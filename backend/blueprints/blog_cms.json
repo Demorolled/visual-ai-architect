@@ -1,0 +1,29 @@
+{
+  "app_type": "blog_cms",
+  "description": "Content management system with articles, categories, tags, comments, author editing workflows, and publishing controls.",
+  "keywords": ["blog", "cms", "content", "articles", "posts", "publishing", "editorial", "writer", "magazine", "documentation", "journal", "news"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "post_models",
+    "post_store",
+    "publishing_logic",
+    "api_routes",
+    "comment_service",
+    "user_auth"
+  ],
+  "wiring_graph": [
+    { "source_module": "ui_screens", "destination_module": "api_routes", "data_passed": "content_requests" },
+    { "source_module": "api_routes", "destination_module": "publishing_logic", "data_passed": "post_commands" },
+    { "source_module": "publishing_logic", "destination_module": "post_store", "data_passed": "persist_posts" },
+    { "source_module": "api_routes", "destination_module": "comment_service", "data_passed": "comment_actions" },
+    { "source_module": "comment_service", "destination_module": "post_store", "data_passed": "comment_queries" },
+    { "source_module": "post_models", "destination_module": "post_store", "data_passed": "schemas" },
+    { "source_module": "user_auth", "destination_module": "publishing_logic", "data_passed": "author_permissions" },
+    { "source_module": "ui_screens", "destination_module": "user_auth", "data_passed": "login_actions" }
+  ]
+}

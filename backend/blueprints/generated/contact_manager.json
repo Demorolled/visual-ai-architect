@@ -1,0 +1,52 @@
+{
+  "app_type": "contact_manager",
+  "description": "Personal CRM with contact groups, search, and vCard import/export — Desktop contacts with customizable fields, groups, birthday reminders, vCard import/export",
+  "keywords": [
+    "contacts",
+    "crm",
+    "address-book",
+    "productivity",
+    "contact",
+    "manager",
+    "contact form",
+    "contact engine",
+    "import/export",
+    "contact db",
+    "contact browser"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Contact Form",
+    "Contact Engine",
+    "Import/Export",
+    "Contact DB",
+    "Contact Browser"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Contact Form",
+      "destination_module": "Contact Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Contact Engine",
+      "destination_module": "Import/Export",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Import/Export",
+      "destination_module": "Contact DB",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Contact DB",
+      "destination_module": "Contact Browser",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

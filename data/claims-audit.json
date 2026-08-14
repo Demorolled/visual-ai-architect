@@ -1,0 +1,183 @@
+{
+ "results": [
+  {
+   "claim": "read named files",
+   "probe": "read backend/src/index.ts",
+   "passed": true,
+   "detail": "response[:200]: import express from 'express';\nimport cors from 'cors';\nimport dotenv from 'dotenv';\nimport http from 'http';\nimport path from 'path';\nimport { spawn, execSync, execFileSync, ChildProcess } from 'chil",
+   "score": 9
+  },
+  {
+   "claim": "search codebase",
+   "probe": "search for sessionMemory",
+   "passed": true,
+   "detail": "response[:220]: Here's a list of the files where the term \"sessionMemory\" appears in the codebase:\n\n- [database/sessionMemory.d.ts](https://github.com/your-repo/backend/tree/master/dist/database/sessionMemory.d.ts)\n- [database/sessionMe",
+   "score": 9
+  },
+  {
+   "claim": "create file in chat-files",
+   "probe": "create audit-test file",
+   "passed": true,
+   "detail": "files: ['data/chat-files/audit-test-fc.txt'] (attempt 1) | resp: \u2705 Created \"audit-test-fc.txt\" \u2014 done for real this time.\n\u2022 File: /home/final-flash1/Desktop/visual-ai-architect/data/chat-files/audit-test-fc.txt  (11",
+   "score": 9
+  },
+  {
+   "claim": "write memory",
+   "probe": "remember favorite color teal",
+   "passed": true,
+   "detail": "notes matching 'teal': True | resp: \u2705 Saved to my memory \u2014 done for real this time.\n\u2022 File: data/session-memory.json  |  Note: \"my favorite color is teal\" (3 total)\n\u2022 It's now part of my",
+   "score": 9
+  },
+  {
+   "claim": "recall memory",
+   "probe": "what is my favorite color?",
+   "passed": true,
+   "detail": "resp: Your favorite color is teal. I can tell because you mentioned it before.",
+   "score": 8
+  },
+  {
+   "claim": "code generation",
+   "probe": "fibonacci python function",
+   "passed": true,
+   "detail": "resp[:200]: def fibonacci_memo(n, memo={}):\n    if n in memo:\n        return memo[n]\n    if n <= 1:\n        return n\n    memo[n] = fibonacci_memo(n - 1, memo) + fibonacci_memo(n - 2, memo)\n    return memo[n]",
+   "score": 8
+  },
+  {
+   "claim": "write-code files array",
+   "probe": "/write-code returns files[] of written {path,content}",
+   "passed": true,
+   "detail": "files: ['src/main.ts', 'src/todo.ts', 'src/storage.ts'] | written-ok: ['src/main.ts', 'src/todo.ts', 'src/storage.ts'] | resp keys: ['contractViolations', 'exportDir', 'files', 'mode', 'repairRounds', 'success', 'summary', 'totalFiles', 'tscErrors', 'written']",
+   "score": 9
+  },
+  {
+   "claim": "blueprint generation",
+   "probe": "build todo blueprint (wiring + edges reference real modules/nodes)",
+   "passed": true,
+   "detail": "checklist=5 wiring=4 dangleMod=0 nodes=6 edges=4 dangleEdge=0 | matchedBy=semantic err=",
+   "score": 9
+  },
+  {
+   "claim": "self-analysis",
+   "probe": "read own source + explain",
+   "passed": true,
+   "detail": "resp[:250]: The getSoulPromptModifier function is responsible for generating a personality prompt modifier based on the current soul config. It takes the personality traits from the soul object and builds a descriptor string that can be injected into the LLM sys",
+   "score": 8
+  },
+  {
+   "claim": "LLM integration",
+   "probe": "/api/health llm block",
+   "passed": true,
+   "detail": "health llm: {\"up\": true, \"model\": \"qwen2.5-7b-instruct-uncensored-dspark\"}",
+   "score": 8
+  },
+  {
+   "claim": "WebSocket",
+   "probe": "socket.io polling handshake",
+   "passed": true,
+   "detail": "handshake: HTTP/1.1 200 OK\r\nX-Powered-By: Express\r\nVary: Origin\r\nAccess-Control-Allow-Credentials: true\r\nAccept-Ranges: bytes\r\nCach",
+   "score": 8
+  },
+  {
+   "claim": "live codegen progress stream",
+   "probe": "generation_progress events over /ws during write-code",
+   "passed": true,
+   "detail": "events: 14 | generating:8% \u2192 generating:17% \u2192 generating:42% \u2192 generating:45% \u2192 generating:51% \u2192 generating:57% \u2192 validating:70% \u2192 validating:76% \u2192 validating:87% \u2192 validating:94% \u2192 validating:100% \u2192 validating:100% \u2192 validating:95% \u2192 done:100%",
+   "score": 9
+  },
+  {
+   "claim": "TTS",
+   "probe": "voices list + real MP3 synthesis",
+   "passed": true,
+   "detail": "voices: 12 | synth: HTTP 200, 16992 bytes, audio/mpeg, magic=True",
+   "score": 10
+  },
+  {
+   "claim": "emotional response",
+   "probe": "stressed user message",
+   "passed": true,
+   "detail": "resp[:250]: I can imagine how overwhelming it feels to have everything piling up like that. Take a deep breath and try to focus on one thing at a time; sometimes breaking it down helps make things feel more manageable.",
+   "score": 8
+  },
+  {
+   "claim": "emotional continuity",
+   "probe": "turn-2 worse news \u2192 warm + references turn 1",
+   "passed": true,
+   "detail": "turn2 warm=True referencesTurn1=True | resp[:220]: That's a lot on top of the deadline you're already stressing about. I'm so sorry for the extra setback; that must feel incredibly frustrating. Let's see if we can try to recover the work or at least get an extension if i",
+   "score": 8
+  },
+  {
+   "claim": "emotion",
+   "probe": "soul.json emotional_state history freshness",
+   "passed": true,
+   "detail": "dominant: neutral | entries: 25 | last_ts: 2026-08-09T00:39:34.995Z (was stale pre-P2: Jul 4)",
+   "score": 8
+  },
+  {
+   "claim": "project mgmt",
+   "probe": "save/load/export/import round-trip + disk persistence",
+   "passed": true,
+   "detail": "create:201 | get:200 | update:200 | export:200 | import:201 | delete:200/gone:404 | disk=True",
+   "score": 10
+  },
+  {
+   "claim": "workflow: define the idea",
+   "probe": "blueprint description states the core functionality/problem",
+   "passed": true,
+   "detail": "desc[:200]: Todo List. \u2394 Todo List",
+   "score": 8
+  },
+  {
+   "claim": "workflow: sketch the architecture",
+   "probe": "blueprint wiring_graph nodes+edges (no dangling refs)",
+   "passed": true,
+   "detail": "wiring=4 nodes=6 edges=4 dangleMod=0 dangleEdge=0",
+   "score": 9
+  },
+  {
+   "claim": "workflow: choose a language",
+   "probe": "blueprint target_stack names concrete technologies per layer",
+   "passed": true,
+   "detail": "stack: {\"frontend\": \"React\", \"backend\": \"Node.js Express\", \"database\": \"SQLite\"}",
+   "score": 9
+  },
+  {
+   "claim": "workflow: core-first (core separate from UI)",
+   "probe": "write-code emits core/business-logic files separate from UI files",
+   "passed": true,
+   "detail": "core=True ui=True | files: ['src/types.ts', 'src/core.ts', 'src/routes.ts', 'src/db.ts', 'src/handlers.ts', 'src/index.ts', 'src/ui.tsx', 'src/app.tsx', 'tests/core.spec.ts', 'Dockerfile', 'index.html']",
+   "score": 8
+  },
+  {
+   "claim": "workflow: UI design",
+   "probe": "write-code emits UI/component files (or ui_screens in blueprint checklist)",
+   "passed": true,
+   "detail": "ui=True checklist_has_ui_screens=True | files: ['src/types.ts', 'src/core.ts', 'src/routes.ts', 'src/db.ts', 'src/handlers.ts', 'src/index.ts', 'src/ui.tsx', 'src/app.tsx', 'tests/core.spec.ts', 'Dockerfile', 'index.html']",
+   "score": 8
+  },
+  {
+   "claim": "workflow: wire up the UI",
+   "probe": "UI connected to core (wiring edge ui\u2192api and/or UI+API files in one write)",
+   "passed": true,
+   "detail": "wireEdge=False uiAndApiFiles=True | files: ['src/types.ts', 'src/core.ts', 'src/routes.ts', 'src/db.ts', 'src/handlers.ts', 'src/index.ts', 'src/ui.tsx', 'src/app.tsx', 'tests/core.spec.ts', 'Dockerfile', 'index.html']",
+   "score": 8
+  },
+  {
+   "claim": "workflow: testing",
+   "probe": "write-code emits unit/integration test files",
+   "passed": true,
+   "detail": "tests=True | files: ['src/types.ts', 'src/core.ts', 'src/routes.ts', 'src/db.ts', 'src/handlers.ts', 'src/index.ts', 'src/ui.tsx', 'src/app.tsx', 'tests/core.spec.ts', 'Dockerfile', 'index.html']",
+   "score": 8
+  },
+  {
+   "claim": "workflow: deployment",
+   "probe": "write-code emits deployment artifacts (Dockerfile/scripts)",
+   "passed": true,
+   "detail": "deploy=True | files: ['src/types.ts', 'src/core.ts', 'src/routes.ts', 'src/db.ts', 'src/handlers.ts', 'src/index.ts', 'src/ui.tsx', 'src/app.tsx', 'tests/core.spec.ts', 'Dockerfile', 'index.html']",
+   "score": 8
+  }
+ ],
+ "total": 213,
+ "max": 250,
+ "pct": 85,
+ "at": "2026-08-08T20:43:21Z"
+}

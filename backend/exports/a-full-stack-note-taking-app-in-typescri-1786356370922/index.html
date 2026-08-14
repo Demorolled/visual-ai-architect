@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note-Taking App</title>
+  <style>
+    /* Add your styles here */
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="grid">
+      <button id="addNoteBtn" class="btn btn-primary" onclick="addNote()">+</button>
+    </div>
+    <div id="notesList" class="grid"></div>
+  </div>
+  <script>
+    const apiClient = () => {};
+    const addNote = async () => {
+      const response = await apiClient('POST', '/api/notes');
+      console.log(response);
+    };
+    const notesList = document.getElementById('notesList');
+    const noteRoutes = [];
+    const renderNotes = (notes) => {
+      notes.forEach((note) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${note.title}</h3>
+          <p>${note.content}</p>
+          <button class="btn" onclick="removeNote(${note.id})">✕</button>
+        `;
+        notesList.appendChild(card);
+      });
+    };
+    const removeNote = (id) => {
+      notesList.querySelector(`[data-id=${id}]`).remove();
+    };
+  </script>
+</body>
+</html>

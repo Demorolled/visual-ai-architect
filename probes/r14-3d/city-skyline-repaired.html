@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>3D Night City Skyline</title>
+    <style>
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #060a15; }
+        #scene { position: fixed; inset: 0; }
+    </style>
+</head>
+<body>
+    <canvas id="scene"></canvas>
+    <button id="randomize">Randomize City</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color('black');
+        scene.fog = new THREE.Fog('black', 50, 200);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500);
+        camera.position.set(0, 25, 100);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        let city = [];
+        const randomHeight = () => 3 + Math.random() * 12;
+        const randomColor = () => 'hsl(' + (Math.random() * 360 | 0) + ', 100%, 50%)';
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(-1, 2, 1).normalize();
+        scene.add(light);
+        const randomize = () => {
+            scene.traverse((o) => { if (o.geometry) scene.remove(o); });
+            city = [];
+            for (let x = -20; x < 20; x++) {
+                for (let z = -20; z < 20; z++) {
+                    const height = randomHeight();
+                    const geometry = new THREE.BoxGeometry(2, height, 2);
+                    const material = new THREE.MeshBasicMaterial({ color: randomColor(), wireframe: true });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(x * 3, height / 2, z * 3);
+                    scene.add(mesh);
+                    city.push(mesh);
+                }
+            }
+            camera.position.set(0, 25, 100);
+            controls.update();
+        };
+        randomize();
+        const moon = new THREE.Mesh(
+            new THREE.SphereGeometry(3, 32, 32),
+            new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3, roughness: 0.3 })
+        );
+        moon.position.set(20, 15, 30);
+        moon.castShadow = true;
+        scene.add(moon);
+        const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+        light2.position.set(-1, 2, 1).normalize();
+        scene.add(light2);
+        const render = () => {
+            requestAnimationFrame(render);
+            moon.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        };
+        render();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        document.getElementById('randomize').addEventListener('click', randomize);
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "app_type": "stand_alone_weather_app",
+  "description": "stand alone weather app",
+  "keywords": [
+    "input",
+    "logic",
+    "output",
+    "stand",
+    "alone",
+    "weather",
+    "app",
+    "main.go",
+    "weather.go",
+    "display.go"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "main.go",
+    "weather.go",
+    "display.go"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "main.go",
+      "destination_module": "weather.go",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "weather.go",
+      "destination_module": "display.go",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

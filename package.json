@@ -1,0 +1,25 @@
+{
+  "name": "visual-ai-architect",
+  "version": "1.0.0",
+  "description": "AI-powered visual development environment with flowchart-based code generation",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build": "npm run build --workspace=frontend && npm run build --workspace=backend && bash scripts/check-training.sh",
+    "start": "npm run start --workspace=backend",
+    "check:training": "bash scripts/check-training.sh",
+    "test:tsc-concurrency": "python3 tests/test-tsc-concurrency.py",
+    "// check:training note": "build ends with check-training.sh (FULL gate, no --quick): py_compile of the training-pipeline Python scripts + the tsc_check concurrency test (48 calls) + the probe self-check (--fail-on-probe-clean, 144 calls across 3 rounds, fails CI if the shared-scratch regression probe stops detecting the bug it guards). Full gate runs in ~22s. Requires python3; self-skips (exit 0) only when tsc (node_modules/typescript) is unavailable. The --quick variant remains available via make check-training-quick / bash scripts/check-training.sh --quick.",
+    "hf-sync": "hf sync hf://buckets/StevenWoods/Codestral-22B-v0.1-bucket ./local"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "playwright": "^1.62.0"
+  }
+}

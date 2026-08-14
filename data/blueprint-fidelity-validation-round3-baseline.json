@@ -1,0 +1,974 @@
+{
+  "generated": "2026-08-06T09:51:15",
+  "endpoint": "http://127.0.0.1:8000/v1/chat/completions",
+  "samples": 61,
+  "temperature": 0.2,
+  "parse_rate_pct": 98.4,
+  "keys_rate_pct": 98.4,
+  "types_rate_pct": 98.4,
+  "known_app_type_rate_pct": 88.5,
+  "exact_app_type_rate_pct": 83.6,
+  "full_fidelity_rate_pct": 59.0,
+  "overall_ok_rate_pct": 59.0,
+  "cases": [
+    {
+      "instruction": "I want a Iot Csharp app. industrial telemetry: sensor registry, high-frequency readings, threshold rules, alert dispatch, live dashboards.",
+      "expected_app_type": "iot-csharp",
+      "got_app_type": "industrial-telemetry",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": false
+      },
+      "ok": false,
+      "elapsed_s": 3.78,
+      "output_preview": "{\"app_type\":\"industrial-telemetry\",\"description\":\"sensor registry, high-frequency readings, threshold rules, alert dispatch, live dashboards.\",\"keywords\":[\"iot\",\"industrial\",\"telemetry\",\"sensor\",\"registry\",\"high-frequency\",\"readings\",\"threshold\",\"rules\",\"alert\",\"dispatch\",\"live\",\"dashboards\"],\"target_stack\":{\"frontend\":\"Blazor\",\"backend\":\"C# .NET\",\"database\":\"SQL Server\"},\"architecture_checklist\":[\"sensor registry\",\"high-frequency readings\",\"threshold rules\",\"alert dispatch\",\"live dashboards\"],\""
+    },
+    {
+      "instruction": "I need a tool that Color Palette Generator. 🎨 Color Palette Generator",
+      "expected_app_type": "color_palette",
+      "got_app_type": "color_palette",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 4.91,
+      "output_preview": "{\"app_type\":\"color_palette\",\"description\":\"Color Palette Generator. 🎨 Color Palette Generator\",\"keywords\":[\"color\",\"palette\",\"generator\",\"color\",\"palette\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"d"
+    },
+    {
+      "instruction": "Can you build an app to Alertmanager routing, inhibition, and grouping configurator — Interactive alertmanager config with real-time visualization and analysis",
+      "expected_app_type": "alertmanager_config_2",
+      "got_app_type": "alertmanager_config_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.12,
+      "output_preview": "{\"app_type\":\"alertmanager_config_2\",\"description\":\"Alertmanager routing, inhibition, and grouping configurator — Interactive alertmanager config with real-time visualization and analysis\",\"keywords\":[\"devops\",\"alertmanager\",\"notification\",\"alerts\",\"devops\",\"alertmanager\",\"config\",\"config input\",\"orchestrator\",\"state store\",\"analysis engine\",\"ops dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Config Input\",\"Orchestrator\","
+    },
+    {
+      "instruction": "I want a Minimum Spanning Tree 2 app. Kruskal and Prim MST algorithms with union-find visualization — Interactive minimum spanning tree with real-time visualization and analysis",
+      "expected_app_type": "minimum_spanning_tree_2",
+      "got_app_type": "minimum_spanning_tree_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.16,
+      "output_preview": "{\"app_type\":\"minimum_spanning_tree_2\",\"description\":\"Kruskal and Prim MST algorithms with union-find visualization — Interactive minimum spanning tree with real-time visualization and analysis\",\"keywords\":[\"algorithms\",\"mst\",\"kruskal\",\"prim\",\"graph\",\"minimum\",\"spanning\",\"tree\",\"data input\",\"core algorithm\",\"results store\",\"analysis engine\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Input\",\"Core Algorithm\",\""
+    },
+    {
+      "instruction": "I'm looking for a Forum Python. discussion platform: threads with posts, vote scoring, moderation queue.",
+      "expected_app_type": "forum-python",
+      "got_app_type": "forum-python",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.32,
+      "output_preview": "{\"app_type\":\"forum-python\",\"description\":\"discussion platform: threads with posts, vote scoring, moderation queue.\",\"keywords\":[\"forum-python\",\"python\",\"forum\",\"discussion\",\"platform\",\"threads\",\"posts\",\"vote\",\"scoring\",\"moderation\",\"queue\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"threads\",\"posts\",\"vote\",\"scoring\",\"moderation\",\"queue\"],\"wiring_graph\":[{\"source_module\":\"threads\",\"destination_module\":\"posts\",\"data_passed\":\"reque"
+    },
+    {
+      "instruction": "Create an application: Text Adventure. ⚔️ Text Adventure",
+      "expected_app_type": "text_adventure",
+      "got_app_type": "text_adventure",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.25,
+      "output_preview": "{\"app_type\":\"text_adventure\",\"description\":\"Text Adventure. ⚔️ Text Adventure\",\"keywords\":[\"text\",\"adventure\",\"text\",\"adventure\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"s"
+    },
+    {
+      "instruction": "I need a tool that Raw socket packet crafting and network analysis — Interactive raw socket tool with real-time visualization and analysis",
+      "expected_app_type": "raw_socket_tool_2",
+      "got_app_type": "raw_socket_tool_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 6.67,
+      "output_preview": "{\"app_type\":\"raw_socket_tool_2\",\"description\":\"Raw socket packet crafting and network analysis — Interactive raw socket tool with real-time visualization and analysis\",\"keywords\":[\"networking\",\"raw-socket\",\"packet\",\"networking\",\"raw\",\"socket\",\"tool\",\"packet builder\",\"raw socket config\",\"packet encoder\",\"packet store\",\"packet decoder\",\"packet analyzer\",\"packet display\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Packet Builder\",\""
+    },
+    {
+      "instruction": "I need a tool that COW page sharing and fork optimization visualization — Interactive copy-on-write lab with real-time visualization and analysis",
+      "expected_app_type": "copy_on_write_lab_2",
+      "got_app_type": "copy_on_write_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.03,
+      "output_preview": "{\"app_type\":\"copy_on_write_lab_2\",\"description\":\"COW page sharing and fork optimization visualization — Interactive copy-on-write lab with real-time visualization and analysis\",\"keywords\":[\"systems\",\"copy-on-write\",\"memory\",\"fork\",\"systems\",\"copy\",\"on\",\"write\",\"lab\",\"system config\",\"core engine\",\"data collection\",\"analysis module\",\"dashboard view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"System Config\",\"Core Engine\",\"Data Col"
+    },
+    {
+      "instruction": "Build a Normalization Tool 2 with features for database, schema-design, education, query/config",
+      "expected_app_type": "normalization_tool_2",
+      "got_app_type": "normalization_tool_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.16,
+      "output_preview": "{\"app_type\":\"normalization_tool_2\",\"description\":\"Database normalization with 1NF, 2NF, 3NF, BCNF, 4NF, 5NF — interactive database tool for normalization tool 2\",\"keywords\":[\"database\",\"normalization\",\"tool\",\"normalization\",\"tool\",\"database\",\"design\",\"schema\",\"design\",\"education\",\"query/config\",\"database engine\",\"data store\",\"analysis module\",\"results display\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Query/Config\",\"Database E"
+    },
+    {
+      "instruction": "Make me a Sorting Viz — Sorting Visualizer. 📊 Sorting Visualizer",
+      "expected_app_type": "sorting_viz",
+      "got_app_type": "sorting_viz",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.13,
+      "output_preview": "{\"app_type\":\"sorting_viz\",\"description\":\"Sorting Visualizer. 📊 Sorting Visualizer\",\"keywords\":[\"sorting\",\"visualizer\",\"sorting\",\"viz\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\""
+    },
+    {
+      "instruction": "Help me build PersistentVolumeClaim and StorageClass configuration lab — Interactive pvc explorer with real-time visualization and analysis",
+      "expected_app_type": "pvc_explorer_2",
+      "got_app_type": "pvc_explorer_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.3,
+      "output_preview": "{\"app_type\":\"pvc_explorer_2\",\"description\":\"PersistentVolumeClaim and StorageClass configuration lab — Interactive pvc explorer with real-time visualization and analysis\",\"keywords\":[\"devops\",\"pvc\",\"kubernetes\",\"storage\",\"devops\",\"pvc\",\"explorer\",\"config input\",\"orchestrator\",\"state store\",\"analysis engine\",\"ops dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Config Input\",\"Orchestrator\",\"State Store\",\"Analysis Engine\",\"O"
+    },
+    {
+      "instruction": "I'm looking for a Timerfd Lab. Linux timerfd for interval and one-shot timers",
+      "expected_app_type": "timerfd_lab",
+      "got_app_type": "timerfd_lab",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.71,
+      "output_preview": "{\"app_type\":\"timerfd_lab\",\"description\":\"Linux timerfd for interval and one-shot timers — Interactive systems tool for timerfd lab\",\"keywords\":[\"systems\",\"timerfd\",\"lab\",\"timerfd\",\"lab\",\"system config\",\"core engine\",\"data collection\",\"analysis module\",\"dashboard view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"System Config\",\"Core Engine\",\"Data Collection\",\"Analysis Module\",\"Dashboard View\"],\"wiring_graph\":[{\"source_module\":\"Sy"
+    },
+    {
+      "instruction": "Help me build Panel de Pon style matching puzzle game — Interactive tetris attack with real-time visualization and analysis",
+      "expected_app_type": "tetris_attack_2",
+      "got_app_type": "tetris_attack",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": false,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.03,
+      "output_preview": "{\"app_type\":\"tetris_attack\",\"description\":\"Help me build Panel de Pon style matching puzzle game — Interactive tetris attack with real-time visualization and analysis\",\"keywords\":[\"game\",\"tetris\",\"puzzle\",\"matching\",\"games\",\"tetris\",\"attack\",\"game controller\",\"game engine\",\"game state\",\"ai opponent\",\"render view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Game Controller\",\"Game Engine\",\"Game State\",\"AI Opponent\",\"Render View\"],"
+    },
+    {
+      "instruction": "Make me a Jaeger Trace Viewer 2 — Jaeger distributed trace search and flame graph — Interactive jaeger trace viewer with real-time visualization and analysis",
+      "expected_app_type": "jaeger_trace_viewer_2",
+      "got_app_type": "jaeger_trace_viewer_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.22,
+      "output_preview": "{\"app_type\":\"jaeger_trace_viewer_2\",\"description\":\"Jaeger distributed trace search and flame graph — Interactive jaeger trace viewer with real-time visualization and analysis\",\"keywords\":[\"devops\",\"jaeger\",\"tracing\",\"distributed\",\"devops\",\"jaeger\",\"trace\",\"viewer\",\"config input\",\"orchestrator\",\"state store\",\"analysis engine\",\"ops dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Config Input\",\"Orchestrator\",\"State Store\",\"A"
+    },
+    {
+      "instruction": "I want a Naive Bayes Lab 2 app. Naive Bayes classifier with probability visualization — Interactive naive bayes lab with real-time visualization and analysis",
+      "expected_app_type": "naive_bayes_lab_2",
+      "got_app_type": "naive_bayes_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.17,
+      "output_preview": "{\"app_type\":\"naive_bayes_lab_2\",\"description\":\"Naive Bayes classifier with probability visualization — Interactive naive bayes lab with real-time visualization and analysis\",\"keywords\":[\"specialized\",\"naive-bayes\",\"classification\",\"probability\",\"specialized\",\"naive\",\"bayes\",\"lab\",\"domain input\",\"core algorithm\",\"data store\",\"analysis engine\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Domain Input\",\"Core Algorith"
+    },
+    {
+      "instruction": "I need a tool that Stackful coroutine implementation with yield/resume — Interactive coroutine lab with real-time visualization and analysis",
+      "expected_app_type": "coroutine_lab_2",
+      "got_app_type": "coroutine_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 4.92,
+      "output_preview": "{\"app_type\":\"coroutine_lab_2\",\"description\":\"Stackful coroutine implementation with yield/resume — Interactive coroutine lab with real-time visualization and analysis\",\"keywords\":[\"systems\",\"coroutine\",\"concurrency\",\"async\",\"systems\",\"coroutine\",\"lab\",\"system config\",\"core engine\",\"data collection\",\"analysis module\",\"dashboard view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"System Config\",\"Core Engine\",\"Data Collection\",\"Analy"
+    },
+    {
+      "instruction": "Make me a Word2Vec Explorer 2 — Word embedding visualization with cosine similarity — Interactive word2vec explorer with real-time visualization and analysis",
+      "expected_app_type": "word2vec_explorer_2",
+      "got_app_type": "word2vec_explorer_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.24,
+      "output_preview": "{\"app_type\":\"word2vec_explorer_2\",\"description\":\"Word embedding visualization with cosine similarity — Interactive word2vec explorer with real-time visualization and analysis\",\"keywords\":[\"search\",\"word2vec\",\"embedding\",\"nlp\",\"search\",\"word2vec\",\"explorer\",\"query input\",\"search engine\",\"index & data\",\"evaluation module\",\"results display\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Query Input\",\"Search Engine\",\"Index & Data\",\"Eva"
+    },
+    {
+      "instruction": "I need a tool that Loki LogQL query builder for log aggregation — Interactive loki logql lab with real-time visualization and analysis",
+      "expected_app_type": "loki_logql_lab_2",
+      "got_app_type": "loki_logql_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.19,
+      "output_preview": "{\"app_type\":\"loki_logql_lab_2\",\"description\":\"Loki LogQL query builder for log aggregation — Interactive loki logql lab with real-time visualization and analysis\",\"keywords\":[\"devops\",\"loki\",\"logql\",\"logging\",\"devops\",\"loki\",\"logql\",\"lab\",\"config input\",\"orchestrator\",\"state store\",\"analysis engine\",\"ops dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Config Input\",\"Orchestrator\",\"State Store\",\"Analysis Engine\",\"Ops Dashb"
+    },
+    {
+      "instruction": "Can you build an app to Graph-coloring register allocation visualization — Interactive register allocator with real-time visualization and analysis",
+      "expected_app_type": "register_allocator_2",
+      "got_app_type": "register_allocator_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.21,
+      "output_preview": "{\"app_type\":\"register_allocator_2\",\"description\":\"Graph-coloring register allocation visualization — Interactive register allocator with real-time visualization and analysis\",\"keywords\":[\"systems\",\"register-allocator\",\"compilers\",\"optimization\",\"systems\",\"register\",\"allocator\",\"system config\",\"core engine\",\"data collection\",\"analysis module\",\"dashboard view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"System Config\",\"Core Engine"
+    },
+    {
+      "instruction": "Create an application: Inspirational quote display with categories",
+      "expected_app_type": "random_quote_generator",
+      "got_app_type": "inspirational_quotes",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": false
+      },
+      "ok": false,
+      "elapsed_s": 5.13,
+      "output_preview": "{\"app_type\":\"inspirational_quotes\",\"description\":\"Inspirational quote display with categories — Interactive desktop tool for inspirational quotes\",\"keywords\":[\"desktop\",\"inspirational\",\"quotes\",\"inspirational\",\"quotes\",\"data store\",\"search & filter\",\"user interface\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Store\",\"Search & Filter\",\"User Interface\"],\"wiring_graph\":[{\"source_module\":\"Data Store\",\"destination_module\":\"Searc"
+    },
+    {
+      "instruction": "Make me a Video Editor — Video Editor Pro. 📁 New Project",
+      "expected_app_type": "video_editor",
+      "got_app_type": "video_editor",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.68,
+      "output_preview": "{\"app_type\":\"video_editor\",\"description\":\"Video Editor Pro. 📁 New Project\",\"keywords\":[\"video\",\"editor\",\"pro\",\"video\",\"editor\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"sou"
+    },
+    {
+      "instruction": "Build me an app for Mind Map Studio.",
+      "expected_app_type": "brainstorm_map",
+      "got_app_type": "mind_map_studio",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": false
+      },
+      "ok": false,
+      "elapsed_s": 4.11,
+      "output_preview": "{\"app_type\":\"mind_map_studio\",\"description\":\"Build me an app for Mind Map Studio.\",\"keywords\":[\"mind\",\"map\",\"studio\",\"mind\",\"map\",\"studio\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"res"
+    },
+    {
+      "instruction": "I'm looking for a Theme Builder. Theme Builder. 🎨 Theme Builder",
+      "expected_app_type": "theme_builder",
+      "got_app_type": "theme_builder",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 4.95,
+      "output_preview": "{\"app_type\":\"theme_builder\",\"description\":\"Theme Builder. 🎨 Theme Builder\",\"keywords\":[\"theme\",\"builder\",\"theme\",\"builder\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"source_"
+    },
+    {
+      "instruction": "Create an application: Ford-Fulkerson and Edmonds-Karp max flow algorithms — Interactive maximum flow lab with real-time visualization and analysis",
+      "expected_app_type": "maximum_flow_lab_2",
+      "got_app_type": "maximum_flow_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.37,
+      "output_preview": "{\"app_type\":\"maximum_flow_lab_2\",\"description\":\"Ford-Fulkerson and Edmonds-Karp max flow algorithms — Interactive maximum flow lab with real-time visualization and analysis\",\"keywords\":[\"algorithms\",\"maximum-flow\",\"ford-fulkerson\",\"graph\",\"network-flow\",\"maximum\",\"flow\",\"lab\",\"graph editor\",\"flow engine\",\"flow store\",\"flow visualizer\",\"flow analyzer\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Graph Editor\",\"Flow Engine\",\"Flow S"
+    },
+    {
+      "instruction": "Make me a Differential Operator 2 — Numerical differentiation with error analysis — Interactive differential operator with real-time visualization and analysis",
+      "expected_app_type": "differential_operator_2",
+      "got_app_type": "differential_operator_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 4.88,
+      "output_preview": "{\"app_type\":\"differential_operator_2\",\"description\":\"Numerical differentiation with error analysis — Interactive differential operator with real-time visualization and analysis\",\"keywords\":[\"mathematics\",\"differentiation\",\"numerical\",\"calculus\",\"mathematics\",\"differential\",\"operator\",\"math input\",\"math engine\",\"data storage\",\"analysis module\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Math Input\",\"Math Engine\",\""
+    },
+    {
+      "instruction": "Build me an app for Apache Hudi merge-on-read and copy-on-write comparison — Interactive hudi merger tool with real-time visualization and analysis",
+      "expected_app_type": "hudi_merger_tool_2",
+      "got_app_type": "hudi_merger_tool_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.32,
+      "output_preview": "{\"app_type\":\"hudi_merger_tool_2\",\"description\":\"Apache Hudi merge-on-read and copy-on-write comparison — Interactive hudi merger tool with real-time visualization and analysis\",\"keywords\":[\"data-engineering\",\"hudi\",\"lakehouse\",\"merge\",\"data-engineering\",\"hudi\",\"merger\",\"tool\",\"pipeline config\",\"data processor\",\"data store\",\"orchestrator\",\"pipeline dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Pipeline Config\",\"Data Proc"
+    },
+    {
+      "instruction": "Build me an app for Permutations, combinations, binomial coefficients, Pigeonhole — Interactive combinatorics explorer with real-time visualization and analysis",
+      "expected_app_type": "combinatorics_explorer_2",
+      "got_app_type": "combinatorics_explorer_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.45,
+      "output_preview": "{\"app_type\":\"combinatorics_explorer_2\",\"description\":\"Permutations, combinations, binomial coefficients, Pigeonhole — Interactive combinatorics explorer with real-time visualization and analysis\",\"keywords\":[\"mathematics\",\"combinatorics\",\"permutations\",\"combinations\",\"mathematics\",\"combinatorics\",\"explorer\",\"math input\",\"math engine\",\"data storage\",\"analysis module\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Mat"
+    },
+    {
+      "instruction": "I'm looking for a Fieldservice Python. service dispatch: technician roster, work-order lifecycle, schedule assignment, parts inventory, invoicing after completion.",
+      "expected_app_type": "fieldservice-python",
+      "got_app_type": "fieldservice-python",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 11.16,
+      "output_preview": "{\"app_type\":\"fieldservice-python\",\"description\":\"service dispatch: technician roster, work-order lifecycle, schedule assignment, parts inventory, invoicing after completion.\",\"keywords\":[\"fieldservice-python\",\"python\",\"fieldservice\",\"field service\",\"technician roster\",\"work order\",\"lifecycle\",\"schedule assignment\",\"parts inventory\",\"invoicing\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Python FastAPI\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"technician roster\",\"work order\",\"lifecycle\""
+    },
+    {
+      "instruction": "Make me a Interactive Dashboard — Interactive Dashboard. 📊 Interactive Dashboard",
+      "expected_app_type": "interactive_dashboard",
+      "got_app_type": "interactive_dashboard",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 4.9,
+      "output_preview": "{\"app_type\":\"interactive_dashboard\",\"description\":\"Interactive Dashboard. 📊 Interactive Dashboard\",\"keywords\":[\"dashboard\",\"interactive\",\"dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_pa"
+    },
+    {
+      "instruction": "Create an application: Spelling correction with edit distance and n-gram language models — Interactive spell checker with real-time visualization and analysis",
+      "expected_app_type": "spell_checker_2",
+      "got_app_type": "spell_checker_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.03,
+      "output_preview": "{\"app_type\":\"spell_checker_2\",\"description\":\"Spelling correction with edit distance and n-gram language models — Interactive spell checker with real-time visualization and analysis\",\"keywords\":[\"spell-checker\",\"edit-distance\",\"nlp\",\"language\",\"education\",\"spell\",\"checker\",\"dictionary input\",\"edit distance engine\",\"language model\",\"spell suggestions\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Dictionary Input\",\"E"
+    },
+    {
+      "instruction": "Build a Clinic Csharp with features for management, patients, appointments, doctors",
+      "expected_app_type": "clinic-csharp",
+      "got_app_type": "clinic-csharp",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.53,
+      "output_preview": "{\"app_type\":\"clinic-csharp\",\"description\":\"Clinic Csharp with features for management, patients, appointments, doctors — an interactive desktop utility tool with a visual interface.\",\"keywords\":[\"desktop\",\"desktop\",\"clinic-csharp\",\"management\",\"clinic\",\"csharp\"],\"target_stack\":{\"frontend\":\"WPF\",\"backend\":\"C# .NET\",\"database\":\"SQL Server\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_eng"
+    },
+    {
+      "instruction": "I want a Todo List app. Todo List. ⎔ Todo List",
+      "expected_app_type": "todo_list",
+      "got_app_type": "todo_list",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 3.98,
+      "output_preview": "{\"app_type\":\"todo_list\",\"description\":\"Todo List. ⎔ Todo List\",\"keywords\":[\"todo\",\"list\",\"todo\",\"list\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"source_module\":\"input_handl"
+    },
+    {
+      "instruction": "Build me an app for Chess Engine Pro. Checkmate!",
+      "expected_app_type": "chess_engine",
+      "got_app_type": "chess_engine_pro",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": false
+      },
+      "ok": false,
+      "elapsed_s": 4.8,
+      "output_preview": "{\"app_type\":\"chess_engine_pro\",\"description\":\"Checkmate!\",\"keywords\":[\"chess\",\"engine\",\"pro\",\"checkmate\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"source_module\":\"input_han"
+    },
+    {
+      "instruction": "Help me build Batch file renaming with patterns and preview — Interactive file renamer with real-time visualization and analysis",
+      "expected_app_type": "file_renamer_2",
+      "got_app_type": "file_renamer_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.16,
+      "output_preview": "{\"app_type\":\"file_renamer_2\",\"description\":\"Batch file renaming with patterns and preview — Interactive file renamer with real-time visualization and analysis\",\"keywords\":[\"desktop\",\"file-renamer\",\"batch\",\"utility\",\"desktop\",\"file\",\"renamer\",\"data store\",\"search & filter\",\"user interface\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Store\",\"Search & Filter\",\"User Interface\"],\"wiring_graph\":[{\"source_module\":\"Data Store\",\"des"
+    },
+    {
+      "instruction": "Make me a Terminal Os — Terminal OS.",
+      "expected_app_type": "terminal_os",
+      "got_app_type": null,
+      "checks": {
+        "parse": false
+      },
+      "ok": false,
+      "elapsed_s": 19.97,
+      "output_preview": "# Terminal OS\n\n> Terminal OS. A minimal, terminal-based operating system with a focus on simplicity and efficiency.\n\n## Features\n\n- Minimal, terminal-based interface\n- Built-in shell with command completion\n- File system management\n- Networking (TCP/UDP)\n- Process management\n- Basic IPC (pipes, signals)\n- Simple kernel (40+ files)\n\n## Getting Started\n\n### Building\n\n```sh\n# Clone the repository\ngit clone https://github.com/your-repo/terminal-os.git\ncd terminal-os\n\n# Build the kernel\nmake\n```\n\n###"
+    },
+    {
+      "instruction": "Build a Paxos Simulator 2 with features for database, consensus, distributed, query/config",
+      "expected_app_type": "paxos_simulator_2",
+      "got_app_type": "paxos_simulator_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.04,
+      "output_preview": "{\"app_type\":\"paxos_simulator_2\",\"description\":\"Paxos Simulator 2 — Interactive database tool for paxos simulator\",\"keywords\":[\"database\",\"paxos\",\"simulator\",\"paxos\",\"simulator\",\"query/config\",\"database engine\",\"data store\",\"analysis module\",\"results display\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Query/Config\",\"Database Engine\",\"Data Store\",\"Analysis Module\",\"Results Display\"],\"wiring_graph\":[{\"source_module\":\"Query/Config\""
+    },
+    {
+      "instruction": "Build a Blackbox Exporter Lab 2 with features for devops, probe, monitoring, config input",
+      "expected_app_type": "blackbox_exporter_lab_2",
+      "got_app_type": "blackbox_exporter_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 6.27,
+      "output_preview": "{\"app_type\":\"blackbox_exporter_lab_2\",\"description\":\"devops, probe, monitoring, config input — Blackbox Exporter Lab. Network probe: port, url, path, timeout, interval, retries, headers, tls. Config: global, targets, alerts. Exporter: metrics, labels, annotations, scrape results. Dashboard: status, alerts, trends, config editor.\",\"keywords\":[\"devops\",\"blackbox\",\"exporter\",\"network\",\"probe\",\"monitoring\",\"config\",\"input\",\"blackbox\",\"exporter\",\"lab\",\"probe config\",\"blackbox exporter\",\"dashboard\"],\""
+    },
+    {
+      "instruction": "Build a Candy Crush Style 2 with features for game, puzzle, match-3, games",
+      "expected_app_type": "candy_crush_style_2",
+      "got_app_type": "candy_crush_style_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.25,
+      "output_preview": "{\"app_type\":\"candy_crush_style_2\",\"description\":\"Candy Crush Style 2 — Interactive games tool for candy crush style 2\",\"keywords\":[\"games\",\"candy\",\"crush\",\"style\",\"candy\",\"crush\",\"style\",\"game controller\",\"game engine\",\"game state\",\"ai opponent\",\"render view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Game Controller\",\"Game Engine\",\"Game State\",\"AI Opponent\",\"Render View\"],\"wiring_graph\":[{\"source_module\":\"Game Controller\",\"des"
+    },
+    {
+      "instruction": "Can you build an app to Weather Widget.",
+      "expected_app_type": "weather_widget",
+      "got_app_type": "weather_widget",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.05,
+      "output_preview": "{\"app_type\":\"weather_widget\",\"description\":\"Weather Widget.\",\"keywords\":[\"weather\",\"widget\",\"weather\",\"widget\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"source_module\":\"inp"
+    },
+    {
+      "instruction": "Create an application: Mining/cave exploration puzzle game — Interactive boulder dash with real-time visualization and analysis",
+      "expected_app_type": "boulder_dash_2",
+      "got_app_type": "boulder_dash",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": false,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.83,
+      "output_preview": "{\"app_type\":\"boulder_dash\",\"description\":\"Mining/cave exploration puzzle game — Interactive boulder dash with real-time visualization and analysis\",\"keywords\":[\"game\",\"boulder-dash\",\"puzzle\",\"arcade\",\"game controller\",\"game engine\",\"game state\",\"ai opponent\",\"render view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Game Controller\",\"Game Engine\",\"Game State\",\"AI Opponent\",\"Render View\"],\"wiring_graph\":[{\"source_module\":\"Game Con"
+    },
+    {
+      "instruction": "Build me an app for Content management system with articles, categories, tags, comments, author editing workflows, and publishing controls.",
+      "expected_app_type": "blog_cms",
+      "got_app_type": "content_management",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": false
+      },
+      "ok": false,
+      "elapsed_s": 6.07,
+      "output_preview": "{\"app_type\":\"content_management\",\"description\":\"Content management system with articles, categories, tags, comments, author editing workflows, and publishing controls.\",\"keywords\":[\"content\",\"management\",\"articles\",\"categories\",\"tags\",\"comments\",\"author\",\"workflows\",\"publishing\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"articles\",\"categories\",\"tags\",\"comments\",\"author\",\"workflows\",\"publishing\"],\"wiring_graph\":[{\"source_module\""
+    },
+    {
+      "instruction": "Make me a Spreadsheet — Spreadsheet. 📊 Spreadsheet",
+      "expected_app_type": "spreadsheet",
+      "got_app_type": "spreadsheet",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.2,
+      "output_preview": "{\"app_type\":\"spreadsheet\",\"description\":\"Spreadsheet. 📊 Spreadsheet\",\"keywords\":[\"spreadsheet\",\"spreadsheet\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"source_module\":\"input"
+    },
+    {
+      "instruction": "Build a Habit Tracker 3 with features for Habit Tracker 3",
+      "expected_app_type": "habit_tracker_3",
+      "got_app_type": "habit_tracker_3",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.18,
+      "output_preview": "{\"app_type\":\"habit_tracker_3\",\"description\":\"Habit Tracker 3 — Interactive desktop tool for habit tracker 3\",\"keywords\":[\"desktop\",\"habit\",\"tracker\",\"3\",\"habit\",\"tracker\",\"data store\",\"search & filter\",\"user interface\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Store\",\"Search & Filter\",\"User Interface\"],\"wiring_graph\":[{\"source_module\":\"Data Store\",\"destination_module\":\"Search & Filter\",\"data_passed\":\"requests\"},{\"source_m"
+    },
+    {
+      "instruction": "I want a Pong Evolution 2 app. Pong with power-ups and AI difficulty levels — Interactive pong evolution with real-time visualization and analysis",
+      "expected_app_type": "pong_evolution_2",
+      "got_app_type": "pong_evolution_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.06,
+      "output_preview": "{\"app_type\":\"pong_evolution_2\",\"description\":\"Pong with power-ups and AI difficulty levels — Interactive pong evolution with real-time visualization and analysis\",\"keywords\":[\"game\",\"pong\",\"arcade\",\"physics\",\"games\",\"pong\",\"evolution\",\"game controller\",\"game engine\",\"game state\",\"ai opponent\",\"render view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Game Controller\",\"Game Engine\",\"Game State\",\"AI Opponent\",\"Render View\"],\"wiring"
+    },
+    {
+      "instruction": "I want a World Clock 2 app. World clock with timezone converter and daylight savings — Interactive world clock with real-time visualization and analysis",
+      "expected_app_type": "world_clock_2",
+      "got_app_type": "world_clock_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 4.33,
+      "output_preview": "{\"app_type\":\"world_clock_2\",\"description\":\"World clock with timezone converter and daylight savings — Interactive world clock with real-time visualization and analysis\",\"keywords\":[\"desktop\",\"world-clock\",\"timezone\",\"utility\",\"desktop\",\"world\",\"clock\",\"data store\",\"search & filter\",\"user interface\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Store\",\"Search & Filter\",\"User Interface\"],\"wiring_graph\":[{\"source_module\":\"Data S"
+    },
+    {
+      "instruction": "Design a Series Expansion Lab 2 app where Taylor/Maclaurin/Laurent series with convergence — Interactive series expansion lab with real-time visualization and analysis",
+      "expected_app_type": "series_expansion_lab_2",
+      "got_app_type": "series_expansion_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.12,
+      "output_preview": "{\"app_type\":\"series_expansion_lab_2\",\"description\":\"Taylor/Maclaurin/Laurent series with convergence — Interactive series expansion lab with real-time visualization and analysis\",\"keywords\":[\"mathematics\",\"series\",\"taylor\",\"calculus\",\"mathematics\",\"series\",\"expansion\",\"lab\",\"math input\",\"math engine\",\"data storage\",\"analysis module\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Math Input\",\"Math Engine\",\"Data Stora"
+    },
+    {
+      "instruction": "Build a Screen Ruler 2 with features for desktop, utility, developer-tools, data store",
+      "expected_app_type": "screen_ruler_2",
+      "got_app_type": "screen_ruler_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.35,
+      "output_preview": "{\"app_type\":\"screen_ruler_2\",\"description\":\"Screen Ruler 2 — Interactive desktop utility with real-time visualization and analysis\",\"keywords\":[\"desktop\",\"desktop\",\"screen-ruler\",\"utility\",\"developer-tools\",\"screen\",\"ruler\",\"data store\",\"search & filter\",\"user interface\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Store\",\"Search & Filter\",\"User Interface\"],\"wiring_graph\":[{\"source_module\":\"Data Store\",\"destination_module\":\""
+    },
+    {
+      "instruction": "I want a Currency Converter 2 app. Currency converter with live rates and historical charts — Interactive currency converter with real-time visualization and analysis",
+      "expected_app_type": "currency_converter_2",
+      "got_app_type": "currency_converter_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 4.57,
+      "output_preview": "{\"app_type\":\"currency_converter_2\",\"description\":\"Currency converter with live rates and historical charts — Interactive currency converter with real-time visualization and analysis\",\"keywords\":[\"currency\",\"converter\",\"exchange\",\"finance\",\"currency\",\"converter\",\"currency selector\",\"currency engine\",\"currency store\",\"currency dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Currency Selector\",\"Currency Engine\",\"Currency Sto"
+    },
+    {
+      "instruction": "Help me build TSP solver with DP (Held-Karp), 2-opt, and nearest neighbor — Interactive traveling salesman with real-time visualization and analysis",
+      "expected_app_type": "traveling_salesman_2",
+      "got_app_type": "traveling_salesman_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.34,
+      "output_preview": "{\"app_type\":\"traveling_salesman_2\",\"description\":\"TSP solver with DP (Held-Karp), 2-opt, and nearest neighbor — Interactive traveling salesman with real-time visualization and analysis\",\"keywords\":[\"algorithms\",\"tsp\",\"dp\",\"optimization\",\"fundamentals\",\"traveling\",\"salesman\",\"data input\",\"core algorithm\",\"results store\",\"analysis engine\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Input\",\"Core Algorithm\",\"Res"
+    },
+    {
+      "instruction": "Build me an app for Multi-armed bandit algorithms: epsilon-greedy, UCB, Thompson — Interactive bandit explorer with real-time visualization and analysis",
+      "expected_app_type": "bandit_explorer_2",
+      "got_app_type": "bandit_explorer",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": false,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 6.24,
+      "output_preview": "{\"app_type\":\"bandit_explorer\",\"description\":\"Multi-armed bandit algorithms: epsilon-greedy, UCB, Thompson — Interactive bandit explorer with real-time visualization and analysis\",\"keywords\":[\"search\",\"bandit\",\"exploration\",\"exploitation\",\"search\",\"bandit\",\"explorer\",\"query input\",\"search engine\",\"results store\",\"analysis module\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Query Input\",\"Search Engine\",\"Results Sto"
+    },
+    {
+      "instruction": "Create an application: Network throughput/latency benchmark for TCP and UDP — Interactive udp/tcp benchmark with real-time visualization and analysis",
+      "expected_app_type": "udp_tcp_benchmark_2",
+      "got_app_type": "udp_tcp_benchmark_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 6.02,
+      "output_preview": "{\"app_type\":\"udp_tcp_benchmark_2\",\"description\":\"Network throughput/latency benchmark for TCP and UDP — Interactive udp/tcp benchmark with real-time visualization and analysis\",\"keywords\":[\"networking\",\"benchmark\",\"udp\",\"tcp\",\"networking\",\"udp\",\"tcp\",\"benchmark\",\"test config\",\"benchmark engine\",\"results store\",\"analysis module\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Test Config\",\"Benchmark Engine\",\"Results S"
+    },
+    {
+      "instruction": "Create an application: Data Visualizer. 📊 Data Visualizer",
+      "expected_app_type": "data_visualizer",
+      "got_app_type": "data_visualizer",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 5.37,
+      "output_preview": "{\"app_type\":\"data_visualizer\",\"description\":\"Data Visualizer. 📊 Data Visualizer\",\"keywords\":[\"data\",\"visualizer\",\"data\",\"visualizer\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"}"
+    },
+    {
+      "instruction": "Help me build Code Editor. 💻 Code Editor",
+      "expected_app_type": "code_editor",
+      "got_app_type": "code_editor",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.05,
+      "output_preview": "{\"app_type\":\"code_editor\",\"description\":\"Code Editor. 💻 Code Editor\",\"keywords\":[\"code\",\"editor\",\"code\",\"editor\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"source_module\":\"i"
+    },
+    {
+      "instruction": "Make me a Cache Simulator 2 — CPU cache (L1/L2/L3) simulator with hit/miss visualization — Interactive cache simulator with real-time visualization and analysis",
+      "expected_app_type": "cache_simulator_2",
+      "got_app_type": "cache_simulator_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 5.68,
+      "output_preview": "{\"app_type\":\"cache_simulator_2\",\"description\":\"CPU cache (L1/L2/L3) simulator with hit/miss visualization — Interactive cache simulator with real-time visualization and analysis\",\"keywords\":[\"systems\",\"cache-simulator\",\"memory\",\"lru\",\"education\",\"cache\",\"simulator\",\"cache config\",\"cache engine\",\"cache viewer\",\"cache data\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Cache Config\",\"Cache Engine\",\"Cache Viewer\",\"Cache Data\"],\"wirin"
+    },
+    {
+      "instruction": "I want a Animation Studio app. Animation Studio. 🎬 Animation Studio",
+      "expected_app_type": "animation_studio",
+      "got_app_type": "animation_studio",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 2.1,
+      "output_preview": "{\"app_type\":\"animation_studio\",\"description\":\"Animation Studio. 🎬 Animation Studio\",\"keywords\":[\"animation\",\"studio\",\"animation\",\"studio\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"resu"
+    },
+    {
+      "instruction": "I need a tool that workforce platform: employee records, department org chart, time-off workflow, performance reviews, payroll runs.",
+      "expected_app_type": "hr-csharp",
+      "got_app_type": "hrms",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": false
+      },
+      "ok": false,
+      "elapsed_s": 2.93,
+      "output_preview": "{\"app_type\":\"hrms\",\"description\":\"workforce platform: employee records, department org chart, time-off workflow, performance reviews, payroll runs.\",\"keywords\":[\"hrms\",\"hr\",\"talent\",\"recruitment\",\"onboarding\",\"performance\",\"payroll\",\"benefits\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"employee_records\",\"department_org_chart\",\"time_off_workflow\",\"performance_reviews\",\"payroll_runs\"],\"wiring_graph\":[{\"source_module\":\"employee_re"
+    },
+    {
+      "instruction": "I want a Simulated Annealing 2 app. SA optimization with temperature schedule visualization — Interactive simulated annealing with real-time visualization and analysis",
+      "expected_app_type": "simulated_annealing_2",
+      "got_app_type": "simulated_annealing_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.08,
+      "output_preview": "{\"app_type\":\"simulated_annealing_2\",\"description\":\"SA optimization with temperature schedule visualization — Interactive simulated annealing with real-time visualization and analysis\",\"keywords\":[\"specialized\",\"simulated-annealing\",\"optimization\",\"metaheuristic\",\"specialized\",\"simulated\",\"annealing\",\"domain input\",\"core algorithm\",\"data store\",\"analysis engine\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Domain I"
+    },
+    {
+      "instruction": "I'm looking for a Lock Manager Lab 2. Database lock manager with deadlock detection — Interactive lock manager lab with real-time visualization and analysis",
+      "expected_app_type": "lock_manager_lab_2",
+      "got_app_type": "lock_manager_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.02,
+      "output_preview": "{\"app_type\":\"lock_manager_lab_2\",\"description\":\"Database lock manager with deadlock detection — Interactive lock manager lab with real-time visualization and analysis\",\"keywords\":[\"database\",\"lock-manager\",\"concurrency\",\"deadlock\",\"education\",\"lock\",\"manager\",\"lab\",\"query/config\",\"database engine\",\"data store\",\"analysis module\",\"results display\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Query/Config\",\"Database Engine\",\"Data St"
+    },
+    {
+      "instruction": "Design a Grafana Panel Builder 2 app where Grafana dashboard panel configuration with queries — Interactive grafana panel builder with real-time visualization and analysis",
+      "expected_app_type": "grafana_panel_builder_2",
+      "got_app_type": "grafana_panel_builder_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.2,
+      "output_preview": "{\"app_type\":\"grafana_panel_builder_2\",\"description\":\"Grafana dashboard panel configuration with queries — Interactive grafana panel builder with real-time visualization and analysis\",\"keywords\":[\"devops\",\"grafana\",\"dashboard\",\"visualization\",\"devops\",\"grafana\",\"panel\",\"builder\",\"config input\",\"orchestrator\",\"state store\",\"analysis engine\",\"ops dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Config Input\",\"Orchestrator\",\"S"
+    },
+    {
+      "instruction": "Confluent Schema Registry with Avro/Protobuf compatibility",
+      "expected_app_type": "schema_registry",
+      "got_app_type": "schema_registry",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 2.99,
+      "output_preview": "{\"app_type\":\"schema_registry\",\"description\":\"Confluent Schema Registry with Avro/Protobuf compatibility — Interactive data engineering tool for schema registry\",\"keywords\":[\"data-engineering\",\"schema\",\"registry\",\"schema\",\"registry\",\"pipeline config\",\"data processor\",\"data store\",\"orchestrator\",\"pipeline dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Pipeline Config\",\"Data Processor\",\"Data Store\",\"Orchestrator\",\"Pipeline "
+    },
+    {
+      "instruction": "B-tree of order m with split/merge operations visualization",
+      "expected_app_type": "b_tree_visualizer",
+      "got_app_type": "b_tree_visualizer",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 2.93,
+      "output_preview": "{\"app_type\":\"b_tree_visualizer\",\"description\":\"B-tree of order m with split/merge operations visualization — Interactive fundamentals tool for b-tree visualizer\",\"keywords\":[\"fundamentals\",\"b-tree\",\"visualizer\",\"b\",\"tree\",\"visualizer\",\"data input\",\"core algorithm\",\"results store\",\"analysis engine\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Data Input\",\"Core Algorithm\",\"Results Store\",\"Analysis Engine\",\"Visualiza"
+    }
+  ]
+}

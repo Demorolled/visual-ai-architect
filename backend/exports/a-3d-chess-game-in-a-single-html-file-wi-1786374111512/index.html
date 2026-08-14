@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Chess Game</title>
+  <style>
+    body {
+      background-color: #15152a;
+      font-family: Arial, sans-serif;
+      color: #fff;
+    }
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    #board {
+      width: 300px;
+      height: 300px;
+      position: relative;
+    }
+    .piece {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: #fff;
+      border-radius: 50%;
+      transform-origin: center center;
+      transition: transform 0.3s;
+    }
+    .white {
+      background-color: #fff;
+    }
+    .black {
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div id="board"></div>
+    <button id="playBtn" class="btn" onclick="play()">▶ Play</button>
+    <button id="saveBtn" class="btn btn-primary" onclick="save()">💾 Save</button>
+    <button id="delBtn" class="btn btn-danger" onclick="remove()">✕ Delete</button>
+  </div>
+
+  <script>
+    const board = document.getElementById('board');
+    let playing = false;
+    let pieces = [];
+    let currentPlayer = 'white';
+    const pieceMap = {
+      'white': {color: 'white', symbol: 'w'},
+      'black': {color: 'black', symbol: 'b'}
+    };
+    const piecePositions = [
+      [0, 1, 2, 3, 4, 5, 6, 7],
+      [10, 11, 12, 13, 14, 15, 16, 17],
+      [20, 21, 22, 23, 24, 25, 26, 27],
+      [30, 31, 32, 33, 34, 35, 36, 37],
+      [40, 41, 42, 43, 44, 45, 46, 47],
+      [50, 51, 52, 53, 54, 55, 56, 57],
+      [60, 61, 62, 63, 64, 65, 66, 67],
+      [70, 71, 72, 73, 74, 75, 76, 77]
+    ];
+    const moves = [
+      // Define moves here
+    ];
+    function createPiece(pieceType, x, y, color) {
+      const piece = document.createElement('div');
+      piece.classList.add('piece', pieceType, color);
+      piece.style.left = `${x * 30}px`;
+      piece.style.top = `${y * 30}px`;
+      board.appendChild(piece);
+      pieces.push({piece, x, y, color});
+    }
+    function play() {
+      if (!playing) {
+        playing = true;
+        moves.forEach(move => {
+          const from = move.from;
+          const to = move.to;
+          const piece = pieces.find(p => p.x === from[0] && p.y === from[1]);
+          if (piece) {
+            piece.piece.style.transform = `translate(${to[0] * 30}px, ${to[1] * 30}px)`;
+            piece.x = to[0];
+            piece.y = to[1];
+          }
+        });
+        playing = false;
+      }
+    }
+    function save() {
+      // Save game state
+    }
+    function remove() {
+      // Remove game state
+    }
+    // Initialize board
+    piecePositions.forEach(pos => {
+      createPiece(pieceMap['white'].symbol, pos[0], pos[1], 'white');
+      createPiece(pieceMap['black'].symbol, pos[0], pos[1], 'black');
+    });
+  </script>
+</body>
+</html>

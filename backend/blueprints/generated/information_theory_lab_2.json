@@ -1,0 +1,54 @@
+{
+  "app_type": "information_theory_lab_2",
+  "description": "Entropy, mutual information, KL divergence, coding — Interactive information theory lab with real-time visualization and analysis",
+  "keywords": [
+    "mathematics",
+    "information-theory",
+    "entropy",
+    "coding",
+    "mathematics",
+    "information",
+    "theory",
+    "lab",
+    "math input",
+    "math engine",
+    "data storage",
+    "analysis module",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Math Input",
+    "Math Engine",
+    "Data Storage",
+    "Analysis Module",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Math Input",
+      "destination_module": "Math Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Math Engine",
+      "destination_module": "Data Storage",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Storage",
+      "destination_module": "Analysis Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Module",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

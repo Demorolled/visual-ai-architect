@@ -1,0 +1,608 @@
+ Put all the code into one block.
+━━━━━━━━━━━━━━━━━━━━━━━━━
+```typescript
+interface Square {
+  x: number;
+  y: number;
+}
+
+enum Color {
+  Light = 'light',
+  Dark = 'dark'
+}
+
+type PieceType =
+  | 'king'
+  | 'queen'
+  | 'rook'
+  | 'bishop'
+  | 'knight'
+  | 'pawn';
+
+interface Piece {
+  type: PieceType;
+  color: Color;
+}
+
+class ChessBoard {
+  private squares: Square[][] = [];
+
+  constructor() {
+    for (let y = 0; y < 8; y++) {
+      this.squares.push([]);
+      for (let x = 0; x < 8; x++) {
+        const squareColor = x % 2 === y % 2 ? Color.Light : Color.Dark;
+        this.squares[y].push({ x, y, color: squareColor });
+      }
+    }
+  }
+
+  drawSquare(square: Square): HTMLElement {
+    const div = document.createElement('div');
+    div.className = `square ${square.color}`;
+    return div;
+  }
+
+  drawBoard(): HTMLElement[] {
+    const boardDivs: HTMLElement[] = [];
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        const square = this.squares[y][x];
+        boardDivs.push(this.drawSquare(square));
+      }
+    }
+    return boardDivs;
+  }
+
+  drawPiece(piece: Piece): HTMLElement {
+    const div = document.createElement('div');
+    div.className = `piece ${piece.color} ${piece.type}`;
+    return div;
+  }
+
+  drawPieces(pieces: Piece[]): HTMLElement[] {
+    const pieceElements: HTMLElement[] = [];
+    for (const { x, y } of this.squares) {
+      if (this.pieceAt(x, y)) continue;
+
+      const squareElement = this.drawSquare({ x, y });
+      pieceElements.push(squareElement);
+    }
+
+    return pieceElements;
+  }
+
+  private pieceAt(x: number, y: number): Piece | null {
+    // Implement logic to check for pieces at the given coordinates
+    return null;
+  }
+}
+
+interface GameStatus {
+  turn: Color;
+  checkmate?: boolean;
+  stalemate?: boolean;
+}
+
+class BoardUI extends ChessBoard {
+  private board: HTMLElement[] = [];
+  private pieceElements: HTMLElement[] = [];
+  private statusDiv: HTMLElement | null = null;
+
+  constructor(containerElement: HTMLElement) {
+    super();
+    this.initContainer(containerElement);
+    this.render();
+  }
+
+  initContainer(containerElement: HTMLElement): void {
+    const mainShell = document.createElement('div');
+    mainShell.className = 'app';
+    containerElement.appendChild(mainShell);
+
+    const boardDiv = document.createElement('div');
+    boardDiv.className = 'grid';
+    mainShell.appendChild(boardDiv);
+
+    this.board = this.drawBoard();
+    for (const element of this.board) {
+      boardDiv.appendChild(element);
+    }
+
+    const pieceElements = this.drawPieces(pieces);
+    for (const element of pieceElements) {
+      boardDiv.appendChild(element);
+    }
+  }
+
+  render(): void {
+    if (!this.statusDiv) {
+      const statusBar = document.createElement('div');
+      statusBar.className = 'status-bar';
+      this.statusDiv = statusBar;
+    }
+
+    // Render the pieces on the board
+    for (const square of this.board) {
+      let pieceElement: HTMLElement | null = null;
+      for (const element of this.pieceElements) {
+        if (!pieceElement && element.getAttribute('data-square-x') === square.getAttribute('data-square-x') &&
+            element.getAttribute('data-square-y') === square.getAttribute('data-square-y')) {
+          pieceElement = element;
+        }
+      }
+
+      // Add or remove the piece
+      const div = document.createElement('div');
+      if (pieceElement) {
+        // Remove old piece from its place and add new one to current place
+        const oldPieceDiv = this.board.find(
+          board => board.getAttribute('data-square-x') === square.getAttribute('data-square-y')
+                   && board.getAttribute('data-square-y') === square.getAttribute('data-square-x')) as HTMLElement;
+        oldPieceDiv.removeChild(pieceElement);
+      } else {
+        div.className = 'empty';
+      }
+    }
+  }
+
+  handleSquareClick(square: Square, piece?: Piece): void {
+    // Handle the click on a specific square
+  }
+
+  handleMove(piece: Piece, fromSquare: Square, toSquare: Square): void {
+    const board = this.drawBoard();
+    for (const element of this.pieceElements) {
+      if (!element) continue;
+
+      if (parseInt(element.getAttribute('data-square-x'), 10) === fromSquare.x &&
+          parseInt(element.getAttribute('data-square-y'), 10) === fromSquare.y && piece !== null) {
+
+        // Handle the move
+        const newPieceElement = this.drawPiece(piece);
+        board[toSquare.y * 8 + toSquare.x].appendChild(newPieceElement);
+
+      }
+    }
+
+    this.pieceElements.push(this.board[fromSquare.y * 8 + toSquare.x]);
+    document.getElementById('statusMsg').textContent = 'Move made';
+  }
+
+  handleDifficultyChange(difficulty: number): void {
+    // Update the AI difficulty
+  }
+
+  getLegalMovesFor(piece: Piece, fromSquare: Square): Square[] {
+    const moves = [];
+    for (const square of this.board) {
+      if (!square.getAttribute('data-square-x') || !square.getAttribute('data-square-y')) continue;
+
+      const movePieceColor = square.getAttribute('data-square-color');
+      if (movePieceColor === piece.color && parseInt(square.getAttribute('data-square-x'), 10) > fromSquare.x &&
+          parseInt(square.getAttribute('data-square-y'), 10) > fromSquare.y) {
+        moves.push({ x: parseInt(square.getAttribute('data-square-x'), 10), y: parseInt(square.getAttribute('data-square-y'), 10) });
+      }
+    }
+
+    return moves;
+  }
+}
+
+class TopBarUI {
+  private difficultySelect: HTMLSelectElement | null = null;
+
+  constructor(containerElement: HTMLElement, gameInstance: BoardUI) {
+    const topbarDiv = document.createElement('div');
+    topbarDiv.className = 'top-bar';
+    containerElement.appendChild(topbarDiv);
+
+    const newGameBtn = document.createElement('button');
+    newGameBtn.className = 'btn';
+    newGameBtn.textContent = 'New Game';
+    newGameBtn.onclick = () => gameInstance.createGame();
+    
+    const undoMoveBtn = document.createElement('button');
+    undoMoveBtn.className = 'btn';
+    undoMoveBtn.textContent = 'Undo Move';
+    undoMoveBtn.onclick = () => gameInstance.undoMove();
+
+    topbarDiv.appendChild(newGameBtn);
+    topbarDiv.appendChild(undoMoveBtn);
+
+    this.difficultySelect = <HTMLSelectElement>document.createElement('select');
+    this.difficultySelect.className = 'btn';
+    
+    for (let i = 1; i <= 4; i++) {
+      const option = document.createElement('option');
+      option.value = `${i}`;
+      option.textContent = `Difficulty ${i}`;
+      this.difficultySelect.appendChild(option);
+    }
+
+    topbarDiv.appendChild(this.difficultySelect);
+
+    this.difficultySelect.onchange = (event) => gameInstance.setDifficulty(parseInt(event.target.value, 10));
+  }
+}
+
+class StatusBarUI {
+  private statusMessage: HTMLElement | null = null;
+
+  constructor(containerElement: HTMLElement, gameInstance: BoardUI) {
+    const statusBarDiv = document.createElement('div');
+    statusBarDiv.className = 'status-bar';
+    containerElement.appendChild(statusBarDiv);
+
+    this.statusMessage = <HTMLElement>document.createElement('div');
+    this.statusMessage.id = 'statusMsg';
+    statusBarDiv.appendChild(this.statusMessage);
+  }
+
+  updateStatus(turn: Color, checkmate?: boolean): void {
+    if (checkmate) {
+      this.statusMessage.textContent = `Checkmate! ${turn === Color.Light ? 'White' : 'Black'} wins.`
+    } else {
+      this.statusMessage.textContent = `${turn === Color.Light ? 'White' : 'Black'} to move.`;
+    }
+  }
+}
+
+export function render(containerElement: HTMLElement): void {
+  const gameInstance = new BoardUI(containerElement);
+  const topBarUI = new TopBarUI(containerElement, gameInstance);
+  const statusBarUI = new StatusBarUI(containerElement, gameInstance);
+
+  // Initialize the UI
+}
+```
+```typescript
+interface Square {
+  x: number;
+  y: number;
+}
+
+enum Color {
+  Light = 'light',
+  Dark = 'dark'
+}
+
+type PieceType =
+  | 'king'
+  | 'queen'
+  | 'rook'
+  | 'bishop'
+  | 'knight'
+  | 'pawn';
+
+interface Piece {
+  type: PieceType;
+  color: Color;
+}
+
+class ChessBoard {
+  private squares: Square[][] = [];
+
+  constructor() {
+    for (let y = 0; y < 8; y++) {
+      this.squares.push([]);
+      for (let x = 0; x < 8; x++) {
+        const squareColor = x % 2 === y ? Color.Dark : Color.Light;
+        this.squares[y].push({ x, y, color: squareColor });
+      }
+    }
+  }
+
+  drawSquare(square: Square): HTMLElement {
+    const div = document.createElement('div');
+    div.className = `square ${square.color}`;
+    return div;
+  }
+
+  drawBoard(): HTMLElement[] {
+    const boardDivs: HTMLElement[] = [];
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        const square = this.squares[y][x];
+        boardDivs.push(this.drawSquare(square));
+      }
+    }
+    return boardDivs;
+  }
+
+  drawPiece(piece: Piece, position: Square): HTMLElement {
+    const div = document.createElement('div');
+    div.className = `piece ${piece.color} ${piece.type}`;
+    
+    // Add data attributes for piece's position
+    div.setAttribute('data-square-x', `${position.x}`);
+    div.setAttribute('data-square-y', `${position.y}`);
+
+    return div;
+  }
+
+  drawPieces(pieces: Piece[]): HTMLElement[] {
+    const pieceElements: HTMLElement[] = [];
+    for (const square of this.squares) {
+      let foundPiece = false;
+
+      // Check if a piece is at the current position
+      for (const piece of pieces) {
+        if (piece.x === square[0].x && piece.y === square[0].y) {
+          const position: Square = { x: square[0].x, y: square[0].y };
+          foundPiece = true;
+          break;
+        }
+      }
+
+      // If no piece is at this position
+      if (!foundPiece) continue;
+
+      pieceElements.push(this.drawPiece(piece, square[0]));
+    }
+    
+    return pieceElements;
+  }
+}
+
+interface GameStatus {
+  turn: Color;
+  checkmate?: boolean;
+  stalemate?: boolean;
+}
+
+class BoardUI extends ChessBoard {
+  private boardDivs: HTMLElement[] = [];
+  private pieces: Piece[] = [];
+
+  constructor(containerElement: HTMLElement) {
+    super();
+    this.initContainer(containerElement);
+    this.render();
+  }
+
+  initContainer(containerElement: HTMLElement): void {
+    const mainShell = document.createElement('div');
+    mainShell.className = 'app';
+    
+    containerElement.appendChild(mainShell);
+
+    const boardDiv = document.createElement('div');
+    boardDiv.className = 'grid';
+    mainShell.appendChild(boardDiv);
+    
+    this.boardDivs = this.drawBoard();
+    for (const div of this.boardDivs) {
+      boardDiv.appendChild(div);
+    }
+
+    // Add initial pieces to the board
+    const pieces: Piece[] = [
+      { type: 'rook', color: Color.Dark }, { type: 'knight', color: Color.Dark },
+      { type: 'bishop', color: Color.Dark }, { type: 'queen', color: Color.Dark },
+      { type: 'king', color: Color.Dark },  { type: 'bishop', color: Color.Dark },
+      { type: 'rook', color: Color.Dark },  { type: 'pawn', color: Color.Dark },
+
+      // Repeat for white pieces
+    ];
+
+    this.pieces = pieces;
+    const pieceElements = this.drawPieces(pieces);
+    
+    for (const element of pieceElements) {
+      boardDiv.appendChild(element);
+    }
+  }
+
+  render(): void {
+    if (!this.boardDivs.length || !this.pieces.length) return;
+
+    // Clear existing squares
+    for (const div of this.boardDivs) div.innerHTML = '';
+
+    const boardState: { [x: number]: { [y: number]: Piece | null } } = {};
+    
+    // Populate the board state with current pieces' positions
+    for (const piece of this.pieces) {
+      if (!boardState[piece.x]) boardState[piece.x] = {};
+      boardState[piece.x][piece.y] = piece;
+    }
+
+    let x, y;
+
+    const/legalMoves: Square[][] = [];
+
+    // Draw pieces on their current squares
+    for (const [xKey, squareRow] of Object.entries(boardState)) {
+      for (const [yKey, piece] of Object.entries(squareRow)) {
+        if (!piece) continue;
+        
+        x = parseInt(xKey);
+        y = parseInt(yKey);
+
+        const position: Square = { x, y };
+        
+        // Add the piece to its square
+        this.boardDivs[y * 8 + x].appendChild(this.drawPiece(piece, position));
+      }
+    }
+
+    // Highlight legal moves for selected pieces
+    for (const [xKey, squareRow] of Object.entries(boardState)) {
+      for (const [yKey, piece] of Object.entries(squareRow)) {
+        if (!piece) continue;
+        
+        x = parseInt(xKey);
+        y = parseInt(yKey);
+
+        const position: Square = { x, y };
+        
+        // Highlight squares that can be moved to
+        legalMoves.push(position);
+      }
+    }
+
+    console.log(legalMoves); // Debugging output for now
+
+  }
+
+  handleSquareClick(square: Square): void {
+    if (document.activeElement !== this.boardDivs[square.y * 8 + square.x]) return;
+    
+    const piece = this.pieces.find((piece) => { 
+      return piece.x === square.x && piece.y === square.y; 
+    });
+
+    // Handle the click on a specific square
+    if (!piece) {
+      console.log('No piece to move here');
+      return;
+    }
+
+    // Determine legal moves for clicked piece
+    const possibleMoves = this.getLegalMovesFor(piece, { x: square.x, y: square.y });
+    
+    // Implement move logic here
+
+  }
+
+  handleMove(piece: Piece, fromSquare: Square, toSquare: Square): void {
+    if (document.activeElement !== this.boardDivs[fromSquare.y * 8 + fromSquare.x]) return;
+
+    const boardState = {};
+    for (const piece of pieces) { 
+      boardState[piece.x] = boardState[piece.x] || {};
+      boardState[piece.x][piece.y] = piece; 
+    }
+
+    // Remove the piece at the old position
+    delete boardState[fromSquare.x][fromSquare.y];
+    
+    const targetPiece = this.pieces.find((p) => (p.x === toSquare.x && p.y === toSquare.y));
+
+    if (!targetPiece) {
+      console.log('Move is invalid');
+      return;
+    }
+
+    // Remove the piece at the new position
+    delete boardState[toSquare.x][toSquare.y];
+
+    
+    const legal = this.getLegalMovesFor(piece, { x: fromSquare.x, y: fromSquare.y });
+    
+  }
+
+  handleDifficultyChange(difficulty: number): void {
+    console.log(`Difficulty set to ${difficulty}`);
+  }
+
+}
+
+class TopBarUI {
+  private difficultySelect: HTMLSelectElement | null = null;
+
+  constructor(containerElement: HTMLElement, gameInstance: BoardUI) {
+    const topbarDiv = document.createElement('div');
+    topbarDiv.className = 'top-bar';
+    
+    containerElement.appendChild(topbarDiv);
+
+    const newGameBtn = document.createElement('button');
+    newGameBtn.className = 'btn';
+    newGameBtn.textContent = 'New Game';
+    newGameBtn.onclick = () => gameInstance.createGame();
+    
+    const undoMoveBtn = document.createElement('button');
+    undoMoveBtn.className = 'btn';
+    undoMoveBtn.textContent = 'Undo Move';
+    undoMoveBtn.onclick = () => gameInstance.undoMove();
+
+    topbarDiv.appendChild(newGameBtn);
+    topbarDiv.appendChild(undoMoveBtn);
+
+    this.difficultySelect = <HTMLSelectElement>document.createElement('select');
+    this.difficultySelect.className = 'btn';
+    
+    for (let i = 1; i <= 4; i++) {
+      const option = document.createElement('option');
+      option.value = `${i}`;
+      option.textContent = `Difficulty ${i}`;
+      this.difficultySelect.appendChild(option);
+    }
+
+    topbarDiv.appendChild(this.difficultySelect);
+
+    this.difficultySelect.onchange = (event) => gameInstance.setDifficulty(parseInt(event.target.value, 10));
+  }
+}
+
+class StatusBarUI {
+  private statusMessage: HTMLElement | null = null;
+
+  constructor(containerElement: HTMLElement, gameInstance: BoardUI) {
+    const statusBarDiv = document.createElement('div');
+    statusBarDiv.className = 'status-bar';
+    
+    containerElement.appendChild(statusBarDiv);
+
+    this.statusMessage = <HTMLElement>document.createElement('div');
+    this.statusMessage.id = 'statusMsg';
+    statusBarDiv.appendChild(this.statusMessage);
+  }
+
+  updateStatus(turn: Color, checkmate?: boolean): void {
+    if (checkmate) {
+      this.statusMessage.textContent = `Checkmate! ${turn === Color.Light ? 'White' : 'Black'} wins.`
+    } else {
+      this.statusMessage.textContent = `${turn === Color.Light ? 'White' : 'Black'} to move.`;
+    }
+  }
+}
+
+export function render(containerElement: HTMLElement): void {
+  const gameInstance = new BoardUI(containerElement);
+  const topBarUI = new TopBarUI(containerElement, gameInstance);
+  const statusBarUI = new StatusBarUI(containerElement, gameInstance);
+
+  // Initialize the UI
+}
+``` ```typescript
+interface Square {
+    x: number;
+    y: number;
+}
+
+enum Color {
+    Light = 'light',
+    Dark = 'dark'
+}
+
+type PieceType =
+    | 'king'
+    | 'queen'
+    | 'rook'
+    | 'bishop'
+    | 'knight'
+    | 'pawn';
+
+interface Piece {
+    type: PieceType;
+    color: Color;
+}
+
+class ChessBoard {
+    private squares: Square[][] = [];
+
+    constructor() {
+        for (let y = 0; y < 8; y++) {
+            this.squares.push([]);
+            for (let x = 0; x < 8; x++) {
+                const squareColor = x % 2 === y ? Color.Light : Color.Dark;
+                this.squares[y].push({x, y, color: squareColor});
+            }
+        }
+    }
+
+    drawSquare(square: Square): HTMLElement {
+        const div = document.createElement('div

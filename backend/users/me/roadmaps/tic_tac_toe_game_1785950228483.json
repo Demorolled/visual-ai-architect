@@ -1,0 +1,125 @@
+{
+  "projectName": "tic tac toe game",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785950171991_j93gn6",
+      "type": "logic",
+      "label": "main.go",
+      "description": "Entry point: initializes the game state, registers handlers for events, manages the game loop. Imports: 0, types, handlers.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1785950171992_h7tcr4",
+      "type": "logic",
+      "label": "types.go",
+      "description": "Types and constants definition: 0, Player, Cell, Move. Exports: 0, Player, Cell, Move.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 100
+      }
+    },
+    {
+      "id": "node_1785950171992_qihv9w",
+      "type": "logic",
+      "label": "config.go",
+      "description": "Application configuration: game rules, AI settings, UI theme. Exports: Config.",
+      "language": "go",
+      "position": {
+        "x": 600,
+        "y": 100
+      }
+    },
+    {
+      "id": "node_1785950171992_uada1b",
+      "type": "logic",
+      "label": "handlers.go",
+      "description": "Game event handlers: handle moves, check win conditions, update state. Imports: types.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 180
+      }
+    },
+    {
+      "id": "node_1785950171992_5nrfap",
+      "type": "logic",
+      "label": "ai.go",
+      "description": "AI logic: implements the Minimax algorithm with alpha-beta pruning for the AI player. Exports: Minimax.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 180
+      }
+    },
+    {
+      "id": "node_1785950171992_fnhm6i",
+      "type": "ui",
+      "label": "ui.go",
+      "description": "User interface: renders the game board, handles input, displays status messages. Imports: 0, types.",
+      "language": "go",
+      "position": {
+        "x": 600,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_1785950171992_nuge7r",
+      "type": "database",
+      "label": "repository.go",
+      "description": "Data persistence layer. Manages application data in SQLite. Handles CRUD operations, connection pooling, and data validation. Exports: Create, Read, Update, Delete, List methods.",
+      "language": "go",
+      "position": {
+        "x": 700,
+        "y": 550
+      }
+    },
+    {
+      "id": "node_1785950171992_b3smaq",
+      "type": "api",
+      "label": "handlers.go",
+      "description": "API request handlers. Routes incoming requests to business logic, validates input, formats JSON responses. Handles HTTP methods (GET, POST, PUT, DELETE). Imports: service, types.",
+      "language": "go",
+      "position": {
+        "x": 700,
+        "y": 700
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785950171991_j93gn6",
+      "target": "node_1785950171992_h7tcr4"
+    },
+    {
+      "source": "node_1785950171991_j93gn6",
+      "target": "node_1785950171992_qihv9w"
+    },
+    {
+      "source": "node_1785950171991_j93gn6",
+      "target": "node_1785950171992_b3smaq"
+    },
+    {
+      "source": "node_1785950171991_j93gn6",
+      "target": "node_1785950171992_fnhm6i"
+    },
+    {
+      "source": "node_1785950171992_b3smaq",
+      "target": "node_1785950171992_h7tcr4"
+    },
+    {
+      "source": "node_1785950171992_5nrfap",
+      "target": "node_1785950171992_h7tcr4"
+    },
+    {
+      "source": "node_1785950171992_fnhm6i",
+      "target": "node_1785950171992_b3smaq"
+    }
+  ],
+  "createdAt": "2026-08-05T17:17:08.483Z"
+}

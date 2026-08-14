@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Terrain Viewer</title>
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #terrain-container {
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            max-height: 800px;
+        }
+        #fps-counter {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="fps-counter">FPS: 0</div>
+    <div id="terrain-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        class TerrainViewer {
+            constructor() {
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.camera.position.set(0, 10, 20);
+                this.renderer = new THREE.WebGLRenderer();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                document.getElementById('terrain-container').appendChild(this.renderer.domElement);
+                this.raycaster = new THREE.Raycaster();
+                this.mouse = new THREE.Vector2();
+                this.clock = new THREE.Clock();
+                this.roughness = 0.5;
+                this.clouds = [];
+                this.update = this.update.bind(this);
+                this.render = this.render.bind(this);
+                this.resize = this.resize.bind(this);
+                this.init();
+                window.addEventListener('resize', this.resize);
+            }
+            init() {
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.scene.add(new THREE.AmbientLight(0x404040));
+                this.scene.add(new THREE.DirectionalLight(0xffffff, 0.5));
+                this.update();
+                this.animate();
+            }
+            animate() {
+                requestAnimationFrame(this.animate);
+                this.update();
+                this.render();
+            }
+            update() {
+                let delta = this.clock.getDelta();
+                this.controls.update(delta);
+                this.clouds.forEach((cloud) => {
+                    cloud.rotation.x += 0.01;
+                    cloud.rotation.y += 0.02;
+                });
+            }
+            render() {
+                this.renderer.render(this.scene, this.camera);
+            }
+            resize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            addClouds() {
+                let geometry = new THREE.SphereGeometry(5, 32, 32);
+                let material = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.5, roughness: 0.2 });
+                for (let i = 0; i < 20; i++) {
+                    let cloud = new THREE.Mesh(geometry, material);
+                    cloud.position.set(
+                        Math.random() * 20 - 10,
+                        5 + Math.random() * 10,
+                        Math.random() * 20 - 10
+                    );
+                    this.scene.add(cloud);
+                    this.clouds.push(cloud);
+                }
+            }
+            addTerrain() {
+                let heightmap = [];
+                let size = 50;
+                let scale = 50;
+                let noise = new THREE.OctaveNoise();
+                noise.seed(Math.random() * 1000);
+                for (let x = 0; x < size; x++) {
+                    heightmap[x] = [];
+                    for (let y = 0; y < size; y++) {
+                        let z = noise.getValue(x / scale, y / scale, 0) * 5;
+                        heightmap[x][y] = z;
+                    }
+                }
+                let geometry = new THREE.Geometry();
+                for (let x = 0; x < size - 1; x++) {
+                    for (let y = 0; y < size - 1; y++) {
+                        let v1 = new THREE.Vector3(x, heightmap[x][y], y);
+                        let v2 = new THREE.Vector3(x + 1, heightmap[x + 1][y], y);
+                        let v3 = new THREE.Vector3(x + 1, heightmap[x + 1][y + 1], y + 1);
+                        let v4 = new THREE.Vector3(x, heightmap[x][y + 1], y + 1);
+                        geometry.vertices.push(v1, v2, v3, v4);
+                        geometry.faces.push(new THREE.Face3(x * size + y, x * size + y + 1, (x + 1) * size + y + 1));
+                        geometry.faces.push(new THREE.Face3(x * size + y, (x + 1) * size + y + 1, (x + 1) * size + y));
+                    }
+                }
+                geometry.computeVertexNormals();
+                geometry.computeFaceNormals();
+                let material = new THREE.MeshStandardMaterial({
+                    color: 0x333333,
+                    roughness: this.roughness,
+                    metalness: 0,
+                    vertexColors: true
+                });
+                for (let i = 0; i < geometry.faces.length; i++) {
+                    let face = geometry.faces[i];
+                    face.color.setHSL(
+                        0.66 + (face.normal.z + 1) / 2 * 0.33,
+                        1,
+                        0.5
+                    );
+                }
+                let terrain = new THREE.Mesh(geometry, material);
+                this.scene.add(terrain);
+            }
+            roughnessSlider(value) {
+                this.roughness = value;
+                this.addTerrain();
+            }
+        }
+        const terrainViewer = new TerrainViewer();
+        terrainViewer.addTerrain();
+        terrainViewer.addClouds();
+        const roughnessSlider = document.createElement('input');
+        roughnessSlider.type = 'range';
+        roughnessSlider.min = '0';
+        roughnessSlider.max = '1';
+        roughnessSlider.step = '0.01';
+        roughnessSlider.value = '0.5';
+        roughnessSlider.oninput = (event) => {
+            terrainViewer.roughnessSlider(event.target.value);
+        };
+        document.body.appendChild(roughnessSlider);
+        const fpsCounter = document.querySelector('#fps-counter');
+        function updateFPS() {
+            const now = performance.now();
+            const fps = 1000 / (now - fpsCounter.lastTime) | 0;
+            fpsCounter.textContent = `FPS: ${fps}`;
+            fpsCounter.lastTime = now;
+        }
+        fpsCounter.lastTime = performance.now();
+        window.addEventListener('mousemove', (event) => {
+            terrainViewer.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            terrainViewer.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+    </script>
+</body>
+</html>

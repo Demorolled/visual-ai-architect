@@ -1,0 +1,58 @@
+{
+  "app_type": "gaming-ts",
+  "description": "user profiles, matchmaking, ranked matches, leaderboards, tournaments.",
+  "keywords": [
+    "gaming-ts",
+    "typescript",
+    "gaming",
+    "platform",
+    "profiles",
+    "matchmaking queue",
+    "match lifecycle",
+    "ELO/rank updates",
+    "leaderboards",
+    "tournaments"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "profiles",
+    "matchmaking queue",
+    "match lifecycle",
+    "ELO/rank updates",
+    "leaderboards",
+    "tournaments"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "profiles",
+      "destination_module": "matchmaking queue",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "matchmaking queue",
+      "destination_module": "match lifecycle",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "match lifecycle",
+      "destination_module": "ELO/rank updates",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "ELO/rank updates",
+      "destination_module": "leaderboards",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "leaderboards",
+      "destination_module": "tournaments",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 29
+}

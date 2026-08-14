@@ -1,0 +1,51 @@
+{
+  "app_type": "forum-python",
+  "description": "discussion platform: threads with posts, vote scoring, moderation queue.",
+  "keywords": [
+    "forum-python",
+    "python",
+    "community",
+    "forum",
+    "users",
+    "threads",
+    "posts",
+    "votes",
+    "moderation"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Python FastAPI",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "users",
+    "threads",
+    "posts",
+    "votes",
+    "moderation"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "users",
+      "destination_module": "threads",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "threads",
+      "destination_module": "posts",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "posts",
+      "destination_module": "votes",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "votes",
+      "destination_module": "moderation",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:python",
+  "file_count": 33
+}

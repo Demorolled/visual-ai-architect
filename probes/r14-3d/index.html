@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R14 Probe — 12-App 3D Battery (Dual-Gate)</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --pass: #3fb950;
+    --fail: #f85149;
+    --warn: #d29922;
+    --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 32px 24px 64px;
+  }
+  header { max-width: 1280px; margin: 0 auto 28px; }
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); margin-top: 8px; font-size: 14px; line-height: 1.5; }
+  .tally { display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
+  .tally div {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 18px; text-align: center; min-width: 110px;
+  }
+  .tally .num { font-size: 24px; font-weight: 700; }
+  .tally .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .tally .raw .num { color: var(--warn); }
+  .tally .rep .num { color: var(--pass); }
+  .tally .r13 .num { color: var(--fail); }
+  .grid {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px); border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(88, 166, 255, 0.12);
+  }
+  .shot { position: relative; width: 100%; aspect-ratio: 16/10; background: #000; overflow: hidden; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .badge {
+    position: absolute; top: 8px; right: 8px; padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.03em; color: #fff;
+  }
+  .badge.raw-ok { background: var(--pass); }
+  .badge.raw-fail { background: var(--fail); }
+  .badge.rep-ok { background: var(--pass); }
+  .badge.rep-fail { background: var(--fail); }
+  .badge.rep-only { background: var(--accent); }
+  .meta { padding: 12px 14px 14px; }
+  .name { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .name .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .dot.pass { background: var(--pass); box-shadow: 0 0 8px var(--pass); }
+  .dot.fail { background: var(--fail); }
+  .cls { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.45; }
+  .errs { margin-top: 8px; font-size: 11px; color: var(--fail); font-family: ui-monospace, monospace; line-height: 1.5; }
+  .legend { max-width: 1280px; margin: 28px auto 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+  .legend b { color: var(--text); }
+  a.view { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--accent); text-decoration: none; }
+  a.view:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎲 R14 3D-Breadth Probe — 12 random app categories</h1>
+  <p class="sub">
+    Generated through dspark (VACA R14), dual-gated: <b>RAW</b> (as generated) vs <b>REPAIRED</b> (after mechanical
+    OrbitControls/CDN wiring repair). The two-gate split isolates <i>wiring</i> from real breadth defects.
+  </p>
+  <div class="tally">
+    <div class="r13"><div class="num">0/12</div><div class="lbl">R13 RAW baseline</div></div>
+    <div class="raw"><div class="num" id="rawCount">–/12</div><div class="lbl">R14 RAW pass</div></div>
+    <div class="rep"><div class="num" id="repCount">–/12</div><div class="lbl">R14 REPAIRED pass</div></div>
+  </div>
+</header>
+
+<main class="grid" id="grid"><!-- cards injected --></main>
+
+<div class="legend">
+  <b>Legend</b> — <span style="color:var(--pass)">● RAW ✅</span> renders clean with zero repair ·
+  <span style="color:var(--accent)">● repaired-only</span> wiring defect fixed mechanically ·
+  <span style="color:var(--fail)">● FAIL</span> real defect survives repair.
+  <br>
+  <b>Next step</b>: the 4 remaining defect classes (addon missing, scope-in-animate, hallucinated API, CDN case) are now
+  QA-rule rows in <code>chunk-3d-r14probe.jsonl</code> for R15.
+</div>
+
+<script>
+const DATA = [ /* filled by build script below */
+  {"name":"city-skyline","raw":false,"rep":true,"cls":"wiring-only (fixed by addon injection)","errs":[]},
+  {"name":"galaxy-spiral","raw":false,"rep":false,"cls":"wiring (addon missing) + scope: points is not defined","errs":["points is not defined"]},
+  {"name":"ocean-waves","raw":false,"rep":true,"cls":"wiring-only (fixed by addon injection)","errs":[]},
+  {"name":"dna-helix","raw":true,"rep":true,"cls":"clean — no repair needed","errs":[]},
+  {"name":"lava-lamp","raw":false,"rep":true,"cls":"wiring-only (fixed by addon injection)","errs":[]},
+  {"name":"snow-globe","raw":false,"rep":true,"cls":"wiring-only (fixed by addon injection)","errs":[]},
+  {"name":"molecule-viewer","raw":true,"rep":true,"cls":"clean — no repair needed","errs":[]},
+  {"name":"voxel-castle","raw":true,"rep":true,"cls":"clean — no repair needed","errs":[]},
+  {"name":"butterfly-swarm","raw":false,"rep":false,"cls":"wiring (addon missing) + scope: orbit is not defined","errs":["orbit is not defined"]},
+  {"name":"donut-shop","raw":true,"rep":true,"cls":"clean — no repair needed","errs":[]},
+  {"name":"shooting-stars","raw":false,"rep":false,"cls":"CDN case (Three.js 404) + wiring","errs":["THREE is not defined","THREE.OrbitControls is not a constructor"]},
+  {"name":"audio-visualizer","raw":false,"rep":false,"cls":"hallucinated API: THREE.ColorGradient","errs":["THREE.ColorGradient is not a constructor"]}
+];
+
+const grid = document.getElementById('grid');
+let rawOk = 0, repOk = 0;
+
+DATA.forEach(d => {
+  rawOk += d.raw ? 1 : 0;
+  repOk += d.rep ? 1 : 0;
+  const badge = d.raw
+    ? '<span class="badge raw-ok">RAW ✅</span>'
+    : (d.rep ? '<span class="badge rep-only">repaired ✅</span>' : '<span class="badge rep-fail">FAIL</span>');
+  const dot = (d.raw || d.rep) ? 'pass' : 'fail';
+  const errHtml = d.errs.length
+    ? '<div class="errs">' + d.errs.map(e => '✗ ' + e).join('<br>') + '</div>' : '';
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="shot">
+      <img loading="lazy" src="${d.name}-repaired-shot.png" alt="${d.name} render">
+      ${badge}
+    </div>
+    <div class="meta">
+      <div class="name"><span class="dot ${dot}"></span>${d.name}</div>
+      <div class="cls">${d.cls}</div>
+      ${errHtml}
+      <a class="view" href="${d.name}-repaired.html" target="_blank">open app →</a>
+    </div>`;
+  grid.appendChild(card);
+});
+
+document.getElementById('rawCount').textContent = rawOk + '/12';
+document.getElementById('repCount').textContent = repOk + '/12';
+</script>
+</body>
+</html>

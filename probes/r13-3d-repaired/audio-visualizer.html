@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Music Visualizer</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #000; }
+  #controls { position: fixed; left: 10px; bottom: 10px; z-index: 100; }
+  #playButton { padding: 10px 20px; font-size: 14px; cursor: pointer; }
+  #playButton:hover { background: rgba(255,255,255,0.1); }
+  #playButton.active { background: #fff; color: #000; }
+  #hueSlider { width: 200px; margin: 10px 0; }
+  #hueSlider .slider { width: 100%; }
+  #hueSlider .track { background: #fff; }
+  #hueSlider .fill { background: #f00; }
+  #bars { position: fixed; bottom: 0; left: 0; width: 100%; height: 200px; }
+  #bars .bar { position: absolute; width: 2%; height: 0; background: #fff; }
+  #debug { position: fixed; bottom: 10px; right: 10px; z-index: 100; font-size: 12px; color: #fff; }
+</style>
+</head>
+<body>
+<div id="controls">
+  <button id="playButton">PLAY</button>
+  <input type="range" id="hueSlider" min="0" max="360" value="120">
+</div>
+<div id="bars"></div>
+<div id="debug"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+camera.position.set(0, 5, 10);
+
+const bars = [];
+for (let i = 0; i < 20; i++) {
+  const bar = document.createElement('div');
+  bar.style.position = 'absolute';
+  bar.style.width = '2%';
+  bar.style.height = '0';
+  bar.style.backgroundColor = 'white';
+  document.getElementById('bars').appendChild(bar);
+  bars.push(bar);
+}
+
+let playing = false;
+let beat = 0;
+const hue = 120;
+const barsCount = bars.length;
+const barWidth = 100 / barsCount;
+const barHeight = 200;
+const barSpacing = 2;
+
+function updateBars() {
+  for (let i = 0; i < barsCount; i++) {
+    const h = Math.sin(beat * 0.3 + i * 0.2) * 100 + 200;
+    const w = barWidth - barSpacing * 2;
+    bars[i].style.left = (i * (barWidth + barSpacing)) + 'px';
+    bars[i].style.height = h + 'px';
+    bars[i].style.transform = 'translateY(-' + h + 'px)';
+  }
+}
+
+function playBeat() {
+  playing = true;
+  beat = 0;
+  const debug = document.getElementById('debug');
+  debug.textContent = 'Playing';
+  const hueSlider = document.getElementById('hueSlider');
+  const hue = hueSlider.value;
+  function animate() {
+    beat += 0.1;
+    updateBars();
+    renderer.render(scene, camera);
+    if (playing) requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+document.getElementById('playButton').addEventListener('click', () => {
+  playing = !playing;
+  document.getElementById('playButton').classList.toggle('active');
+  playBeat();
+});
+
+document.getElementById('hueSlider').addEventListener('input', (e) => {
+  hue = e.target.value;
+  renderer.setClearColor(`hsl(${hue}, 100%, 50%)`);
+});
+
+const floorGeometry = new THREE.PlaneGeometry(20, 20);
+const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
+const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+floor.rotation.x = -Math.PI / 2;
+scene.add(floor);
+
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(1, 1, 1).normalize();
+scene.add(light);
+
+const ambientLight = new THREE.AmbientLight(0x222222);
+scene.add(ambientLight);
+
+renderer.setClearColor(`hsl(${hue}, 100%, 50%)`);
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+</script>
+</body>
+</html>

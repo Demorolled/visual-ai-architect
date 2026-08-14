@@ -1,0 +1,32 @@
+{
+  "app_type": "task_management_app",
+  "description": "Task Management App — A web app to manage personal tasks with create, read, update, delete, and filter by status",
+  "keywords": [
+    "input",
+    "logic",
+    "database",
+    "ui",
+    "task",
+    "management",
+    "app",
+    "data storage",
+    "user interface"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Storage",
+    "User Interface"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Storage",
+      "destination_module": "User Interface",
+      "data_passed": "requests"
+    }
+  ],
+  "source": "designs.json"
+}

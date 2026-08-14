@@ -1,0 +1,65 @@
+{
+  "app_type": "social-ts",
+  "description": "user profiles, posts, comments, likes, follows, a personalized feed, and notifications.",
+  "keywords": [
+    "social-ts",
+    "typescript",
+    "social",
+    "network",
+    "auth/profiles",
+    "posts",
+    "comments",
+    "likes",
+    "follows",
+    "feed assembly",
+    "notifications"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "auth/profiles",
+    "posts",
+    "comments",
+    "likes",
+    "follows",
+    "feed assembly",
+    "notifications"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "auth/profiles",
+      "destination_module": "posts",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "posts",
+      "destination_module": "comments",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "comments",
+      "destination_module": "likes",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "likes",
+      "destination_module": "follows",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "follows",
+      "destination_module": "feed assembly",
+      "data_passed": "updates"
+    },
+    {
+      "source_module": "feed assembly",
+      "destination_module": "notifications",
+      "data_passed": "requests"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 29
+}

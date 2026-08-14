@@ -1,0 +1,145 @@
+[
+  {
+    "pass": false,
+    "file": "solar-system.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/solar-system-shot.png",
+    "name": "solar-system"
+  },
+  {
+    "pass": false,
+    "file": "chess.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/chess-shot.png",
+    "name": "chess"
+  },
+  {
+    "pass": false,
+    "file": "maze-explorer.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/maze-explorer-shot.png",
+    "name": "maze-explorer"
+  },
+  {
+    "pass": false,
+    "file": "terrain-viewer.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/terrain-viewer-shot.png",
+    "name": "terrain-viewer"
+  },
+  {
+    "pass": false,
+    "file": "fireworks.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "Identifier 'firework' has already been declared"
+    ],
+    "canvas": {
+      "found": false
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/fireworks-shot.png",
+    "name": "fireworks"
+  },
+  {
+    "pass": false,
+    "file": "product-showcase.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/product-showcase-shot.png",
+    "name": "product-showcase"
+  },
+  {
+    "pass": false,
+    "file": "bar-chart.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/bar-chart-shot.png",
+    "name": "bar-chart"
+  },
+  {
+    "pass": false,
+    "file": "rubiks-cube.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/rubiks-cube-shot.png",
+    "name": "rubiks-cube"
+  }
+]

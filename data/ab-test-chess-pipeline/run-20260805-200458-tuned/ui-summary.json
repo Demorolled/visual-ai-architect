@@ -1,0 +1,35 @@
+{
+ "gates": {
+  "chars": 4202,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": true,
+  "named_exports": [
+   "render"
+  ],
+  "prose_leak": 0
+ },
+ "check": {
+  "tsc_clean": false,
+  "error_count": 5,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-200458-tuned/ui/chess-ui/chess-ui.ts(117,3): error TS2304: Cannot find name 'drawBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200458-tuned/ui/chess-ui/chess-ui.ts(121,6): error TS7006: Parameter 'm' implicitly has an 'any' type.",
+   "data/ab-test-chess-pipeline/run-20260805-200458-tuned/ui/chess-ui/chess-ui.ts(146,8): error TS7006: Parameter 'm' implicitly has an 'any' type.",
+   "data/ab-test-chess-pipeline/run-20260805-200458-tuned/ui/chess-ui/chess-ui.ts(146,27): error TS2304: Cannot find name 'x'.",
+   "data/ab-test-chess-pipeline/run-20260805-200458-tuned/ui/chess-ui/chess-ui.ts(146,45): error TS2304: Cannot find name 'y'."
+  ]
+ },
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored-dspark",
+  "tag": "tuned",
+  "task": "ui",
+  "elapsed_s": 23.3,
+  "prompt_chars": 6642,
+  "raw_chars": 4202
+ }
+}

@@ -1,0 +1,4 @@
+# System Awareness Daemon — system monitor for Veronica terminal
+psutil>=7.0.0
+requests>=2.28.0
+mss>=10.0.0

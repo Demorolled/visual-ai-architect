@@ -1,0 +1,26 @@
+{
+  "app_type": "chat_app",
+  "description": "Real-time messaging app with chat rooms, direct messages, online presence, and persistent message history.",
+  "keywords": ["chat", "messaging", "messenger", "chat app", "realtime", "real-time", "websocket", "rooms", "direct message", "dm", "instant message", "forum", "discord", "slack"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express (WebSocket)",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "message_models",
+    "message_store",
+    "chat_logic",
+    "websocket_server",
+    "user_auth"
+  ],
+  "wiring_graph": [
+    { "source_module": "ui_screens", "destination_module": "websocket_server", "data_passed": "connect_and_send_events" },
+    { "source_module": "websocket_server", "destination_module": "chat_logic", "data_passed": "inbound_messages" },
+    { "source_module": "chat_logic", "destination_module": "message_store", "data_passed": "persist_and_query_messages" },
+    { "source_module": "message_models", "destination_module": "message_store", "data_passed": "schemas" },
+    { "source_module": "user_auth", "destination_module": "websocket_server", "data_passed": "session_validation" },
+    { "source_module": "ui_screens", "destination_module": "user_auth", "data_passed": "login_actions" }
+  ]
+}

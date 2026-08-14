@@ -1,0 +1,52 @@
+{
+  "app_type": "analytics-ts",
+  "description": "projects, event ingestion, metrics, user management, API tokens.",
+  "keywords": [
+    "analytics-ts",
+    "typescript",
+    "saas",
+    "analytics",
+    "dashboard",
+    "projects",
+    "event ingestion",
+    "metrics computation",
+    "user management",
+    "API tokens"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "projects",
+    "event ingestion",
+    "metrics computation",
+    "user management",
+    "API tokens"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "projects",
+      "destination_module": "event ingestion",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "event ingestion",
+      "destination_module": "metrics computation",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "metrics computation",
+      "destination_module": "user management",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "user management",
+      "destination_module": "API tokens",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 25
+}

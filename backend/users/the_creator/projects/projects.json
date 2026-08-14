@@ -1,0 +1,330 @@
+[
+  {
+    "id": "proj_1786612232426_552cw35",
+    "name": "3d chees game — ",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master-node",
+        "type": "master",
+        "position": {
+          "x": 250,
+          "y": 50
+        },
+        "data": {
+          "label": "App Blueprint",
+          "appGoal": "",
+          "appPurpose": "",
+          "selectedOS": "linux",
+          "status": "pending",
+          "scale": "medium"
+        }
+      },
+      {
+        "id": "node_0",
+        "type": "input",
+        "position": {
+          "x": 150,
+          "y": 280
+        },
+        "data": {
+          "label": "index",
+          "description": "The single HTML entry point for the game — a self-contained single-file game",
+          "type": "input",
+          "status": "pending",
+          "language": "html",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_1",
+        "type": "logic",
+        "position": {
+          "x": 370,
+          "y": 280
+        },
+        "data": {
+          "label": "game",
+          "description": "The main game loop and state management",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_2",
+        "type": "logic",
+        "position": {
+          "x": 590,
+          "y": 280
+        },
+        "data": {
+          "label": "canvas",
+          "description": "Canvas setup and rendering",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_3",
+        "type": "input",
+        "position": {
+          "x": 150,
+          "y": 450
+        },
+        "data": {
+          "label": "input",
+          "description": "Keyboard input handling",
+          "type": "input",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_4",
+        "type": "logic",
+        "position": {
+          "x": 370,
+          "y": 450
+        },
+        "data": {
+          "label": "scene",
+          "description": "The game world and entities",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_5",
+        "type": "logic",
+        "position": {
+          "x": 590,
+          "y": 450
+        },
+        "data": {
+          "label": "cheese",
+          "description": "The cheese player entity",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_6",
+        "type": "logic",
+        "position": {
+          "x": 150,
+          "y": 620
+        },
+        "data": {
+          "label": "enemy",
+          "description": "The enemy entity that chases the player",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_7",
+        "type": "logic",
+        "position": {
+          "x": 370,
+          "y": 620
+        },
+        "data": {
+          "label": "item",
+          "description": "Collectible items in the game",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chees game — ",
+          "appPurpose": ""
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_node_1",
+        "source": "node_0",
+        "target": "node_1"
+      },
+      {
+        "id": "edge_node_2",
+        "source": "node_1",
+        "target": "node_2"
+      },
+      {
+        "id": "edge_node_3",
+        "source": "node_2",
+        "target": "node_3"
+      },
+      {
+        "id": "edge_node_4",
+        "source": "node_3",
+        "target": "node_4"
+      },
+      {
+        "id": "edge_node_5",
+        "source": "node_4",
+        "target": "node_5"
+      },
+      {
+        "id": "edge_node_6",
+        "source": "node_5",
+        "target": "node_6"
+      },
+      {
+        "id": "edge_node_7",
+        "source": "node_6",
+        "target": "node_7"
+      }
+    ],
+    "savedAt": "2026-08-13T09:10:32.426Z",
+    "version": 1
+  },
+  {
+    "id": "proj_1786661106506",
+    "name": "full 3d chess game",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master",
+        "type": "master",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "data": {
+          "label": "chess_game_2 blueprint",
+          "description": "full 3d chess game",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "full 3d chess game",
+          "appPurpose": "Chess Game — Play vs AI. Difficulty",
+          "selectedOS": "linux",
+          "scale": "medium",
+          "blueprintContext": "APP TYPE: chess_game_2\nAPP DESCRIPTION: Chess Game — Play vs AI. Difficulty\nTARGET STACK: frontend=React, backend=Node.js Express, database=SQLite\nSOURCE LANGUAGE: typescript\n\nARCHITECTURE CHECKLIST (the whole app is exactly these modules, each implemented in its own file):\n  - ui_screens\n  - core_engine\n  - input_handler\n  - data_store\n  - game_engine\n\nWIRING GRAPH (data contracts between sibling modules — use these names verbatim so files connect):\n  - core_engine → ui_screens : requests\n  - core_engine → input_handler : results\n  - input_handler → data_store : state_and_events\n  - data_store → game_engine : data\n\nRULE: You are generating ONE module of this app. Implement exactly the module named in THIS FILE'S MODULE below.\nDo NOT implement other checklist modules — they are separate files. Do NOT invent new modules."
+        }
+      },
+      {
+        "id": "mod_0",
+        "type": "ui",
+        "position": {
+          "x": 60,
+          "y": 120
+        },
+        "data": {
+          "label": "ui_screens",
+          "description": "Module \"ui_screens\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests).",
+          "status": "valid",
+          "language": "typescript",
+          "selectedOS": "linux",
+          "generatedCode": "import { coreEngine } from '../core-engine/core-engine.ts';\n\nexport function renderBoard(container: HTMLElement) {\n  const board = document.createElement('div');\n  board.className = 'chess-board';\n  for (let row = 0; row < 8; row++) {\n    for (let col = 0; col < 8; col++) {\n      const square = document.createElement('div');\n      square.className = `square ${row % 2 === col % 2 ? 'light' : 'dark'}`;\n      square.dataset.rank = String(8 - row);\n      square.dataset.file = String(col + 1);\n      board.appendChild(square);\n    }\n  }\n  container.appendChild(board);\n}\n\nexport function renderPieces(board: HTMLElement) {\n  const pieces = [\n    { type: 'pawn', color: 'white', rank: 7, file: 0 },\n    { type: 'knight', color: 'white', rank: 7, file: 1 },\n    { type: 'bishop', color: 'white', rank: 7, file: 2 },\n    { type: 'rook', color: 'white', rank: 7, file: 3 },\n    { type: 'queen', color: 'white', rank: 7, file: 4 },\n    { type: 'king', color: 'white', rank: 7, file: 5 },\n    { type: 'bishop', color: 'white', rank: 7, file: 6 },\n    { type: 'rook', color: 'white', rank: 7, file: 7 },\n    { type: 'pawn', color: 'black', rank: 2, file: 0 },\n    { type: 'knight', color: 'black', rank: 2, file: 1 },\n    { type: 'bishop', color: 'black', rank: 2, file: 2 },\n    { type: 'rook', color: 'black', rank: 2, file: 3 },\n    { type: 'queen', color: 'black', rank: 2, file: 4 },\n    { type: 'king', color: 'black', rank: 2, file: 5 },\n    { type: 'bishop', color: 'black', rank: 2, file: 6 },\n    { type: 'rook', color: 'black', rank: 2, file: 7 },\n  ];\n  pieces.forEach(p => {\n    const piece = document.createElement('div');\n    piece.className = `piece ${p.color} ${p.type}`;\n    piece.dataset.rank = String(p.rank);\n    piece.dataset.file = String(p.file);\n    board.appendChild(piece);\n  });\n}\n\nexport function renderMoveHighlight(board: HTMLElement, fromRank: number, fromFile: number, toRank: number, toFile: number) {\n  const fromSquare = document.querySelector(`.square[data-rank=\"${fromRank}\"][data-file=\"${fromFile}\"]`);\n  const toSquare = document.querySelector(`.square[data-rank=\"${toRank}\"][data-file=\"${toFile}\"]`);\n  if (fromSquare) fromSquare.classList.add('selected');\n  if (toSquare) toSquare.classList.add('highlight');\n}\n\nexport function renderCheck(board: HTMLElement, isWhiteChecked: boolean) {\n  const check = document.createElement('div');\n  check.className = 'check';\n  if (isWhiteChecked) {\n    check.textContent = '♔';\n  } else {\n    check.textContent = '♚';\n  }\n  board.appendChild(check);\n}"
+        }
+      },
+      {
+        "id": "mod_1",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "label": "core_engine",
+          "description": "Module \"core_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests); core_engine → input_handler (results).",
+          "status": "valid",
+          "language": "typescript",
+          "selectedOS": "linux",
+          "generatedCode": "// TODO: Implement core_engine\nexport function coreEngine() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      },
+      {
+        "id": "mod_2",
+        "type": "input",
+        "position": {
+          "x": 700,
+          "y": 120
+        },
+        "data": {
+          "label": "input_handler",
+          "description": "Module \"input_handler\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → input_handler (results); input_handler → data_store (state_and_events).",
+          "status": "valid",
+          "language": "typescript",
+          "selectedOS": "linux",
+          "generatedCode": "import { coreEngine } from '../core-engine/core-engine.ts';\n\n// TODO: Implement input_handler\nexport function inputHandler() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      },
+      {
+        "id": "mod_3",
+        "type": "database",
+        "position": {
+          "x": 60,
+          "y": 340
+        },
+        "data": {
+          "label": "data_store",
+          "description": "Module \"data_store\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: input_handler → data_store (state_and_events); data_store → game_engine (data).",
+          "status": "valid",
+          "language": "typescript",
+          "selectedOS": "linux",
+          "generatedCode": "import { inputHandler } from '../input-handler/input-handler.ts';\n\nexport function dataStore() {\n  const savedGames: { id: number; name: string; moves: string[] }[] = [];\n  let currentGameId = 1;\n  let currentGameMoves: string[] = [];\n  let currentPlayer: 'white' | 'black' = 'white';\n\n  function saveGame(name: string) {\n    savedGames.push({ id: currentGameId, name, moves: currentGameMoves.slice() });\n    currentGameId++;\n    currentGameMoves = [];\n    currentPlayer = 'white';\n  }\n\n  function loadGame(id: number) {\n    const game = savedGames.find((g) => g.id === id);\n    if (game) {\n      currentGameMoves = game.moves.slice();\n      currentPlayer = game.moves.length % 2 === 0 ? 'white' : 'black';\n    }\n  }\n\n  function makeMove(move: string) {\n    currentGameMoves.push(move);\n    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';\n  }\n\n  function getMoves() { return currentGameMoves; }\n  function getCurrentPlayer() { return currentPlayer; }\n  function getSavedGames() { return savedGames; }\n\n  return { saveGame, loadGame, makeMove, getMoves, getCurrentPlayer, getSavedGames };\n}"
+        }
+      },
+      {
+        "id": "mod_4",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 340
+        },
+        "data": {
+          "label": "game_engine",
+          "description": "Module \"game_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: data_store → game_engine (data).",
+          "status": "valid",
+          "language": "typescript",
+          "selectedOS": "linux",
+          "generatedCode": "import { dataStore } from '../data-store/data-store.ts';\n\n// TODO: Implement game_engine\nexport function gameEngine() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0",
+        "source": "mod_1",
+        "target": "mod_0"
+      },
+      {
+        "id": "edge_1",
+        "source": "mod_1",
+        "target": "mod_2"
+      },
+      {
+        "id": "edge_2",
+        "source": "mod_2",
+        "target": "mod_3"
+      },
+      {
+        "id": "edge_3",
+        "source": "mod_3",
+        "target": "mod_4"
+      }
+    ],
+    "savedAt": "2026-08-13T22:46:52.353Z",
+    "version": 2
+  }
+]

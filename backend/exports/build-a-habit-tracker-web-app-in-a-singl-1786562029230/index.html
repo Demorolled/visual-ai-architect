@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #000; color: #fff; }
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin: 8px; }
+    .btn { display: inline-block; padding: 8px 12px; margin: 0 4px 8px; cursor: pointer; font-size: 14px; font-family: inherit; border: none; border-radius: 4px; }
+    .btn-primary { background: #007bff; color: #fff; }
+    .btn-secondary { background: #6c757d; color: #fff; }
+    .btn-danger { background: #dc3545; color: #fff; }
+    .card-title { margin: 0; font-size: 16px; font-weight: 600; }
+    .card-description { margin: 4px 0 12px; font-size: 14px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    #streakCounter { margin: 0; font-size: 18px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <h3 class="card-title">Daily Habits</h3>
+      <div id="streakCounter">Current Streak: 0</div>
+      <div id="habitsList"></div>
+      <div class="card-footer">
+        <input id="habitTitleInput" type="text" placeholder="Title" value="">
+        <input id="habitQuantityInput" type="number" min="0" value="1">
+        <button id="addHabitBtn" class="btn btn-primary">Add Habit</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const streakCounter = document.getElementById('streakCounter');
+    const habitsList = document.getElementById('habitsList');
+    const titleInput = document.getElementById('habitTitleInput');
+    const quantityInput = document.getElementById('habitQuantityInput');
+    const addHabitBtn = document.getElementById('addHabitBtn');
+
+    let habits = [];
+    let currentStreak = 0;
+
+    addHabitBtn.addEventListener('click', () => {
+      const title = titleInput.value.trim();
+      const quantity = Number(quantityInput.value) || 0;
+      if (!title) return;
+
+      habits.push({ title, quantity, checked: false });
+      updateStreak();
+      renderHabits();
+      titleInput.value = '';
+      quantityInput.value = '1';
+    });
+
+    function renderHabits() {
+      habitsList.innerHTML = '';
+      habits.forEach((habit, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-title">${habit.title}</div>
+          <div class="card-description">Target: ${habit.quantity}</div>
+          <div class="card-footer">
+            <input type="checkbox" ${habit.checked ? 'checked' : ''} data-index="${index}">
+            <button class="btn btn-danger" onclick="removeHabit(${index})">✕</button>
+          </div>
+        `;
+        card.querySelector('input[type="checkbox"]').addEventListener('change', () => {
+          habits[index].checked = this.checked;
+          updateStreak();
+          renderHabits();
+        });
+        habitsList.appendChild(card);
+      });
+    }
+
+    function updateStreak() {
+      let streak = 0;
+      for (let i = habits.length - 1; i >= 0; i--) {
+        if (!habits[i].checked) break;
+        streak++;
+      }
+      currentStreak = streak;
+      streakCounter.textContent = `Current Streak: ${streak}`;
+    }
+
+    function removeHabit(index) {
+      habits.splice(index, 1);
+      renderHabits();
+      updateStreak();
+    }
+  </script>
+</div>
+</body>
+</html>

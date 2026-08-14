@@ -1,0 +1,53 @@
+{
+  "app_type": "media_player_desktop",
+  "description": "Audio/video player with playlist, equalizer, and subtitle support — Desktop media player MP3/FLAC/MP4/MKV with playlist, EQ, subtitles, speed control",
+  "keywords": [
+    "media-player",
+    "audio",
+    "video",
+    "entertainment",
+    "media",
+    "player",
+    "desktop",
+    "media loader",
+    "playback engine",
+    "equalizer",
+    "media library",
+    "player ui"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Media Loader",
+    "Playback Engine",
+    "Equalizer",
+    "Media Library",
+    "Player UI"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Media Loader",
+      "destination_module": "Playback Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Playback Engine",
+      "destination_module": "Equalizer",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Equalizer",
+      "destination_module": "Media Library",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Media Library",
+      "destination_module": "Player UI",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

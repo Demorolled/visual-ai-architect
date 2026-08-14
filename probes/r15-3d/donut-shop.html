@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Donut Showcase</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; display: flex; justify-content: center; align-items: center; }
+  #scene { width: 500px; height: 500px; }
+  canvas { width: 100%; height: 100%; }
+  footer { position: fixed; bottom: 12px; left: 12px; z-index: 10; }
+  footer button { padding: 8px 16px; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; background: rgba(0,0,0,0.15); color: #fff; cursor: pointer; transition: all 0.2s ease; }
+  footer button:hover { background: rgba(0,0,0,0.35); }
+  footer button:active { transform: translateY(1px); }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<footer>
+  <button id="glazeBtn">New Glaze</button>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(500, 500);
+    document.getElementById('scene').appendChild(renderer.domElement);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.z = 400;
+    const donut = new THREE.Mesh(
+      new THREE.TorusKnotGeometry(26, 8, 128, 128),
+      new THREE.MeshStandardMaterial({ color: 0x2a1b1a, roughness: 0.35 })
+    );
+    donut.rotation.x = -Math.PI / 2;
+    scene.add(donut);
+    const spotlight = new THREE.SpotLight(0xffffff, 2.5, 800, Math.PI / 5, 0.3, 1);
+    spotlight.position.set(150, 250, 200);
+    spotlight.castShadow = true;
+    spotlight.shadow.mapSize.set(1024, 1024);
+    scene.add(spotlight);
+    const plate = new THREE.Mesh(
+      new THREE.CircleGeometry(100, 32),
+      new THREE.MeshStandardMaterial({ color: 0xd98050, roughness: 0.45 })
+    );
+    scene.add(plate);
+    const glazeColors = ['#ff4500', '#ffd700', '#008000', '#0000ff', '#ff69b4'];
+    let currentGlaze = 0;
+    function animate() {
+      donut.rotation.y += 0.005;
+      donut.rotation.x += 0.005;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+    document.getElementById('glazeBtn').addEventListener('click', () => {
+      currentGlaze = (currentGlaze + 1) % glazeColors.length;
+      donut.material.color.set(glazeColors[currentGlaze]);
+    });
+</script>
+</body>
+</html>

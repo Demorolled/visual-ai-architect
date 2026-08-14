@@ -1,0 +1,22 @@
+export interface Task {
+  id: string;
+  title: string;
+  done: boolean;
+  createdAt: string;
+}
+
+export type TaskPriority = 'low' | 'medium' | 'high';
+
+export class DueDate {
+  private date: Date;
+
+  constructor(iso: string) {
+    this.date = new Date(iso);
+  }
+
+  daysLeft(): number {
+    const now = new Date();
+    const diff = this.date.getTime() - now.getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }
+}

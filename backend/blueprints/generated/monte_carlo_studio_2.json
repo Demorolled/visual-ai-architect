@@ -1,0 +1,54 @@
+{
+  "app_type": "monte_carlo_studio_2",
+  "description": "Monte Carlo methods for integration and simulation — Interactive monte carlo studio with real-time visualization and analysis",
+  "keywords": [
+    "mathematics",
+    "monte-carlo",
+    "simulation",
+    "numerical",
+    "mathematics",
+    "monte",
+    "carlo",
+    "studio",
+    "math input",
+    "math engine",
+    "data storage",
+    "analysis module",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Math Input",
+    "Math Engine",
+    "Data Storage",
+    "Analysis Module",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Math Input",
+      "destination_module": "Math Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Math Engine",
+      "destination_module": "Data Storage",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Storage",
+      "destination_module": "Analysis Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Module",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

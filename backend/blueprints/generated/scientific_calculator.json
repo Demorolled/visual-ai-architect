@@ -1,0 +1,52 @@
+{
+  "app_type": "scientific_calculator",
+  "description": "Advanced calculator with graphing, unit conversion, and equation solving — Desktop scientific calculator with expression parser, 2D/3D graphing, unit conversion, solver",
+  "keywords": [
+    "calculator",
+    "scientific",
+    "graphing",
+    "math",
+    "scientific",
+    "calculator",
+    "expression input",
+    "expression engine",
+    "graph plotter",
+    "history store",
+    "calculator ui"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Expression Input",
+    "Expression Engine",
+    "Graph Plotter",
+    "History Store",
+    "Calculator UI"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Expression Input",
+      "destination_module": "Expression Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Expression Engine",
+      "destination_module": "Graph Plotter",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Graph Plotter",
+      "destination_module": "History Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "History Store",
+      "destination_module": "Calculator UI",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

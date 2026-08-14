@@ -1,0 +1,53 @@
+{
+  "app_type": "pong_game",
+  "description": "Classic two-player Pong with paddle physics, ball collision, and score tracking — A complete Pong implementation with paddle movement, ball bouncing physics, collision detection, score tracking, and AI opponent mode",
+  "keywords": [
+    "pong",
+    "game",
+    "physics",
+    "2d",
+    "multiplayer",
+    "pong",
+    "game",
+    "paddle controller",
+    "physics engine",
+    "ai opponent",
+    "game state store",
+    "game renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Paddle Controller",
+    "Physics Engine",
+    "AI Opponent",
+    "Game State Store",
+    "Game Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Paddle Controller",
+      "destination_module": "Physics Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Physics Engine",
+      "destination_module": "AI Opponent",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "AI Opponent",
+      "destination_module": "Game State Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State Store",
+      "destination_module": "Game Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

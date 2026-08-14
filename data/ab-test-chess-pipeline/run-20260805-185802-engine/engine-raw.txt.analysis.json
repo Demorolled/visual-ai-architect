@@ -1,0 +1,32 @@
+{
+ "gates": {
+  "chars": 2813,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [
+   "getBestMove"
+  ],
+  "prose_leak": 0
+ },
+ "meta": {},
+ "contract": {
+  "tsc_clean": false,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-ai-engine/chess-ai-engine.ts(20,34): error TS2339: Property 'isCheckmate' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-ai-engine/chess-ai-engine.ts(21,47): error TS2339: Property 'evaluate' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-ai-engine/chess-ai-engine.ts(25,67): error TS2339: Property 'evaluate' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-ai-engine/chess-ai-engine.ts(33,26): error TS2339: Property 'makeMove' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-ai-engine/chess-ai-engine.ts(51,26): error TS2339: Property 'makeMove' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-ai-engine/chess-ai-engine.ts(68,41): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.",
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-ai-engine/chess-ai-engine.ts(78,44): error TS2345: Argument of type 'AIConfig | undefined' is not assignable to parameter of type 'AIConfig'.",
+   "data/ab-test-chess-pipeline/run-20260805-185802-engine/contract/chess-move-rules/chess-move-rules.ts(1,61): error TS2307: Cannot find module './chess-board' or its corresponding type declarations."
+  ],
+  "error_count": 8
+ },
+ "functional": {}
+}

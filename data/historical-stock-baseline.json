@@ -1,0 +1,13 @@
+{
+  "last_measured": [
+    47.2,
+    47.6,
+    47.8,
+    47.3,
+    47.7,
+    47.7
+  ],
+  "mean": 47.55,
+  "restored_at": "2026-08-01",
+  "note": "restored after benchmark-dspark.py clobbered it with the noisy 5.2 tok/s smoke-test line from a fresh dspark.log; these are the pre-training stock measurements from the Jul 31 run"
+}

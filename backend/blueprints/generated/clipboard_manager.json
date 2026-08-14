@@ -1,0 +1,52 @@
+{
+  "app_type": "clipboard_manager",
+  "description": "Clipboard history with snippets, search, and LAN sync — Desktop clipboard manager: text/image/file history, favorites, full-text search, LAN sync",
+  "keywords": [
+    "clipboard",
+    "manager",
+    "productivity",
+    "utility",
+    "clipboard",
+    "manager",
+    "clipboard monitor",
+    "history engine",
+    "sync engine",
+    "clip store",
+    "clipboard panel"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Clipboard Monitor",
+    "History Engine",
+    "Sync Engine",
+    "Clip Store",
+    "Clipboard Panel"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Clipboard Monitor",
+      "destination_module": "History Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "History Engine",
+      "destination_module": "Sync Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Sync Engine",
+      "destination_module": "Clip Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Clip Store",
+      "destination_module": "Clipboard Panel",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,54 @@
+{
+  "app_type": "stack_queue_simulator",
+  "description": "Interactive LIFO/FIFO data structure simulator with array and linked-list implementations — Visualizes stack (push/pop/peek) and queue (enqueue/dequeue/peek) operations. Shows both array and linked-list implementations side-by-side with memory layout and operation complexity",
+  "keywords": [
+    "stack",
+    "queue",
+    "lifo",
+    "fifo",
+    "data-structures",
+    "stack",
+    "queue",
+    "simulator",
+    "operation panel",
+    "structure engine",
+    "data store",
+    "structure view",
+    "operation log"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Operation Panel",
+    "Structure Engine",
+    "Data Store",
+    "Structure View",
+    "Operation Log"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Operation Panel",
+      "destination_module": "Structure Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Structure Engine",
+      "destination_module": "Data Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Structure View",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Structure View",
+      "destination_module": "Operation Log",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D DNA Double Helix</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0c0c25; }
+  #scene { position: fixed; inset: 0; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.querySelector('#scene').appendChild(renderer.domElement);
+
+    const light = new THREE.DirectionalLight(0xffffff, 0.5);
+    light.position.set(-1, 2, 2);
+    scene.add(light);
+    const ambient = new THREE.AmbientLight(0x404040);
+    scene.add(ambient);
+
+    const geometry = new THREE.CylinderGeometry(0.1, 0.1, 2, 64);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+    const group = new THREE.Group();
+    const colors = ['#ff0000', '#00ff00'];
+
+    for (let i = 0; i < 100; i++) {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = Math.sin(i * Math.PI * 2 / 100) * 20;
+        mesh.position.y = Math.cos(i * Math.PI * 2 / 100) * 20;
+        mesh.position.z = i - (i * 0.3);
+        mesh.rotation.x = i * Math.PI * 2 / 100;
+        mesh.scale.y = 0.2 + Math.random() * 0.2;
+        mesh.material.color = new THREE.Color(colors[i % 2]);
+        group.add(mesh);
+    }
+
+    scene.add(group);
+
+    camera.position.z = 30;
+
+    function animate() {
+        group.rotation.y += 0.01;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+    }
+    animate();
+</script>
+</body>
+</html>

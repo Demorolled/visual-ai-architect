@@ -1,0 +1,48 @@
+{
+  "app_type": "pvc_explorer",
+  "description": "PersistentVolumeClaim and StorageClass configuration lab — an interactive devops tool with a visual interface.",
+  "keywords": [
+    "devops",
+    "devops",
+    "pvc",
+    "storage",
+    "kubernetes",
+    "pvc",
+    "explorer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "config_engine",
+    "validator_core",
+    "input_handler",
+    "export_service"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "config_engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "config_engine",
+      "destination_module": "validator_core",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "validator_core",
+      "destination_module": "input_handler",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "input_handler",
+      "destination_module": "export_service",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:devops"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "__USERNAME__/round14-genfix",
+  "title": "Round-14 GenFix training rows",
+  "subtitle": "Generation-framed 3D defect fixes plus 11 QA wiring rules",
+  "licenses": [
+    {
+      "name": "other"
+    }
+  ]
+}

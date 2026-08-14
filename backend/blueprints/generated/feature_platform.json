@@ -1,0 +1,52 @@
+{
+  "app_type": "feature_platform",
+  "description": "Feature engineering: definitions, transforms, online/offline serving — Feature platform: definitions, transformations, serving, validation",
+  "keywords": [
+    "search",
+    "recommendations",
+    "personalization",
+    "ranking",
+    "feature",
+    "platform",
+    "search/recs config",
+    "search engine",
+    "evaluation",
+    "index & data",
+    "results display"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Search/Recs Config",
+    "Search Engine",
+    "Evaluation",
+    "Index & Data",
+    "Results Display"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Search/Recs Config",
+      "destination_module": "Search Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search Engine",
+      "destination_module": "Evaluation",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Evaluation",
+      "destination_module": "Index & Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Index & Data",
+      "destination_module": "Results Display",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

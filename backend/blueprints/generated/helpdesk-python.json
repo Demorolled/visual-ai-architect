@@ -1,0 +1,52 @@
+{
+  "app_type": "helpdesk-python",
+  "description": "support platform: ticket lifecycle, agent assignment, response threads, SLA policies, report queries.",
+  "keywords": [
+    "helpdesk-python",
+    "python",
+    "help",
+    "desk",
+    "support",
+    "tickets",
+    "agents",
+    "responses",
+    "slas",
+    "reports"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Python FastAPI",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "tickets",
+    "agents",
+    "responses",
+    "slas",
+    "reports"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "tickets",
+      "destination_module": "agents",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "agents",
+      "destination_module": "responses",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "responses",
+      "destination_module": "slas",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "slas",
+      "destination_module": "reports",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:python",
+  "file_count": 33
+}

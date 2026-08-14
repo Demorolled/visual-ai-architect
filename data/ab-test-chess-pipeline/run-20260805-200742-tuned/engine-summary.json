@@ -1,0 +1,49 @@
+{
+ "gates": {
+  "chars": 4319,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [
+   "getBestMove"
+  ],
+  "prose_leak": 0
+ },
+ "contract": {
+  "tsc_clean": false,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(26,5): error TS2353: Object literal may only specify known properties, and 'color' does not exist in type 'Node'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(48,24): error TS18048: 'bestNode' is possibly 'undefined'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(49,13): error TS2339: Property 'makeMove' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(69,7): error TS2588: Cannot assign to 'bestMove' because it is a constant.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(81,31): error TS2322: Type '{ from: string; to: string; } | null' is not assignable to type 'Move'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(88,7): error TS2554: Expected 3 arguments, but got 2.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(90,14): error TS2339: Property 'makeMove' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(92,5): error TS2741: Property 'children' is missing in type '{ score: number; moves: Move[]; depth: number; }' but required in type 'Node'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(96,12): error TS2339: Property 'makeMove' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(103,3): error TS2741: Property 'children' is missing in type '{ score: number; moves: Move[]; depth: number; }' but required in type 'Node'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(120,42): error TS2554: Expected 1 arguments, but got 2.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(124,27): error TS2693: 'Color' only refers to a type, but is being used as a value here.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(133,27): error TS2339: Property 'getPieceByType' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(133,42): error TS2693: 'Piece' only refers to a type, but is being used as a value here.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(133,54): error TS2693: 'Color' only refers to a type, but is being used as a value here.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(134,27): error TS2339: Property 'getPieceByType' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(134,42): error TS2693: 'Piece' only refers to a type, but is being used as a value here.",
+   "data/ab-test-chess-pipeline/run-20260805-200742-tuned/contract/chess-ai-engine/chess-ai-engine.ts(134,54): error TS2693: 'Color' only refers to a type, but is being used as a value here."
+  ],
+  "error_count": 18
+ },
+ "functional": {},
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored-dspark",
+  "tag": "tuned",
+  "task": "engine",
+  "elapsed_s": 20.8,
+  "prompt_chars": 2735,
+  "raw_chars": 4319
+ }
+}

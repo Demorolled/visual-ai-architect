@@ -1,0 +1,1065 @@
+{
+  "scannedAt": "2026-07-31T12:36:29.000Z",
+  "results": [
+    {
+      "slug": "countdown-timer",
+      "name": "Countdown Timer",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/alarm-handler/alarm-handler.ts(22,24): error TS2345: Argument of type 'Timeout' is not assignable to parameter of type 'Immediate'.; src/countdown-engine/countdown-engine.ts(4,11): error TS2564: Property 'timer' has no initializer and is not definitely assigned in the constructor.; src/countdown-engine/countdown-engine.ts(17,14): error TS2339: Property 'updateTimer' does not exist on type 'CountdownEngine'.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/countdown-timer/countdown-timer",
+      "totalFiles": 6,
+      "totalChars": 13887
+    },
+    {
+      "slug": "todo-list",
+      "name": "Todo List",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/task-manager/task-manager.ts(43,1): error TS1127: Invalid character.; src/task-manager/task-manager.ts(43,2): error TS1127: Invalid character.; src/task-manager/task-manager.ts(43,3): error TS1127: Invalid character.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/todo-list/todo-list",
+      "totalFiles": 6,
+      "totalChars": 23699
+    },
+    {
+      "slug": "unit-converter",
+      "name": "Unit Converter",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/category-picker/category-picker.ts(28,30): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.; src/converter-ui/converter-ui.ts(9,15): error TS7006: Parameter 'containerElement' implicitly has an 'any' type.; src/converter-ui/converter-ui.ts(49,24): error TS7006: Parameter 'containerElement' implicitly has an 'any' type.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/unit-converter/unit-converter",
+      "totalFiles": 6,
+      "totalChars": 14743
+    },
+    {
+      "slug": "random-quote-generator",
+      "name": "Random Quote Generator",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/quote-ui/quote-ui.ts(35,81): error TS1005: ',' expected.; src/quote-ui/quote-ui.ts(35,84): error TS1109: Expression expected.; src/quote-ui/quote-ui.ts(35,97): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/random-quote-generator/random-quote-generator",
+      "totalFiles": 6,
+      "totalChars": 13673
+    },
+    {
+      "slug": "color-palette-generator",
+      "name": "Color Palette Generator",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/palette-ui/palette-ui.ts(72,20): error TS1005: ',' expected.; src/palette-ui/palette-ui.ts(74,13): error TS1005: ',' expected.; src/palette-ui/palette-ui.ts(74,20): error TS1005: ';' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/color-palette-generator/color-palette-generator",
+      "totalFiles": 6,
+      "totalChars": 20927
+    },
+    {
+      "slug": "memory-card-game",
+      "name": "Memory Card Game",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/match-engine/match-engine.ts(54,33): error TS1005: ',' expected.; src/match-engine/match-engine.ts(54,42): error TS1005: ',' expected.; src/match-engine/match-engine.ts(54,53): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/memory-card-game/memory-card-game",
+      "totalFiles": 6,
+      "totalChars": 27918
+    },
+    {
+      "slug": "stopwatch",
+      "name": "Stopwatch",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/stopwatch-ui/stopwatch-ui.ts(34,22): error TS1005: '(' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/stopwatch/stopwatch",
+      "totalFiles": 6,
+      "totalChars": 16214
+    },
+    {
+      "slug": "calculator",
+      "name": "Calculator",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/calc-engine/calc-engine.ts(6,68): error TS1005: '=>' expected.; src/calc-engine/calc-engine.ts(6,70): error TS1131: Property or signature expected.; src/calc-engine/calc-engine.ts(6,77): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/calculator/calculator",
+      "totalFiles": 6,
+      "totalChars": 19194
+    },
+    {
+      "slug": "word-counter",
+      "name": "Word Counter",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/stats-ui/stats-ui.ts(14,55): error TS1005: ';' expected.; src/stats-ui/stats-ui.ts(15,4): error TS1128: Declaration or statement expected.; src/stats-ui/stats-ui.ts(50,1): error TS1128: Declaration or statement expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/word-counter/word-counter",
+      "totalFiles": 6,
+      "totalChars": 18009
+    },
+    {
+      "slug": "simple-quiz",
+      "name": "Simple Quiz",
+      "tier": "simple",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/quiz-engine/quiz-engine.ts(61,10): error TS1005: ';' expected.; src/quiz-loader/quiz-loader.ts(29,1): error TS1435: Unknown keyword or identifier. Did you mean 'this'?; src/quiz-loader/quiz-loader.ts(29,6): error TS1434: Unexpected keyword or identifier.",
+        "stubs: index.html: matched 'placeholder\\s+for\\b' pattern; quiz-loader.ts: matched 'placeholder\\s+for\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/simple-quiz/simple-quiz",
+      "totalFiles": 6,
+      "totalChars": 21157
+    },
+    {
+      "slug": "expense-tracker",
+      "name": "Expense Tracker",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/chart-renderer/chart-renderer.ts(7,1): error TS1128: Declaration or statement expected.; src/chart-renderer/chart-renderer.ts(9,1): error TS1109: Expression expected.; src/chart-renderer/chart-renderer.ts(9,7): error TS1005: ';' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/expense-tracker/expense-tracker",
+      "totalFiles": 7,
+      "totalChars": 26050
+    },
+    {
+      "slug": "habit-tracker",
+      "name": "Habit Tracker",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/habit-manager/habit-manager.ts(108,18): error TS1005: ',' expected.; src/habit-manager/habit-manager.ts(109,34): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/habit-tracker/habit-tracker",
+      "totalFiles": 6,
+      "totalChars": 25001
+    },
+    {
+      "slug": "pomodoro-timer",
+      "name": "Pomodoro Timer",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/timer-ui/timer-ui.ts(34,29): error TS1005: '{' expected.; src/timer-ui/timer-ui.ts(35,8): error TS1109: Expression expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/pomodoro-timer/pomodoro-timer",
+      "totalFiles": 6,
+      "totalChars": 20065
+    },
+    {
+      "slug": "markdown-previewer",
+      "name": "Markdown Previewer",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/preview-ui/preview-ui.ts(7,1): error TS1434: Unexpected keyword or identifier.",
+        "stubs: markdown-parser.ts: matched '\\bnot implemented\\b' pattern; index.html: matched '\\bnot implemented\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/markdown-previewer/markdown-previewer",
+      "totalFiles": 6,
+      "totalChars": 21035
+    },
+    {
+      "slug": "weather-widget",
+      "name": "Weather Widget",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/city-selector/city-selector.ts(7,23): error TS2304: Cannot find name 'citiesData'.; src/weather-engine/weather-engine.ts(15,10): error TS2339: Property 'city' does not exist on type 'WeatherEngine'.; src/weather-store/weather-store.ts(15,7): error TS2420: Class 'WeatherEngine' incorrectly implements interface 'WeatherData'.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/weather-widget/weather-widget",
+      "totalFiles": 6,
+      "totalChars": 13252
+    },
+    {
+      "slug": "typing-speed-test",
+      "name": "Typing Speed Test",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "fail",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/typing-ui/typing-ui.ts(30,35): error TS1144: '{' or ';' expected.; src/typing-ui/typing-ui.ts(51,35): error TS1144: '{' or ';' expected.",
+        "stubs: index.html: matched 'placeholder\\s+for\\b' pattern; test-config.ts: matched 'placeholder\\s+for\\b' pattern",
+        "security: typing-ui.ts:47 eval() usage; index.html:305 eval() usage"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/typing-speed-test/typing-speed-test",
+      "totalFiles": 6,
+      "totalChars": 21512
+    },
+    {
+      "slug": "sketch-pad",
+      "name": "Sketch Pad",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/canvas-ui/canvas-ui.ts(10,10): error TS1005: '>' expected.; src/canvas-ui/canvas-ui.ts(10,19): error TS1005: ')' expected.; src/canvas-ui/canvas-ui.ts(11,15): error TS1005: '>' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/sketch-pad/sketch-pad",
+      "totalFiles": 6,
+      "totalChars": 21250
+    },
+    {
+      "slug": "password-generator",
+      "name": "Password Generator",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/generator-engine/generator-engine.ts(67,1): error TS1434: Unexpected keyword or identifier.; src/generator-engine/generator-engine.ts(67,9): error TS1005: ';' expected.; src/generator-engine/generator-engine.ts(67,22): error TS1005: ';' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/password-generator/password-generator",
+      "totalFiles": 6,
+      "totalChars": 19480
+    },
+    {
+      "slug": "flashcard-study-app",
+      "name": "Flashcard Study App",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/card-store/card-store.ts(46,56): error TS1005: ']' expected.; src/card-store/card-store.ts(46,68): error TS1005: ',' expected.; src/card-store/card-store.ts(46,69): error TS1135: Argument expression expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/flashcard-study-app/flashcard-study-app",
+      "totalFiles": 6,
+      "totalChars": 21262
+    },
+    {
+      "slug": "bmi-health-calculator",
+      "name": "BMI & Health Calculator",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/bmi-engine/bmi-engine.ts(5,40): error TS2339: Property 'loadFormData' does not exist on type 'typeof InputForm'.; src/bmi-engine/bmi-engine.ts(20,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.; src/category-map/category-map.ts(13,69): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/bmi-health-calculator/bmi-health-calculator",
+      "totalFiles": 6,
+      "totalChars": 17390
+    },
+    {
+      "slug": "sudoku-solver",
+      "name": "Sudoku Solver",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/board-input/board-input.ts(1,1): error TS1434: Unexpected keyword or identifier.; src/board-input/board-input.ts(1,6): error TS1228: A type predicate is only allowed in return type position for functions and methods.; src/board-input/board-input.ts(1,9): error TS1434: Unexpected keyword or identifier.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/sudoku-solver/sudoku-solver",
+      "totalFiles": 6,
+      "totalChars": 37303
+    },
+    {
+      "slug": "recipe-manager",
+      "name": "Recipe Manager",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/recipe-form/recipe-form.ts(4,27): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'Ingredient[]'.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/recipe-manager/recipe-manager",
+      "totalFiles": 6,
+      "totalChars": 15334
+    },
+    {
+      "slug": "connect-four",
+      "name": "Connect Four",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/ai-opponent/ai-opponent.ts(10,17): error TS1005: ',' expected.; src/ai-opponent/ai-opponent.ts(25,33): error TS1005: ',' expected.; src/ai-opponent/ai-opponent.ts(25,40): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/connect-four/connect-four",
+      "totalFiles": 6,
+      "totalChars": 24730
+    },
+    {
+      "slug": "url-shortener-local",
+      "name": "URL Shortener (Local)",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/stats-engine/stats-engine.ts(25,1): error TS1127: Invalid character.; src/stats-engine/stats-engine.ts(25,2): error TS1127: Invalid character.; src/stats-engine/stats-engine.ts(25,3): error TS1127: Invalid character.",
+        "stubs: index.html: matched '\\bnot implemented\\b' pattern; shortener-ui.ts: matched '\\bnot implemented\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/url-shortener-local/url-shortener-local",
+      "totalFiles": 6,
+      "totalChars": 19979
+    },
+    {
+      "slug": "music-player",
+      "name": "Music Player",
+      "tier": "medium",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/audio-engine/audio-engine.ts(11,18): error TS2552: Cannot find name 'TransportControls'. Did you mean 'transportControlsClass'?; src/playlist-store/playlist-store.ts(16,9): error TS2663: Cannot find name 'playTrack'. Did you mean the instance member 'this.playTrack'?; src/playlist-store/playlist-store.ts(27,7): error TS2663: Cannot find name 'pauseTrack'. Did you mean the instance member 'this.pauseTrack'?",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/music-player/music-player",
+      "totalFiles": 6,
+      "totalChars": 13867
+    },
+    {
+      "slug": "kanban-board",
+      "name": "Kanban Board",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/filter-engine/filter-engine.ts(10,71): error TS1005: '>' expected.; src/filter-engine/filter-engine.ts(10,72): error TS1109: Expression expected.; src/filter-engine/filter-engine.ts(10,73): error TS1109: Expression expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/kanban-board/kanban-board",
+      "totalFiles": 7,
+      "totalChars": 27251
+    },
+    {
+      "slug": "chat-simulator",
+      "name": "Chat Simulator",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/chat-store/chat-store.ts(62,5): error TS1435: Unknown keyword or identifier. Did you mean 'get Message'?; src/chat-store/chat-store.ts(84,1): error TS1434: Unexpected keyword or identifier.; src/chat-ui/chat-ui.ts(54,3): error TS1128: Declaration or statement expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/chat-simulator/chat-simulator",
+      "totalFiles": 6,
+      "totalChars": 23646
+    },
+    {
+      "slug": "finance-dashboard",
+      "name": "Finance Dashboard",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/aggregation-engine/aggregation-engine.ts(6,7): error TS1003: Identifier expected.; src/aggregation-engine/aggregation-engine.ts(6,21): error TS1005: ',' expected.; src/aggregation-engine/aggregation-engine.ts(6,49): error TS1005: ';' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/finance-dashboard/finance-dashboard",
+      "totalFiles": 7,
+      "totalChars": 29610
+    },
+    {
+      "slug": "text-adventure-engine",
+      "name": "Text Adventure Engine",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/adventure-ui/adventure-ui.ts(32,47): error TS1005: ';' expected.; src/adventure-ui/adventure-ui.ts(32,49): error TS1434: Unexpected keyword or identifier.; src/adventure-ui/adventure-ui.ts(32,57): error TS1002: Unterminated string literal.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/text-adventure-engine/text-adventure-engine",
+      "totalFiles": 6,
+      "totalChars": 25114
+    },
+    {
+      "slug": "data-visualization-studio",
+      "name": "Data Visualization Studio",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/studio-ui/studio-ui.ts(173,5): error TS1434: Unexpected keyword or identifier.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/data-visualization-studio/data-visualization-studio",
+      "totalFiles": 7,
+      "totalChars": 31140
+    },
+    {
+      "slug": "task-automation-builder",
+      "name": "Task Automation Builder",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/automation-ui/automation-ui.ts(27,7): error TS1005: '>' expected.; src/automation-ui/automation-ui.ts(27,16): error TS1005: ')' expected.; src/automation-ui/automation-ui.ts(27,18): error TS1136: Property assignment expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/task-automation-builder/task-automation-builder",
+      "totalFiles": 6,
+      "totalChars": 22768
+    },
+    {
+      "slug": "interactive-map-explorer",
+      "name": "Interactive Map Explorer",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/map-interactions/map-interactions.ts(21,10): error TS1005: '>' expected.; src/map-interactions/map-interactions.ts(21,19): error TS1005: ')' expected.; src/map-interactions/map-interactions.ts(23,14): error TS1005: ';' expected.",
+        "stubs: index.html: matched 'placeholder\\s+for\\b' pattern; quiz-engine.ts: matched 'placeholder\\s+for\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/interactive-map-explorer/interactive-map-explorer",
+      "totalFiles": 6,
+      "totalChars": 21939
+    },
+    {
+      "slug": "music-synth-workstation",
+      "name": "Music Synth Workstation",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/keyboard-input/keyboard-input.ts(21,52): error TS2551: Property 'toLocaleTimeString' does not exist on type 'number'. Did you mean 'toLocaleString'?; src/sequencer/sequencer.ts(16,60): error TS2345: Argument of type 'null' is not assignable to parameter of type '[number, number]'.; src/synth-engine/synth-engine.ts(10,33): error TS2339: Property 'createAmpEnvelope' does not exist on type 'AudioContext'.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/music-synth-workstation/music-synth-workstation",
+      "totalFiles": 6,
+      "totalChars": 16460
+    },
+    {
+      "slug": "inventory-manager",
+      "name": "Inventory Manager",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/report-builder/report-builder.ts(44,20): error TS1005: ';' expected.",
+        "stubs: index.html: matched '\\bnot implemented\\b' pattern; inventory-ui.ts: matched '\\bnot implemented\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/inventory-manager/inventory-manager",
+      "totalFiles": 6,
+      "totalChars": 26778
+    },
+    {
+      "slug": "workout-tracker",
+      "name": "Workout Tracker",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/workout-logger/workout-logger.ts(17,17): error TS1005: ',' expected.; src/workout-logger/workout-logger.ts(17,27): error TS1005: ',' expected.; src/workout-logger/workout-logger.ts(20,8): error TS1005: ';' expected.",
+        "stubs: index.html: matched '\\bnot implemented\\b' pattern; progress-builder.ts: matched '\\bnot implemented\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/workout-tracker/workout-tracker",
+      "totalFiles": 6,
+      "totalChars": 18119
+    },
+    {
+      "slug": "pdf-text-toolkit",
+      "name": "PDF & Text Toolkit",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/tool-state/tool-state.ts(3,1): error TS1435: Unknown keyword or identifier. Did you mean 'string'?; src/tool-state/tool-state.ts(3,10): error TS1434: Unexpected keyword or identifier.",
+        "stubs: index.html: matched '\\blorem ipsum\\b' pattern; text-engine.ts: matched '\\blorem ipsum\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/pdf-text-toolkit/pdf-text-toolkit",
+      "totalFiles": 6,
+      "totalChars": 18359
+    },
+    {
+      "slug": "pathfinding-visualizer",
+      "name": "Pathfinding Visualizer",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/maze-generator/maze-generator.ts(78,13): error TS1136: Property assignment expected.; src/maze-generator/maze-generator.ts(78,44): error TS1005: ';' expected.; src/maze-generator/maze-generator.ts(84,1): error TS1128: Declaration or statement expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/pathfinding-visualizer/pathfinding-visualizer",
+      "totalFiles": 6,
+      "totalChars": 20008
+    },
+    {
+      "slug": "budget-planner",
+      "name": "Budget Planner",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/budget-setup/budget-setup.ts(32,10): error TS2551: Property 'remainigBudget' does not exist on type 'Budget'. Did you mean 'remainingBudget'?; src/budget-setup/budget-setup.ts(44,10): error TS2551: Property 'remainigBudget' does not exist on type 'Budget'. Did you mean 'remainingBudget'?; src/budget-setup/budget-setup.ts(64,20): error TS2341: Property 'categories' is private and only accessible within class 'Budget'.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/budget-planner/budget-planner",
+      "totalFiles": 6,
+      "totalChars": 17570
+    },
+    {
+      "slug": "image-editor-lite",
+      "name": "Image Editor Lite",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/editor-ui/editor-ui.ts(9,1): error TS1434: Unexpected keyword or identifier.; src/editor-ui/editor-ui.ts(9,9): error TS1005: ';' expected.; src/editor-ui/editor-ui.ts(9,26): error TS1005: ';' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/image-editor-lite/image-editor-lite",
+      "totalFiles": 6,
+      "totalChars": 16773
+    },
+    {
+      "slug": "task-scheduler",
+      "name": "Task Scheduler",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/task-form/task-form.ts(5,1): error TS1109: Expression expected.; src/task-form/task-form.ts(5,3): error TS1434: Unexpected keyword or identifier.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/task-scheduler/task-scheduler",
+      "totalFiles": 6,
+      "totalChars": 14489
+    },
+    {
+      "slug": "escape-room-puzzle",
+      "name": "Escape Room Puzzle",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/game-ui/game-ui.ts(17,5): error TS1109: Expression expected.; src/room-interactions/room-interactions.ts(56,5): error TS1005: 'try' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/escape-room-puzzle/escape-room-puzzle",
+      "totalFiles": 6,
+      "totalChars": 22865
+    },
+    {
+      "slug": "network-speed-test-local",
+      "name": "Network Speed Test (Local)",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/benchmark-engine/benchmark-engine.ts(24,19): error TS1005: ',' expected.; src/chart-builder/chart-builder.ts(22,1): error TS1435: Unknown keyword or identifier. Did you mean 'this'?; src/chart-builder/chart-builder.ts(22,6): error TS1434: Unexpected keyword or identifier.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/network-speed-test-local/network-speed-test-local",
+      "totalFiles": 6,
+      "totalChars": 16245
+    },
+    {
+      "slug": "documentation-site-builder",
+      "name": "Documentation Site Builder",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/doc-store/doc-store.ts(10,11): error TS2304: Cannot find name 'renderEngine'.; src/page-editor/page-editor.ts(1,1): error TS2304: Cannot find name 'createApp'.; src/page-editor/page-editor.ts(1,11): error TS2304: Cannot find name 'App'.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/documentation-site-builder/documentation-site-builder",
+      "totalFiles": 6,
+      "totalChars": 14821
+    },
+    {
+      "slug": "language-learning-app",
+      "name": "Language Learning App",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "fail",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/learning-ui/learning-ui.ts(8,1): error TS1109: Expression expected.; src/learning-ui/learning-ui.ts(8,3): error TS1434: Unexpected keyword or identifier.",
+        "stubs: learning-ui.ts: matched '\\bnot implemented\\b' pattern; index.html: matched '\\bnot implemented\\b' pattern",
+        "security: index.html:117 eval() usage; lesson-engine.ts:13 eval() usage"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/language-learning-app/language-learning-app",
+      "totalFiles": 6,
+      "totalChars": 21753
+    },
+    {
+      "slug": "smart-home-dashboard",
+      "name": "Smart Home Dashboard",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/home-ui/home-ui.ts(5,10): error TS1005: '>' expected.; src/home-ui/home-ui.ts(5,15): error TS1005: '{' expected.; src/home-ui/home-ui.ts(5,32): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/smart-home-dashboard/smart-home-dashboard",
+      "totalFiles": 6,
+      "totalChars": 29123
+    },
+    {
+      "slug": "code-snippet-manager",
+      "name": "Code Snippet Manager",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/search-engine/search-engine.ts(18,1): error TS1434: Unexpected keyword or identifier.; src/search-engine/search-engine.ts(18,4): error TS1434: Unexpected keyword or identifier.; src/search-engine/search-engine.ts(18,8): error TS1434: Unexpected keyword or identifier.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/code-snippet-manager/code-snippet-manager",
+      "totalFiles": 6,
+      "totalChars": 22351
+    },
+    {
+      "slug": "survey-builder-analyzer",
+      "name": "Survey Builder & Analyzer",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/analytics-engine/analytics-engine.ts(29,20): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/survey-builder-analyzer/survey-builder-analyzer",
+      "totalFiles": 6,
+      "totalChars": 18998
+    },
+    {
+      "slug": "ai-chat-client",
+      "name": "AI Chat Client",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/chat-ui/chat-ui.ts(13,3): error TS2353: Object literal may only specify known properties, and 'MidnightBlue' does not exist in type '{ primary: string; background: string; surface: string; text: string; accent: string; }'.; src/chat-ui/chat-ui.ts(55,19): error TS7053: Element implicitly has an 'any' type because expression of type '\"MidnightBlue\"' can't be used to index type '{ primary: string; background: string; surface: string; text: string; accent: string; }'.; src/chat-ui/chat-ui.ts(77,53): error TS2551: Property 'onChange' does not exist on type 'HTMLElement'. Did you mean 'onchange'?",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/ai-chat-client/ai-chat-client",
+      "totalFiles": 6,
+      "totalChars": 23358
+    },
+    {
+      "slug": "traffic-simulation",
+      "name": "Traffic Simulation",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "pass",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/metrics-engine/metrics-engine.ts(14,62): error TS1005: ',' expected.; src/metrics-engine/metrics-engine.ts(14,65): error TS1002: Unterminated string literal.; src/metrics-engine/metrics-engine.ts(15,1): error TS1005: ',' expected.",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/traffic-simulation/traffic-simulation",
+      "totalFiles": 6,
+      "totalChars": 18041
+    },
+    {
+      "slug": "project-planner",
+      "name": "Project Planner",
+      "tier": "complex",
+      "pass": false,
+      "checks": {
+        "index_html": "pass",
+        "html_structure": "pass",
+        "ts_compiles": "fail",
+        "no_stubs": "fail",
+        "security": "pass",
+        "files_generated": "pass"
+      },
+      "problems": [
+        "tsc: src/task-editor/task-editor.ts(50,21): error TS1005: ',' expected.; src/task-editor/task-editor.ts(53,21): error TS1005: ',' expected.",
+        "stubs: planner-ui.ts: matched 'placeholder\\s+for\\b' pattern; index.html: matched 'placeholder\\s+for\\b' pattern",
+        "advisory: .innerHTML assignment (XSS advisory)"
+      ],
+      "outputDir": "/home/final-flash1/Desktop/visual-ai-architect/backend/exports/campaign50/project-planner/project-planner",
+      "totalFiles": 6,
+      "totalChars": 24158
+    }
+  ]
+}

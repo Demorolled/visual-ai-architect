@@ -1,0 +1,53 @@
+{
+  "app_type": "simon_says_2",
+  "description": "Memory sequence game with pattern generation, sound/light feedback, and difficulty scaling — Simon Says memory game with random pattern generation (color+audio), sequence playback animation, player input matching, pattern length progression, and score tracking",
+  "keywords": [
+    "simon",
+    "game",
+    "memory",
+    "sequence",
+    "pattern",
+    "simon",
+    "says",
+    "color pad",
+    "pattern generator",
+    "match checker",
+    "game data",
+    "game display"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Color Pad",
+    "Pattern Generator",
+    "Match Checker",
+    "Game Data",
+    "Game Display"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Color Pad",
+      "destination_module": "Pattern Generator",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Pattern Generator",
+      "destination_module": "Match Checker",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Match Checker",
+      "destination_module": "Game Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game Data",
+      "destination_module": "Game Display",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

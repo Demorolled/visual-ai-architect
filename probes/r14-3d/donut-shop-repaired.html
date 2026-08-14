@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Glazed Donut Showcase</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b0e14;font-family:system-ui,sans-serif;}
+  #scene{position:fixed;width:100%;height:100%;}
+  #hud{position:fixed;top:12px;left:12px;z-index:10;color:#e8d7a5;background:rgba(0,0,0,0.5);padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.25;text-shadow:1px 1px 1px rgba(0,0,0,0.5);backdrop-filter:blur(4px);pointer-events:none;}
+  #hud button{background:#c89140;color:#fff;border:none;padding:8px 16px;margin-left:8px;font-size:13px;cursor:pointer;transition:transform 0.125s,background 0.125s;}
+  #hud button:hover{transform:translateY(-1px);background:#e8a55a;}
+  #hud button:active{transform:translateY(1px);}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="hud">
+  <span>Glazed Donut</span>
+  <button id="glazeBtn">New Glaze</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('scene').appendChild(renderer.domElement);
+camera.position.z = 400;
+const donut = new THREE.Mesh(
+  new THREE.TorusKnotGeometry(50, 100, 128, 128),
+  new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.3, metalness: 0.2 })
+);
+donut.rotation.x = -Math.PI / 2;
+scene.add(donut);
+const spotlight = new THREE.SpotLight(0xffa072, 2, 1000);
+spotlight.position.set(150, 200, 200);
+spotlight.castShadow = true;
+spotlight.shadow.mapSize.set(1024, 1024);
+scene.add(spotlight);
+const plate = new THREE.Mesh(
+  new THREE.CircleGeometry(120, 32),
+  new THREE.MeshStandardMaterial({ color: 0xededd9, roughness: 0.8, metalness: 0 })
+);
+scene.add(plate);
+const glazeColors = [0xff6600, 0x66d9ff, 0x22ff22, 0xff22ff];
+let currentGlaze = 0;
+const glazeBtn = document.getElementById('glazeBtn');
+glazeBtn.addEventListener('click', () => {
+  currentGlaze = (currentGlaze + 1) % glazeColors.length;
+  donut.material.color.set(glazeColors[currentGlaze]);
+});
+const clock = new THREE.Clock();
+const animate = () => {
+  requestAnimationFrame(animate);
+  donut.rotation.y += 0.005;
+  donut.rotation.x += 0.005;
+  const t = clock.getElapsedTime();
+  spotlight.position.x = 150 + 100 * Math.cos(t * 0.5);
+  spotlight.position.z = 200 + 100 * Math.sin(t * 0.5);
+  renderer.render(scene, camera);
+};
+animate();
+</script>
+</body>
+</html>

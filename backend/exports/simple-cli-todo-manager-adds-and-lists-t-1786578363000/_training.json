@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-12T23:46:03.000Z",
+  "request": "simple cli todo manager — adds and lists todos from the command line",
+  "intent": {
+    "goal": "simple cli todo manager — adds and lists todos from the command line",
+    "targetUser": "",
+    "coreFeatures": [
+      "todo / task list"
+    ],
+    "uiStyle": "cli",
+    "language": ""
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "src/main.ts",
+      "summary": "Entry point: parses args, orchestrates the app",
+      "language": "typescript",
+      "exports": [
+        "run",
+        "main"
+      ]
+    },
+    {
+      "path": "src/todo.ts",
+      "summary": "Todo item type and CRUD operations",
+      "language": "typescript",
+      "exports": [
+        "addTodo",
+        "listTodos"
+      ]
+    },
+    {
+      "path": "src/storage.ts",
+      "summary": "File-based JSON storage for todos",
+      "language": "typescript",
+      "exports": [
+        "loadTodos",
+        "saveTodos"
+      ]
+    }
+  ],
+  "mode": "one-shot-rebuild",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "(rebuilt from last session's _training.json — original blank/stub CLI was replaced with a working implementation)",
+  "files": [
+    "src/main.ts",
+    "src/todo.ts",
+    "src/storage.ts"
+  ],
+  "status": "verified",
+  "capturedAt": "2026-08-12T23:46:45.000Z",
+  "capturedRows": 2,
+  "cliGate": {
+    "bare": "passed",
+    "help": "passed",
+    "h": "passed",
+    "add": "passed",
+    "list": "passed",
+    "complete": "passed",
+    "remove": "passed"
+  }
+}

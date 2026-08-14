@@ -1,0 +1,39 @@
+{
+  "app_type": "screen_ruler_2",
+  "description": "On-screen pixel ruler with measurement tools — Interactive screen ruler with real-time visualization and analysis",
+  "keywords": [
+    "desktop",
+    "screen-ruler",
+    "utility",
+    "developer-tools",
+    "desktop",
+    "screen",
+    "ruler",
+    "data store",
+    "search & filter",
+    "user interface"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Store",
+      "destination_module": "Search & Filter",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search & Filter",
+      "destination_module": "User Interface",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

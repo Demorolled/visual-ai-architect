@@ -1,0 +1,54 @@
+{
+  "app_type": "memory_allocator_lab",
+  "description": "Interactive memory allocator simulator with stack, heap, pool, and slab allocators — Visualizes memory allocation strategies: bump allocator, free-list, buddy system, slab allocator, arena. Shows memory fragmentation, allocation/deallocation patterns, and garbage collection (mark-sweep, copying)",
+  "keywords": [
+    "memory-management",
+    "allocator",
+    "gc",
+    "fragmentation",
+    "low-level",
+    "memory",
+    "allocator",
+    "lab",
+    "alloc config",
+    "allocation engine",
+    "memory block store",
+    "gc simulator",
+    "memory map"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Alloc Config",
+    "Allocation Engine",
+    "Memory Block Store",
+    "GC Simulator",
+    "Memory Map"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Alloc Config",
+      "destination_module": "Allocation Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Allocation Engine",
+      "destination_module": "Memory Block Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Memory Block Store",
+      "destination_module": "GC Simulator",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "GC Simulator",
+      "destination_module": "Memory Map",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

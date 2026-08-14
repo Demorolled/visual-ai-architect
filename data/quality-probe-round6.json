@@ -1,0 +1,16 @@
+{
+ "recalled": 3,
+ "codegen": {
+  "def": true,
+  "cache": true,
+  "recursion": true
+ },
+ "blueprint_ok": true,
+ "blueprint_detail": "app_type=todo_list_app nodes=5 edges=5",
+ "emotion": {
+  "first": true,
+  "followup": true
+ },
+ "self_analysis_ok": true,
+ "at": "2026-08-08T19:55:05Z"
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>3D Night City Skyline</title>
+<style>
+  html,body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#0b0c10; font-family:system-ui,sans-serif; }
+  #scene { position:fixed; inset:0; }
+  #hud { position:fixed; top:12px; left:12px; z-index:10; color:#e9eff6; font-size:12px; white-space:nowrap; }
+  #hud span { margin-right:8px; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="hud">
+  <button id="btnRandomize">Randomize City</button>
+  <span>City Size:</span> <span id="hudCitySize">1000x1000</span>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0b0c10);
+  const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  document.getElementById('scene').appendChild(renderer.domElement);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  let citySize = 1000;
+  let randomCity = () => {
+    scene.traverse((o) => { if (o.isMesh) o.geometry.dispose(); });
+    scene.children = [camera, renderer.domElement];
+    scene.background = new THREE.Color(0x0b0c10);
+    scene.fog = new THREE.Fog(0x0b0c10, 1600, 4000);
+    camera.position.set(0, 120, 300);
+    camera.rotation.set(0, -0.1, 0);
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(citySize, 1, citySize), new THREE.MeshStandardMaterial({ color: 0x1a202c, roughness: 0.35 }));
+    scene.add(floor);
+    for (let x = -citySize / 2; x < citySize / 2; x += 3) {
+      for (let z = -citySize / 2; z < citySize / 2; z += 3) {
+        const h = 10 + Math.random() * 30;
+        const b = new THREE.BoxGeometry(3, h, 3);
+        const m = new THREE.MeshBasicMaterial({ color: 0xffffff * (1 - h / 40) });
+        const mg = new THREE.Mesh(b, m);
+        mg.position.set(x, h / 2, z);
+        mg.castShadow = true;
+        scene.add(mg);
+        for (let y = 0; y < h; y += 3) {
+          const n = Math.random() * 3 + 1;
+          for (let l = 0; l < n; l++) {
+            const lpos = new THREE.Vector3();
+            const light = new THREE.PointLight(0xffffff, 0.5, 100);
+            light.position.copy(lpos);
+            light.position.y = y + 2;
+            light.position.addScaledVector(mg.position, 0.25);
+            scene.add(light);
+          }
+        }
+      }
+    }
+    const road = new THREE.Mesh(new THREE.BoxGeometry(citySize / 2, 1, citySize / 2), new THREE.MeshStandardMaterial({ color: 0x263248, roughness: 0.75 }));
+    road.position.set(0, -0.5, 0);
+    scene.add(road);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const ambient = new THREE.AmbientLight(0x1a202c);
+    scene.add(ambient);
+    const spot = new THREE.SpotLight(0xffffff);
+    spot.position.set(0, 200, 0);
+    spot.castShadow = true;
+    spot.shadow.mapSize.set(1024, 1024);
+    scene.add(spot);
+    scene.background = new THREE.Color(0x1a202c);
+    scene.fog = new THREE.Fog(0x1a202c, 1600, 4000);
+    camera.position.set(0, 120, 300);
+    camera.rotation.set(0, -0.1, 0);
+  };
+  randomCity();
+  document.getElementById('btnRandomize').addEventListener('click', randomCity);
+  window.addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+  controls.update();
+  renderer.setAnimationLoop(() => {
+    renderer.render(scene, camera);
+    controls.update();
+  });
+</script>
+</body>
+</html>

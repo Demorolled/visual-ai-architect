@@ -1,0 +1,53 @@
+{
+  "app_type": "compiler_explorer",
+  "description": "Educational compiler: lexer, parser, AST, IR, and x86 code generation — Interactive showing each compiler stage: tokens, AST, semantic analysis, IR, assembly output",
+  "keywords": [
+    "compiler",
+    "lexer",
+    "parser",
+    "ast",
+    "education",
+    "compiler",
+    "explorer",
+    "source editor",
+    "lexer & parser",
+    "semantic analyzer",
+    "compilation store",
+    "pipeline view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Source Editor",
+    "Lexer & Parser",
+    "Semantic Analyzer",
+    "Compilation Store",
+    "Pipeline View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Source Editor",
+      "destination_module": "Lexer & Parser",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Lexer & Parser",
+      "destination_module": "Semantic Analyzer",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Semantic Analyzer",
+      "destination_module": "Compilation Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Compilation Store",
+      "destination_module": "Pipeline View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

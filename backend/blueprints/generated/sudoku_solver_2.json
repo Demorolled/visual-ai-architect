@@ -1,0 +1,53 @@
+{
+  "app_type": "sudoku_solver_2",
+  "description": "Sudoku puzzle with backtracking solver, pencil marks, and difficulty levels — Complete Sudoku application with puzzle generation (easy/medium/hard), backtracking solver with constraint propagation, pencil mark mode, and validation",
+  "keywords": [
+    "sudoku",
+    "game",
+    "puzzle",
+    "backtracking",
+    "solver",
+    "sudoku",
+    "solver",
+    "sudoku input",
+    "backtracking solver",
+    "puzzle generator",
+    "puzzle state",
+    "board renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Sudoku Input",
+    "Backtracking Solver",
+    "Puzzle Generator",
+    "Puzzle State",
+    "Board Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Sudoku Input",
+      "destination_module": "Backtracking Solver",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Backtracking Solver",
+      "destination_module": "Puzzle Generator",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Puzzle Generator",
+      "destination_module": "Puzzle State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Puzzle State",
+      "destination_module": "Board Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

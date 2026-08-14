@@ -1,0 +1,54 @@
+{
+  "app_type": "loki_logql_lab_2",
+  "description": "Loki LogQL query builder for log aggregation — Interactive loki logql lab with real-time visualization and analysis",
+  "keywords": [
+    "devops",
+    "loki",
+    "logql",
+    "logging",
+    "devops",
+    "loki",
+    "logql",
+    "lab",
+    "config input",
+    "orchestrator",
+    "state store",
+    "analysis engine",
+    "ops dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Config Input",
+    "Orchestrator",
+    "State Store",
+    "Analysis Engine",
+    "Ops Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Config Input",
+      "destination_module": "Orchestrator",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Orchestrator",
+      "destination_module": "State Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "State Store",
+      "destination_module": "Analysis Engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Engine",
+      "destination_module": "Ops Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

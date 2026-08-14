@@ -1,0 +1,41 @@
+/* ui.css */
+
+.ui-board {
+    grid-template-rows: repeat(3, auto);
+    grid-template-columns: repeat(3, 1fr);
+    display: grid;
+}
+
+.ui-cell {
+    background-color: #fff;
+    border: 2px solid #ddd;
+    padding: 16px;
+    cursor: pointer;
+}
+
+.ui-board:hover .ui-cell:not(.selected) {
+    background-color: #f0f0f0;
+}
+
+.ui-winning-banner, .ui-tie-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border: 1px solid #ccc;
+    font-size: 2em;
+    color: #fff;
+    background-color: #333;
+    opacity: 0.8;
+}
+
+.ui-winning-banner::after,
+.ui-tie-banner::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #333;
+}

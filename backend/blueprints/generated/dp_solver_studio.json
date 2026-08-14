@@ -1,0 +1,61 @@
+{
+  "app_type": "dp_solver_studio",
+  "description": "Interactive dynamic programming table builder with memoization vs tabulation comparison — Solves classic DP problems (knapsack, LCS, edit distance, subset sum, matrix chain) with visual DP tables, memoization tree highlighting, and optimal substructure exploration",
+  "keywords": [
+    "dynamic-programming",
+    "dp",
+    "memoization",
+    "tabulation",
+    "algorithms",
+    "dp",
+    "solver",
+    "studio",
+    "problem config",
+    "dp engine",
+    "dp table store",
+    "optimal path finder",
+    "dp table viewer",
+    "solution panel"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Problem Config",
+    "DP Engine",
+    "DP Table Store",
+    "Optimal Path Finder",
+    "DP Table Viewer",
+    "Solution Panel"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Problem Config",
+      "destination_module": "DP Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "DP Engine",
+      "destination_module": "DP Table Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "DP Table Store",
+      "destination_module": "Optimal Path Finder",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Optimal Path Finder",
+      "destination_module": "DP Table Viewer",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "DP Table Viewer",
+      "destination_module": "Solution Panel",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

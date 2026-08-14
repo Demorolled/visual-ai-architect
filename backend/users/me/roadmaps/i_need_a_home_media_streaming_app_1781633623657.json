@@ -1,0 +1,312 @@
+{
+  "projectName": "i need a home media streaming app",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1781633420779_qrovia",
+      "type": "logic",
+      "label": "main.ts",
+      "description": "The entry point of the application. Initializes the server, loads configurations, and connects to the database. Imports services and UI components.",
+      "language": "typescript",
+      "position": {
+        "x": 10,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1781633420779_hfo4xa",
+      "type": "logic",
+      "label": "config.ts",
+      "description": "Contains application configuration including network settings, database connection strings, and other constants. Uses environment variables for sensitive information.",
+      "language": "typescript",
+      "position": {
+        "x": 10,
+        "y": 120
+      }
+    },
+    {
+      "id": "node_1781633420779_iakkwq",
+      "type": "api",
+      "label": "database.ts",
+      "description": "Manages database operations. Responsible for connecting to the database and executing queries on media files, streaming sessions, and user data.",
+      "language": "typescript",
+      "position": {
+        "x": 10,
+        "y": 190
+      }
+    },
+    {
+      "id": "node_1781633420779_hozxtl",
+      "type": "logic",
+      "label": "media_service.ts",
+      "description": "Handles the business logic for managing media files. Can include methods for uploading, organizing, and retrieving media data.",
+      "language": "typescript",
+      "position": {
+        "x": 100,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1781633420779_wewtq7",
+      "type": "logic",
+      "label": "user_service.ts",
+      "description": "Handles user authentication, authorization, and profile management. Includes methods for registering new users, logging in, and updating profiles.",
+      "language": "typescript",
+      "position": {
+        "x": 100,
+        "y": 190
+      }
+    },
+    {
+      "id": "node_1781633420779_nbtdmr",
+      "type": "logic",
+      "label": "stream_service.ts",
+      "description": "Manages streaming sessions. Includes methods to initiate and terminate streams, handle user connections, and manage playback settings.",
+      "language": "typescript",
+      "position": {
+        "x": 190,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1781633420779_t883kr",
+      "type": "api",
+      "label": "connection_service.ts",
+      "description": "Handles network connections. Includes methods to detect available devices on the network and establish streaming sessions.",
+      "language": "typescript",
+      "position": {
+        "x": 190,
+        "y": 230
+      }
+    },
+    {
+      "id": "node_1781633420779_z6579s",
+      "type": "ui",
+      "label": "home_screen.tsx",
+      "description": "The main user interface for the home screen. Displays a list of media files and streams available devices to stream to.",
+      "language": "typescript",
+      "position": {
+        "x": 280,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1781633420779_3n4bp2",
+      "type": "ui",
+      "label": "connection_screen.tsx",
+      "description": "The user interface for managing streaming connections. Displays a list of active streams and allows users to initiate new sessions.",
+      "language": "typescript",
+      "position": {
+        "x": 280,
+        "y": 130
+      }
+    },
+    {
+      "id": "node_1781633420779_rx4au9",
+      "type": "ui",
+      "label": "styles.css",
+      "description": "Contains global styles for the application. Defines common UI elements like buttons, text, and backgrounds.",
+      "language": "css",
+      "position": {
+        "x": 280,
+        "y": 190
+      }
+    },
+    {
+      "id": "node_1781633420779_0vsmg1",
+      "type": "logic",
+      "label": "types.ts",
+      "description": "Defines types and interfaces used throughout the application. Helps enforce data structure consistency across different parts of the codebase.",
+      "language": "typescript",
+      "position": {
+        "x": 10,
+        "y": 260
+      }
+    },
+    {
+      "id": "node_1781633420779_fzysuf",
+      "type": "api",
+      "label": "server.ts",
+      "description": "Sets up the server using an Express.js framework. Defines routes and middleware for handling incoming requests.",
+      "language": "typescript",
+      "position": {
+        "x": 190,
+        "y": 260
+      }
+    },
+    {
+      "id": "node_1781633420779_w8f8ql",
+      "type": "logic",
+      "label": "validator.ts",
+      "description": "Contains validation logic to ensure data integrity and error handling. Uses Joi for schema validation across different layers.",
+      "language": "typescript",
+      "position": {
+        "x": 10,
+        "y": 320
+      }
+    },
+    {
+      "id": "node_1781633420779_301hze",
+      "type": "logic",
+      "label": "logger.ts",
+      "description": "Handles logging throughout the application. Outputs logs to systemd journal for easy monitoring and debugging.",
+      "language": "typescript",
+      "position": {
+        "x": 190,
+        "y": 320
+      }
+    },
+    {
+      "id": "node_1781633420779_8ts98g",
+      "type": "api",
+      "label": "routes.ts",
+      "description": "Defines API routes for the application. Includes endpoints for media management, user authentication, and stream control.",
+      "language": "typescript",
+      "position": {
+        "x": 100,
+        "y": 320
+      }
+    },
+    {
+      "id": "node_1781633420779_gyypj1",
+      "type": "api",
+      "label": "middleware.ts",
+      "description": "Handles middleware functions for incoming requests. Includes authentication checking and other pre-request processing.",
+      "language": "typescript",
+      "position": {
+        "x": 100,
+        "y": 380
+      }
+    },
+    {
+      "id": "node_1781633420779_ra1psj",
+      "type": "logic",
+      "label": "package.json",
+      "description": "Metadata for the project including dependencies, scripts, and configuration settings. Used by npm to manage package installations and scripts.",
+      "language": "json",
+      "position": {
+        "x": 360,
+        "y": 80
+      }
+    },
+    {
+      "id": "node_1781633420779_ydyots",
+      "type": "logic",
+      "label": "tsconfig.json",
+      "description": "Compiler options used by TypeScript for compiling the project. Defines configurations like target language, module system, and source map generation.",
+      "language": "json",
+      "position": {
+        "x": 360,
+        "y": 150
+      }
+    },
+    {
+      "id": "node_1781633420779_d1utvv",
+      "type": "logic",
+      "label": "tslint.json",
+      "description": "Configuration file for TypeScript linting rules to enforce code quality and consistency.",
+      "language": "json",
+      "position": {
+        "x": 360,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1781633420779_czxsl8",
+      "type": "logic",
+      "label": "jest.config.js",
+      "description": "Configuration file for Jest test runner including settings like coverage threshold and transform rules.",
+      "language": "js",
+      "position": {
+        "x": 360,
+        "y": 290
+      }
+    },
+    {
+      "id": "node_1781633420779_v4dzvl",
+      "type": "logic",
+      "label": "systemd.service",
+      "description": "Systemd service file for packaging the application as a .deb file. Defines how the app is started and stopped on the system.",
+      "language": "ini",
+      "position": {
+        "x": 360,
+        "y": 360
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_hfo4xa"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_iakkwq"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_hozxtl"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_wewtq7"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_nbtdmr"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_t883kr"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_z6579s"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_3n4bp2"
+    },
+    {
+      "source": "node_1781633420779_qrovia",
+      "target": "node_1781633420779_fzysuf"
+    },
+    {
+      "source": "node_1781633420779_hfo4xa",
+      "target": "node_1781633420779_iakkwq"
+    },
+    {
+      "source": "node_1781633420779_iakkwq",
+      "target": "node_1781633420779_hozxtl"
+    },
+    {
+      "source": "node_1781633420779_iakkwq",
+      "target": "node_1781633420779_wewtq7"
+    },
+    {
+      "source": "node_1781633420779_t883kr",
+      "target": "node_1781633420779_z6579s"
+    },
+    {
+      "source": "node_1781633420779_hozxtl",
+      "target": "node_1781633420779_nbtdmr"
+    },
+    {
+      "source": "node_1781633420779_hozxtl",
+      "target": "node_1781633420779_w8f8ql"
+    },
+    {
+      "source": "node_1781633420779_wewtq7",
+      "target": "node_1781633420779_w8f8ql"
+    },
+    {
+      "source": "node_1781633420779_fzysuf",
+      "target": "node_1781633420779_8ts98g"
+    },
+    {
+      "source": "node_1781633420779_fzysuf",
+      "target": "node_1781633420779_gyypj1"
+    }
+  ],
+  "createdAt": "2026-06-16T18:13:43.657Z"
+}

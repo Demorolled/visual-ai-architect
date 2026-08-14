@@ -1,0 +1,188 @@
+{
+  "projectName": "chess game",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785322358726_vgwnio",
+      "type": "ui-functions",
+      "label": "main.go",
+      "description": "Entry point: instantiates the game, handles I/O to/from stdin/stdout. Sets up command-line arguments and exits on quit or error. Imports: 0, game.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 90
+      }
+    },
+    {
+      "id": "node_1785322358726_n45csc",
+      "type": "logic",
+      "label": "types.go",
+      "description": "Types and interfaces for the chess game domain: 0, Pieces, BoardPosition. Used across various files. Imports: none.",
+      "language": "go",
+      "position": {
+        "x": 300,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785322358726_nn1yfr",
+      "type": "logic",
+      "label": "game.go",
+      "description": "Business logic for the game: 0, play, moves. Exports: Play(), ValidateMove(). Returns Errors on invalid input or moves. Imports: types.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785322358726_xrljgz",
+      "type": "database",
+      "label": "board.go",
+      "description": "Data access and manipulation layer for the game state: 0, moves. Exports: UpdateBoard(), GetPieceAt(). Thread-safe with mutex. Imports: types.",
+      "language": "go",
+      "position": {
+        "x": 100,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785322358726_oy22p5",
+      "type": "ui-functions",
+      "label": "ui.go",
+      "description": "UI functions for input/output: prompts user moves, renders game state in stdout. Imports: 0, game.",
+      "language": "go",
+      "position": {
+        "x": 600,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785322358726_oyt0sr",
+      "type": "database",
+      "label": "gamestate.go",
+      "description": "GameState to represent all pieces and their positions. Exports: NewGameState(), Move Piece(). Implements: types.GameState interface.",
+      "language": "go",
+      "position": {
+        "x": 250,
+        "y": 310
+      }
+    },
+    {
+      "id": "node_1785322358726_dz43oz",
+      "type": "logic",
+      "label": "moves.go",
+      "description": "List of allowed moves for each piece type. Used by game to validate Moves. Exports: MovesForPiece(). Imports: types.",
+      "language": "go",
+      "position": {
+        "x": 150,
+        "y": 240
+      }
+    },
+    {
+      "id": "node_1785322358726_vandgq",
+      "type": "logic",
+      "label": "validations.go",
+      "description": "Game validation logic implemented here. Checks for valid moves. Exports: ValidateMove(). Imports: 0, types.",
+      "language": "go",
+      "position": {
+        "x": 380,
+        "y": 240
+      }
+    },
+    {
+      "id": "node_1785322358726_pe46lh",
+      "type": "logic",
+      "label": "errors.go",
+      "description": "Error definitions for chess domain. Exports: InvalidMove error type. Imports: none.",
+      "language": "go",
+      "position": {
+        "x": 480,
+        "y": 130
+      }
+    },
+    {
+      "id": "node_1785322358726_zafl52",
+      "type": "logic",
+      "label": "tests/game_test.go",
+      "description": "Unit tests for game-related logic. Imports: 0, game.",
+      "language": "go",
+      "position": {
+        "x": 800,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785322358726_sqp45c",
+      "type": "logic",
+      "label": "buildconfig.env",
+      "description": "Environment variables for build settings. Imports: none.",
+      "language": "typescript",
+      "position": {
+        "x": 350,
+        "y": -40
+      }
+    },
+    {
+      "id": "node_1785322358726_45835r",
+      "type": "ui",
+      "label": "ui.go",
+      "description": "User interface layer. Renders output and handles user input. For CLI: prints formatted output, reads stdin. For web: HTML templates or JSON API responses. Imports: types, handlers.",
+      "language": "go",
+      "position": {
+        "x": 900,
+        "y": 410
+      }
+    },
+    {
+      "id": "node_1785322358726_onie75",
+      "type": "api",
+      "label": "handlers.go",
+      "description": "API request handlers. Routes incoming requests to business logic, validates input, formats JSON responses. Handles HTTP methods (GET, POST, PUT, DELETE). Imports: service, types.",
+      "language": "go",
+      "position": {
+        "x": 900,
+        "y": 710
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785322358726_vgwnio",
+      "target": "node_1785322358726_n45csc"
+    },
+    {
+      "source": "node_1785322358726_vgwnio",
+      "target": "node_1785322358726_nn1yfr"
+    },
+    {
+      "source": "node_1785322358726_nn1yfr",
+      "target": "node_1785322358726_xrljgz"
+    },
+    {
+      "source": "node_1785322358726_45835r",
+      "target": "node_1785322358726_dz43oz"
+    },
+    {
+      "source": "node_1785322358726_45835r",
+      "target": "node_1785322358726_vandgq"
+    },
+    {
+      "source": "node_1785322358726_vgwnio",
+      "target": "node_1785322358726_45835r"
+    },
+    {
+      "source": "node_1785322358726_nn1yfr",
+      "target": "node_1785322358726_n45csc"
+    },
+    {
+      "source": "node_1785322358726_xrljgz",
+      "target": "node_1785322358726_dz43oz"
+    },
+    {
+      "source": "node_1785322358726_xrljgz",
+      "target": "node_1785322358726_vandgq"
+    }
+  ],
+  "createdAt": "2026-07-29T20:31:43.773Z"
+}

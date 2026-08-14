@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+        .row { display: flex; gap: 10px; align-items: center; }
+        .col { display: flex; flex-direction: column; gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .btn { padding: 12px 24px; border: 1px solid #333; border-radius: 8px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .card { background: #15152a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; }
+        .card h3 { margin: 0 0 8px; }
+        .card p { margin: 0 0 12px; }
+        .card button { margin-top: 12px; }
+        .videoDisplay { width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="grid">
+            <div class="card">
+                <h3>Game Board</h3>
+                <p id="board"> </p>
+                <button id="playBtn" class="btn" onclick="play()">▶ Play</button>
+            </div>
+            <div class="card">
+                <h3>Player</h3>
+                <p id="player">X</p>
+            </div>
+            <div class="card">
+                <h3>Opponent</h3>
+                <p id="opponent">O</p>
+            </div>
+            <div class="card">
+                <h3>Result</h3>
+                <p id="result"> </p>
+            </div>
+        </div>
+    </div>
+    <script>
+        const board = document.getElementById('board');
+        const player = document.getElementById('player');
+        const opponent = document.getElementById('opponent');
+        const result = document.getElementById('result');
+        const playBtn = document.getElementById('playBtn');
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameRunning = true;
+
+        function play(index) {
+            if (gameRunning && gameBoard[index] === '') {
+                gameBoard[index] = currentPlayer;
+                board.textContent = gameBoard.join('\n');
+                checkWinner();
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                playBtn.textContent = `Player: ${currentPlayer}`;
+            }
+            if (gameRunning && currentPlayer === 'O') {
+                const bestMove = minimax(gameBoard, 'O', -1000, 1000);
+                gameBoard[bestMove.index] = 'O';
+                board.textContent = gameBoard.join('\n');
+                checkWinner();
+            }
+        }
+
+        function minimax(board, player, alpha, beta) {
+            let winner = checkWinner(board);
+            if (winner === 'X') return { index: -1, score: -1000 };
+            if (winner === 'O') return { index: -1, score: 1000 };
+            if (winner === 'Tie') return { index: -1, score: 0 };
+
+            let moves = [];
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    moves.push(i);
+                }
+            }
+
+            if (player === 'X') {
+                let bestScore = -1000;
+                let bestMove = {};
+                for (let move of moves) {
+                    gameBoard[move] = 'X';
+                    let score = minimax(gameBoard, 'O', alpha, beta).score;
+                    gameBoard[move] = '';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove.index = move;
+                    }
+                    alpha = Math.max(alpha, bestScore);
+                    if (alpha >= beta) break;
+                }
+                return bestMove;
+            } else {
+                let bestScore = 1000;
+                let bestMove = {};
+                for (let move of moves) {
+                    gameBoard[move] = 'O';
+                    let score = minimax(gameBoard, 'X', alpha, beta).score;
+                    gameBoard[move] = '';
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestMove.index = move;
+                    }
+                    beta = Math.min(beta, bestScore);
+                    if (alpha >= beta) break;
+                }
+                return bestMove;
+            }
+        }
+
+        function checkWinner() {
+            let winner = '';
+            if (gameBoard[0] === gameBoard[1] && gameBoard[1] === gameBoard[2] && gameBoard[0] !== '') winner = gameBoard[0];
+            if (gameBoard[3] === gameBoard[4] && gameBoard[4] === gameBoard[5] && gameBoard[3] !== '') winner = gameBoard[3];
+            if (gameBoard[6] === gameBoard[7] && gameBoard[7] === gameBoard[8] && gameBoard[6] !== '') winner = gameBoard[6];
+            if (gameBoard[0] === gameBoard[3] && gameBoard[3] === gameBoard[6] && gameBoard[0] !== '') winner = gameBoard[0];
+            if (gameBoard[1] === gameBoard[4] && gameBoard[4] === gameBoard[7] && gameBoard[1] !== '') winner = gameBoard[1];
+            if (gameBoard[2] === gameBoard[5] && gameBoard[5] === gameBoard[8] && gameBoard[2] !== '') winner = gameBoard[2];
+            if (gameBoard[0] === gameBoard[4] && gameBoard[4] === gameBoard[8] && gameBoard[0] !== '') winner = gameBoard[0];
+            if (gameBoard[2] === gameBoard[4] && gameBoard[4] === gameBoard[6] && gameBoard[2] !== '') winner = gameBoard[2];
+
+            if (winner === 'X') {
+                result.textContent = 'Player wins!';
+                gameRunning = false;
+            } else if (winner === 'O') {
+                result.textContent = 'Opponent wins!';
+                gameRunning = false;
+            } else if (gameBoard.every(cell => cell !== '')) {
+                result.textContent = 'Tie game!';
+                gameRunning = false;
+            }
+        }
+
+        playBtn.onclick = play;
+    </script>
+</body>
+</html>

@@ -1,0 +1,973 @@
+{
+ "generatedAt": "2026-08-10T10:59:40Z",
+ "sourceSheets": [
+  "02-app-type-templates.md",
+  "01-node-architecture-reference.md",
+  "07-node-implementation-guide.md"
+ ],
+ "nodeTypes": [
+  {
+   "type": "input",
+   "purpose": "Handle user input, validate, sanitize",
+   "variants": [
+    "CLI Args",
+    "HTTP Request",
+    "File Input",
+    "Form Input",
+    "WebSocket",
+    "Stdin"
+   ],
+   "canonicalFiles": [
+    "src/input/index.ts",
+    "src/input/validation.ts"
+   ]
+  },
+  {
+   "type": "logic",
+   "purpose": "Business logic, processing, computation",
+   "variants": [
+    "Pure function",
+    "Pipeline",
+    "State machine"
+   ],
+   "canonicalFiles": [
+    "src/logic/index.ts"
+   ]
+  },
+  {
+   "type": "database",
+   "purpose": "Data persistence, storage, retrieval",
+   "variants": [
+    "SQLite (default)",
+    "PostgreSQL",
+    "JSON File",
+    "In-Memory"
+   ],
+   "canonicalFiles": [
+    "src/db/schema.ts",
+    "src/db/repository.ts",
+    "data/app.db"
+   ]
+  },
+  {
+   "type": "ui",
+   "purpose": "User interface rendering",
+   "variants": [
+    "Web UI (React)",
+    "Terminal UI (Bubble Tea)",
+    "Desktop UI"
+   ],
+   "canonicalFiles": [
+    "src/ui/App.tsx",
+    "src/ui/components/"
+   ]
+  },
+  {
+   "type": "api",
+   "purpose": "External service integration",
+   "variants": [
+    "REST",
+    "WebSocket",
+    "System command"
+   ],
+   "canonicalFiles": [
+    "src/api/client.ts"
+   ]
+  }
+ ],
+ "universalSkeleton": [
+  "src/index.ts",
+  "src/types.ts",
+  "src/config.ts",
+  "src/input/",
+  "src/logic/",
+  "src/db/schema.ts",
+  "src/db/repository.ts",
+  "src/ui/App.tsx",
+  "src/ui/components/",
+  "data/app.db",
+  "package.json",
+  "tsconfig.json",
+  "README.md"
+ ],
+ "appTypes": [
+  {
+   "appType": "CLI Tool",
+   "nodes": [
+    {
+     "name": "Input",
+     "type": "input"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Output",
+     "type": "ui"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    }
+   ],
+   "files": [
+    "cmd/",
+    "cmd/app/",
+    "cmd/app/main.go",
+    "cmd/app/main.ts",
+    "pkg/",
+    "src/",
+    "src/input/",
+    "src/logic/",
+    "src/db/",
+    "src/output/",
+    "config/",
+    "config/config.yaml",
+    "Makefile",
+    "README.md"
+   ],
+   "languages": [
+    "Go",
+    "TypeScript"
+   ],
+   "libraries": [
+    "spf13/cobra",
+    "spf13/viper",
+    "charmbracelet/bubbletea",
+    "commander",
+    "inquirer",
+    "chalk",
+    "ora",
+    "click",
+    "rich",
+    "typer"
+   ],
+   "database": "SQLite / None",
+   "interface": "Terminal",
+   "bestFor": "System utilities, file processors, dev tools",
+   "nodeCount": "3-5",
+   "selectionKeywords": [
+    "convert files",
+    "analyze data"
+   ]
+  },
+  {
+   "appType": "Web App",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "API",
+     "type": "api"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    }
+   ],
+   "files": [
+    "frontend/",
+    "frontend/src/",
+    "frontend/src/components/",
+    "frontend/src/pages/",
+    "frontend/src/api/",
+    "frontend/src/App.tsx",
+    "frontend/index.html",
+    "frontend/vite.config.ts",
+    "backend/",
+    "backend/src/",
+    "backend/src/routes/",
+    "backend/src/services/",
+    "backend/src/db/",
+    "backend/src/index.ts",
+    "backend/package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "React"
+   ],
+   "libraries": [
+    "better-sqlite3"
+   ],
+   "database": "SQLite / PostgreSQL",
+   "interface": "Web Browser",
+   "bestFor": "Dashboards, management tools, collaborative apps",
+   "nodeCount": "5-8",
+   "selectionKeywords": [
+    "manage tasks",
+    "shopping cart",
+    "monitor metrics",
+    "admin panel",
+    "appointment booking"
+   ]
+  },
+  {
+   "appType": "Media Server",
+   "nodes": [
+    {
+     "name": "Library",
+     "type": "database"
+    },
+    {
+     "name": "Scanner",
+     "type": "logic"
+    },
+    {
+     "name": "Stream",
+     "type": "api"
+    },
+    {
+     "name": "Server",
+     "type": "custom"
+    }
+   ],
+   "files": [
+    "src/",
+    "src/scanner/",
+    "src/library/",
+    "src/transcoder/",
+    "src/stream/",
+    "src/api/",
+    "src/ui/",
+    "data/",
+    "package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "Python",
+    "React"
+   ],
+   "libraries": [
+    "fluent-ffmpeg",
+    "music-metadata",
+    "sharp",
+    "ffmpeg-python"
+   ],
+   "database": "SQLite",
+   "interface": "Web UI + Native",
+   "bestFor": "Home streaming, media management, audio/video processing",
+   "nodeCount": "6-10",
+   "selectionKeywords": [
+    "stream media"
+   ]
+  },
+  {
+   "appType": "System Tool",
+   "nodes": [
+    {
+     "name": "Collector",
+     "type": "input"
+    },
+    {
+     "name": "Checks",
+     "type": "logic"
+    },
+    {
+     "name": "Report",
+     "type": "ui"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    },
+    {
+     "name": "TUI",
+     "type": "ui"
+    }
+   ],
+   "files": [
+    "cmd/",
+    "cmd/app/main.go",
+    "pkg/",
+    "pkg/collector/",
+    "pkg/checks/",
+    "pkg/db/",
+    "pkg/report/",
+    "pkg/tui/",
+    "Makefile",
+    "README.md"
+   ],
+   "languages": [
+    "Go",
+    "Python"
+   ],
+   "libraries": [
+    "shirou/gopsutil",
+    "charmbracelet/bubbletea",
+    "spf13/cobra",
+    "psutil",
+    "rich",
+    "click"
+   ],
+   "database": "SQLite",
+   "interface": "Terminal UI",
+   "bestFor": "Diagnostics, monitoring, system management",
+   "nodeCount": "4-7",
+   "selectionKeywords": [
+    "scan my system"
+   ]
+  },
+  {
+   "appType": "Desktop App",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Files",
+     "type": "database"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    }
+   ],
+   "files": [],
+   "languages": [
+    "TypeScript",
+    "React"
+   ],
+   "libraries": [],
+   "database": "SQLite",
+   "interface": "Native Linux UI",
+   "bestFor": "Productivity tools, file managers, media players",
+   "nodeCount": "4-6",
+   "selectionKeywords": [
+    "build a player"
+   ]
+  },
+  {
+   "appType": "API Server",
+   "nodes": [
+    {
+     "name": "Auth",
+     "type": "logic"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Middle",
+     "type": "custom"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    }
+   ],
+   "files": [],
+   "languages": [
+    "TypeScript",
+    "Python",
+    "Go"
+   ],
+   "libraries": [
+    "\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510     \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510     \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502  Router  \u2502\u2500\u2500\u2500\u2500\u25b6\u2502  Auth    \u2502\u2500\u2500\u2500\u2500\u25b6\u2502  Logic   \u2502\n\u2502  (HTTP)  \u2502     \u2502  Middle  \u2502     \u2502          \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518     \u2514\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2518\n                                       \u2502\n                                \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u25bc\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                                \u2502  Database   \u2502\n                                \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518"
+   ],
+   "database": "PostgreSQL",
+   "interface": "REST / GraphQL",
+   "bestFor": "Microservices, backend-only apps, mobile backends",
+   "nodeCount": "3-5",
+   "selectionKeywords": [
+    "create an API"
+   ]
+  },
+  {
+   "appType": "Auth App",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "Auth",
+     "type": "logic"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    },
+    {
+     "name": "Sessions",
+     "type": "database"
+    }
+   ],
+   "files": [
+    "frontend/",
+    "frontend/src/",
+    "frontend/src/pages/",
+    "frontend/src/pages/Login.tsx",
+    "frontend/src/pages/Register.tsx",
+    "frontend/src/pages/Profile.tsx",
+    "frontend/src/components/",
+    "frontend/src/api/",
+    "frontend/src/App.tsx",
+    "frontend/index.html",
+    "frontend/vite.config.ts",
+    "backend/",
+    "backend/src/",
+    "backend/src/routes/",
+    "backend/src/routes/auth.ts",
+    "backend/src/routes/users.ts",
+    "backend/src/services/",
+    "backend/src/services/password.ts",
+    "backend/src/services/session.ts",
+    "backend/src/db/",
+    "backend/src/db/schema.ts",
+    "backend/src/db/repository.ts",
+    "backend/src/index.ts",
+    "backend/package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "Python"
+   ],
+   "libraries": [
+    "argon2",
+    "bcrypt",
+    "jsonwebtoken",
+    "lucia",
+    "passport",
+    "pg"
+   ],
+   "database": "PostgreSQL",
+   "interface": "Web Browser",
+   "bestFor": "Login/registration, user accounts, session management, OAuth",
+   "nodeCount": "5-7",
+   "selectionKeywords": [
+    "log in users",
+    "authenticate users",
+    "user accounts"
+   ]
+  },
+  {
+   "appType": "Chat App",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "Chat",
+     "type": "logic"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    },
+    {
+     "name": "Realtime",
+     "type": "api"
+    }
+   ],
+   "files": [
+    "frontend/",
+    "frontend/src/",
+    "frontend/src/components/",
+    "frontend/src/components/MessageList.tsx",
+    "frontend/src/components/MessageInput.tsx",
+    "frontend/src/components/RoomList.tsx",
+    "frontend/src/hooks/",
+    "frontend/src/hooks/useSocket.ts",
+    "frontend/src/api/",
+    "frontend/src/App.tsx",
+    "frontend/index.html",
+    "frontend/vite.config.ts",
+    "backend/",
+    "backend/src/",
+    "backend/src/routes/",
+    "backend/src/routes/rooms.ts",
+    "backend/src/sockets/",
+    "backend/src/sockets/chat.ts",
+    "backend/src/services/",
+    "backend/src/services/messageStore.ts",
+    "backend/src/db/",
+    "backend/src/index.ts",
+    "backend/package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "Node.js"
+   ],
+   "libraries": [
+    "socket.io",
+    "ws",
+    "better-sqlite3"
+   ],
+   "database": "SQLite / PostgreSQL",
+   "interface": "Web Browser",
+   "bestFor": "Real-time messaging, rooms, support widgets",
+   "nodeCount": "5-8",
+   "selectionKeywords": [
+    "build a chat",
+    "real-time messaging"
+   ]
+  },
+  {
+   "appType": "E-commerce",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "Cart",
+     "type": "logic"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    },
+    {
+     "name": "Payments",
+     "type": "api"
+    }
+   ],
+   "files": [
+    "frontend/",
+    "frontend/src/",
+    "frontend/src/pages/",
+    "frontend/src/pages/ProductList.tsx",
+    "frontend/src/pages/ProductDetail.tsx",
+    "frontend/src/pages/Checkout.tsx",
+    "frontend/src/components/",
+    "frontend/src/components/Cart.tsx",
+    "frontend/src/api/",
+    "frontend/src/App.tsx",
+    "frontend/index.html",
+    "frontend/vite.config.ts",
+    "backend/",
+    "backend/src/",
+    "backend/src/routes/",
+    "backend/src/routes/products.ts",
+    "backend/src/routes/cart.ts",
+    "backend/src/routes/orders.ts",
+    "backend/src/services/",
+    "backend/src/services/inventory.ts",
+    "backend/src/services/payment.ts",
+    "backend/src/db/",
+    "backend/src/db/schema.ts",
+    "backend/src/db/seed.ts",
+    "backend/src/index.ts",
+    "backend/package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "Python"
+   ],
+   "libraries": [
+    "stripe",
+    "paypal-rest-sdk",
+    "pg"
+   ],
+   "database": "PostgreSQL",
+   "interface": "Web Browser",
+   "bestFor": "Online stores, product catalogs, checkout, orders",
+   "nodeCount": "6-8",
+   "selectionKeywords": [
+    "online store",
+    "shopping cart",
+    "sell products"
+   ]
+  },
+  {
+   "appType": "Dashboard",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "Widgets",
+     "type": "ui"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    },
+    {
+     "name": "Data API",
+     "type": "api"
+    }
+   ],
+   "files": [
+    "frontend/",
+    "frontend/src/",
+    "frontend/src/widgets/",
+    "frontend/src/widgets/ChartWidget.tsx",
+    "frontend/src/widgets/StatWidget.tsx",
+    "frontend/src/widgets/TableWidget.tsx",
+    "frontend/src/layouts/",
+    "frontend/src/layouts/GridLayout.tsx",
+    "frontend/src/api/",
+    "frontend/src/App.tsx",
+    "frontend/index.html",
+    "frontend/vite.config.ts",
+    "backend/",
+    "backend/src/",
+    "backend/src/routes/",
+    "backend/src/routes/metrics.ts",
+    "backend/src/services/",
+    "backend/src/services/aggregator.ts",
+    "backend/src/services/exporter.ts",
+    "backend/src/db/",
+    "backend/src/index.ts",
+    "backend/package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "Python"
+   ],
+   "libraries": [
+    "recharts",
+    "chart.js",
+    "d3",
+    "better-sqlite3"
+   ],
+   "database": "SQLite / PostgreSQL",
+   "interface": "Web Browser",
+   "bestFor": "Analytics, metrics monitoring, admin panels",
+   "nodeCount": "4-6",
+   "selectionKeywords": [
+    "analytics dashboard",
+    "monitor metrics",
+    "admin panel"
+   ]
+  },
+  {
+   "appType": "File Sync Tool",
+   "nodes": [
+    {
+     "name": "Watcher",
+     "type": "input"
+    },
+    {
+     "name": "Sync",
+     "type": "logic"
+    },
+    {
+     "name": "Index",
+     "type": "database"
+    },
+    {
+     "name": "Remote",
+     "type": "api"
+    }
+   ],
+   "files": [
+    "cmd/",
+    "cmd/app/",
+    "cmd/app/main.go",
+    "cmd/app/main.ts",
+    "pkg/",
+    "src/",
+    "src/watcher/",
+    "src/sync/",
+    "src/index/",
+    "src/remote/",
+    "config/",
+    "config/config.yaml",
+    "Makefile",
+    "README.md"
+   ],
+   "languages": [
+    "Go",
+    "TypeScript"
+   ],
+   "libraries": [
+    "fsnotify",
+    "rclone",
+    "spf13/cobra",
+    "chokidar",
+    "commander",
+    "modernc.org/sqlite",
+    "better-sqlite3"
+   ],
+   "database": "SQLite",
+   "interface": "CLI / Tray",
+   "bestFor": "Folder mirroring, backup tools, cloud sync clients",
+   "nodeCount": "3-5",
+   "selectionKeywords": [
+    "sync files",
+    "backup folders",
+    "mirror directories"
+   ]
+  },
+  {
+   "appType": "Booking App",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "Booking",
+     "type": "logic"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    },
+    {
+     "name": "Payments",
+     "type": "api"
+    }
+   ],
+   "files": [
+    "frontend/",
+    "frontend/src/",
+    "frontend/src/pages/",
+    "frontend/src/pages/Availability.tsx",
+    "frontend/src/pages/BookingForm.tsx",
+    "frontend/src/pages/Confirmation.tsx",
+    "frontend/src/components/",
+    "frontend/src/components/Calendar.tsx",
+    "frontend/src/api/",
+    "frontend/src/App.tsx",
+    "frontend/index.html",
+    "frontend/vite.config.ts",
+    "backend/",
+    "backend/src/",
+    "backend/src/routes/",
+    "backend/src/routes/availability.ts",
+    "backend/src/routes/bookings.ts",
+    "backend/src/routes/payments.ts",
+    "backend/src/services/",
+    "backend/src/services/scheduler.ts",
+    "backend/src/services/capacity.ts",
+    "backend/src/db/",
+    "backend/src/db/schema.ts",
+    "backend/src/db/repository.ts",
+    "backend/src/index.ts",
+    "backend/package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "Python"
+   ],
+   "libraries": [
+    "node-cron",
+    "date-fns",
+    "stripe",
+    "pg"
+   ],
+   "database": "PostgreSQL",
+   "interface": "Web Browser",
+   "bestFor": "Reservations, appointment scheduling, capacity management",
+   "nodeCount": "5-7",
+   "selectionKeywords": [
+    "book a reservation",
+    "scheduling app",
+    "appointment booking"
+   ]
+  },
+  {
+   "appType": "CMS",
+   "nodes": [
+    {
+     "name": "UI",
+     "type": "ui"
+    },
+    {
+     "name": "Content",
+     "type": "logic"
+    },
+    {
+     "name": "Logic",
+     "type": "logic"
+    },
+    {
+     "name": "Database",
+     "type": "database"
+    },
+    {
+     "name": "Publish",
+     "type": "api"
+    }
+   ],
+   "files": [
+    "frontend/",
+    "frontend/src/",
+    "frontend/src/pages/",
+    "frontend/src/pages/Admin.tsx",
+    "frontend/src/pages/PostView.tsx",
+    "frontend/src/components/",
+    "frontend/src/components/Editor.tsx",
+    "frontend/src/api/",
+    "frontend/src/App.tsx",
+    "frontend/index.html",
+    "frontend/vite.config.ts",
+    "backend/",
+    "backend/src/",
+    "backend/src/routes/",
+    "backend/src/routes/posts.ts",
+    "backend/src/routes/media.ts",
+    "backend/src/services/",
+    "backend/src/services/content.ts",
+    "backend/src/services/publish.ts",
+    "backend/src/db/",
+    "backend/src/db/schema.ts",
+    "backend/src/db/repository.ts",
+    "backend/src/index.ts",
+    "backend/package.json",
+    "README.md"
+   ],
+   "languages": [
+    "TypeScript",
+    "Python"
+   ],
+   "libraries": [
+    "marked",
+    "better-sqlite3"
+   ],
+   "database": "SQLite / PostgreSQL",
+   "interface": "Web Browser",
+   "bestFor": "Blogs, content publishing, admin editing",
+   "nodeCount": "5-7",
+   "selectionKeywords": [
+    "content management",
+    "blog platform",
+    "publish articles"
+   ]
+  },
+  {
+   "appType": "3D App",
+   "nodes": [],
+   "files": [],
+   "languages": [
+    "TypeScript / JS (browser)"
+   ],
+   "libraries": [
+    "44-threejs-scene-recipes.md",
+    "index.html",
+    "THREE",
+    "ui",
+    "logic",
+    "input",
+    "api",
+    "database",
+    "typeof THREE",
+    "3D Game = ui (index.html w/ Three.js) + logic (rules + AI) + input (Raycaster)\n3D Viewer = ui (index.html) + logic (object load/animate) + input (OrbitControls)\n3D Dashboard = ui (index.html + HUD overlay) + logic (data \u2192 mesh transforms)"
+   ],
+   "database": "None",
+   "interface": "Web Browser (WebGL)",
+   "bestFor": "",
+   "nodeCount": "4-8",
+   "selectionKeywords": []
+  },
+  {
+   "appType": "Data Processor",
+   "nodes": [],
+   "files": [],
+   "languages": [
+    "Python"
+   ],
+   "libraries": [],
+   "database": "SQLite / Files",
+   "interface": "CLI / Web",
+   "bestFor": "Quick-reference only (no full template section in 02-app-type-templates.md \u2014 consult the matching bible-reference/ level for component details)",
+   "nodeCount": "3-4",
+   "selectionKeywords": [
+    "analyze data"
+   ]
+  },
+  {
+   "appType": "Game",
+   "nodes": [],
+   "files": [],
+   "languages": [
+    "TypeScript",
+    "Go"
+   ],
+   "libraries": [],
+   "database": "SQLite",
+   "interface": "Web / Desktop",
+   "bestFor": "Quick-reference only (no full template section in 02-app-type-templates.md \u2014 consult the matching bible-reference/ level for component details)",
+   "nodeCount": "5-8",
+   "selectionKeywords": [
+    "make a game"
+   ]
+  }
+ ],
+ "selectionGuide": {
+  "scan my system": "System Tool",
+  "stream media": "Media Server",
+  "manage tasks": "Web App",
+  "convert files": "CLI Tool",
+  "build a player": "Desktop App",
+  "create an API": "API Server",
+  "analyze data": "Data Processor / CLI Tool",
+  "make a game": "Game Template",
+  "log in users": "Auth App",
+  "authenticate users": "Auth App",
+  "user accounts": "Auth App",
+  "build a chat": "Chat App",
+  "real-time messaging": "Chat App",
+  "online store": "E-commerce",
+  "shopping cart": "E-commerce / Web App",
+  "sell products": "E-commerce",
+  "analytics dashboard": "Dashboard",
+  "monitor metrics": "Dashboard / Web App",
+  "admin panel": "Dashboard / Web App",
+  "sync files": "File Sync Tool",
+  "backup folders": "File Sync Tool",
+  "mirror directories": "File Sync Tool",
+  "book a reservation": "Booking App",
+  "scheduling app": "Booking App",
+  "appointment booking": "Booking App / Web App",
+  "content management": "CMS",
+  "blog platform": "CMS",
+  "publish articles": "CMS"
+ },
+ "hybrids": [
+  "Media Server + Desktop App = Media Player with Web Remote",
+  "System Tool + Web App = System Dashboard",
+  "CLI Tool + Web App = CLI with Web GUI",
+  "Auth App + Web App = Members Only Web App",
+  "Chat App + E-commerce = Live Shopping with Chat Support",
+  "Dashboard + API Server = Metrics Dashboard over Microservices",
+  "File Sync Tool + Web App = Cloud Sync Dashboard",
+  "Booking App + Chat App = Appointment Chat Reminders",
+  "CMS + E-commerce = Store with Content Management"
+ ]
+}

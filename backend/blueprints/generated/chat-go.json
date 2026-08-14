@@ -1,0 +1,52 @@
+{
+  "app_type": "chat-go",
+  "description": "WebSocket connections, rooms, direct messages, presence, history.",
+  "keywords": [
+    "chat-go",
+    "go",
+    "realtime",
+    "chat",
+    "platform",
+    "connection hub",
+    "rooms",
+    "direct messages",
+    "presence",
+    "message history"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "connection hub",
+    "rooms",
+    "direct messages",
+    "presence",
+    "message history"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "connection hub",
+      "destination_module": "rooms",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "rooms",
+      "destination_module": "direct messages",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "direct messages",
+      "destination_module": "presence",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "presence",
+      "destination_module": "message history",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 26
+}

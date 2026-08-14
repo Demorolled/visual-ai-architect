@@ -1,0 +1,53 @@
+{
+  "app_type": "ci_cd_builder",
+  "description": "Visual CI/CD: stages, parallel steps, matrix builds, deployment — Pipeline designer: pipeline generation, caching, artifacts, deploy",
+  "keywords": [
+    "devops",
+    "sre",
+    "monitoring",
+    "ci-cd",
+    "ci",
+    "cd",
+    "builder",
+    "config input",
+    "orchestration",
+    "analysis",
+    "state store",
+    "ops dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Config Input",
+    "Orchestration",
+    "Analysis",
+    "State Store",
+    "Ops Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Config Input",
+      "destination_module": "Orchestration",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Orchestration",
+      "destination_module": "Analysis",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Analysis",
+      "destination_module": "State Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "State Store",
+      "destination_module": "Ops Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

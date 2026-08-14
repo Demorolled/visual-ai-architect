@@ -1,0 +1,60 @@
+{
+  "app_type": "connect_4",
+  "description": "Two-player Connect 4 with gravity physics, win detection, and AI opponent — Connect 4 with column drop animation, horizontal/vertical/diagonal win detection, board-full detection, and minimax AI opponent with configurable depth",
+  "keywords": [
+    "connect4",
+    "game",
+    "ai",
+    "minimax",
+    "two-player",
+    "connect",
+    "4",
+    "column selector",
+    "gravity engine",
+    "win detector",
+    "board state",
+    "ai opponent",
+    "board renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Column Selector",
+    "Gravity Engine",
+    "Win Detector",
+    "Board State",
+    "AI Opponent",
+    "Board Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Column Selector",
+      "destination_module": "Gravity Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Gravity Engine",
+      "destination_module": "Win Detector",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Win Detector",
+      "destination_module": "Board State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Board State",
+      "destination_module": "AI Opponent",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "AI Opponent",
+      "destination_module": "Board Renderer",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,26 @@
+{
+  "app_type": "todo_app",
+  "description": "A task management app with lists, priorities, due dates, categories, and local persistence. Users create, edit, complete, and filter tasks.",
+  "keywords": ["todo", "task", "tasks", "tasks app", "to do", "todo list", "checklist", "productivity", "notes", "planner", "kanban", "task manager", "reminders"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "task_models",
+    "task_store",
+    "business_logic",
+    "api_routes",
+    "user_preferences"
+  ],
+  "wiring_graph": [
+    { "source_module": "ui_screens", "destination_module": "api_routes", "data_passed": "user_actions_and_filters" },
+    { "source_module": "api_routes", "destination_module": "business_logic", "data_passed": "validated_commands" },
+    { "source_module": "business_logic", "destination_module": "task_store", "data_passed": "task_crud_operations" },
+    { "source_module": "task_models", "destination_module": "task_store", "data_passed": "type_definitions" },
+    { "source_module": "task_models", "destination_module": "business_logic", "data_passed": "domain_types" },
+    { "source_module": "user_preferences", "destination_module": "api_routes", "data_passed": "preference_updates" }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "sessionId": "auto_live_demo",
+  "startedAt": "2026-06-12T13:40:00.000Z",
+  "totalCaptured": 24858,
+  "totalFlushed": 24858,
+  "lastFlushTime": "2026-08-14T09:23:57.975Z",
+  "mindspaceTrainingCount": 3,
+  "lastTrainingTrigger": "2026-07-27T19:27:47.843Z",
+  "interactionsSinceLastTraining": 436,
+  "currentBuffer": 0
+}

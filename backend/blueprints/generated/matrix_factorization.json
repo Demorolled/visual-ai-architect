@@ -1,0 +1,48 @@
+{
+  "app_type": "matrix_factorization",
+  "description": "ALS and SGD matrix factorization for recommendations — an interactive search tool with a visual interface.",
+  "keywords": [
+    "search",
+    "search",
+    "matrix-factorization",
+    "recommendation",
+    "als",
+    "matrix",
+    "factorization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "index_store",
+    "query_engine",
+    "visualization_engine",
+    "dataset_store"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "index_store",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "index_store",
+      "destination_module": "query_engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "query_engine",
+      "destination_module": "visualization_engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "visualization_engine",
+      "destination_module": "dataset_store",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:search"
+}

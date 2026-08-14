@@ -1,0 +1,90 @@
+import './chess-ai-engine.ts';
+
+// chess-ui.ts
+
+const BOARD_SIZE = 8;
+const SQUARE_SIZE = 60;
+
+function render(container: HTMLElement): void {
+  const boardElement = document.createElement('div');
+  boardElement.className = 'chess-board';
+  container.appendChild(boardElement);
+
+  // Generate the board with light/dark squares
+  for (let row = 0; row < BOARD_SIZE; row++) {
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      const square = document.createElement('div');
+      square.style.width = `${SQUARE_SIZE}px`;
+      square.style.height = `${SQUARE_SIZE}px`;
+      if ((row + col) % 2 === 0) {
+        square.style.backgroundColor = '#f0d9b5';
+      } else {
+        square.style.backgroundColor = '#ffffff';
+      }
+      boardElement.appendChild(square);
+    }
+  }
+
+  // Add Unicode piece glyphs as children
+  const pieces = ['♔', '♕', '♖', '♗', '♘', '♙', '♚', '♛', '♜', '♝', '♞', '♟'];
+  for (let i = 0; i < pieces.length; i++) {
+    const pieceElement = document.createElement('div');
+    pieceElement.className = 'chess-piece';
+    pieceElement.textContent = pieces[i];
+    boardElement.appendChild(pieceElement);
+  }
+
+  // Add click-to-select and click-to-move functionality
+  const selectSquare = (event: MouseEvent) => {
+    // Implement selection logic here
+  };
+
+  const movePiece = (event: MouseEvent) => {
+    // Implement move logic here
+  };
+
+  // Add buttons for New Game and Undo
+  const newGameButton = document.createElement('button');
+  newGameButton.textContent = 'New Game';
+  newGameButton.onclick = () => { /* Implement new game logic */ };
+  boardElement.appendChild(newGameButton);
+
+  const undoButton = document.createElement('button');
+  undoButton.textContent = 'Undo';
+  undoButton.onclick = () => { /* Implement undo logic */ };
+  boardElement.appendChild(undoButton);
+
+  // Add a status bar for turn and check state
+  const statusBar = document.createElement('div');
+  statusBar.className = 'chess-status-bar';
+  boardElement.appendChild(statusBar);
+
+  // Add a difficulty selector
+  const difficultySelector = document.createElement('select');
+  difficultySelector.className = 'chess-difficulty-selector';
+  const options = ['Easy', 'Medium', 'Hard', 'Expert'];
+  options.forEach((option) => {
+    const opt = document.createElement('option');
+    opt.value = option.toLowerCase();
+    opt.textContent = option;
+    difficultySelector.appendChild(opt);
+  });
+  boardElement.appendChild(difficultySelector);
+
+  // Add a move log sidebar
+  const moveLogSidebar = document.createElement('div');
+  moveLogSidebar.className = 'chess-move-log';
+  boardElement.appendChild(moveLogSidebar);
+
+  // Add a check state
+  const checkState = document.createElement('div');
+  checkState.className = 'chess-check-state';
+  boardElement.appendChild(checkState);
+
+  // Add a turn state
+  const turnState = document.createElement('div');
+  turnState.className = 'chess-turn-state';
+  boardElement.appendChild(turnState);
+}
+
+export default { render };

@@ -1,0 +1,52 @@
+{
+  "app_type": "calendar_app",
+  "description": "Desktop calendar with events, reminders, recurrence, and iCal sync — Calendar with month/week/day views, event recurrence, reminders, iCal import/export, Google Calendar sync",
+  "keywords": [
+    "calendar",
+    "schedule",
+    "events",
+    "productivity",
+    "calendar",
+    "app",
+    "event creator",
+    "schedule engine",
+    "reminder system",
+    "calendar store",
+    "calendar view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Event Creator",
+    "Schedule Engine",
+    "Reminder System",
+    "Calendar Store",
+    "Calendar View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Event Creator",
+      "destination_module": "Schedule Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Schedule Engine",
+      "destination_module": "Reminder System",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Reminder System",
+      "destination_module": "Calendar Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Calendar Store",
+      "destination_module": "Calendar View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

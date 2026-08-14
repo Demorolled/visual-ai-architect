@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Task Board</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .board { display: flex; gap: 20px; }
+    .column { width: 250px; border: 1px solid #ddd; padding: 10px; min-height: 300px; }
+    .column h2 { margin: 0; padding: 10px; background: #222; color: #fff; }
+    .column ul { list-style: none; padding: 0; margin: 0; }
+    .column ul li { margin: 8px 0; padding: 10px 14px; background: #f0f0f0; border-radius: 4px; }
+    .column ul li.dragging { opacity: 0.5; }
+    .card-form { display: flex; gap: 10px; margin-top: 20px; }
+    .card-form input { flex: 1; padding: 6px 10px; }
+    .card-form button { padding: 6px 12px; }
+    .card-count { margin-top: 10px; font-size: 0.85rem; color: #888; }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <div class="column" id="todo">
+      <h2>To Do</h2>
+      <ul></ul>
+      <div class="card-form">
+        <input type="text" id="todoInput" placeholder="Add new task...">
+        <button onclick="addCard('todo')">Add</button>
+      </div>
+      <div class="card-count" id="todoCount">0</div>
+    </div>
+    <div class="column" id="doing">
+      <h2>Doing</h2>
+      <ul></ul>
+      <div class="card-form">
+        <input type="text" id="doingInput" placeholder="Add new task...">
+        <button onclick="addCard('doing')">Add</button>
+      </div>
+      <div class="card-count" id="doingCount">0</div>
+    </div>
+    <div class="column" id="done">
+      <h2>Done</h2>
+      <ul></ul>
+      <div class="card-form">
+        <input type="text" id="doneInput" placeholder="Add new task...">
+        <button onclick="addCard('done')">Add</button>
+      </div>
+      <div class="card-count" id="doneCount">0</div>
+    </div>
+  </div>
+  <script>
+    const columns = { todo: [], doing: [], done: [] };
+    const saveData = () => { localStorage.setItem('kanban', JSON.stringify(columns)); };
+    const loadData = () => {
+      const data = localStorage.getItem('kanban');
+      if (data) columns.todo = JSON.parse(data).todo.slice();
+      updateDisplay();
+    };
+    window.addEventListener('load', loadData);
+    document.addEventListener('beforeunload', saveData);
+    function addCard(state) {
+      const input = document.getElementById(`${state}Input`);
+      if (!input.value.trim()) return;
+      const id = Date.now();
+      columns[state].push(id);
+      updateCardList();
+      input.value = '';
+      saveData();
+    }
+    function updateCardList() {
+      document.querySelectorAll('.column ul').forEach((ul, idx) => {
+        ul.innerHTML = columns.phases[idx].map(id => {
+          return `
+            <li draggable="true" ondragstart="drag(event)" data-id="${id}">${id}</li>
+          `;
+        }).join('');
+        const count = document.getElementById(`phase${idx}Count`);
+        count.textContent = columns.phases[idx].length;
+      });
+    }
+    function drag(e) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', e.target.dataset.id);
+    }
+    function dragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+    function drop(e) {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      const phase = ['todo', 'doing', 'done'][e.target.closest('.column')?.dataset.phase];
+      const idx = columns[phase].indexOf(Number(id));
+      if (idx === -1) return;
+      columns[phase].splice(idx, 1);
+      updateCardList();
+      if (phase === 'doing') {
+        const toPhase = ['todo', 'done'][Math.floor(Math.random() * 2)];
+        columns[toPhase].push(Number(id));
+      }
+      saveData();
+    }
+    document.querySelectorAll('.column').forEach((column, idx) => {
+      column.dataset.phase = idx;
+      column.addEventListener('dragover', dragOver);
+      column.addEventListener('drop', drop);
+    });
+    document.querySelectorAll('.column li').forEach(li => {
+      li.addEventListener('dragstart', drag);
+      li.addEventListener('dragend', saveData);
+    });
+  </script>
+</body>
+</html>

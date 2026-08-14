@@ -1,0 +1,1 @@
+export interface Habit { name: string; description: string; goal: number; streak: number; check(): void; }

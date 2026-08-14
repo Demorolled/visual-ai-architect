@@ -1,0 +1,51 @@
+{
+  "app_type": "vagrant_lab",
+  "description": "Vagrant multi-machine VM environment manager — Interactive devops tool for vagrant lab",
+  "keywords": [
+    "devops",
+    "vagrant",
+    "lab",
+    "vagrant",
+    "lab",
+    "config input",
+    "orchestrator",
+    "state store",
+    "analysis engine",
+    "ops dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Config Input",
+    "Orchestrator",
+    "State Store",
+    "Analysis Engine",
+    "Ops Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Config Input",
+      "destination_module": "Orchestrator",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Orchestrator",
+      "destination_module": "State Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "State Store",
+      "destination_module": "Analysis Engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Engine",
+      "destination_module": "Ops Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,52 @@
+{
+  "app_type": "kanban-ts",
+  "description": "kanban workspace: project/board hierarchy, task lifecycle across columns, comments, activity feed.",
+  "keywords": [
+    "kanban-ts",
+    "typescript",
+    "project",
+    "management",
+    "kanban",
+    "projects",
+    "boards",
+    "tasks",
+    "comments",
+    "activity"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "projects",
+    "boards",
+    "tasks",
+    "comments",
+    "activity"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "projects",
+      "destination_module": "boards",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "boards",
+      "destination_module": "tasks",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "tasks",
+      "destination_module": "comments",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "comments",
+      "destination_module": "activity",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

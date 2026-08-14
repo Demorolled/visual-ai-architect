@@ -1,0 +1,22 @@
+{
+  "generated": "2026-08-10",
+  "round": 11,
+  "mix": "A",
+  "total_rows": 127,
+  "by_source": {
+    "chunk-3d.jsonl": 22,
+    "verified-generations.jsonl": 18,
+    "round9-buildladder.jsonl": 57,
+    "gui-combined-all.jsonl": 30
+  },
+  "split": {
+    "train": 114,
+    "val": 13,
+    "seed": 42
+  },
+  "projected_t4_time": {
+    "seq_2048_2ep": "~3.5 h",
+    "per_row_anchor": "49.5 s/row @ seq 2048 (measured round-6 Kaggle T4)"
+  },
+  "note": "gui-combined top-up is a deliberate retention re-exposure (exempt from dedupe)."
+}

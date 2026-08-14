@@ -1,0 +1,69 @@
+{
+  "app_type": "binary_tree_viewer",
+  "description": "Comprehensive BST/AVL/Red-Black tree viewer with rotation animations and traversal demos — Visualizes tree data structures with auto-layout, color-coded nodes (balance factor, red/black), rotation animations, and all traversal orders (in/pre/post/level). Supports insert/delete/search with self-balancing",
+  "keywords": [
+    "binary-tree",
+    "bst",
+    "avl",
+    "red-black",
+    "tree",
+    "visualization",
+    "binary",
+    "tree",
+    "viewer",
+    "tree builder",
+    "tree engine",
+    "balance manager",
+    "node store",
+    "traversal engine",
+    "tree canvas",
+    "traversal output"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Tree Builder",
+    "Tree Engine",
+    "Balance Manager",
+    "Node Store",
+    "Traversal Engine",
+    "Tree Canvas",
+    "Traversal Output"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Tree Builder",
+      "destination_module": "Tree Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Tree Engine",
+      "destination_module": "Balance Manager",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Balance Manager",
+      "destination_module": "Node Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Node Store",
+      "destination_module": "Traversal Engine",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Traversal Engine",
+      "destination_module": "Tree Canvas",
+      "data_passed": "updates"
+    },
+    {
+      "source_module": "Tree Canvas",
+      "destination_module": "Traversal Output",
+      "data_passed": "requests"
+    }
+  ],
+  "source": "designs.json"
+}

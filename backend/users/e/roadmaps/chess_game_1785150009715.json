@@ -1,0 +1,201 @@
+{
+  "projectName": "chess game",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785149338048_xzyjuq",
+      "type": "logic",
+      "label": "chess-game-node",
+      "description": "Entry point: parses CLI flags, loads config, initializes game state, handles user moves, displays board. Handles graceful shutdown via SIGTERM/SIGINT. Imports: 0, settings, board-repo, move-handler. Exports: command-line interface with history and controls.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 120
+      }
+    },
+    {
+      "id": "node_1785149338048_f59dm1",
+      "type": "database",
+      "label": "board-repo-node",
+      "description": "Data access: SQLite-based game board. Implements double-buffered rendering of chessboard squares with move history tracking and piece persistence.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 145
+      }
+    },
+    {
+      "id": "node_1785149338048_tzm2rh",
+      "type": "ui",
+      "label": "renderer-node",
+      "description": "Visual architecture design: generates the CLI prompt or a game board from the core application components. Renders moves, checksmate scenarios, and displays history.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785149338048_qwxai7",
+      "type": "logic",
+      "label": "controller-node",
+      "description": "Business logic layer: executes legal moves according to chess rules. Maintains game state variables such as selected squares and current move history. Checks for valid moves and captures responses.",
+      "language": "go",
+      "position": {
+        "x": 650,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785149338048_oqc7l7",
+      "type": "logic",
+      "label": "settings-node",
+      "description": "Configuration layer: reads from settings to define game rules and preferences. Manages theme selection (classic/modern), move history retention, and sound toggling.",
+      "language": "go",
+      "position": {
+        "x": 504,
+        "y": 200
+      }
+    },
+    {
+      "id": "node_1785149338048_g87g12",
+      "type": "logic",
+      "label": "move-hisotory-node",
+      "description": "Moves history implementation: keeps track of all chess moves in the game. Maintains a chronological log that can be exported to various formats like PGN.",
+      "language": "go",
+      "position": {
+        "x": 502,
+        "y": 143
+      }
+    },
+    {
+      "id": "node_1785149338048_ifzemz",
+      "type": "ui",
+      "label": "style-sheet-node",
+      "description": "UI style layer: applies custom theme options. Handles color schemes and typography preferences for the visuals.",
+      "language": "css",
+      "position": {
+        "x": 605,
+        "y": 226
+      }
+    },
+    {
+      "id": "node_1785149338048_es1mtq",
+      "type": "logic",
+      "label": "move-handler-node",
+      "description": "Moves logic: checks moves' validity and updates chess positions accordingly. Handles castling, en passant, king's move limitations.",
+      "language": "go",
+      "position": {
+        "x": 648,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785149338048_m4yx1o",
+      "type": "ui",
+      "label": "greeting-node",
+      "description": "Greeting layer: displays welcome messages and initial game controls.",
+      "language": "go",
+      "position": {
+        "x": 502,
+        "y": 467
+      }
+    },
+    {
+      "id": "node_1785149338048_7gqsdr",
+      "type": "logic",
+      "label": "exit-node",
+      "description": "Exits layer: handles shutting down the chess game application gracefully.",
+      "language": "go",
+      "position": {
+        "x": 363.31562499999995,
+        "y": 324.74375
+      }
+    },
+    {
+      "id": "node_1785149338048_ia12hr",
+      "type": "logic",
+      "label": "tests-node",
+      "description": "Test suite: implements helper functions to validate game states and perform unit testing of core components.",
+      "language": "go",
+      "position": {
+        "x": 502,
+        "y": 173
+      }
+    },
+    {
+      "id": "node_1785149338048_wtrnhw",
+      "type": "logic",
+      "label": "build-node",
+      "description": "Build process: compiles all source code into the final executable.",
+      "language": "go",
+      "position": {
+        "x": 502,
+        "y": 198
+      }
+    },
+    {
+      "id": "node_1785149338048_pbm8wr",
+      "type": "logic",
+      "label": "core-posh-types",
+      "description": "Types layer: defines core types and enforces type checking across the application to maintain consistency and reliability.",
+      "language": "go",
+      "position": {
+        "x": 502,
+        "y": 146
+      }
+    },
+    {
+      "id": "node_1785149338048_2ng6ds",
+      "type": "logic",
+      "label": "user-interface-repo",
+      "description": "UI component repository: provides access to utility functions and configurations used across the application interface.",
+      "language": "go",
+      "position": {
+        "x": 502,
+        "y": 139
+      }
+    },
+    {
+      "id": "node_1785149338048_igm5x0",
+      "type": "logic",
+      "label": "data storage repository",
+      "description": "Data access: SQLite-based database for storing game position history and moves.",
+      "language": "rust",
+      "position": {
+        "x": 199.99375,
+        "y": 133.515625
+      }
+    },
+    {
+      "id": "node_1785149338048_7byvkv",
+      "type": "api",
+      "label": "handlers.go",
+      "description": "API request handlers. Routes incoming requests to business logic, validates input, formats JSON responses. Handles HTTP methods (GET, POST, PUT, DELETE). Imports: service, types.",
+      "language": "go",
+      "position": {
+        "x": 750,
+        "y": 887
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785149338048_f59dm1",
+      "target": "node_1785149338048_tzm2rh"
+    },
+    {
+      "source": "node_1785149338048_qwxai7",
+      "target": "node_1785149338048_tzm2rh"
+    },
+    {
+      "source": "node_1785149338048_oqc7l7",
+      "target": "node_1785149338048_m4yx1o"
+    },
+    {
+      "source": "node_1785149338048_m4yx1o",
+      "target": "node_1785149338048_7gqsdr"
+    }
+  ],
+  "createdAt": "2026-07-27T11:00:09.715Z"
+}

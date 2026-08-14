@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Terrain Viewer</title>
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #terrain-container {
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            max-height: 800px;
+        }
+        #fps-counter {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="fps-counter">FPS: 0</div>
+    <div id="terrain-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        class TerrainViewer {
+            constructor() {
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.camera.position.set(0, 10, 20);
+                this.renderer = new THREE.WebGLRenderer();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                document.getElementById('terrain-container').appendChild(this.renderer.domElement);
+                this.raycaster = new THREE.Raycaster();
+                this.mouse = new THREE.Vector2();
+                this.clock = new THREE.Clock();
+                this.roughness = 0.5;
+                this.clouds = [];
+                this.update = this.update.bind(this);
+                this.render = this.render.bind(this);
+                this.resize = this.resize.bind(this);
+                this.animate = this.animate.bind(this);
+                this.init();
+                window.addEventListener('resize', this.resize);
+            }
+            init() {
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.scene.add(new THREE.AmbientLight(0x404040));
+                this.scene.add(new THREE.DirectionalLight(0xffffff, 0.5));
+                this.update();
+                this.animate();
+            }
+            animate() {
+                requestAnimationFrame(this.animate);
+                this.update();
+                this.render();
+            }
+            update() {
+                let delta = this.clock.getDelta();
+                this.controls.update(delta);
+                this.clouds.forEach((cloud) => {
+                    cloud.rotation.x += 0.01;
+                    cloud.rotation.y += 0.02;
+                });
+            }
+            render() {
+                this.renderer.render(this.scene, this.camera);
+            }
+            resize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            addClouds() {
+                let geometry = new THREE.SphereGeometry(5, 32, 32);
+                let material = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.5, roughness: 0.2 });
+                for (let i = 0; i < 20; i++) {
+                    let cloud = new THREE.Mesh(geometry, material);
+                    cloud.position.set(
+                        Math.random() * 20 - 10,
+                        5 + Math.random() * 10,
+                        Math.random() * 20 - 10
+                    );
+                    this.scene.add(cloud);
+                    this.clouds.push(cloud);
+                }
+            }
+            addTerrain() {
+                let heightmap = [];
+                let size = 50;
+                let scale = 50;
+                function makeNoise(seed) {
+                    let s = seed >>> 0;
+                    const rand = () => (s = (s * 1103515245 + 12345) >>> 0) / 4294967296;
+                    const grad = {};
+                    const hash = (x, y) => { const k = x + ',' + y; if (!(k in grad)) grad[k] = rand(); return grad[k]; };
+                    const smooth = t => t * t * (3 - 2 * t);
+                    return {
+                        getValue(x, y) {
+                            const xi = Math.floor(x), yi = Math.floor(y);
+                            const xf = x - xi, yf = y - yi;
+                            const a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
+                            const u = smooth(xf), v = smooth(yf);
+                            return (a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v;
+                        }
+                    };
+                }
+                let noise = makeNoise(Math.floor(Math.random() * 1000));
+                for (let x = 0; x < size; x++) {
+                    heightmap[x] = [];
+                    for (let y = 0; y < size; y++) {
+                        let z = noise.getValue(x / scale, y / scale) * 5;
+                        heightmap[x][y] = z;
+                    }
+                }
+                // THREE.Geometry/Face3 were removed in r125+ — use BufferGeometry.
+                let geometry = new THREE.BufferGeometry();
+                const positionsArr = [];
+                const indicesArr = [];
+                for (let x = 0; x < size - 1; x++) {
+                    for (let y = 0; y < size - 1; y++) {
+                        const i0 = positionsArr.length / 3;
+                        positionsArr.push(x, heightmap[x][y], y);
+                        positionsArr.push(x + 1, heightmap[x + 1][y], y);
+                        positionsArr.push(x + 1, heightmap[x + 1][y + 1], y + 1);
+                        positionsArr.push(x, heightmap[x][y + 1], y + 1);
+                        indicesArr.push(i0, i0 + 1, i0 + 2, i0, i0 + 2, i0 + 3);
+                    }
+                }
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionsArr, 3));
+                geometry.setIndex(indicesArr);
+                geometry.computeVertexNormals();
+                let material = new THREE.MeshStandardMaterial({
+                    color: 0x333333,
+                    roughness: this.roughness,
+                    metalness: 0,
+                    vertexColors: true
+                });
+                // color vertices by height (geometry.faces/Face3 no longer exist)
+                const posAttr = geometry.attributes.position;
+                const vcolors = new Float32Array(posAttr.count * 3);
+                const tmpColor = new THREE.Color();
+                for (let i = 0; i < posAttr.count; i++) {
+                    const h = posAttr.getY(i);
+                    tmpColor.setHSL(0.66 + (h + 2) / 8 * 0.2, 0.9, 0.42 + h / 30);
+                    vcolors[i * 3] = tmpColor.r;
+                    vcolors[i * 3 + 1] = tmpColor.g;
+                    vcolors[i * 3 + 2] = tmpColor.b;
+                }
+                geometry.setAttribute('color', new THREE.Float32BufferAttribute(vcolors, 3));
+                let terrain = new THREE.Mesh(geometry, material);
+                this.scene.add(terrain);
+            }
+            roughnessSlider(value) {
+                this.roughness = value;
+                this.addTerrain();
+            }
+        }
+        const terrainViewer = new TerrainViewer();
+        terrainViewer.addTerrain();
+        terrainViewer.addClouds();
+        const roughnessSlider = document.createElement('input');
+        roughnessSlider.type = 'range';
+        roughnessSlider.min = '0';
+        roughnessSlider.max = '1';
+        roughnessSlider.step = '0.01';
+        roughnessSlider.value = '0.5';
+        roughnessSlider.oninput = (event) => {
+            terrainViewer.roughnessSlider(event.target.value);
+        };
+        document.body.appendChild(roughnessSlider);
+        const fpsCounter = document.querySelector('#fps-counter');
+        function updateFPS() {
+            const now = performance.now();
+            const fps = 1000 / (now - fpsCounter.lastTime) | 0;
+            fpsCounter.textContent = `FPS: ${fps}`;
+            fpsCounter.lastTime = now;
+        }
+        fpsCounter.lastTime = performance.now();
+        window.addEventListener('mousemove', (event) => {
+            terrainViewer.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            terrainViewer.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+    </script>
+</body>
+</html>

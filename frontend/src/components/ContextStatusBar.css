@@ -1,0 +1,261 @@
+/* ── Context Status Bar ── */
+.context-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px;
+  background: linear-gradient(90deg, rgba(0, 217, 255, 0.04) 0%, rgba(0, 0, 0, 0.15) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  flex-shrink: 0;
+  min-height: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.context-status-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Loading state ── */
+.csb-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #888;
+  font-size: 10px;
+  font-weight: 500;
+  animation: csb-pulse 1.2s ease-in-out infinite;
+}
+
+.csb-spinner {
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #00d9ff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes csb-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ── Context item ── */
+.csb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  white-space: nowrap;
+  cursor: default;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.csb-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(0, 217, 255, 0.2);
+}
+
+/* ── Special keys (theme, project, goal, purpose) ── */
+.csb-special {
+  border-color: rgba(0, 217, 255, 0.12);
+  background: rgba(0, 217, 255, 0.04);
+}
+
+.csb-special:hover {
+  border-color: rgba(0, 217, 255, 0.3);
+  background: rgba(0, 217, 255, 0.08);
+}
+
+.csb-icon {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.csb-value {
+  color: #d0d0d0;
+  font-weight: 500;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csb-value-compact {
+  color: #999;
+  font-weight: 400;
+  max-width: 100px;
+}
+
+.csb-key {
+  color: #666;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+/* ── Divider ── */
+.csb-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+/* ── Key count badge ── */
+.csb-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: #888;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: default;
+}
+
+/* ── System state indicator (active window + CPU/RAM bars) ── */
+.csb-system {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 4px 0 8px;
+  margin-left: 4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: default;
+}
+
+.csb-system-window {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 4px;
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.12);
+  max-width: 120px;
+  transition: background 0.15s;
+}
+
+.csb-system-window:hover {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+/* ── CPU bar ── */
+.csb-system-cpu {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  position: relative;
+  padding-left: 2px;
+}
+
+.csb-cpu-bar {
+  display: inline-block;
+  height: 6px;
+  min-width: 2px;
+  max-width: 30px;
+  background: #4ade80;
+  border-radius: 1px;
+  transition: width 0.5s ease, background 0.3s ease;
+}
+
+.csb-cpu-bar.csb-cpu-mid {
+  background: #facc15;
+}
+
+.csb-cpu-bar.csb-cpu-high {
+  background: #f87171;
+}
+
+.csb-cpu-text {
+  color: #888;
+  font-size: 10px;
+  font-weight: 500;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ── RAM bar ── */
+.csb-system-ram {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.csb-ram-bar {
+  display: inline-block;
+  height: 6px;
+  min-width: 2px;
+  max-width: 30px;
+  background: #60a5fa;
+  border-radius: 1px;
+  transition: width 0.5s ease, background 0.3s ease;
+}
+
+.csb-ram-bar.csb-ram-mid {
+  background: #facc15;
+}
+
+.csb-ram-bar.csb-ram-high {
+  background: #f87171;
+}
+
+.csb-ram-text {
+  color: #888;
+  font-size: 10px;
+  font-weight: 500;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ── Live indicator ── */
+.csb-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: #555;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: default;
+}
+
+.csb-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 4px rgba(74, 222, 128, 0.4);
+  animation: csb-pulse 2s ease-in-out infinite;
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 768px) {
+  .context-status-bar {
+    padding: 2px 6px;
+    gap: 4px;
+    min-height: 20px;
+    font-size: 10px;
+  }
+
+  .csb-value {
+    max-width: 80px;
+  }
+
+  .csb-item {
+    padding: 0 4px;
+    gap: 3px;
+  }
+
+  .csb-live {
+    display: none;
+  }
+}

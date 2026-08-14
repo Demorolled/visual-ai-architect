@@ -1,0 +1,52 @@
+{
+  "app_type": "fd_explorer",
+  "description": "Process file descriptor explorer: files, sockets, pipes, epoll — Explore any process's FDs: regular files, sockets, pipes, epoll fds, seek pos, flags",
+  "keywords": [
+    "file-descriptor",
+    "process",
+    "procfs",
+    "linux",
+    "fd",
+    "explorer",
+    "process picker",
+    "procfs parser",
+    "socket inspector",
+    "fd cache",
+    "fd browser"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Process Picker",
+    "ProcFS Parser",
+    "Socket Inspector",
+    "FD Cache",
+    "FD Browser"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Process Picker",
+      "destination_module": "ProcFS Parser",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "ProcFS Parser",
+      "destination_module": "Socket Inspector",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Socket Inspector",
+      "destination_module": "FD Cache",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "FD Cache",
+      "destination_module": "FD Browser",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

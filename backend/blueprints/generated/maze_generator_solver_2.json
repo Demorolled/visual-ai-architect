@@ -1,0 +1,54 @@
+{
+  "app_type": "maze_generator_solver_2",
+  "description": "Procedural maze generation (DFS, Kruskal, Prim) with pathfinding solver visualization — Generates mazes using multiple algorithms (recursive backtracking, Kruskal, Prim, Wilson), solves them with BFS/DFS/A*, and shows step-by-step generation/solving animations",
+  "keywords": [
+    "maze",
+    "game",
+    "procedural",
+    "pathfinding",
+    "algorithms",
+    "maze",
+    "generator",
+    "solver",
+    "maze config",
+    "generation engine",
+    "solving engine",
+    "maze data",
+    "maze canvas"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Maze Config",
+    "Generation Engine",
+    "Solving Engine",
+    "Maze Data",
+    "Maze Canvas"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Maze Config",
+      "destination_module": "Generation Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Generation Engine",
+      "destination_module": "Solving Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Solving Engine",
+      "destination_module": "Maze Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Maze Data",
+      "destination_module": "Maze Canvas",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

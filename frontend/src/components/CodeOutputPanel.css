@@ -1,0 +1,536 @@
+.code-output-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.cop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--color-bg-raised);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.cop-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cop-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.cop-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-inverse);
+  background: var(--color-accent);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+.cop-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cop-clear-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 7px;
+  line-height: 1.4;
+  transition: all 0.15s;
+}
+
+.cop-clear-btn:hover:not(:disabled) {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.cop-clear-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── Detach Button ── */
+.cop-detach-btn {
+  background: none;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 8px;
+  line-height: 1.4;
+  transition: all 0.2s;
+}
+
+.cop-detach-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-text-inverse);
+  background: var(--color-gold-light);
+}
+
+.cop-detach-btn.detached {
+  border-color: var(--color-success);
+  color: var(--color-success);
+  background: var(--color-success-light);
+}
+
+/* ── Detached Placeholder Message ── */
+.cop-detached-msg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-size: 13px;
+  gap: 8px;
+}
+
+/* ── Toolbar ── */
+.cop-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  flex-shrink: 0;
+}
+
+.cop-filter-row {
+  display: flex;
+  gap: 6px;
+}
+
+.cop-filter-input {
+  flex: 1;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cop-filter-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.cop-filter-input::placeholder {
+  color: var(--color-text-dim);
+}
+
+.cop-toggle-row {
+  display: flex;
+  gap: 8px;
+}
+
+.cop-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  transition: all 0.15s;
+}
+
+.cop-toggle:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.cop-toggle.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.cop-toggle input[type="checkbox"] {
+  display: none;
+}
+
+/* ── Empty State ── */
+.cop-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 16px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.cop-empty-icon {
+  font-size: 36px;
+  opacity: 0.5;
+}
+
+.cop-empty-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.cop-empty-desc {
+  font-size: 11px;
+  color: var(--color-text-dim);
+  max-width: 240px;
+  line-height: 1.5;
+}
+
+/* ── Content Area ── */
+.cop-content {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── File List (left sidebar of the code panel) ── */
+.cop-file-list {
+  width: 180px;
+  min-width: 120px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg-raised);
+}
+
+.cop-file-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.1s;
+}
+
+.cop-file-item:hover {
+  background: var(--color-bg-elevated);
+}
+
+.cop-file-item.selected {
+  background: rgba(37, 99, 235, 0.12);
+  border-left: 2px solid var(--color-accent);
+}
+
+.cop-file-item-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cop-file-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.cop-file-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.cop-file-source-badge {
+  font-size: 10px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.cop-file-meta {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+  padding-left: 20px;
+}
+
+.cop-file-lang {
+  font-size: 9px;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.cop-file-lines {
+  font-size: 9px;
+  color: var(--color-text-dim);
+}
+
+/* ── Code Viewer ── */
+.cop-viewer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cop-viewer-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--color-text-dim);
+  padding: 16px;
+}
+
+.cop-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background: var(--color-bg-raised);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.cop-viewer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cop-viewer-icon {
+  font-size: 14px;
+}
+
+.cop-viewer-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.cop-viewer-lang {
+  font-size: 10px;
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.08);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.cop-viewer-lines {
+  font-size: 10px;
+  color: var(--color-text-dim);
+}
+
+.cop-copy-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 3px 10px;
+  transition: all 0.15s;
+}
+
+.cop-copy-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+/* ── Tool Manifest Banner ── */
+.cop-tools-banner {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+
+.cop-tools-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  transition: background 0.1s;
+}
+
+.cop-tools-header:hover {
+  background: var(--color-bg-raised);
+}
+
+.cop-tools-header-icon {
+  font-size: 13px;
+}
+
+.cop-tools-header-label {
+  font-weight: 600;
+  flex: 1;
+}
+
+.cop-tools-header-toggle {
+  font-size: 10px;
+  color: var(--color-text-dim);
+}
+
+.cop-tools-body {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 2px 12px 8px;
+}
+
+.cop-tools-category {
+  margin-bottom: 6px;
+}
+
+.cop-tools-category-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 3px;
+}
+
+.cop-tools-category-count {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--color-text-dim);
+  background: var(--color-bg-raised);
+  padding: 0 5px;
+  border-radius: var(--radius-sm);
+}
+
+.cop-tools-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.cop-tools-item {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  cursor: default;
+  transition: all 0.12s;
+}
+
+.cop-tools-item:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.cop-tools-item-name {
+  font-weight: 500;
+}
+
+.cop-tools-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cop-tools-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cop-tools-body::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 3px;
+}
+
+.cop-code-wrapper {
+  flex: 1;
+  overflow: auto;
+  background: #0d1117;
+  position: relative;
+}
+
+.cop-code-block {
+  margin: 0;
+  padding: 12px 16px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #e6edf3;
+  white-space: pre;
+  overflow-x: auto;
+  min-height: 100%;
+}
+
+.cop-code-block code {
+  font-family: inherit;
+  tab-size: 2;
+}
+
+/* ── Scrollbar styling for code viewer ── */
+.cop-code-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cop-code-wrapper::-webkit-scrollbar-track {
+  background: #0d1117;
+}
+
+.cop-code-wrapper::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 4px;
+}
+
+.cop-code-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+/* ── Syntax highlight-like coloring (simple approach) ── */
+.cop-code-block code .comment { color: #8b949e; }
+.cop-code-block code .keyword { color: #ff7b72; }
+.cop-code-block code .string { color: #a5d6ff; }
+.cop-code-block code .number { color: #79c0ff; }
+.cop-code-block code .function { color: #d2a8ff; }
+.cop-code-block code .type { color: #ffa657; }
+
+/* ── Compact mode ── */
+.cop-compact .cop-file-list {
+  display: none;
+}
+
+.cop-compact .cop-viewer-empty {
+  display: none;
+}

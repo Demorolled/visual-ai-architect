@@ -1,0 +1,3 @@
+export interface TodoItem { title: string; completed: boolean; }
+export const listTodos = () => { console.log('Todo list:'); const todos: TodoItem[] = []; for (let i = 0; i < 5; i++) { todos.push({ title: `Task ${i + 1}`, completed: i % 2 === 0 }); } todos.forEach((t, i) => { const mark = t.completed ? 'x' : ' '; console.log(`  ${i + 1}. [${mark}] ${t.title}`); }); };
+export const addTodo = (title: string) => { console.log(`Added: ${title}`); };

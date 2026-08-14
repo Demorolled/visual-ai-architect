@@ -1,0 +1,47 @@
+export class Game {
+  private cells: (string | null)[];
+  private currentPlayer: 'X' | 'O';
+
+  constructor() {
+    this.cells = Array(9).fill(null);
+    this.currentPlayer = 'X';
+  }
+
+  makeMove(index: number): void {
+    if (this.cells[index] !== null || this.gameOver) return;
+    this.cells[index] = this.currentPlayer;
+    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+  }
+
+  get gameOver() { return this.cells.every((_, i) => i !== null) || this.checkWinner(); }
+
+  get winner() { const w = this.checkWinner(); return w ? w.winner : null; }
+  get line() { const w = this.checkWinner(); return w ? w.line : null; }
+
+  checkWinner(): { winner: string | null; line: number[] } {
+    const lines: { [key: number]: number[] } = {
+      0: [0, 1, 2],
+      1: [3, 4, 5],
+      2: [6, 7, 8],
+      3: [0, 3, 6],
+      4: [1, 4, 7],
+      5: [2, 5, 8],
+      6: [0, 4, 8],
+      7: [2, 4, 6],
+    };
+    for (const [_, l] of Object.entries(lines)) {
+      const [a, b, c] = l;
+      if (this.cells[a] !== null && this.cells[a] === this.cells[b] && this.cells[a] === this.cells[c]) {
+        return { winner: this.cells[a], line: l };
+      }
+    }
+    return null;
+  }
+
+  isFull() { return this.gameOver; }
+
+  reset() {
+    this.cells = Array(9).fill(null);
+    this.currentPlayer = 'X';
+  }
+}

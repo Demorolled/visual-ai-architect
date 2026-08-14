@@ -1,0 +1,51 @@
+{
+  "app_type": "payment-csharp",
+  "description": "fintech core: merchant accounts, payment lifecycle, settlement batches, dispute handling, regulatory reporting.",
+  "keywords": [
+    "payment-csharp",
+    "csharp",
+    "payment",
+    "processing",
+    "accounts",
+    "payments",
+    "settlements",
+    "disputes",
+    "reports"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "accounts",
+    "payments",
+    "settlements",
+    "disputes",
+    "reports"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "accounts",
+      "destination_module": "payments",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "payments",
+      "destination_module": "settlements",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "settlements",
+      "destination_module": "disputes",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "disputes",
+      "destination_module": "reports",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

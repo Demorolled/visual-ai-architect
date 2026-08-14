@@ -1,0 +1,28 @@
+{
+ "gates": {
+  "chars": 2813,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [
+   "getBestMove"
+  ],
+  "prose_leak": 0
+ },
+ "meta": {},
+ "contract": {
+  "tsc_clean": false,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-185737-engine/contract/ai-engine.ts(1,82): error TS2307: Cannot find module '../chess-board/chess-board' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185737-engine/contract/ai-engine.ts(2,93): error TS2307: Cannot find module '../chess-move-rules/chess-move-rules' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185737-engine/contract/ai-engine.ts(68,41): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.",
+   "data/ab-test-chess-pipeline/run-20260805-185737-engine/contract/ai-engine.ts(78,44): error TS2345: Argument of type 'AIConfig | undefined' is not assignable to parameter of type 'AIConfig'."
+  ],
+  "error_count": 4
+ },
+ "functional": {}
+}

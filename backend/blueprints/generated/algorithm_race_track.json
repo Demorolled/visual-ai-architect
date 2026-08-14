@@ -1,0 +1,61 @@
+{
+  "app_type": "algorithm_race_track",
+  "description": "Side-by-side algorithm comparison with live benchmark charts and complexity verification — Competitive algorithm benchmarking tool. Runs multiple algorithms on identical data, measures execution time, operations count, and memory usage. Generates comparison charts and complexity analysis reports",
+  "keywords": [
+    "benchmark",
+    "algorithms",
+    "comparison",
+    "complexity",
+    "performance",
+    "algorithm",
+    "race",
+    "track",
+    "race config",
+    "race engine",
+    "benchmark store",
+    "complexity verifier",
+    "benchmark charts",
+    "report generator"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Race Config",
+    "Race Engine",
+    "Benchmark Store",
+    "Complexity Verifier",
+    "Benchmark Charts",
+    "Report Generator"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Race Config",
+      "destination_module": "Race Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Race Engine",
+      "destination_module": "Benchmark Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Benchmark Store",
+      "destination_module": "Complexity Verifier",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Complexity Verifier",
+      "destination_module": "Benchmark Charts",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Benchmark Charts",
+      "destination_module": "Report Generator",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

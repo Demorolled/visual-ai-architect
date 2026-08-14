@@ -1,0 +1,122 @@
+{
+  "id": "chess-full-graph-v1",
+  "name": "Full Chess Game",
+  "targetOS": "linux",
+  "savedAt": "2026-08-05T16:40:00.000Z",
+  "version": 1,
+  "nodes": [
+    {
+      "id": "master-node",
+      "type": "master",
+      "position": { "x": 640, "y": 40 },
+      "data": {
+        "label": "Full Chess Game",
+        "description": "Full-featured chess: complete legal move generation, check/checkmate detection, minimax AI opponent, and saved games.",
+        "type": "master",
+        "status": "pending",
+        "appGoal": "A full-featured chess game where users play against a minimax AI opponent or another player, with complete legal move generation, check/checkmate/stalemate detection, and save/load of games",
+        "appPurpose": "Users play chess on a board UI with legal-move highlighting, an AI opponent with difficulty levels, undo, and save/load games",
+        "selectedOS": "linux",
+        "selectedDistro": "ubuntu",
+        "scale": "large"
+      }
+    },
+    {
+      "id": "board-state",
+      "type": "logic",
+      "position": { "x": 80, "y": 260 },
+      "data": {
+        "label": "Board State",
+        "description": "8x8 board representation with piece placement, side-to-move tracking, move history, castling/en-passant rights, and FEN import/export. Foundational module that every other file imports.",
+        "type": "logic",
+        "status": "pending",
+        "language": "go"
+      }
+    },
+    {
+      "id": "move-rules",
+      "type": "logic",
+      "position": { "x": 340, "y": 260 },
+      "data": {
+        "label": "Move Rules",
+        "description": "Legal move generation for all six piece types including castling, en passant, and promotion, plus pinned-piece filtering and check/checkmate/stalemate detection.",
+        "type": "logic",
+        "status": "pending",
+        "language": "go"
+      }
+    },
+    {
+      "id": "chess-input",
+      "type": "input",
+      "position": { "x": 600, "y": 260 },
+      "data": {
+        "label": "Chess Input",
+        "description": "Parses player input — click square-to-square moves and algebraic notation (SAN) — validates legality against the rules engine, and applies moves with undo/redo support.",
+        "type": "input",
+        "status": "pending",
+        "language": "go"
+      }
+    },
+    {
+      "id": "ai-engine",
+      "type": "logic",
+      "position": { "x": 860, "y": 260 },
+      "data": {
+        "label": "AI Engine",
+        "description": "Minimax search with alpha-beta pruning, piece-square evaluation tables, and selectable difficulty levels (Easy/Medium/Hard). Plays either color.",
+        "type": "logic",
+        "status": "pending",
+        "language": "go"
+      }
+    },
+    {
+      "id": "game-storage",
+      "type": "database",
+      "position": { "x": 1120, "y": 260 },
+      "data": {
+        "label": "Game Storage",
+        "description": "Save/load in-progress games and export/import games in PGN format, with full move history and game metadata.",
+        "type": "database",
+        "status": "pending",
+        "language": "go"
+      }
+    },
+    {
+      "id": "board-renderer",
+      "type": "ui",
+      "position": { "x": 480, "y": 540 },
+      "data": {
+        "label": "Board Renderer",
+        "description": "Renders the chess board and pieces, highlights legal moves on click, animates captures, and shows the captured-piece tray, check indicator, and game-over banner.",
+        "type": "ui",
+        "status": "pending",
+        "language": "go"
+      }
+    },
+    {
+      "id": "gui-controls",
+      "type": "ui-functions",
+      "position": { "x": 820, "y": 540 },
+      "data": {
+        "label": "GUI Controls",
+        "description": "GUI control layer: New Game, Undo, Flip Board, difficulty selector, and Save/Load buttons wired to the game actions.",
+        "type": "ui-functions",
+        "status": "pending",
+        "language": "go"
+      }
+    }
+  ],
+  "edges": [
+    { "id": "e-board-moves", "source": "board-state", "target": "move-rules", "type": "default" },
+    { "id": "e-moves-input", "source": "move-rules", "target": "chess-input", "type": "default" },
+    { "id": "e-board-ai", "source": "board-state", "target": "ai-engine", "type": "default" },
+    { "id": "e-moves-ai", "source": "move-rules", "target": "ai-engine", "type": "default" },
+    { "id": "e-board-storage", "source": "board-state", "target": "game-storage", "type": "default" },
+    { "id": "e-moves-storage", "source": "move-rules", "target": "game-storage", "type": "default" },
+    { "id": "e-board-render", "source": "board-state", "target": "board-renderer", "type": "default" },
+    { "id": "e-input-render", "source": "chess-input", "target": "board-renderer", "type": "default" },
+    { "id": "e-ai-render", "source": "ai-engine", "target": "board-renderer", "type": "default" },
+    { "id": "e-storage-render", "source": "game-storage", "target": "board-renderer", "type": "default" },
+    { "id": "e-render-controls", "source": "board-renderer", "target": "gui-controls", "type": "default" }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "app_type": "matrix_decomposer",
+  "description": "LU/QR/Cholesky/SVD matrix decomposition explorer — an interactive mathematics tool with a visual interface.",
+  "keywords": [
+    "mathematics",
+    "mathematics",
+    "linear-algebra",
+    "matrix",
+    "decomposition",
+    "matrix",
+    "decomposer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "math_core",
+    "input_handler",
+    "plot_renderer",
+    "dataset_store"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "math_core",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "math_core",
+      "destination_module": "input_handler",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "input_handler",
+      "destination_module": "plot_renderer",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "plot_renderer",
+      "destination_module": "dataset_store",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:mathematics"
+}

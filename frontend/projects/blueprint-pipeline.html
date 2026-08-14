@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blueprint → Code Pipeline — VACA Architecture Diagram</title>
+<style>
+  :root {
+    --bg: #0b0e1a;
+    --bg2: #0f1220;
+    --surface: #161a2e;
+    --surface2: #1c2138;
+    --border: rgba(255,255,255,.08);
+    --border2: rgba(255,255,255,.14);
+    --text: #e2e6f5;
+    --dim: #8b93b0;
+    --dim2: #6b7392;
+    --primary: #4a9eff;
+    --green: #2dd4a7;
+    --amber: #ffb454;
+    --red: #ff6b6b;
+    --purple: #b388ff;
+    --radius: 14px;
+    --shadow: 0 12px 40px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(74,158,255,.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(45,212,167,.08), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 32px 20px 64px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  /* ── Header ───────────────────────────────────────────── */
+  header { text-align: center; margin-bottom: 34px; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--primary); border: 1px solid rgba(74,158,255,.35);
+    background: rgba(74,158,255,.08); padding: 6px 14px; border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -.02em; }
+  h1 .accent { background: linear-gradient(90deg, var(--primary), var(--green)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--dim); margin-top: 10px; font-size: 15px; max-width: 640px; margin-inline: auto; }
+  .legend { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; margin-top: 18px; font-size: 12.5px; color: var(--dim); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .dot.pipeline { background: var(--primary); }
+  .dot.fixed { background: var(--green); }
+  .dot.warn { background: var(--red); }
+
+  /* ── Pipeline ─────────────────────────────────────────── */
+  .pipeline { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .stage {
+    position: relative;
+    background: linear-gradient(180deg, var(--surface), var(--surface2));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 52px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+  .stage:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .stage.active { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary), var(--shadow); }
+  .stage .icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 24px;
+    background: rgba(74,158,255,.10);
+    border: 1px solid rgba(74,158,255,.25);
+  }
+  .stage .icon.fixed { background: rgba(45,212,167,.10); border-color: rgba(45,212,167,.3); }
+  .stage h3 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .stage h3 .tag {
+    font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .tag.new { color: #06281f; background: var(--green); }
+  .tag.tuned { color: #1a1206; background: var(--amber); }
+  .tag.core { color: #0a1a2e; background: var(--primary); }
+  .stage p { color: var(--dim); font-size: 13px; margin-top: 2px; }
+  .stage .chev { color: var(--dim2); font-size: 18px; transition: transform .2s ease; }
+  .stage.open .chev { transform: rotate(90deg); }
+  .stage .detail {
+    grid-column: 2 / -1;
+    max-height: 0; overflow: hidden;
+    transition: max-height .28s ease, margin .28s ease;
+    color: var(--dim); font-size: 13px;
+  }
+  .stage.open .detail { max-height: 260px; margin-top: 4px; }
+  .stage .detail code {
+    background: rgba(255,255,255,.06); border: 1px solid var(--border);
+    border-radius: 5px; padding: 1px 6px; font-size: 12px; color: var(--green);
+  }
+  .stage .files { color: var(--dim2); font-size: 11.5px; margin-top: 8px; }
+
+  /* animated connector */
+  .connector {
+    position: relative; height: 26px; margin: -2px 0;
+    display: grid; place-items: center;
+  }
+  .connector::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 50%;
+    height: 2px; transform: translateY(-50%);
+    background: repeating-linear-gradient(90deg, var(--border2) 0 6px, transparent 6px 12px);
+  }
+  .connector .flow {
+    position: absolute; left: 6px; top: 50%; width: 10px; height: 10px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+    animation: flow 2.4s linear infinite;
+  }
+  .connector .flow.green { background: var(--green); box-shadow: 0 0 10px var(--green); }
+  @keyframes flow {
+    0%   { left: 4px; opacity: 0; }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { left: calc(100% - 14px); opacity: 0; }
+  }
+
+  /* ── Changes section ──────────────────────────────────── */
+  section.block { margin-top: 44px; }
+  .block-title { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+  .block-title h2 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+  .block-title h2 .n { color: var(--green); }
+  .block-sub { color: var(--dim); font-size: 13.5px; margin-bottom: 18px; }
+  .switch {
+    display: inline-flex; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 999px; padding: 3px; gap: 2px;
+  }
+  .switch button {
+    border: 0; background: transparent; color: var(--dim);
+    font: inherit; font-size: 12.5px; font-weight: 600;
+    padding: 6px 16px; border-radius: 999px; cursor: pointer; transition: all .18s ease;
+  }
+  .switch button.on { background: var(--green); color: #06281f; }
+
+  .changes { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; margin-top: 20px; }
+  .change {
+    background: linear-gradient(180deg, var(--surface), var(--surface2));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; transition: border-color .18s ease, transform .18s ease;
+  }
+  .change:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .change .ch-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .change .ch-n {
+    width: 26px; height: 26px; border-radius: 8px; flex: none;
+    display: grid; place-items: center; font-size: 12px; font-weight: 800;
+    background: rgba(45,212,167,.12); color: var(--green); border: 1px solid rgba(45,212,167,.3);
+  }
+  .change h4 { font-size: 14.5px; font-weight: 700; }
+  .change .pair { display: flex; flex-direction: column; gap: 6px; }
+  .change .row { display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; }
+  .change .row .lbl { flex: none; width: 52px; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .change .row.before .lbl { color: var(--red); }
+  .change .row.after .lbl { color: var(--green); }
+  .change .row .val { color: var(--dim); }
+  .change .row.after .val { color: var(--text); }
+  .change .row code { background: rgba(255,255,255,.06); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; font-size: 11.5px; }
+  .change .why { color: var(--dim2); font-size: 12px; margin-top: 9px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+  /* ── Routing example ──────────────────────────────────── */
+  .example {
+    margin-top: 20px;
+    background: linear-gradient(180deg, var(--surface), var(--surface2));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .example h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .example .goal {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px;
+    color: var(--amber); background: rgba(255,180,84,.08); border: 1px dashed rgba(255,180,84,.35);
+    border-radius: 8px; padding: 8px 12px; display: inline-block; margin: 10px 0 16px;
+  }
+  .route { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .route .side { flex: 1; min-width: 240px; }
+  .route .card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+    background: var(--bg2);
+  }
+  .route .card.before { border-color: rgba(255,107,107,.35); }
+  .route .card.after { border-color: rgba(45,212,167,.4); }
+  .route .card .r { color: var(--dim2); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+  .route .card .name { font-weight: 700; font-size: 15px; }
+  .route .card .score { font-family: ui-monospace, monospace; font-size: 13px; }
+  .route .card.before .score { color: var(--red); }
+  .route .card.after .score { color: var(--green); }
+  .route .arrow { font-size: 22px; color: var(--primary); }
+  .route .runner { color: var(--dim); font-size: 12.5px; margin-top: 10px; }
+
+  footer { margin-top: 44px; text-align: center; color: var(--dim2); font-size: 12.5px; }
+  footer code { background: rgba(255,255,255,.06); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; }
+
+  @media (max-width: 640px) {
+    .stage { grid-template-columns: 44px 1fr auto; }
+    .stage .icon { width: 44px; height: 44px; font-size: 20px; }
+    .route .arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">VACA · visual-ai-architect</div>
+    <h1>Blueprint → Code <span class="accent">Pipeline</span></h1>
+    <p class="sub">How a natural-language goal becomes a compiling multi-file app — and the quality fixes that got the generated TypeScript to actually pass <code>tsc</code>.</p>
+    <div class="legend">
+      <span><i class="dot pipeline"></i>Pipeline stage</span>
+      <span><i class="dot fixed"></i>Stage with a quality fix</span>
+      <span><i class="dot warn"></i>Before/after change</span>
+    </div>
+  </header>
+
+  <!-- ── PIPELINE ─────────────────────────────────────── -->
+  <div class="pipeline" id="pipeline"></div>
+
+  <!-- ── CHANGES ──────────────────────────────────────── -->
+  <section class="block">
+    <div class="block-title">
+      <div>
+        <h2><span class="n">⚙</span> What changed — <span id="mode-label">all fixes</span></h2>
+      </div>
+      <div class="switch" role="group" aria-label="toggle">
+        <button id="btn-before">BEFORE (broken)</button>
+        <button id="btn-after" class="on">AFTER (fixed)</button>
+      </div>
+    </div>
+    <p class="block-sub">Every change maps to a failure mode observed in live builds. Toggle BEFORE/AFTER to compare.</p>
+    <div class="changes" id="changes"></div>
+  </section>
+
+  <!-- ── ROUTING EXAMPLE ──────────────────────────────── -->
+  <section class="block">
+    <div class="block-title">
+      <h2><span class="n">🧭</span> Routing example — “recipe” goal</h2>
+    </div>
+    <p class="block-sub">The matcher fix in action on a real build request.</p>
+    <div class="example">
+      <div class="goal">goal: “an app to organize and search my cooking recipes with ingredients and ratings”</div>
+      <div class="route">
+        <div class="side card before">
+          <div class="r">Before · threshold 0.05</div>
+          <div class="name">code_playground</div>
+          <div class="score">score 0.271 — unrelated noise won</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="side card after">
+          <div class="r">After · lexical boost + threshold 0.30</div>
+          <div class="name">cooking_timer <span style="font-weight:400;color:var(--dim)">(runner-up: recipe_manager_2)</span></div>
+          <div class="score">score 0.866 — exact “cooking”/“recipe” vocabulary hit</div>
+        </div>
+      </div>
+      <div class="runner">code_playground no longer clears the 0.30 floor and is dropped entirely.</div>
+    </div>
+  </section>
+
+  <footer>
+    Pipeline: <code>bible.ts</code> → <code>blueprint.ts</code> → <code>fileGenerator.ts</code> → <code>verifiedGenerationCapture.ts</code> ·
+    backend live on <code>:3001</code> · 774 tests passing
+  </footer>
+</div>
+
+<script>
+// ── Pipeline stages ──────────────────────────────────────────────
+const STAGES = [
+  { icon:"🧠", fixed:false, tag:["core","input"], title:"Goal", sub:"Natural-language app description → POST /api/blueprint/build",
+    detail:"The only thing the user provides: e.g. “a pomodoro timer with session history and stats”. The route validates it and hands it to the matcher.",
+    files:"routes/blueprint.ts" },
+  { icon:"🔍", fixed:true, tag:["new","fixed"], title:"Blueprint matcher", sub:"cosine similarity + exact-vocabulary boost, floor 0.30",
+    detail:`<b>matchBlueprint</b> embeds the goal with the same deterministic hashing trick as <code>semanticRetrieval</code>, scores all ~1,228 bible blueprints, then adds <code>+0.35</code> per goal token that hits a blueprint's <code>app_type</code>/<code>keywords</code> (capped at 2 hits). Scores below <code>0.30</code> are rejected → <code>generic_fullstack_app</code> fallback.`,
+    files:"blueprint/bible.ts · routes/blueprint.ts" },
+  { icon:"🗺️", fixed:true, tag:["new","fixed"], title:"Blueprint → Project", sub:"one node per module · sanitized wiring DAG",
+    detail:`<b>blueprintToProject</b> builds a master node (holding goal/scale/OS + the fused <code>blueprintContext</code>) plus one node per architecture-checklist module, one edge per wiring contract. <b>sanitizeWiring</b> reverses UI-backwards edges (a UI module must consume from logic/data, never feed it) and drops cycle-forming edges so generation always sees a DAG.`,
+    files:"blueprint/bible.ts" },
+  { icon:"🤖", fixed:true, tag:["tuned","prompt"], title:"Per-file LLM generation", sub:"topological batches · fast 0.5B / 7B delegator",
+    detail:`Files generate in dependency order (parallel batches). Each prompt fuses: node description + blueprint constraints + program scale + GUI widget layout + the real export contracts of available dependencies. Three hard rules were added — <b>named exports only</b> (never <code>export default</code>), <b>no stubs/placeholders</b>, <b>standard-library only</b> (no prisma/express/lodash — nothing is installed).`,
+    files:"layers/fileGenerator.ts · generateNodeFile()" },
+  { icon:"🧹", fixed:true, tag:["new","fixed"], title:"Import stripping", sub:"AI imports removed — every top-level form",
+    detail:`<b>postProcessTsJsCode</b> removes import statements the model emitted: <code>import {X}</code>, no-space <code>import{X}</code>, <code>import type</code>, and multi-line blocks. A <code>from</code>-guard keeps template-literal content starting with the word “import” safe. Go/Rust/Python get language-specific post-processors.`,
+    files:"layers/fileGenerator.ts" },
+  { icon:"🔗", fixed:true, tag:["new","fixed"], title:"Auto-import assembly", sub:"named · default · side-effect — from real export contracts",
+    detail:`<b>buildImportStatement</b> builds the import section from each dependency's <code>FileExportInfo</code> contract <code>{names, defaultName}</code>: named imports for named exports, <code>import X from '…'</code> for default exports (fixes TS2614), and a side-effect import only when a dependency exposes nothing. Empty contracts render as <b>“NONE — do NOT import from this file”</b> in prompts.`,
+    files:"layers/fileGenerator.ts · extractExports()" },
+  { icon:"🔁", fixed:true, tag:["tuned","loop"], title:"Compile-check & repair", sub:"up to 3 rounds · repair WITH context · dependents regenerate",
+    detail:`<b>tsc --noEmit</b> (strict off — structural checks only) runs on a temp scaffold. Every failing file is regenerated with its <b>previous content</b> + the <b>real export contracts of its import targets</b> (may ONLY reference these). When a repair changes a file's exports, its <b>dependents</b> are regenerated too so the graph converges instead of drifting.`,
+    files:"layers/fileGenerator.ts · compileCheckAndFix()" },
+  { icon:"✅", fixed:false, tag:["core","gate"], title:"Verification gate", sub:"tsCompileClean = every TS/JS file compiles",
+    detail:`The live tsc loop's zero-failure verdict is the authoritative <code>tsCompileClean</code> stamp. Broken output never counts as verified — this is what the training capture trusts.`,
+    files:"layers/fileGenerator.ts" },
+  { icon:"📊", fixed:false, tag:["core","capture"], title:"Capture → training data", sub:"verified rows into verified-generations.jsonl",
+    detail:`<b>captureVerifiedGeneration</b> writes blueprint-constrained instruction → output rows for every file that passed the gate. <code>build-vaca-knowledge-dataset</code> + <code>merge-campaign50-into-dataset</code> guarantee these into the fine-tune (train-venorica).`,
+    files:"training/verifiedGenerationCapture.ts · routes/blueprint.ts" },
+  { icon:"🖥️", fixed:false, tag:["core","output"], title:"Preview + canvas", sub:"importable project graph",
+    detail:`A preview HTML wrapper inlines the generated files (external script refs are inlined for the iframe). The project — nodes + edges + files — persists to <code>GET /api/projects</code> so the canvas can load the built app graph.`,
+    files:"layers/fileGenerator.ts · db/projects.ts" },
+];
+
+// ── Changes (before → after) ─────────────────────────────────────
+const CHANGES = [
+  { title:"Matcher floor & exact hits",
+    before:"threshold 0.05 — any weak embedding noise routed builds (recipe goal → code_playground 0.271)",
+    after:"threshold 0.30 + lexical bonus (+0.35/hit) — exact domain hits win; noise falls back to generic_fullstack_app",
+    why:"The 0.05 floor was so permissive that unrelated playgrounds beat obviously-right blueprints." },
+  { title:"Wiring direction sanity",
+    before:"raw wiring chain — engine depended on UI; data-store depended on input-handler",
+    after:"sanitizeWiring reverses UI-backwards edges and drops cycles → clean DAG (UI consumes from engine)",
+    why:"The generator faithfully implemented garbage bible wiring; the reverse order is impossible in a real app." },
+  { title:"Default exports",
+    before:"export default ignored → dependents got side-effect imports → TS2304 on every symbol",
+    after:"FileExportInfo captures {names, defaultName} → dependents get import X from '…' (fixes TS2614)",
+    why:"3 of 5 generated files default-exported; the import contract only knew named exports." },
+  { title:"Import stripper",
+    before:"only /^import\\s/ in the leading block — import{X} and mid-file imports survived",
+    after:"every top-level import stripped (no-space, type, multi-line) with a from-guard for strings",
+    why:"Surviving AI imports caused TS2300 duplicates and TS2614 wrong-sibling imports." },
+  { title:"Repair prompt context",
+    before:"errors only — model repaired blind and reproduced the same mistakes",
+    after:"errors + previous content (≤6k chars) + import-target export contracts",
+    why:"Cross-file drift (\"Property 'updateEvent' does not exist on 'DataStore'\") is unfixable without the other file's contract." },
+  { title:"Dependent regeneration",
+    before:"only the failing file regenerated — its dependents kept stale imports",
+    after:"when a repair changes a dep's export contract, dependents regenerate too; rounds 2 → 3",
+    why:"A fixed export list silently breaks every importer that referenced the old members." },
+  { title:"Validation strictness",
+    before:"tsc strict:true — benign number|null mismatches failed otherwise-fine files",
+    after:"strict:false — the gate catches structural failures (missing imports, duplicates), not nullability nitpicks",
+    why:"Matches the codePlanner runner; strict null errors are noise for AI output." },
+  { title:"Prompt anti-pattern rules",
+    before:"\"COMPLETE, PRODUCTION-READY\" — model still emitted stubs and invented libraries",
+    after:"hard rules: named exports only · no stubs/placeholders · standard-library only",
+    why:"Stubs produced zero exports; invented third-party libs (PrismaClient, Database) can't resolve in the sandbox." },
+];
+
+// ── Render pipeline ──────────────────────────────────────────────
+const pipe = document.getElementById("pipeline");
+STAGES.forEach((s, i) => {
+  const el = document.createElement("div");
+  el.className = "stage";
+  el.innerHTML = `
+    <div class="icon ${s.fixed ? "fixed" : ""}">${s.icon}</div>
+    <div>
+      <h3>${s.title} <span class="tag ${s.tag[0]}">${s.tag[1] || s.tag[0]}</span></h3>
+      <p>${s.sub}</p>
+      <div class="detail">${s.detail}<div class="files">📁 ${s.files}</div></div>
+    </div>
+    <div class="chev">▸</div>`;
+  el.addEventListener("click", () => {
+    el.classList.toggle("open");
+    el.classList.toggle("active");
+  });
+  pipe.appendChild(el);
+  if (i < STAGES.length - 1) {
+    const c = document.createElement("div");
+    c.className = "connector";
+    c.innerHTML = `<span class="flow ${STAGES[i+1].fixed ? "green" : ""}" style="animation-delay:${(i*0.28)%2}s"></span>`;
+    pipe.appendChild(c);
+  }
+});
+
+// ── Render changes ───────────────────────────────────────────────
+const changesEl = document.getElementById("changes");
+const modeLabel = document.getElementById("mode-label");
+const btnBefore = document.getElementById("btn-before");
+const btnAfter = document.getElementById("btn-after");
+let mode = "after";
+
+function renderChanges() {
+  changesEl.innerHTML = "";
+  CHANGES.forEach((c, i) => {
+    const el = document.createElement("div");
+    el.className = "change";
+    el.innerHTML = `
+      <div class="ch-top"><span class="ch-n">${i+1}</span><h4>${c.title}</h4></div>
+      <div class="pair">
+        ${mode === "after"
+          ? `<div class="row after"><span class="lbl">After</span><span class="val">${c.after}</span></div>
+             <div class="row before"><span class="lbl">Before</span><span class="val">${c.before}</span></div>`
+          : `<div class="row before"><span class="lbl">Before</span><span class="val">${c.before}</span></div>
+             <div class="row after"><span class="lbl">After</span><span class="val">${c.after}</span></div>`}
+      </div>
+      <div class="why">💡 ${c.why}</div>`;
+    changesEl.appendChild(el);
+  });
+}
+function setMode(m) {
+  mode = m;
+  btnBefore.classList.toggle("on", m === "before");
+  btnAfter.classList.toggle("on", m === "after");
+  modeLabel.textContent = m === "after" ? "all fixes" : "the broken state";
+  renderChanges();
+}
+btnBefore.addEventListener("click", () => setMode("before"));
+btnAfter.addEventListener("click", () => setMode("after"));
+renderChanges();
+</script>
+</body>
+</html>

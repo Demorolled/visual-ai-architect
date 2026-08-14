@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Molecule Viewer</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  #molCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+  #caption { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 10; color: #fff; font-family: system-ui, sans-serif; font-size: 14px; }
+  #cycle { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10; width: 160px; height: 30px; line-height: 30px; text-align: center; color: #fff; font-size: 14px; cursor: pointer; user-select: none; }
+  #cycle:hover { color: #0ff; }
+</style>
+</head>
+<body>
+<canvas id="molCanvas"></canvas>
+<div id="caption">Water</div>
+<div id="cycle">Cycle</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const molecules = [{name:'Water', atoms:[{x:0,y:0,z:0,r:8.98,color:0x00ff00},{x:0,y:0,z:1.23,r:6.6,rColor:0xff0000},{x:0,y:0,z:-1.23,r:6.6,rColor:0xff0000}], bonds:[[[0,1],[0,2]]} , {name:'Methane', atoms:[{x:0,y:0,z:0,r:10.1,rColor:0x00ff00},{x:1.2,y:0,z:0,r:6.6,rColor:0xff0000},{x:-1.2,y:0,z:0,r:6.6,rColor:0xff0000},{x:0,y:1.2,z:0,r:6.6,rColor:0xff0000},{x:0,y:-1.2,z:0,r:6.6,rColor:0xff0000}], bonds:[[[0,1],[0,2],[0,3],[0,4]]} , {name:'Benzene', atoms:[{x:0,y:0,z:0,r:10.1,rColor:0x00ff00},{x:1.2,y:0,z:0,r:6.6,rColor:0xff0000},{x:-1.2,y:0,z:0,r:6.6,rColor:0xff0000},{x:0,y:1.2,z:0,r:6.6,rColor:0xff0000},{x:0,y:-1.2,z:0,r:6.6,rColor:0xff0000},{x:0,y:0,z:1.2,r:6.6,rColor:0xff0000},{x:0,y:0,z:-1.2,r:6.6,rColor:0xff0000}], bonds:[[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]}] , currentMolIdx: 0, canvas: null, scene: null, camera: null, renderer: null, clock: null, animate: null, orbit: null, molecule: null, createScene: function () { this.scene = new THREE.Scene(); this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); this.camera.position.set(4, 4, 4); this.renderer = new THREE.WebGLRenderer({ antialias: true }); this.renderer.setSize(window.innerWidth, window.innerHeight); this.canvas.appendChild(this.renderer.domElement); this.clock = new THREE.Clock(); }, addMolecule: function (atoms, bonds) { if (this.molecule) this.scene.remove(this.molecule.geometry); const mat = new THREE.MeshBasicMaterial({ vertexColors: true }); const group = new THREE.Group(); for (let i = 0; i < atoms.length; i++) { const a = atoms[i]; const sphere = new THREE.Mesh(new THREE.SphereGeometry(a.r, 32, 32), mat); sphere.position.set(a.x, a.y, a.z); sphere.color.setHex(a.color); if (a.rColor) sphere.material.color.setHex(a.rColor); group.add(sphere); } for (let i = 0; i < bonds.length; i++) { const b = bonds[i]; const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute([atoms[b[0]].position, atoms[b[1]].position], 3)); const line = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0xffffff })); group.add(line); } this.molecule = group; this.scene.add(group); }, animate: function () { requestAnimationFrame(this.animate.bind(this)); const t = this.clock.getElapsedTime(); this.orbit.update(t); this.renderer.render(this.scene, this.camera); }, onCycle: function () { this.currentMolIdx = (this.currentMolIdx + 1) % molecules.length; this.addMolecule(molecules[this.currentMolIdx].atoms, molecules[this.currentMolIdx].bonds); document.getElementById('caption').textContent = molecules[this.currentMolIdx].name; }, init: function () { this.canvas = document.createElement('canvas'); document.body.appendChild(this.canvas); this.createScene(); this.addMolecule(molecules[0].atoms, molecules[0].bonds); this.orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement); this.animate = this.animate.bind(this); this.animate(); document.getElementById('cycle').addEventListener('click', this.onCycle.bind(this)); }, run: function () { if (this.scene === null) this.init(); } } window.onload = function () { theRun.run(); };
+</script>
+</body>
+</html>

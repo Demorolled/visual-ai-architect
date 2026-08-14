@@ -1,0 +1,66 @@
+.eq-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  cursor: default;
+  user-select: none;
+}
+
+.eq-circle {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  background: var(--color-bg-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+
+/* ── Pulsing glow layer (sits behind the prism) ── */
+.eq-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.eq-glow.active {
+  opacity: 1;
+  animation: prism-glow-pulse 1.8s ease-in-out infinite;
+}
+
+.eq-indicator.speaking .eq-circle {
+  background: rgba(139, 92, 246, 0.06);
+}
+
+.eq-indicator:not(.speaking) .eq-circle {
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-raised);
+}
+
+@keyframes prism-glow-pulse {
+  0% {
+    background: radial-gradient(ellipse at 35% 50%, rgba(139, 92, 246, 0.25) 0%, transparent 55%);
+    transform: scale(0.92);
+  }
+  50% {
+    background: radial-gradient(ellipse at 65% 50%, rgba(249, 115, 22, 0.25) 0%, transparent 55%);
+    transform: scale(1.08);
+  }
+  100% {
+    background: radial-gradient(ellipse at 40% 50%, rgba(139, 92, 246, 0.18) 0%, rgba(249, 115, 22, 0.10) 50%, transparent 60%);
+    transform: scale(0.95);
+  }
+}
+
+

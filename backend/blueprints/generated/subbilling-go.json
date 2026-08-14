@@ -1,0 +1,51 @@
+{
+  "app_type": "subbilling-go",
+  "description": "SaaS billing: plan catalog, customer lifecycle, subscription states, prorated invoicing, usage metering.",
+  "keywords": [
+    "subbilling-go",
+    "go",
+    "subscription",
+    "billing",
+    "plans",
+    "customers",
+    "subscriptions",
+    "invoices",
+    "usage"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "plans",
+    "customers",
+    "subscriptions",
+    "invoices",
+    "usage"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "plans",
+      "destination_module": "customers",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "customers",
+      "destination_module": "subscriptions",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "subscriptions",
+      "destination_module": "invoices",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "invoices",
+      "destination_module": "usage",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 33
+}

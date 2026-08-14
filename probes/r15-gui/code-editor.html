@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Editor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background: #222; }
+  .container { width: 100%; max-width: 1200px; display: flex; }
+  .editor { flex: 1; padding: 20px; background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+  .editor textarea { width: 100%; height: 100vh; padding: 20px; font-size: 14px; color: #ddd; background: #1e1e1e; border: none; outline: none; margin-bottom: 10px; }
+  .editor button { padding: 10px 20px; font-size: 14px; color: #fff; background: #f00; border: none; border-radius: 4px; cursor: pointer; }
+  .preview { width: 50%; padding: 20px; background: #111; border-radius: 8px; overflow: hidden; }
+  .preview iframe { width: 100%; height: 100%; border: none; }
+  .footer { margin-top: 20px; font-size: 12px; color: #777; }
+  .footer span { margin-right: 10px; }
+  .footer span.count { margin-right: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="editor">
+    <textarea id="editor" placeholder="HTML, CSS, JavaScript..."></textarea>
+    <button onclick="run()">Run</button>
+    <div class="footer">
+      <span class="count"></span>
+      <span>Lines</span>
+    </div>
+  </div>
+  <div class="preview">
+    <iframe id="preview"></iframe>
+  </div>
+</div>
+<script>
+const editor = document.getElementById('editor');
+const preview = document.getElementById('preview');
+const lineCount = document.querySelector('.footer .count');
+
+function run() {
+  const content = editor.value.trim();
+  if (!content) return;
+
+  const iframe = document.createElement('iframe');
+  iframe.id = 'preview';
+  iframe.style.width = '100%';
+  iframe.style.height = '100%';
+  iframe.style.border = 'none';
+  preview.innerHTML = '';
+  preview.appendChild(iframe);
+
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  iframeDoc.open();
+  iframeDoc.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        ${content.split('\n').filter(line => line.trim().startsWith('style'))[0]}
+      </style>
+    </head>
+    <body>
+      ${content.split('\n').filter(line => line.trim().startsWith('script'))[0]}
+    </body>
+    </html>
+  `);
+  iframeDoc.close();
+}
+
+editor.addEventListener('input', () => {
+  const lines = editor.value.split('\n').length;
+  lineCount.textContent = lines;
+});
+
+run();
+</script>
+</body>
+</html>

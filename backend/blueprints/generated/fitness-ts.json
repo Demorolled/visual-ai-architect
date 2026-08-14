@@ -1,0 +1,51 @@
+{
+  "app_type": "fitness-ts",
+  "description": "health tracking: workout logging, exercise library, goal setting, progress analytics over time.",
+  "keywords": [
+    "fitness-ts",
+    "typescript",
+    "fitness",
+    "tracker",
+    "users",
+    "workouts",
+    "exercises",
+    "goals",
+    "progress"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "users",
+    "workouts",
+    "exercises",
+    "goals",
+    "progress"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "users",
+      "destination_module": "workouts",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "workouts",
+      "destination_module": "exercises",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "exercises",
+      "destination_module": "goals",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "goals",
+      "destination_module": "progress",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

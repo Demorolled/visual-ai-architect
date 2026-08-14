@@ -1,0 +1,60 @@
+{
+  "app_type": "tetris_game",
+  "description": "Full Tetris with SRS rotation, bag randomizer, ghost piece, and T-spin detection — Complete Tetris implementation with Super Rotation System, 7-bag randomizer, wall kicks, ghost piece preview, line clearing, T-spin detection, and scoring system",
+  "keywords": [
+    "tetris",
+    "game",
+    "rotation",
+    "puzzle",
+    "arcade",
+    "tetris",
+    "game",
+    "tetris controls",
+    "piece engine",
+    "collision & clear",
+    "board state",
+    "game board",
+    "scoring system"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Tetris Controls",
+    "Piece Engine",
+    "Collision & Clear",
+    "Board State",
+    "Game Board",
+    "Scoring System"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Tetris Controls",
+      "destination_module": "Piece Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Piece Engine",
+      "destination_module": "Collision & Clear",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Collision & Clear",
+      "destination_module": "Board State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Board State",
+      "destination_module": "Game Board",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Game Board",
+      "destination_module": "Scoring System",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

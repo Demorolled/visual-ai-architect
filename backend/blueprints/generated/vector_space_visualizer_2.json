@@ -1,0 +1,54 @@
+{
+  "app_type": "vector_space_visualizer_2",
+  "description": "Vector spaces, linear combinations, span, and basis — Interactive vector space visualizer with real-time visualization and analysis",
+  "keywords": [
+    "mathematics",
+    "vector-space",
+    "linear-algebra",
+    "visualization",
+    "mathematics",
+    "vector",
+    "space",
+    "visualizer",
+    "math input",
+    "math engine",
+    "data storage",
+    "analysis module",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Math Input",
+    "Math Engine",
+    "Data Storage",
+    "Analysis Module",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Math Input",
+      "destination_module": "Math Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Math Engine",
+      "destination_module": "Data Storage",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Storage",
+      "destination_module": "Analysis Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Module",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

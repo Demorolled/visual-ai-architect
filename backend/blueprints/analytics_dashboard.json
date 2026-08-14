@@ -1,0 +1,26 @@
+{
+  "app_type": "analytics_dashboard",
+  "description": "Admin analytics dashboard with charts, metrics, KPI cards, and data visualization over collected events and usage data.",
+  "keywords": ["dashboard", "analytics", "metrics", "charts", "graphs", "admin", "reporting", "statistics", "monitoring", "kpi", "visualization", "business intelligence"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "event_models",
+    "event_store",
+    "aggregation_logic",
+    "api_routes",
+    "export_service"
+  ],
+  "wiring_graph": [
+    { "source_module": "ui_screens", "destination_module": "api_routes", "data_passed": "dashboard_queries" },
+    { "source_module": "api_routes", "destination_module": "aggregation_logic", "data_passed": "metric_requests" },
+    { "source_module": "aggregation_logic", "destination_module": "event_store", "data_passed": "aggregate_queries" },
+    { "source_module": "event_models", "destination_module": "event_store", "data_passed": "schemas" },
+    { "source_module": "api_routes", "destination_module": "export_service", "data_passed": "report_requests" },
+    { "source_module": "event_models", "destination_module": "aggregation_logic", "data_passed": "type_definitions" }
+  ]
+}

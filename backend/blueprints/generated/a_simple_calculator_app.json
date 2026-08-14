@@ -1,0 +1,33 @@
+{
+  "app_type": "a_simple_calculator_app",
+  "description": "A simple calculator app — Add, subtract, multiply, divide numbers",
+  "keywords": [
+    "input",
+    "logic",
+    "database",
+    "ui",
+    "a",
+    "simple",
+    "calculator",
+    "app",
+    "data storage",
+    "user interface"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Storage",
+    "User Interface"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Storage",
+      "destination_module": "User Interface",
+      "data_passed": "requests"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "__USERNAME__/vaca-r10-adapter",
+  "title": "VACA R10 LoRA adapter", 
+  "subtitle": "Resume round-11 from the R10 model serving the VACA app", 
+  "licenses": [
+    {
+      "name": "other"
+    }
+  ]
+}

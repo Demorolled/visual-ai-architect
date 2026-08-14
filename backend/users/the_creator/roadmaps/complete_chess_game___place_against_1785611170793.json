@@ -1,0 +1,50 @@
+{
+  "projectName": "complete chess game — place against",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "logic",
+      "label": "chess_game",
+      "description": "Core chess game logic, including piece movement, check/checkmate detection.",
+      "language": "java",
+      "position": {
+        "x": 150,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_1",
+      "type": "logic",
+      "label": "user_interface",
+      "description": "Console-based user interface for player interaction, including input handling and display.",
+      "language": "java",
+      "position": {
+        "x": 370,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_2",
+      "type": "input",
+      "label": "main",
+      "description": "Entry point of the application, initializes the game and user interface.",
+      "language": "java",
+      "position": {
+        "x": 590,
+        "y": 280
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_0",
+      "target": "node_1"
+    },
+    {
+      "source": "node_1",
+      "target": "node_2"
+    }
+  ],
+  "createdAt": "2026-08-01T19:06:10.793Z"
+}

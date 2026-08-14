@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .todos { margin: 0; padding: 0; list-style: none; }
+        .todo { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .todo label { width: 70%; cursor: pointer; }
+        .todo label input { display: none; }
+        .todo label input:checked + span { text-decoration: line-through; color: gray; }
+        .todo .actions { width: 20%; display: flex; gap: 8px; align-items: center; }
+        .todo .actions button { background: none; border: none; cursor: pointer; font-size: 14px; }
+        .todo .actions button:hover { color: #007bff; }
+        .footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .footer span { font-size: 14px; color: gray; }
+        .footer button { background: none; border: none; cursor: pointer; font-size: 14px; color: #007bff; }
+        .footer button:hover { color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Todo List</h1>
+    <ul class="todos" id="todos"></ul>
+    <div class="footer">
+        <span id="remaining-count"></span>
+        <button id="clear-completed">Clear Completed</button>
+        <label>
+            <input type="checkbox" id="filter-all">
+            <span>All</span>
+        </label>
+        <label>
+            <input type="checkbox" id="filter-active">
+            <span>Active</span>
+        </label>
+        <label>
+            <input type="checkbox" id="filter-completed">
+            <span>Completed</span>
+        </label>
+    </div>
+    <script>
+        const TODOS_KEY = 'todos';
+        let todos = [];
+
+        function loadTodos() {
+            todos = JSON.parse(localStorage.getItem(TODOS_KEY)) || [];
+        }
+
+        function saveTodos() {
+            localStorage.setItem(TODOS_KEY, JSON.stringify(todos));
+        }
+
+        function renderTodos() {
+            const todosEl = document.getElementById('todos');
+            todosEl.innerHTML = '';
+            const filteredTodos = todos.filter((todo) => {
+                const { completed, title } = todo;
+                const filterAll = document.getElementById('filter-all').checked;
+                const filterActive = document.getElementById('filter-active').checked;
+                const filterCompleted = document.getElementById('filter-completed').checked;
+                if (filterAll) return true;
+                if (filterActive) return !completed;
+                if (filterCompleted) return completed;
+                return false;
+            });
+            const remainingCount = filteredTodos.filter((todo) => !todo.completed).length;
+            document.getElementById('remaining-count').textContent = remainingCount;
+            filteredTodos.forEach((todo) => {
+                const todoEl = document.createElement('li');
+                todoEl.className = 'todo';
+                todoEl.innerHTML = `
+                    <label>
+                        <input type="checkbox" data-id="${todo.id}" ${todo.completed ? 'checked' : ''}>
+                        <span>${todo.title}</span>
+                    </label>
+                    <div class="actions">
+                        <button data-id="${todo.id}" onclick="deleteTodo(this)">Delete</button>
+                    </div>
+                `;
+                todosEl.appendChild(todoEl);
+            });
+        }
+
+        function addTodo(title) {
+            const id = Date.now();
+            todos.push({ id, title, completed: false });
+            saveTodos();
+            renderTodos();
+        }
+
+        function deleteTodo(button) {
+            const id = button.dataset.id;
+            todos = todos.filter((todo) => todo.id !== parseInt(id));
+            saveTodos();
+            renderTodos();
+        }
+
+        document.getElementById('clear-completed')?.addEventListener('click', () => {
+            todos = todos.filter((todo) => !todo.completed);
+            saveTodos();
+            renderTodos();
+        });
+
+        document.getElementById('filter-all')?.addEventListener('change', renderTodos);
+        document.getElementById('filter-active')?.addEventListener('change', renderTodos);
+        document.getElementById('filter-completed')?.addEventListener('change', renderTodos);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTodos();
+            renderTodos();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
+                const id = e.target.dataset.id;
+                const todo = todos.find((t) => t.id === parseInt(id));
+                todo.completed = !todo.completed;
+                saveTodos();
+                renderTodos();
+            }
+        });
+    </script>
+</body>
+</html>

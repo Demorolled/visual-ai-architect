@@ -1,0 +1,50 @@
+{
+  "projectName": "stand alone weather app",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785097389720_ew8rru",
+      "type": "input",
+      "label": "main.go",
+      "description": "The entry point of the application. Initializes the app, handles command line arguments, and delegates to the appropriate logic based on user input.",
+      "language": "rust",
+      "position": {
+        "x": 0,
+        "y": 200
+      }
+    },
+    {
+      "id": "node_1785097389720_94nlbi",
+      "type": "logic",
+      "label": "weather.go",
+      "description": "Retrieves weather data for a given city from the OpenWeatherMap API. Handles network requests, error parsing, and data validation.",
+      "language": "rust",
+      "position": {
+        "x": 200,
+        "y": 200
+      }
+    },
+    {
+      "id": "node_1785097389720_kf5q5a",
+      "type": "output",
+      "label": "display.go",
+      "description": "Displays the weather data to the user. Handles formatting and rendering the data to the console or a simple GUI.",
+      "language": "rust",
+      "position": {
+        "x": 286.103125,
+        "y": 91.846875
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785097389720_ew8rru",
+      "target": "node_1785097389720_94nlbi"
+    },
+    {
+      "source": "node_1785097389720_94nlbi",
+      "target": "node_1785097389720_kf5q5a"
+    }
+  ],
+  "createdAt": "2026-07-26T20:54:17.487Z"
+}

@@ -1,0 +1,53 @@
+{
+  "app_type": "array_explorer",
+  "description": "Interactive visualization of static/dynamic array operations with memory layout display — Demonstrates array internals: contiguous memory, O(1) access, insertion/deletion costs, dynamic resizing (geometric growth), and cache-line behavior with a memory address visualizer",
+  "keywords": [
+    "arrays",
+    "memory",
+    "data-structures",
+    "visualization",
+    "cache",
+    "array",
+    "explorer",
+    "array builder",
+    "operation engine",
+    "memory store",
+    "growth simulator",
+    "memory map viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Array Builder",
+    "Operation Engine",
+    "Memory Store",
+    "Growth Simulator",
+    "Memory Map Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Array Builder",
+      "destination_module": "Operation Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Operation Engine",
+      "destination_module": "Memory Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Memory Store",
+      "destination_module": "Growth Simulator",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Growth Simulator",
+      "destination_module": "Memory Map Viewer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

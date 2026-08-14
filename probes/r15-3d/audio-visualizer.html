@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Music Visualizer</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; }
+    #scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+    #controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; }
+    #playPause { width: 36px; height: 36px; border: none; background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cpath d="M 20,20 L 80,80" stroke="%23fff" stroke-width="8"/%3E M 20,80 L 80,20" stroke="%23fff" stroke-width="8"/%3E%3C/svg%3E') center / contain no-repeat; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <button id="playPause"></button>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('scene').appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(0, 5, 15);
+
+    const bars = [];
+    const barCount = 20;
+    const width = 0.5;
+    const height = 1;
+    for (let i = 0; i < barCount; i++) {
+      const geometry = new THREE.BoxGeometry(width, 1, width);
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 + (i * 0x800000 / barCount) });
+      const bar = new THREE.Mesh(geometry, material);
+      bar.position.y = i - (barCount - 1) / 2;
+      scene.add(bar);
+      bars.push(bar);
+    }
+
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(20, 0.1, 20), new THREE.MeshBasicMaterial({ color: 0x141414 }));
+    floor.position.y = -1;
+    scene.add(floor);
+
+    let play = true;
+    document.getElementById('playPause').addEventListener('click', () => { play = !play; });
+    let t = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      t += 0.016;
+      const beat = Math.sin(t * 0.5) * 0.5 + 0.5;
+      for (let i = 0; i < barCount; i++) {
+        const h = height * beat;
+        bars[i].scale.y = h;
+        bars[i].rotation.x = t * 0.1;
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>

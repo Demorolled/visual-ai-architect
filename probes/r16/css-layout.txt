@@ -1,0 +1,9 @@
+/* --- board --- */
+.board { display: flex; flex-direction: column; align-items: center; }
+.board .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; width: 100%; max-width: 520px; padding: 2px; }
+.square { width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; }
+.square.light { background: #f8d8a7; color: #4c3846; }
+.square.dark { background: #e8a85e; color: #fff; }
+.square.highlight { border-style: solid; border-width: 2px; border-color: #ff9f1a; }
+.square.selected { box-shadow: 0 0 12px rgba(255,159,26,0.4); }
+.board .status { margin-top: 12px; font-size: 1.4rem; font-weight: 600; text-align: center; color: #444; }

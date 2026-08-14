@@ -1,0 +1,52 @@
+{
+  "app_type": "netlink_monitor",
+  "description": "Linux netlink socket monitor: routing, neighbors, link events — Real-time netlink: RTNETLINK messages, routing changes, neighbor discovery, link state, IP addrs",
+  "keywords": [
+    "netlink",
+    "networking",
+    "linux",
+    "routing",
+    "netlink",
+    "monitor",
+    "netlink config",
+    "netlink engine",
+    "route parser",
+    "netlink store",
+    "network view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Netlink Config",
+    "Netlink Engine",
+    "Route Parser",
+    "Netlink Store",
+    "Network View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Netlink Config",
+      "destination_module": "Netlink Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Netlink Engine",
+      "destination_module": "Route Parser",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Route Parser",
+      "destination_module": "Netlink Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Netlink Store",
+      "destination_module": "Network View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

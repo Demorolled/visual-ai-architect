@@ -1,0 +1,51 @@
+{
+  "app_type": "hr-csharp",
+  "description": "workforce platform: employee records, department org chart, time-off workflow, performance reviews, payroll runs.",
+  "keywords": [
+    "hr-csharp",
+    "csharp",
+    "hr",
+    "management",
+    "employees",
+    "departments",
+    "timeoffs",
+    "reviews",
+    "payroll"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "employees",
+    "departments",
+    "timeoffs",
+    "reviews",
+    "payroll"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "employees",
+      "destination_module": "departments",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "departments",
+      "destination_module": "timeoffs",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "timeoffs",
+      "destination_module": "reviews",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "reviews",
+      "destination_module": "payroll",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

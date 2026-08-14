@@ -1,0 +1,25 @@
+{
+ "gates": {
+  "chars": 1217,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [],
+  "prose_leak": 0
+ },
+ "meta": {},
+ "check": {
+  "tsc_clean": false,
+  "error_count": 4,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-185738-ui/ui/chess-ui.ts(1,82): error TS2307: Cannot find module '../chess-board/chess-board' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185738-ui/ui/chess-ui.ts(2,93): error TS2307: Cannot find module '../chess-move-rules/chess-move-rules' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185738-ui/ui/chess-ui.ts(3,96): error TS2307: Cannot find module '../chess-game/chess-game' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185738-ui/ui/chess-ui.ts(4,71): error TS2307: Cannot find module '../chess-ai-engine/chess-ai-engine' or its corresponding type declarations."
+  ]
+ }
+}

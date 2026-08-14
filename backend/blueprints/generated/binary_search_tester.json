@@ -1,0 +1,54 @@
+{
+  "app_type": "binary_search_tester",
+  "description": "Interactive binary search lab with classic, lower_bound, upper_bound, and exponential search — Teaches binary search variants on sorted arrays. Shows search interval (low/mid/high pointers), decision tree, comparison count, and handles edge cases (empty, duplicates, not found)",
+  "keywords": [
+    "binary-search",
+    "searching",
+    "algorithms",
+    "decision-tree",
+    "education",
+    "binary",
+    "search",
+    "tester",
+    "search config",
+    "search engine",
+    "step store",
+    "search visualizer",
+    "decision tree"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Search Config",
+    "Search Engine",
+    "Step Store",
+    "Search Visualizer",
+    "Decision Tree"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Search Config",
+      "destination_module": "Search Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search Engine",
+      "destination_module": "Step Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Step Store",
+      "destination_module": "Search Visualizer",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Search Visualizer",
+      "destination_module": "Decision Tree",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

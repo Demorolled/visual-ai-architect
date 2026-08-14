@@ -1,0 +1,51 @@
+{
+  "app_type": "iot-ts",
+  "description": "device registry, time-series telemetry, threshold alerts, configurable dashboards, user scopes; an ingestion pipeline feeds metrics.",
+  "keywords": [
+    "iot-ts",
+    "typescript",
+    "iot",
+    "dashboard",
+    "devices",
+    "telemetry",
+    "alerts",
+    "dashboards",
+    "users"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "devices",
+    "telemetry",
+    "alerts",
+    "dashboards",
+    "users"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "devices",
+      "destination_module": "telemetry",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "telemetry",
+      "destination_module": "alerts",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "alerts",
+      "destination_module": "dashboards",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "dashboards",
+      "destination_module": "users",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

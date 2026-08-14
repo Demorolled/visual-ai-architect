@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-07-28T11:44:40Z",
+  "totalExamples": 690,
+  "projectsParsed": 92,
+  "datasets": {
+    "gui-projects": 637,
+    "gui-components": 27,
+    "gui-css-patterns": 8,
+    "gui-js-patterns": 8,
+    "gui-design": 10
+  },
+  "format": "instruction-input-output",
+  "targetModel": "qwen2.5-7b-instruct-uncensored",
+  "description": "GUI-focused training datasets for web application development fine-tuning"
+}

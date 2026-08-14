@@ -1,0 +1,54 @@
+{
+  "app_type": "big_o_analyzer",
+  "description": "Visualize and compare algorithm time/space complexity with interactive charts — An educational tool that runs algorithms on sample data and plots their growth curves to teach Big O notation, with step-by-step animation of each operation",
+  "keywords": [
+    "complexity",
+    "big-o",
+    "visualization",
+    "education",
+    "algorithms",
+    "big",
+    "o",
+    "analyzer",
+    "algorithm selector",
+    "complexity engine",
+    "results store",
+    "curve fitter",
+    "chart renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Algorithm Selector",
+    "Complexity Engine",
+    "Results Store",
+    "Curve Fitter",
+    "Chart Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Algorithm Selector",
+      "destination_module": "Complexity Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Complexity Engine",
+      "destination_module": "Results Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Results Store",
+      "destination_module": "Curve Fitter",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Curve Fitter",
+      "destination_module": "Chart Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

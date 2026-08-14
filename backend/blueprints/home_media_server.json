@@ -1,0 +1,26 @@
+{
+  "app_type": "home_media_server",
+  "description": "A local media streaming server that indexes the movies, shows, and music on your home network, lets users browse the library, and streams media to devices on the LAN.",
+  "keywords": ["media", "streaming", "movies", "video", "music", "server", "plex", "home media", "library", "player", "jellyfin", "films", "tv shows"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "media_metadata",
+    "media_indexer",
+    "local_storage_controller",
+    "user_auth_system",
+    "streaming_server"
+  ],
+  "wiring_graph": [
+    { "source_module": "user_auth_system", "destination_module": "streaming_server", "data_passed": "session_token" },
+    { "source_module": "media_indexer", "destination_module": "local_storage_controller", "data_passed": "raw_file_paths" },
+    { "source_module": "media_metadata", "destination_module": "media_indexer", "data_passed": "parsed_metadata" },
+    { "source_module": "ui_screens", "destination_module": "streaming_server", "data_passed": "play_requests" },
+    { "source_module": "ui_screens", "destination_module": "media_metadata", "data_passed": "browse_library_requests" },
+    { "source_module": "local_storage_controller", "destination_module": "streaming_server", "data_passed": "file_streams" }
+  ]
+}

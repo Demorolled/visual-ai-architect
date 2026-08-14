@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>3D Product Showcase</title>
+	<style>
+		body { margin: 0; overflow: hidden; background: #141414; }
+		#controls { position: absolute; left: 10px; bottom: 10px; z-index: 100; font-family: Arial, sans-serif; font-size: 12px; color: #fff; }
+		#controls button { background: #222; color: #fff; border: none; padding: 8px 12px; margin: 0 3px; cursor: pointer; outline: none; transition: background 0.1s; }
+		#controls button:hover { background: #333; }
+		#controls button.active { background: #f00; }
+		#controls label { margin: 0 3px; }
+	</style>
+</head>
+<body>
+	<div id="controls">
+		<label>Product:</label>
+		<button id="bottleBtn" class="active">Bottle</button>
+		<button id="sphereBtn">Sphere</button>
+		<button id="cubeBtn">Cube</button>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+	<script>
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		const controls = new THREE.OrbitControls(camera, renderer.domElement);
+		controls.minDistance = 1.5;
+		controls.maxDistance = 10;
+		controls.enablePan = false;
+		controls.target.set(0, 2, 0);
+		const ambient = new THREE.AmbientLight(0x222222);
+		scene.add(ambient);
+		const light = new THREE.DirectionalLight(0xffffff, 1);
+		light.position.set(-1, 2, 2).normalize();
+		scene.add(light);
+		scene.add(new THREE.DirectionalLightHelper(light, 1));
+		const pedestal = new THREE.Group();
+		pedestal.rotation.x = -Math.PI / 2;
+		pedestal.position.y = 0.5;
+		scene.add(pedestal);
+		const bottle = new THREE.Mesh(
+			new THREE.SphereGeometry(1, 32, 32),
+			new THREE.MeshStandardMaterial({ color: 0x6666ff, metalness: 0.3, roughness: 0.5 })
+		);
+		bottle.position.y = 1.5;
+		bottle.scale.set(0.5, 0.5, 0.5);
+		pedestal.add(bottle);
+		const sphere = new THREE.Mesh(
+			new THREE.BoxGeometry(1, 1, 1),
+			new THREE.MeshStandardMaterial({ color: 0xff6666, metalness: 0.8, roughness: 0.3 })
+		);
+		sphere.position.y = 1.5;
+		sphere.scale.set(0.5, 0.5, 0.5);
+		pedestal.add(sphere);
+		const cube = new THREE.Mesh(
+			new THREE.BoxGeometry(1, 1, 1),
+			new THREE.MeshStandardMaterial({ color: 0x66ff66, metalness: 0.2, roughness: 0.2 })
+		);
+		cube.position.y = 1.5;
+		cube.scale.set(0.5, 0.5, 0.5);
+		pedestal.add(cube);
+		let currentProduct = 0;
+		function animate() {
+			pedestal.rotation.y += 0.01;
+			renderer.render(scene, camera);
+			requestAnimationFrame(animate);
+		}
+		animate();
+		const btns = document.querySelectorAll('#controls button');
+		btns.forEach((btn, idx) => {
+			btn.addEventListener('click', () => {
+				btns.forEach(b => b.classList.remove('active'));
+				btn.classList.add('active');
+				currentProduct = idx;
+				pedestal.position.set(-0.5, 0.5, 0);
+				pedestal.rotation.set(0, 0, 0);
+				pedestal.scale.set(1, 1, 1);
+				switch (idx) {
+					case 0:
+						bottle.position.set(-0.5, 0.5, 0);
+						sphere.position.set(0, 0.5, 0);
+						cube.position.set(0.5, 0.5, 0);
+						pedestal.rotation.set(-0.1, 0.2, 0);
+						pedestal.scale.set(1, 1, 1);
+						break;
+					case 1:
+						bottle.position.set(0.5, 0.5, 0);
+						sphere.position.set(-0.5, 0.5, 0);
+						cube.position.set(0, 0.5, 0);
+						pedestal.rotation.set(-0.1, -0.2, 0);
+						pedestal.scale.set(1.2, 1.2, 1.2);
+						break;
+					case 2:
+						bottle.position.set(0, 0.5, 0);
+						sphere.position.set(0.5, 0.5, 0);
+						cube.position.set(-0.5, 0.5, 0);
+						pedestal.rotation.set(0.1, 0.2, 0);
+						pedestal.scale.set(0.8, 0.8, 0.8);
+						break;
+				}
+			});
+		});
+	</script>
+</body>
+</html>

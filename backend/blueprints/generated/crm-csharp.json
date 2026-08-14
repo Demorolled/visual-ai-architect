@@ -1,0 +1,50 @@
+{
+  "app_type": "crm-csharp",
+  "description": "sales CRM: contact/company records, deal stages in pipelines, activity logging.",
+  "keywords": [
+    "crm-csharp",
+    "csharp",
+    "crm",
+    "contacts",
+    "companies",
+    "deals",
+    "activities",
+    "pipelines"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "contacts",
+    "companies",
+    "deals",
+    "activities",
+    "pipelines"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "contacts",
+      "destination_module": "companies",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "companies",
+      "destination_module": "deals",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "deals",
+      "destination_module": "activities",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "activities",
+      "destination_module": "pipelines",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

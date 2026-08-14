@@ -1,0 +1,49 @@
+{
+  "app_type": "hudi_merger_tool",
+  "description": "Apache Hudi merge-on-read and copy-on-write comparison — an interactive data engineering tool with a visual interface.",
+  "keywords": [
+    "data-engineering",
+    "data-engineering",
+    "hudi",
+    "lakehouse",
+    "merge",
+    "hudi",
+    "merger",
+    "tool"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "file_loader",
+    "format_engine",
+    "schema_models",
+    "visualization_engine"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "file_loader",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "file_loader",
+      "destination_module": "format_engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "format_engine",
+      "destination_module": "schema_models",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "schema_models",
+      "destination_module": "visualization_engine",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:data-engineering"
+}

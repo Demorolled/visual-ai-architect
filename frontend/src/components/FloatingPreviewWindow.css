@@ -1,0 +1,231 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FloatingPreviewWindow — Draggable, resizable floating preview window
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Window Container ── */
+
+.fpw-window {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  background: #12122a;
+  border: 1px solid rgba(74, 158, 255, 0.3);
+  border-radius: 10px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(74, 158, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  animation: fpw-appear 0.2s ease-out;
+  transition: box-shadow 0.2s ease;
+}
+
+.fpw-window.fpw-dragging {
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(74, 158, 255, 0.4);
+  transition: none;
+}
+
+.fpw-window.fpw-resizing {
+  transition: none;
+}
+
+@keyframes fpw-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── Title Bar ── */
+
+.fpw-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px 8px 14px;
+  background: rgba(74, 158, 255, 0.08);
+  border-bottom: 1px solid rgba(74, 158, 255, 0.15);
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  min-height: 36px;
+}
+
+.fpw-title-bar:active {
+  cursor: grabbing;
+}
+
+.fpw-title-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.fpw-title-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.fpw-title-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e0e0e0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fpw-title-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.fpw-title-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: #64748b;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fpw-title-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+.fpw-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.fpw-minimize-btn {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ── Content Area ── */
+
+.fpw-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Resize Handle ── */
+
+.fpw-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 3px;
+  cursor: nwse-resize;
+  z-index: 10;
+}
+
+.fpw-resize-handle:hover svg line {
+  stroke: rgba(74, 158, 255, 0.6);
+}
+
+.fpw-resize-handle:active svg line {
+  stroke: rgba(74, 158, 255, 0.8);
+}
+
+/* ── Minimized Pill ── */
+
+.fpw-minimized-pill {
+  position: fixed;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #16163a;
+  border: 1px solid rgba(74, 158, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  animation: fpw-bounce-in 0.3s ease;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.fpw-minimized-pill:hover {
+  background: #1a1a4a;
+  border-color: rgba(74, 158, 255, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  transform: scale(1.03);
+}
+
+@keyframes fpw-bounce-in {
+  0% { transform: scale(0.85); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.fpw-minimized-icon {
+  font-size: 14px;
+}
+
+.fpw-minimized-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.fpw-minimized-restore {
+  font-size: 12px;
+  color: #4a9eff;
+  margin-left: 4px;
+}
+
+/* ── Responsive: Stack buttons on very small windows ── */
+
+.fpw-window[style*="width: 300"] .fpw-title-text,
+.fpw-window[style*="width: 350"] .fpw-title-text {
+  max-width: 120px;
+}
+
+/* ── Scrollbar styling for content ── */
+
+.fpw-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.fpw-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fpw-content::-webkit-scrollbar-thumb {
+  background: rgba(74, 158, 255, 0.2);
+  border-radius: 3px;
+}
+
+.fpw-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 158, 255, 0.35);
+}

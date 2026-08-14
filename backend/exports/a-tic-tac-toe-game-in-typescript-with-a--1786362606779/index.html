@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+        .row { display: flex; gap: 10px; align-items: center; }
+        .col { display: flex; flex-direction: column; gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .btn { padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; margin: 4px; }
+        .btn-primary { background: #0056b3; }
+        .btn-danger { background: #dc3545; }
+        .btn[disabled] { background: #6c757d; color: #ffffff; }
+        .card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; }
+        .card h3 { margin: 0 0 8px; }
+        .card p { margin: 0 0 12px; }
+        .card button { padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; margin: 4px; }
+        .card button:hover { background: #218838; }
+        #statusMsg { padding: 8px 12px; border-radius: 8px; margin-top: 10px; background: #212529; color: #ffffff; }
+        #statusMsg[role="status"] { margin-top: 24px; }
+        #playBtn { margin-top: 24px; }
+        #titleInput, #qtyInput, #searchInput { display: block; margin-bottom: 8px; }
+        #formatSelect { display: block; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="row">
+            <div class="col">
+                <div id="statusMsg" role="status"></div>
+                <button id="playBtn" class="btn" onclick="play()">▶ Play</button>
+                <h3>Tic-Tac-Toe Game</h3>
+                <div id="board" class="grid"></div>
+                <div id="turnMessage" class="col"></div>
+                <div id="scoreMessage" class="col"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const board = document.getElementById('board');
+        const playBtn = document.getElementById('playBtn');
+        const turnMessage = document.getElementById('turnMessage');
+        const scoreMessage = document.getElementById('scoreMessage');
+
+        class TicTacToe {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.board = Array(3).fill(null).map(() => Array(3).fill(null));
+                this.currentPlayer = 'X';
+                this.winner = null;
+                this.draw = false;
+            }
+
+            makeMove(row, col) {
+                if (this.board[row][col] === null) {
+                    this.board[row][col] = this.currentPlayer;
+                    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+                    return true;
+                }
+                return false;
+            }
+
+            checkWin() {
+                const lines = [
+                    [0, 1, 2],
+                    [3, 4, 5],
+                    [6, 7, 8],
+                    [0, 3, 6],
+                    [1, 4, 7],
+                    [2, 5, 8],
+                    [0, 4, 8],
+                    [2, 4, 6]
+                ];
+
+                for (let i = 0; i < lines.length; i++) {
+                    const [a, b, c] = lines[i];
+                    if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
+                        this.winner = this.board[a];
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            checkDraw() {
+                return this.board.every(row => row.every(cell => cell !== null));
+            }
+
+            minimax(board, depth, isMaximizing) {
+                if (this.checkWin()) {
+                    return { score: isMaximizing ? 1 : -1 };
+                }
+                if (this.checkDraw()) {
+                    return { score: 0 };
+                }
+
+                let bestScore = isMaximizing ? -Infinity : Infinity;
+
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (board[i][j] === null) {
+                            const tempBoard = JSON.parse(JSON.stringify(board));
+                            tempBoard[i][j] = isMaximizing ? 'X' : 'O';
+                            const result = this.minimax(tempBoard, depth + 1, !isMaximizing);
+                            const score = result.score;
+
+                            if (isMaximizing) {
+                                bestScore = Math.max(score, bestScore);
+                                if (bestScore === 1) {
+ break;
+                                }
+                            } else {
+                                bestScore = Math.min(score, bestScore);
+                                if (bestScore === -1) {
+ break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return { score: bestScore };
+            }
+
+            aiMove() {
+                const result = this.minimax(this.board, 0, true);
+                const row = Math.floor(result.score / 3);
+                const col = result.score % 3;
+                this.makeMove(row, col);
+            }
+
+            updateUI() {
+                board.innerHTML = '';
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = this.board[i][j] ? this.board[i][j] : 'empty';
+                        board.appendChild(cell);
+                    }
+                }
+
+                if (this.winner) {
+                    turnMessage.textContent = `Player ${this.winner} wins!`;
+                } else if (this.draw) {
+                    turnMessage.textContent = 'Draw!';
+                } else {
+                    turnMessage.textContent = `Player ${this.currentPlayer}'s turn`;
+                }
+
+                scoreMessage.textContent = `Score: X - ${this.board.filter(row => row.includes('X')).length}, O - ${this.board.filter(row => row.includes('O')).length}`;
+            }
+        }
+
+        const game = new TicTacToe();
+
+        function play() {
+            game.reset();
+            game.updateUI();
+            turnMessage.textContent = 'Player X\'s turn';
+        }
+
+        playBtn.addEventListener('click', play);
+    </script>
+</body>
+</html>

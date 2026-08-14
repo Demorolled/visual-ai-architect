@@ -1,0 +1,54 @@
+{
+  "app_type": "bit_manipulation_tool",
+  "description": "Interactive bitwise operation sandbox with binary representation and bit hacks — Visualizes bitwise operations (AND, OR, XOR, NOT, shifts) on integers. Shows binary/hex/decimal representations with animated bit flips. Demonstrates bit hacks: population count, bit reversal, power-of-2 detection",
+  "keywords": [
+    "bitwise",
+    "bit-manipulation",
+    "binary",
+    "hacks",
+    "low-level",
+    "bit",
+    "manipulation",
+    "tool",
+    "bit workshop",
+    "bit engine",
+    "bit store",
+    "bit display",
+    "hack library"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Bit Workshop",
+    "Bit Engine",
+    "Bit Store",
+    "Bit Display",
+    "Hack Library"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Bit Workshop",
+      "destination_module": "Bit Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Bit Engine",
+      "destination_module": "Bit Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Bit Store",
+      "destination_module": "Bit Display",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Bit Display",
+      "destination_module": "Hack Library",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

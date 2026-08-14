@@ -1,0 +1,40 @@
+{
+  "app_type": "huffman_coding",
+  "description": "Huffman Coding Visualizer. 🌳 Huffman Coding Visualizer",
+  "keywords": [
+    "huffman",
+    "coding",
+    "visualizer",
+    "huffman",
+    "coding"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "core_engine",
+    "input_handler",
+    "data_store"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "core_engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "core_engine",
+      "destination_module": "input_handler",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "input_handler",
+      "destination_module": "data_store",
+      "data_passed": "state_and_events"
+    }
+  ],
+  "source": "projects-html:huffman-coding.html"
+}

@@ -1,0 +1,272 @@
+{
+  "projectName": "a 3d chess game with 3d pieces and board, an AI opponent, and the full rules of chess",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "nodeId": "node_1786614121569_q6w5fm",
+      "nodeLabel": "main.go",
+      "fileName": "main.go",
+      "language": "go",
+      "dependencies": [],
+      "exports": [],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786614121570_3cwba0",
+      "nodeLabel": "config.go",
+      "fileName": "config.go",
+      "language": "go",
+      "dependencies": [],
+      "exports": [
+        "ExposedFunction"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786614121569_gx8nwo",
+      "nodeLabel": "types.go",
+      "fileName": "types.go",
+      "language": "go",
+      "dependencies": [
+        "main.go"
+      ],
+      "exports": [
+        "Piece",
+        "Color",
+        "Type",
+        "Position",
+        "BoardState",
+        "Move",
+        "Turn",
+        "GameMode",
+        "GameStatus",
+        "TurnResult",
+        "InputEvent",
+        "EventType",
+        "CameraState",
+        "LightingState",
+        "ColorPicker",
+        "Rectangle",
+        "Projection",
+        "ProjectionType",
+        "Quaternion",
+        "InitializeBoardState",
+        "MakeMove",
+        "GetLegalMoves",
+        "IsCheckmate",
+        "IsStalemate",
+        "IsDraw",
+        "GetPieceAt",
+        "CloneBoardState",
+        "UpdateCameraState"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786614121570_0qcrne",
+      "nodeLabel": "game.go",
+      "fileName": "game.go",
+      "language": "go",
+      "dependencies": [
+        "types.go",
+        "main.go"
+      ],
+      "exports": [
+        "GameStatus",
+        "TurnResult",
+        "GameMode",
+        "InputEvent",
+        "EventType",
+        "CameraState",
+        "LightingState",
+        "ColorPicker",
+        "Rectangle",
+        "Projection",
+        "Quaternion",
+        "Position",
+        "Piece",
+        "Type",
+        "Turn",
+        "Move",
+        "BoardState"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786614121569_hmuybh",
+      "nodeLabel": "ui.go",
+      "fileName": "ui.go",
+      "language": "go",
+      "dependencies": [
+        "types.go",
+        "game.go",
+        "main.go"
+      ],
+      "exports": [
+        "SetupCamera",
+        "HandleUserInput",
+        "Render3DScene"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786614121569_un9lva",
+      "nodeLabel": "ai.go",
+      "fileName": "ai.go",
+      "language": "go",
+      "dependencies": [
+        "types.go",
+        "game.go",
+        "main.go"
+      ],
+      "exports": [
+        "Piece",
+        "Type",
+        "Color",
+        "Position",
+        "BoardState",
+        "Move",
+        "TurnResult",
+        "GameMode",
+        "EventType",
+        "CameraState",
+        "LightingState",
+        "ColorPicker",
+        "Rectangle",
+        "ProjectionType",
+        "Quaternion",
+        "InitializeBoardState",
+        "MakeMove",
+        "GetLegalMoves",
+        "IsCheckmate",
+        "IsStalemate",
+        "IsDraw",
+        "GetPieceAt",
+        "CloneBoardState",
+        "UpdateCameraState"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786614121569_jxgnli",
+      "nodeLabel": "board.go",
+      "fileName": "board.go",
+      "language": "go",
+      "dependencies": [
+        "types.go",
+        "ui.go",
+        "ai.go",
+        "game.go",
+        "main.go"
+      ],
+      "exports": [
+        "Move",
+        "BoardState",
+        "CloneBoardState"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786614121569_bndo5e",
+      "nodeLabel": "pieces.go",
+      "fileName": "pieces.go",
+      "language": "go",
+      "dependencies": [
+        "types.go",
+        "board.go",
+        "ui.go",
+        "main.go"
+      ],
+      "exports": [
+        "PieceType",
+        "Color",
+        "Position",
+        "Piece"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "preview_gui_wrapper",
+      "nodeLabel": "App Preview (Auto-generated)",
+      "fileName": "index.html",
+      "language": "html",
+      "dependencies": [],
+      "exports": [],
+      "validated": true
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1786614121569_gx8nwo",
+      "target": "node_1786614121569_jxgnli"
+    },
+    {
+      "source": "node_1786614121569_gx8nwo",
+      "target": "node_1786614121569_bndo5e"
+    },
+    {
+      "source": "node_1786614121569_gx8nwo",
+      "target": "node_1786614121569_hmuybh"
+    },
+    {
+      "source": "node_1786614121569_gx8nwo",
+      "target": "node_1786614121569_un9lva"
+    },
+    {
+      "source": "node_1786614121569_gx8nwo",
+      "target": "node_1786614121570_0qcrne"
+    },
+    {
+      "source": "node_1786614121569_jxgnli",
+      "target": "node_1786614121569_bndo5e"
+    },
+    {
+      "source": "node_1786614121569_hmuybh",
+      "target": "node_1786614121569_jxgnli"
+    },
+    {
+      "source": "node_1786614121569_hmuybh",
+      "target": "node_1786614121569_bndo5e"
+    },
+    {
+      "source": "node_1786614121569_un9lva",
+      "target": "node_1786614121569_jxgnli"
+    },
+    {
+      "source": "node_1786614121570_0qcrne",
+      "target": "node_1786614121569_jxgnli"
+    },
+    {
+      "source": "node_1786614121570_0qcrne",
+      "target": "node_1786614121569_hmuybh"
+    },
+    {
+      "source": "node_1786614121570_0qcrne",
+      "target": "node_1786614121569_un9lva"
+    },
+    {
+      "source": "node_1786614121569_q6w5fm",
+      "target": "node_1786614121569_gx8nwo"
+    },
+    {
+      "source": "node_1786614121569_q6w5fm",
+      "target": "node_1786614121569_jxgnli"
+    },
+    {
+      "source": "node_1786614121569_q6w5fm",
+      "target": "node_1786614121569_bndo5e"
+    },
+    {
+      "source": "node_1786614121569_q6w5fm",
+      "target": "node_1786614121569_hmuybh"
+    },
+    {
+      "source": "node_1786614121569_q6w5fm",
+      "target": "node_1786614121569_un9lva"
+    },
+    {
+      "source": "node_1786614121569_q6w5fm",
+      "target": "node_1786614121570_0qcrne"
+    }
+  ]
+}

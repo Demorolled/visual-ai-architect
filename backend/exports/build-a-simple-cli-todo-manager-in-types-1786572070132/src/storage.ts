@@ -1,0 +1,1 @@
+import { TodoItem } from './todo'; export function loadTodos(): TodoItem[] { return []; } export function saveTodos(todos: TodoItem[]): void {}

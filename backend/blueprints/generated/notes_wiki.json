@@ -1,0 +1,52 @@
+{
+  "app_type": "notes_wiki",
+  "description": "Personal knowledge base with rich text, tags, backlinks, and full-text search — Desktop notes with WYSIWYG rich text, tag organization, wiki backlinks, full-text search",
+  "keywords": [
+    "notes",
+    "wiki",
+    "knowledge-base",
+    "productivity",
+    "notes",
+    "wiki",
+    "note editor",
+    "wiki engine",
+    "search engine",
+    "note store",
+    "workspace"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Note Editor",
+    "Wiki Engine",
+    "Search Engine",
+    "Note Store",
+    "Workspace"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Note Editor",
+      "destination_module": "Wiki Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Wiki Engine",
+      "destination_module": "Search Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Search Engine",
+      "destination_module": "Note Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Note Store",
+      "destination_module": "Workspace",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

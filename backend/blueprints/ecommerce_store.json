@@ -1,0 +1,28 @@
+{
+  "app_type": "ecommerce_store",
+  "description": "Online store with product catalog, search, shopping cart, checkout flow, order management, and inventory tracking.",
+  "keywords": ["ecommerce", "e-commerce", "store", "shop", "shopping", "products", "catalog", "cart", "checkout", "orders", "payments", "marketplace", "inventory", "commerce"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "product_models",
+    "product_store",
+    "cart_manager",
+    "api_routes",
+    "order_logic",
+    "payment_service"
+  ],
+  "wiring_graph": [
+    { "source_module": "ui_screens", "destination_module": "api_routes", "data_passed": "catalog_queries_and_cart_actions" },
+    { "source_module": "api_routes", "destination_module": "cart_manager", "data_passed": "cart_operations" },
+    { "source_module": "api_routes", "destination_module": "order_logic", "data_passed": "checkout_requests" },
+    { "source_module": "order_logic", "destination_module": "payment_service", "data_passed": "payment_intents" },
+    { "source_module": "order_logic", "destination_module": "product_store", "data_passed": "inventory_updates" },
+    { "source_module": "product_models", "destination_module": "product_store", "data_passed": "schemas" },
+    { "source_module": "product_models", "destination_module": "cart_manager", "data_passed": "type_definitions" }
+  ]
+}

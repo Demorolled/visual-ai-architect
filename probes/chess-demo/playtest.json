@@ -1,0 +1,47 @@
+{
+ "checks": {
+  "load": {
+   "clean": true,
+   "canvas": true,
+   "three": true
+  },
+  "initial": {
+   "canvas": true,
+   "three": true,
+   "piecesVar": 16,
+   "blackPieces": 8,
+   "state": {
+    "turn": "white",
+    "moveHistoryLen": 0,
+    "check": false,
+    "enPassant": null
+   },
+   "boardRotY": 4.449999999999996,
+   "hasMoveFn": false,
+   "hasClickHandler": true,
+   "hintText": ""
+  },
+  "spins": {
+   "r0": 4.449999999999996,
+   "r1": 5.775000000000015,
+   "spinning": true
+  },
+  "hint": "Hint: Move your knight to g5 to capture the black pawn.",
+  "click_moves_piece": {
+   "moveHistory_before": 0,
+   "moveHistory_after": 0,
+   "changed": false
+  }
+ },
+ "errors": [],
+ "console": [
+  "warning: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost",
+  "log: THREE.WebGLRenderer: Context Lost.",
+  "log: THREE.WebGLRenderer: Context Restored.",
+  "warning: [.WebGL-0x2a0c000f0800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x2a0c000f0800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x2a0c000f0800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x2a0c000f0800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no lo"
+ ],
+ "verdict": "renders clean; has black pieces; board SPINS continuously (bug); clicks do NOTHING; no move() function"
+}

@@ -1,0 +1,19 @@
+{
+  "projectName": "the game — ",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "input",
+      "label": "index",
+      "description": "Single self-contained GUI page (HTML + CSS + JS inline, no build step) that renders the complete app interface and wires it to the logic. This is what makes the app viewable in the browser preview — build the full UI here. STRICT RULES: (1) do NOT reference external files — no <script src=\"...\">, no <link href=\"...\">, no CSS or JS files; the preview iframe cannot load external files, so inline ALL CSS in a <style> tag and ALL JavaScript in a <script> tag directly in this file; (2) plain browser JavaScript only — no React, no TypeScript, no imports, no JSX, no build step; (3) include working inline code that actually renders the interface so the page is never blank.",
+      "language": "html",
+      "position": {
+        "x": 150,
+        "y": 280
+      }
+    }
+  ],
+  "edges": [],
+  "createdAt": "2026-08-09T03:26:39.584Z"
+}

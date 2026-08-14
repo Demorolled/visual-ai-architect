@@ -1,0 +1,80 @@
+{
+  "app_type": "i_want_a_home_media_streaming_app_to_pla",
+  "description": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+  "keywords": [
+    "database",
+    "api",
+    "logic",
+    "ui",
+    "i",
+    "want",
+    "a",
+    "home",
+    "media",
+    "streaming",
+    "app",
+    "to",
+    "pla",
+    "media library",
+    "user authentication",
+    "media player core",
+    "video/screen recorder",
+    "media converter",
+    "web ui",
+    "streaming server",
+    "media streaming service"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Python FastAPI",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Media Library",
+    "User Authentication",
+    "Media Player Core",
+    "Video/Screen Recorder",
+    "Media Converter",
+    "Web UI",
+    "Streaming Server",
+    "Media Streaming Service"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Media Library",
+      "destination_module": "User Authentication",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "User Authentication",
+      "destination_module": "Media Player Core",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Media Player Core",
+      "destination_module": "Video/Screen Recorder",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Video/Screen Recorder",
+      "destination_module": "Media Converter",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Media Converter",
+      "destination_module": "Web UI",
+      "data_passed": "updates"
+    },
+    {
+      "source_module": "Web UI",
+      "destination_module": "Streaming Server",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Streaming Server",
+      "destination_module": "Media Streaming Service",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

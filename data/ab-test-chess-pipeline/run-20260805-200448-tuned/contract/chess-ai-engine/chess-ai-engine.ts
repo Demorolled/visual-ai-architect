@@ -1,0 +1,58 @@
+import { ChessBoard, createInitialBoard, Square, Color, Piece, BoardState } from '../chess-board/chess-board';
+import { Move, getPseudoLegalMoves, isSquareAttacked, isKingInCheck, isCastlingLegal } from '../chess-move-rules/chess-move-rules';
+
+export function getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+    const depth = difficulty ?? 2;
+    const maxDepth = 4;
+    const evaluation = evaluateBoard(board);
+    if (evaluation.isCheckmate) return null;
+
+    const moves = getPseudoLegalMoves(board, color);
+    if (moves.length === 0) return null;
+
+    let bestMove: Move | null = null;
+    let bestScore = -Infinity;
+
+    for (const move of moves) {
+        const tempBoard = createCopy(board);
+        makeMove(tempBoard, move);
+        const score = minimax(tempBoard, -Infinity, Infinity, 1, color === 'black');
+        if (score > bestScore) {
+            bestScore = score;
+            bestMove = move;
+        }
+    }
+
+    return bestMove;
+}
+
+function minimax(board: ChessBoard, alpha: number, beta: number, depth: number, maximizing: boolean): number {
+    if (depth === 0 || isCheckmate(board)) return evaluateBoard(board).score;
+
+    const moves = getPseudoLegalMoves(board, maximizing ? 'black' : 'white');
+    if (moves.length === 0) return depth === maxDepth ? evaluateBoard(board).score : 0;
+
+    if (maximizing) {
+        let bestScore = -Infinity;
+        for (const move of moves) {
+            const tempBoard = createCopy(board);
+            makeMove(tempBoard, move);
+            const score = minimax(tempBoard, alpha, beta, depth - 1, false);
+            bestScore = Math.max(score, bestScore);
+            alpha = Math.max(alpha, score);
+            if (beta <= alpha) break;
+        }
+        return bestScore;
+    } else {
+        let bestScore = Infinity;
+        for (const move of moves) {
+            const tempBoard = createCopy(board);
+            makeMove(tempBoard, move);
+            const score = minimax(tempBoard, alpha, beta, depth - 1, true);
+            bestScore = Math.min(score, bestScore);
+            beta = Math.min(beta, score);
+            if (beta <= alpha) break;
+        }
+        return bestScore;
+    }
+}

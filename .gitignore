@@ -1,0 +1,62 @@
+node_modules
+dist
+.env
+.env.local
+*.log
+.DS_Store
+coverage
+.vscode
+.idea
+*.swp
+*.swo
+.davinci_cache/
+sandbox/
+projects/*/generated/
+projects/*/output/
+knowledge/rnn-model.json
+keys/
+release/
+frontend/android/
+*.aab
+*.apk
+
+# ────────────────────────────────────────────────────────────────────────────
+# Deep-scan P0 1.1 (TODO fixes.txt) — heavy training/build artifacts that
+# must never be committed: the 9GB of GGUFs, 20G of cloud-training output,
+# caches, LoRA adapters, and studio uploads. Everything else (source, docs,
+# small datasets) IS tracked.
+# ────────────────────────────────────────────────────────────────────────────
+# Models (GGUF weights) — Modelfiles stay tracked
+models/*.gguf
+
+# Build / pipeline output
+out/
+curriculum/out/
+training/cloud/out/
+
+# LoRA adapters (regenerable training artifacts)
+adapters/
+adapters_raw/
+
+# Caches
+huggingface_tokenizers_cache/
+unsloth_compiled_cache/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Training-studio uploads / data copies (metadata.json stays tracked)
+llm-training-app/data/uploads/
+backend/llm-training-app/data/
+
+# Large third-party datasets (regenerable / downloadable)
+data/rico/
+
+# Backup dir referenced by deploy scripts (sits one level above the repo)
+../model-backups/
+
+# Dataset snapshot backups (63 timestamped copies of train.jsonl)
+training/dataset/backup-*/
+
+# Cloned dataset repos that keep their own git history
+data/galaxy/

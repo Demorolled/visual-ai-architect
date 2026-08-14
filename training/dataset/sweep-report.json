@@ -1,0 +1,2463 @@
+{
+  "rows": [
+    {
+      "node": "task-store",
+      "app": "Todo List",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './task-manager.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-0jswx_80/src/node.ts(12,30): error TS2552: Cannot fin"
+    },
+    {
+      "node": "task-manager",
+      "app": "Todo List",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './task-input.ts';"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "PROSE",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1cfwf5l3/src/node.ts(42,1): error TS1127: Invalid cha"
+    },
+    {
+      "node": "filter-engine",
+      "app": "Todo List",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { TaskManager } from '../task-store/task-store.ts'; -> inline sibling (used: ['TaskManager'])",
+        "INLINE ../task-store/task-store.ts [TaskManager]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-e7yi_mcs/src/node.ts(2,13): error TS2395: Individual "
+    },
+    {
+      "node": "task-input",
+      "app": "Todo List",
+      "status": "needs-hand-write",
+      "actions": [
+        "default TodoInput -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-pds6evbm/src/node.ts(15,30): error TS18047: 'event.ta"
+    },
+    {
+      "node": "category-picker",
+      "app": "Unit Converter",
+      "status": "needs-hand-write",
+      "actions": [],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1pcwt9h6/src/node.ts(28,30): error TS2345: Argument o"
+    },
+    {
+      "node": "converter-ui",
+      "app": "Unit Converter",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { runSwapHandler } from '../swap-handler/swap-handler.ts';",
+        "strip side-effect import './style.css';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-5dk9x068/src/node.ts(7,15): error TS7006: Parameter '"
+    },
+    {
+      "node": "swap-handler",
+      "app": "Unit Converter",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './history-store.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-hphd1ohn/src/node.ts(9,33): error TS2304: Cannot find"
+    },
+    {
+      "node": "history-store",
+      "app": "Unit Converter",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './conversion-engine.ts';",
+        "default HistoryStore -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-8tb31ikq/src/node.ts(11,28): error TS2322: Type 'numb"
+    },
+    {
+      "node": "conversion-engine",
+      "app": "Unit Converter",
+      "status": "passed",
+      "actions": [
+        "strip side-effect import './category-picker.ts';",
+        "default inline -> export class ConversionEngine",
+        "(1 inline defaults converted)"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "share-actions",
+      "app": "Random Quote Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './category-filter.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-h958la4_/src/node.ts(9,22): error TS2304: Cannot find"
+    },
+    {
+      "node": "quote-source",
+      "app": "Random Quote Generator",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "quote-ui",
+      "app": "Random Quote Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { copyToClipboard } from '../share-actions/share-actions.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-3kkuyv6c/src/node.ts(34,81): error TS1005: ',' expect"
+    },
+    {
+      "node": "category-filter",
+      "app": "Random Quote Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { getRandomQuote } from '../picker-engine/picker-engine.ts'; -> inline sibling (used: ['getRandomQuote'])",
+        "INLINE ../picker-engine/picker-engine.ts [getRandomQuote]",
+        "default inline -> export function filterQuotesByCategory",
+        "(1 inline defaults converted)"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-zkylxko8/src/node.ts(7,34): error TS2339: Property 'c"
+    },
+    {
+      "node": "picker-engine",
+      "app": "Random Quote Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { addQuote, getAllQuotes, getQuoteById } from '../quote-source/quote-source.ts'; -> inline sibling (used: ['getAllQuotes'])",
+        "INLINE ../quote-source/quote-source.ts [addQuote, getAllQuotes, getQuoteById]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-yh6olpf_/src/node.ts(9,17): error TS7053: Element imp"
+    },
+    {
+      "node": "palette-store",
+      "app": "Color Palette Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { generatePalette } from '../palette-engine/palette-engine.ts'; -> inline sibling (used: ['generatePalette'])",
+        "INLINE ../palette-engine/palette-engine.ts [generatePalette]",
+        "default PaletteStore -> named export on declaration"
+      ],
+      "flags": [
+        "PROSE",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-v8iac85u/src/node.ts(15,31): error TS2552: Cannot fin"
+    },
+    {
+      "node": "palette-ui",
+      "app": "Color Palette Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './copy-handler.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-4r9kzn89/src/node.ts(71,20): error TS1005: ',' expect"
+    },
+    {
+      "node": "copy-handler",
+      "app": "Color Palette Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { Palette } from '../palette-store/palette-store.ts';",
+        "default copyAndFeedback -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-hxxoxovh/src/node.ts(5,37): error TS2304: Cannot find"
+    },
+    {
+      "node": "scheme-picker",
+      "app": "Color Palette Generator",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "score-tracker",
+      "app": "Memory Card Game",
+      "status": "passed",
+      "actions": [
+        "strip unused import { GameState } from '../game-state/game-state.ts';",
+        "default Record -> named export on declaration"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "match-engine",
+      "app": "Memory Card Game",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { GameSelection, GameSetup, NewGameTrigger } from '../game-setup/game-setup.ts'; -> inline sibling (used: ['GameSetup'])",
+        "INLINE ../game-setup/game-setup.ts [GameSelection, GameSetup, NewGameTrigger]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-tgezjw6b/src/node.ts(53,33): error TS1005: ',' expect"
+    },
+    {
+      "node": "game-state",
+      "app": "Memory Card Game",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { CardFlipEngine } from '../match-engine/match-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-csoun4ht/src/node.ts(18,14): error TS2551: Property '"
+    },
+    {
+      "node": "game-ui",
+      "app": "Memory Card Game",
+      "status": "passed",
+      "actions": [
+        "used import import { Difficulty } from '../score-tracker/score-tracker.ts'; -> inline sibling (used: ['Difficulty'])",
+        "INLINE ../score-tracker/score-tracker.ts [Difficulty]",
+        "default GameUI -> named export on declaration"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "game-setup",
+      "app": "Memory Card Game",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "lap-store",
+      "app": "Stopwatch",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { TimeEngine } from '../time-engine/time-engine.ts'; -> inline sibling (used: ['TimeEngine'])",
+        "INLINE ../time-engine/time-engine.ts [TimeEngine]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-re51mfva/src/node.ts(21,45): error TS2339: Property '"
+    },
+    {
+      "node": "control-buttons",
+      "app": "Stopwatch",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "stopwatch-ui",
+      "app": "Stopwatch",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { lapAnalyzer } from '../lap-analyzer/lap-analyzer.ts'; -> inline sibling (used: ['lapAnalyzer'])",
+        "INLINE ../lap-analyzer/lap-analyzer.ts [lapAnalyzer]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-xcq9dda3/src/node.ts(33,22): error TS1005: '(' expect"
+    },
+    {
+      "node": "lap-analyzer",
+      "app": "Stopwatch",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { LapStore } from '../lap-store/lap-store.ts'; -> inline sibling (used: ['LapStore'])",
+        "INLINE ../lap-store/lap-store.ts [LapStore]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-axl86cri/src/node.ts(4,36): error TS2339: Property 'f"
+    },
+    {
+      "node": "time-engine",
+      "app": "Stopwatch",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { handleControlButtons } from '../control-buttons/control-buttons.ts'; -> inline sibling (used: ['handleControlButtons'])",
+        "INLINE ../control-buttons/control-buttons.ts [handleControlButtons]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-vkt1y82s/src/node.ts(16,26): error TS2554: Expected 0"
+    },
+    {
+      "node": "format-handler",
+      "app": "Calculator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { getDisplayState } from '../display-state/display-state.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ov7c2jc4/src/node.ts(13,23): error TS2554: Expected 0"
+    },
+    {
+      "node": "calc-ui",
+      "app": "Calculator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { NumberFormatter } from '../format-handler/format-handler.ts'; -> inline sibling (used: ['NumberFormatter'])",
+        "used import import * as calcUI from './calc-ui'; -> inline sibling (used: ['calcUI'])",
+        "strip unused import { formatTo } from './format-handler';",
+        "INLINE ../format-handler/format-handler.ts [NumberFormatter]",
+        "NO-REF ./calc-ui"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-7e126wr1/src/node.ts(4,7): error TS2300: Duplicate id"
+    },
+    {
+      "node": "display-state",
+      "app": "Calculator",
+      "status": "passed",
+      "actions": [
+        "strip unused import { calcEngine } from '../calc-engine/calc-engine.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "keypad",
+      "app": "Calculator",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "calc-engine",
+      "app": "Calculator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { NumberKeypad } from '../keypad/keypad.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ajmayf92/src/node.ts(5,68): error TS1005: '=>' expect"
+    },
+    {
+      "node": "analysis-engine",
+      "app": "Word Counter",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "stats-store",
+      "app": "Word Counter",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { AnalysisEngine } from '../analysis-engine/analysis-engine.ts'; -> inline sibling (used: ['AnalysisEngine'])",
+        "INLINE ../analysis-engine/analysis-engine.ts [AnalysisEngine]",
+        "default StatisticsStoreService -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-6djrrjj2/src/node.ts(9,45): error TS2449: Class 'Anal"
+    },
+    {
+      "node": "stats-ui",
+      "app": "Word Counter",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './read-time-calc.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-umupzj9f/src/node.ts(13,55): error TS1005: ';' expect"
+    },
+    {
+      "node": "read-time-calc",
+      "app": "Word Counter",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './stats-store.ts';",
+        "default ReadTimeEstimate -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-z8gfzcvd/src/node.ts(21,26): error TS2304: Cannot fin"
+    },
+    {
+      "node": "text-area",
+      "app": "Word Counter",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "quiz-ui",
+      "app": "Simple Quiz",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { PassFailThreshold, Percentage, initializeResultCalculation } from '../result-calc/result-calc.ts';"
+      ],
+      "flags": [
+        "PROSE",
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-2lsajz11/src/node.ts(57,1): error TS1127: Invalid cha"
+    },
+    {
+      "node": "quiz-engine",
+      "app": "Simple Quiz",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './quiz-loader.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-uz2_ozio/src/node.ts(60,10): error TS1005: ';' expect"
+    },
+    {
+      "node": "question-store",
+      "app": "Simple Quiz",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { QuizService, QuizSession, QuizStatus, QuizStatusService, SessionManager } from '../quiz-engine/quiz-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-flckkx45/src/node.ts(3,19): error TS2304: Cannot find"
+    },
+    {
+      "node": "ledger-store",
+      "app": "Expense Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { LedgerEngine } from '../ledger-engine/ledger-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-tx2tm9fz/src/node.ts(3,21): error TS2304: Cannot find"
+    },
+    {
+      "node": "aggregate-engine",
+      "app": "Expense Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { LedgerStore } from '../ledger-store/ledger-store.ts'; -> inline sibling (used: ['LedgerStore'])",
+        "INLINE ../ledger-store/ledger-store.ts [LedgerStore]"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-fwhe8039/src/node.ts(20,23): error TS2355: A function"
+    },
+    {
+      "node": "ledger-engine",
+      "app": "Expense Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { ExpenseFormProps } from '../expense-form/expense-form.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-qs2r9axk/src/node.ts(12,9): error TS2845: This condit"
+    },
+    {
+      "node": "chart-renderer",
+      "app": "Expense Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './aggregate-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-9t7x93xn/src/node.ts(6,1): error TS1128: Declaration "
+    },
+    {
+      "node": "habit-ui",
+      "app": "Habit Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { Habit, getHabits, storeHabit } from '../heatmap-builder/heatmap-builder.ts'; -> inline sibling (used: ['Habit'])",
+        "INLINE ../heatmap-builder/heatmap-builder.ts [Habit, getHabits, storeHabit]"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-b5sfqczk/src/node.ts(108,41): error TS2339: Property "
+    },
+    {
+      "node": "heatmap-builder",
+      "app": "Habit Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './habit-store.ts';",
+        "used import import { Habit, storeHabit } from './habit-store'; -> inline sibling (used: ['Habit', 'storeHabit'])",
+        "NO-REF ./habit-store",
+        "default HeatmapBuilder -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-gf9mdg1s/src/node.ts(23,41): error TS2339: Property '"
+    },
+    {
+      "node": "streak-engine",
+      "app": "Habit Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './habit-manager.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-2fr_kv2n/src/node.ts(17,43): error TS2532: Object is "
+    },
+    {
+      "node": "habit-store",
+      "app": "Habit Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { Habit, StreakEngine } from '../streak-engine/streak-engine.ts'; -> inline sibling (used: ['Habit', 'StreakEngine'])",
+        "INLINE ../streak-engine/streak-engine.ts [Habit, StreakEngine]",
+        "default HabitStore -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1mh033f4/src/node.ts(6,14): error TS2420: Class 'Habi"
+    },
+    {
+      "node": "habit-manager",
+      "app": "Habit Tracker",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "session-store",
+      "app": "Pomodoro Timer",
+      "status": "passed",
+      "actions": [
+        "strip unused import { PomodoroCycle } from '../pomodoro-engine/pomodoro-engine.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "pomodoro-engine",
+      "app": "Pomodoro Timer",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './mode-picker.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-92bgyqmz/src/node.ts(68,38): error TS2366: Function l"
+    },
+    {
+      "node": "stats-engine",
+      "app": "Pomodoro Timer",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { SessionStore } from '../session-store/session-store.ts';"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-qaywsmjp/src/node.ts(8,16): error TS7006: Parameter '"
+    },
+    {
+      "node": "export-handler",
+      "app": "Markdown Previewer",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { DocStore } from '../doc-store/doc-store.ts'; -> inline sibling (used: ['DocStore'])",
+        "INLINE ../doc-store/doc-store.ts [DocStore]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ul6v3t0t/src/node.ts(3,3): error TS2394: This overloa"
+    },
+    {
+      "node": "editor-input",
+      "app": "Markdown Previewer",
+      "status": "passed",
+      "actions": [
+        "default inline -> export class EditorInput",
+        "(1 inline defaults converted)"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "preview-ui",
+      "app": "Markdown Previewer",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { ExportHandler } from '../export-handler/export-handler.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-10jblvi2/src/node.ts(6,1): error TS1434: Unexpected k"
+    },
+    {
+      "node": "doc-store",
+      "app": "Markdown Previewer",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "city-selector",
+      "app": "Weather Widget",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "unit-converter",
+      "app": "Weather Widget",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './weather-store.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-9jr1o37c/src/node.ts(24,1): error TS2591: Cannot find"
+    },
+    {
+      "node": "weather-ui",
+      "app": "Weather Widget",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './unit-converter.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-xcb4_zjt/src/node.ts(2,20): error TS2591: Cannot find"
+    },
+    {
+      "node": "weather-store",
+      "app": "Weather Widget",
+      "status": "needs-hand-write",
+      "actions": [
+        "default WeatherEngine -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-6tey1u1h/src/node.ts(15,14): error TS2420: Class 'Wea"
+    },
+    {
+      "node": "typing-ui",
+      "app": "Typing Speed Test",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './result-store.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-cc1hrd1x/src/node.ts(29,35): error TS1144: '{' or ';'"
+    },
+    {
+      "node": "metric-engine",
+      "app": "Typing Speed Test",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { detectWords, generateText, reportResults, start, stop } from '../input-tracker/input-tracker.ts'; -> inline sibling (used: ['detectWords', 'generateText', 'reportResults'])",
+        "INLINE ../input-tracker/input-tracker.ts [detectWords, generateText, reportResults, start, stop]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-hofdw2et/src/node.ts(18,20): error TS2304: Cannot fin"
+    },
+    {
+      "node": "result-store",
+      "app": "Typing Speed Test",
+      "status": "passed",
+      "actions": [
+        "strip unused import { MetricsEngine } from '../metric-engine/metric-engine.ts';",
+        "default MetricEngine -> named export on declaration"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "input-tracker",
+      "app": "Typing Speed Test",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { testConfig } from '../test-config/test-config.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-zx7mmtk0/src/node.ts(47,44): error TS2304: Cannot fin"
+    },
+    {
+      "node": "stroke-engine",
+      "app": "Sketch Pad",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { ToolbarInput } from '../toolbar-input/toolbar-input.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-qcv7_lv_/src/node.ts(5,52): error TS1131: Property or"
+    },
+    {
+      "node": "history-store",
+      "app": "Sketch Pad",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './stroke-engine.ts';",
+        "default SimpleHistoryStore -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-hobdh44t/src/node.ts(3,20): error TS2304: Cannot find"
+    },
+    {
+      "node": "toolbar-input",
+      "app": "Sketch Pad",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "strength-analyzer",
+      "app": "Password Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { CharacterSetType, Option } from '../generator-engine/generator-engine.ts'; -> inline sibling (used: ['CharacterSetType', 'Option'])",
+        "INLINE ../generator-engine/generator-engine.ts [CharacterSetType, Option]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-sdfqolmg/src/node.ts(72,1): error TS1434: Unexpected "
+    },
+    {
+      "node": "options-panel",
+      "app": "Password Generator",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "generator-engine",
+      "app": "Password Generator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { createOptionsPanel } from '../options-panel/options-panel.ts'; -> inline sibling (used: ['createOptionsPanel'])",
+        "INLINE ../options-panel/options-panel.ts [createOptionsPanel]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-4e3_cu1t/src/node.ts(66,1): error TS1434: Unexpected "
+    },
+    {
+      "node": "history-store",
+      "app": "Password Generator",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "deck-builder",
+      "app": "Flashcard Study App",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "review-engine",
+      "app": "Flashcard Study App",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { Deck } from '../deck-builder/deck-builder.ts'; -> inline sibling (used: ['Deck'])",
+        "INLINE ../deck-builder/deck-builder.ts [Deck]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-hww8tgyg/src/node.ts(17,33): error TS2339: Property '"
+    },
+    {
+      "node": "card-store",
+      "app": "Flashcard Study App",
+      "status": "needs-hand-write",
+      "actions": [
+        "default ReviewEngine -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-yn8o8n0a/src/node.ts(46,56): error TS1005: ']' expect"
+    },
+    {
+      "node": "stats-engine",
+      "app": "Flashcard Study App",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './card-store.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-6oda37in/src/node.ts(3,34): error TS2304: Cannot find"
+    },
+    {
+      "node": "input-form",
+      "app": "BMI & Health Calculator",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "health-ui",
+      "app": "BMI & Health Calculator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { calculateHealthyWeightRange } from '../range-calc/range-calc.ts'; -> inline sibling (used: ['calculateHealthyWeightRange'])",
+        "INLINE ../range-calc/range-calc.ts [calculateHealthyWeightRange]"
+      ],
+      "flags": [
+        "PROSE",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-5kaww01b/src/node.ts(40,76): error TS2554: Expected 1"
+    },
+    {
+      "node": "bmi-engine",
+      "app": "BMI & Health Calculator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { InputForm } from '../input-form/input-form.ts'; -> inline sibling (used: ['InputForm'])",
+        "INLINE ../input-form/input-form.ts [InputForm]"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-mkh9nbmg/src/node.ts(4,30): error TS2449: Class 'Inpu"
+    },
+    {
+      "node": "category-map",
+      "app": "BMI & Health Calculator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './bmi-engine.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1zvkytw0/src/node.ts(12,69): error TS2345: Argument o"
+    },
+    {
+      "node": "board-input",
+      "app": "Sudoku Solver",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { validateInput } from './validate-input'; -> inline sibling (used: ['validateInput'])",
+        "used import import { validateRow, validateColumn, validateSection } from './validations'; -> inline sibling (used: ['validateRow', 'validateColumn', 'validateSection'])",
+        "NO-REF ./validate-input",
+        "NO-REF ./validations"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-hy7gmhko/src/node.ts(1,1): error TS1434: Unexpected k"
+    },
+    {
+      "node": "validator",
+      "app": "Sudoku Solver",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { GridState } from '../board-store/board-store.ts'; -> inline sibling (used: ['GridState'])",
+        "INLINE ../board-store/board-store.ts [GridState]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ailv1qa9/src/node.ts(7,28): error TS2339: Property 'r"
+    },
+    {
+      "node": "solver-ui",
+      "app": "Sudoku Solver",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { validateBoard } from '../validator/validator.ts'; -> inline sibling (used: ['validateBoard'])",
+        "INLINE ../validator/validator.ts [validateBoard]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-7q1k26v4/src/node.ts(33,21): error TS18047: 'e.target"
+    },
+    {
+      "node": "solver-engine",
+      "app": "Sudoku Solver",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { BoardInput, validateColumn, validateInput, validateRow, validateSection } from '../board-input/board-input.ts'; -> inline sibling (used: ['BoardInput', 'validateColumn', 'validateRow', 'validateSection'])",
+        "INLINE ../board-input/board-input.ts [BoardInput, validateColumn, validateInput, validateRow, validateSection]",
+        "default SudokuSolver -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-2txv5sje/src/node.ts(108,1): error TS1434: Unexpected"
+    },
+    {
+      "node": "board-store",
+      "app": "Sudoku Solver",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './solver-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-34_zn28d/src/node.ts(12,27): error TS2663: Cannot fin"
+    },
+    {
+      "node": "recipe-ui",
+      "app": "Recipe Manager",
+      "status": "passed",
+      "actions": [
+        "strip side-effect import './scaling-engine.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "search-engine",
+      "app": "Recipe Manager",
+      "status": "passed",
+      "actions": [
+        "strip unused import { Recipe, createRecipe } from '../recipe-form/recipe-form.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "recipe-store",
+      "app": "Recipe Manager",
+      "status": "passed",
+      "actions": [
+        "used import import { Ingredient, searchRecipes } from '../search-engine/search-engine.ts'; -> inline sibling (used: ['Ingredient'])",
+        "INLINE ../search-engine/search-engine.ts [Ingredient, searchRecipes]",
+        "default RecipeStore -> named export on declaration"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "scaling-engine",
+      "app": "Recipe Manager",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './recipe-store.ts';",
+        "default scaleIngredients: declaration not found (anonymous?)"
+      ],
+      "flags": [
+        "NO-EXPORT"
+      ],
+      "tsc": "PASS"
+    },
+    {
+      "node": "recipe-form",
+      "app": "Recipe Manager",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "column-input",
+      "app": "Connect Four",
+      "status": "needs-hand-write",
+      "actions": [
+        "default inline -> export class ColumnInput",
+        "(1 inline defaults converted)"
+      ],
+      "flags": [
+        "PROSE",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-7fac59t2/src/node.ts(56,1): error TS1127: Invalid cha"
+    },
+    {
+      "node": "board-engine",
+      "app": "Connect Four",
+      "status": "passed",
+      "actions": [
+        "strip side-effect import './column-input.ts';",
+        "default BoardEngine: declaration not found (anonymous?)"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "game-ui",
+      "app": "Connect Four",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { GameBoard, MatchStore } from '../match-store/match-store.ts'; -> inline sibling (used: ['MatchStore'])",
+        "INLINE ../match-store/match-store.ts [GameBoard, MatchStore]"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-8eaamd5k/src/node.ts(159,1): error TS1434: Unexpected"
+    },
+    {
+      "node": "ai-opponent",
+      "app": "Connect Four",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { BoardEngine } from '../board-engine/board-engine.ts'; -> inline sibling (used: ['BoardEngine'])",
+        "INLINE ../board-engine/board-engine.ts [BoardEngine]"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-wm6cksqs/src/node.ts(9,17): error TS1005: ',' expecte"
+    },
+    {
+      "node": "match-store",
+      "app": "Connect Four",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { Difficulty, MinimaxAI } from '../ai-opponent/ai-opponent.ts'; -> inline sibling (used: ['MinimaxAI'])",
+        "INLINE ../ai-opponent/ai-opponent.ts [Difficulty, MinimaxAI]"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1mjioq18/src/node.ts(64,1): error TS1434: Unexpected "
+    },
+    {
+      "node": "link-store",
+      "app": "URL Shortener (Local)",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './code-generator.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-r55ly9q1/src/node.ts(13,18): error TS2591: Cannot fin"
+    },
+    {
+      "node": "stats-engine",
+      "app": "URL Shortener (Local)",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { ILink } from '../link-store/link-store.ts'; -> inline sibling (used: ['ILink'])",
+        "INLINE ../link-store/link-store.ts [ILink]"
+      ],
+      "flags": [
+        "PROSE",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-87zc1lha/src/node.ts(24,1): error TS1127: Invalid cha"
+    },
+    {
+      "node": "audio-engine",
+      "app": "Music Player",
+      "status": "needs-hand-write",
+      "actions": [],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-pdxafqbu/src/node.ts(11,18): error TS2552: Cannot fin"
+    },
+    {
+      "node": "player-ui",
+      "app": "Music Player",
+      "status": "passed",
+      "actions": [
+        "default VisualizerNode -> named export on declaration"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "transport-controls",
+      "app": "Music Player",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "visualizer",
+      "app": "Music Player",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { Playlist } from '../playlist-store/playlist-store.ts'; -> inline sibling (used: ['Playlist'])",
+        "INLINE ../playlist-store/playlist-store.ts [Playlist]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-99mzb6n6/src/node.ts(11,20): error TS2304: Cannot fin"
+    },
+    {
+      "node": "playlist-store",
+      "app": "Music Player",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './audio-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-k0ivwgcc/src/node.ts(15,9): error TS2663: Cannot find"
+    },
+    {
+      "node": "board-actions",
+      "app": "Kanban Board",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "filter-engine",
+      "app": "Kanban Board",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "drag-engine",
+      "app": "Kanban Board",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { ColumnCardSearch, createBoard, deleteBoard, findCards } from '../board-actions/board-actions.ts'; -> inline sibling (used: ['ColumnCardSearch', 'createBoard', 'deleteBoard', 'findCards'])",
+        "INLINE ../board-actions/board-actions.ts [ColumnCardSearch, createBoard, deleteBoard, findCards]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-sg4aqec4/src/node.ts(5,22): error TS2304: Cannot find"
+    },
+    {
+      "node": "board-store",
+      "app": "Kanban Board",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { BoardManager } from '../drag-engine/drag-engine.ts'; -> inline sibling (used: ['BoardManager'])",
+        "INLINE ../drag-engine/drag-engine.ts [BoardManager]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-74twlepq/src/node.ts(6,10): error TS2339: Property 'b"
+    },
+    {
+      "node": "card-sorter",
+      "app": "Kanban Board",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './filter-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-dv7sjcgd/src/node.ts(21,20): error TS2304: Cannot fin"
+    },
+    {
+      "node": "kanban-ui",
+      "app": "Kanban Board",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "chat-ui",
+      "app": "Chat Simulator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { ClearCommand, HelpCommand, RollCommand, ThemeCommand } from '../command-parser/command-parser.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-gnysq3fa/src/node.ts(53,3): error TS1128: Declaration"
+    },
+    {
+      "node": "bot-engine",
+      "app": "Chat Simulator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './message-input.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-f17owv72/src/node.ts(73,41): error TS2339: Property '"
+    },
+    {
+      "node": "chat-store",
+      "app": "Chat Simulator",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { MessageInput } from '../bot-engine/bot-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-8l7i9h2o/src/node.ts(61,5): error TS1435: Unknown key"
+    },
+    {
+      "node": "command-parser",
+      "app": "Chat Simulator",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { IChatMessage } from '../chat-store/chat-store.ts'; -> inline sibling (used: ['IChatMessage'])",
+        "INLINE ../chat-store/chat-store.ts [IChatMessage]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-uwdi115l/src/node.ts(118,5): error TS1435: Unknown ke"
+    },
+    {
+      "node": "budget-monitor",
+      "app": "Finance Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { LedgerStore } from '../ledger-store/ledger-store.ts'; -> inline sibling (used: ['LedgerStore'])",
+        "INLINE ../ledger-store/ledger-store.ts [LedgerStore]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-dszc7s7z/src/node.ts(10,48): error TS2339: Property '"
+    },
+    {
+      "node": "aggregation-engine",
+      "app": "Finance Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './transaction-feed.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-cf_69kui/src/node.ts(5,7): error TS1003: Identifier e"
+    },
+    {
+      "node": "chart-builder",
+      "app": "Finance Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { BudgetMonitor } from '../budget-monitor/budget-monitor.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-8s_60pwl/src/node.ts(23,29): error TS2345: Argument o"
+    },
+    {
+      "node": "ledger-store",
+      "app": "Finance Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './aggregation-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-d21ftot3/src/node.ts(3,21): error TS2304: Cannot find"
+    },
+    {
+      "node": "dashboard-ui",
+      "app": "Finance Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { ChartData } from '../chart-builder/chart-builder.ts';",
+        "strip side-effect import './aggregation-engine.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-z91nv37o/src/node.ts(97,54): error TS2304: Cannot fin"
+    },
+    {
+      "node": "transaction-feed",
+      "app": "Finance Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "default TransactionFeed -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-u9rcfcdt/src/node.ts(24,65): error TS2339: Property '"
+    },
+    {
+      "node": "command-input",
+      "app": "Text Adventure Engine",
+      "status": "needs-hand-write",
+      "actions": [
+        "default inline -> export class CommandParser",
+        "(1 inline defaults converted)"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-bs0dbeo4/src/node.ts(22,9): error TS2552: Cannot find"
+    },
+    {
+      "node": "adventure-ui",
+      "app": "Text Adventure Engine",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { Parser, SuccessResult } from '../parser/parser.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-16xt16de/src/node.ts(31,47): error TS1005: ';' expect"
+    },
+    {
+      "node": "world-store",
+      "app": "Text Adventure Engine",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { LogicNode } from '../scene-engine/scene-engine.ts'; -> inline sibling (used: ['LogicNode'])",
+        "INLINE ../scene-engine/scene-engine.ts [LogicNode]"
+      ],
+      "flags": [
+        "PROSE",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-mo718s0r/src/node.ts(3,9): error TS1005: ';' expected"
+    },
+    {
+      "node": "parser",
+      "app": "Text Adventure Engine",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { WorldStore } from '../world-store/world-store.ts'; -> inline sibling (used: ['WorldStore'])",
+        "INLINE ../world-store/world-store.ts [WorldStore]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-54ooydt9/src/node.ts(49,33): error TS1005: ')' expect"
+    },
+    {
+      "node": "studio-ui",
+      "app": "Data Visualization Studio",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './export-handler.ts';",
+        "strip side-effect import './chart-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-f46xpkbn/src/node.ts(171,5): error TS1434: Unexpected"
+    },
+    {
+      "node": "data-import",
+      "app": "Data Visualization Studio",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "style-mapper",
+      "app": "Data Visualization Studio",
+      "status": "needs-hand-write",
+      "actions": [
+        "default DatasetStore -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-7t8jljpc/src/node.ts(5,24): error TS2304: Cannot find"
+    },
+    {
+      "node": "dataset-store",
+      "app": "Data Visualization Studio",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './chart-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-gp0d3_pb/src/node.ts(6,19): error TS2304: Cannot find"
+    },
+    {
+      "node": "chart-engine",
+      "app": "Data Visualization Studio",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { DataImport } from '../data-import/data-import.ts'; -> inline sibling (used: ['DataImport'])",
+        "INLINE ../data-import/data-import.ts [DataImport]",
+        "default chartEngine: declaration not found (anonymous?)"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-kpnr7_kg/src/node.ts(8,17): error TS2304: Cannot find"
+    },
+    {
+      "node": "rule-editor",
+      "app": "Task Automation Builder",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "rule-engine",
+      "app": "Task Automation Builder",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { NodeEditor } from '../rule-editor/rule-editor.ts';",
+        "default RuleEngine -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-c3_dt6h8/src/node.ts(58,11): error TS7022: 'selectedE"
+    },
+    {
+      "node": "rule-store",
+      "app": "Task Automation Builder",
+      "status": "passed",
+      "actions": [
+        "strip side-effect import './rule-engine.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "simulator",
+      "app": "Task Automation Builder",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { RuleStore } from '../rule-store/rule-store.ts'; -> inline sibling (used: ['RuleStore'])",
+        "INLINE ../rule-store/rule-store.ts [RuleStore]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1qzq0hk4/src/node.ts(10,32): error TS2339: Property '"
+    },
+    {
+      "node": "region-engine",
+      "app": "Interactive Map Explorer",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { MapInteractions } from '../map-interactions/map-interactions.ts'; -> inline sibling (used: ['MapInteractions'])",
+        "INLINE ../map-interactions/map-interactions.ts [MapInteractions]",
+        "default RegionEngine -> named export on declaration"
+      ],
+      "flags": [
+        "JSX",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-640ic71u/src/node.ts(28,10): error TS1005: '>' expect"
+    },
+    {
+      "node": "map-ui",
+      "app": "Interactive Map Explorer",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { QuizEngine } from '../quiz-engine/quiz-engine.ts'; -> inline sibling (used: ['QuizEngine'])",
+        "used import import { QuizEngine } from './quiz-engine'; -> inline sibling (used: ['QuizEngine'])",
+        "INLINE ../quiz-engine/quiz-engine.ts [QuizEngine]",
+        "NO-REF ./quiz-engine"
+      ],
+      "flags": [
+        "STUB",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-rac0upuf/src/node.ts(199,21): error TS1005: ',' expec"
+    },
+    {
+      "node": "patch-store",
+      "app": "Music Synth Workstation",
+      "status": "passed",
+      "actions": [
+        "strip unused import { synthEngine } from '../synth-engine/synth-engine.ts';",
+        "default PatchStore -> named export on declaration"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "keyboard-input",
+      "app": "Music Synth Workstation",
+      "status": "needs-hand-write",
+      "actions": [
+        "default KeyboardInputService -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-b2yq7c8o/src/node.ts(21,52): error TS2551: Property '"
+    },
+    {
+      "node": "sequencer",
+      "app": "Music Synth Workstation",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "synth-engine",
+      "app": "Music Synth Workstation",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './keyboard-input.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-w5wpgq75/src/node.ts(9,33): error TS2339: Property 'c"
+    },
+    {
+      "node": "synth-ui",
+      "app": "Music Synth Workstation",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './sequencer.ts';",
+        "default render -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-n_av2kvq/src/node.ts(3,20): error TS2304: Cannot find"
+    },
+    {
+      "node": "stock-engine",
+      "app": "Inventory Manager",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { addItem, editItem, removeItem } from '../item-form/item-form.ts';"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-8xbz29pz/src/node.ts(5,7): error TS2552: Cannot find "
+    },
+    {
+      "node": "inventory-store",
+      "app": "Inventory Manager",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './stock-engine.ts';",
+        "default InventoryStore -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-7gz9xfgb/src/node.ts(5,24): error TS2304: Cannot find"
+    },
+    {
+      "node": "item-form",
+      "app": "Inventory Manager",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "report-builder",
+      "app": "Inventory Manager",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './inventory-store.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-i77dqnxx/src/node.ts(43,20): error TS1005: ';' expect"
+    },
+    {
+      "node": "workout-store",
+      "app": "Workout Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { VolumeEngine } from '../volume-engine/volume-engine.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT"
+      ],
+      "tsc": "PASS"
+    },
+    {
+      "node": "workout-ui",
+      "app": "Workout Tracker",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './progress-builder.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-chz77axb/src/node.ts(3,1): error TS2304: Cannot find "
+    },
+    {
+      "node": "volume-engine",
+      "app": "Workout Tracker",
+      "status": "passed",
+      "actions": [
+        "strip unused import { WorkoutLogger } from '../workout-logger/workout-logger.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "workout-logger",
+      "app": "Workout Tracker",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "tool-tabs",
+      "app": "PDF & Text Toolkit",
+      "status": "needs-hand-write",
+      "actions": [
+        "default ToolSelector -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1vennoil/src/node.ts(13,5): error TS2722: Cannot invo"
+    },
+    {
+      "node": "diff-renderer",
+      "app": "PDF & Text Toolkit",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './tool-state.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-k9lvgn6c/src/node.ts(5,22): error TS2304: Cannot find"
+    },
+    {
+      "node": "tool-state",
+      "app": "PDF & Text Toolkit",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { TextEngine } from '../text-engine/text-engine.ts'; -> inline sibling (used: ['TextEngine'])",
+        "used import import textEngine from './text-engine.ts'; -> inline sibling (used: ['textEngine'])",
+        "INLINE ../text-engine/text-engine.ts [TextEngine]",
+        "SYMBOL-NOT-FOUND ./text-engine.ts",
+        "default ToolState -> named export on declaration"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "STUB",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-h9j34hzw/src/node.ts(2,1): error TS1435: Unknown keyw"
+    },
+    {
+      "node": "toolkit-ui",
+      "app": "PDF & Text Toolkit",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { DiffRenderer } from '../diff-renderer/diff-renderer.ts';",
+        "default render -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-18sbqp1u/src/node.ts(13,34): error TS2339: Property '"
+    },
+    {
+      "node": "visualizer-ui",
+      "app": "Pathfinding Visualizer",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { Maze } from '../maze-generator/maze-generator.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-bqx9nn8a/src/node.ts(22,54): error TS2345: Argument o"
+    },
+    {
+      "node": "maze-generator",
+      "app": "Pathfinding Visualizer",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { calculatePath } from '../grid-store/grid-store.ts';",
+        "default generateMaze -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-t5gpchq7/src/node.ts(77,13): error TS1136: Property a"
+    },
+    {
+      "node": "search-engine",
+      "app": "Pathfinding Visualizer",
+      "status": "passed",
+      "actions": [
+        "strip unused import { updateGrid } from '../grid-controls/grid-controls.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "grid-controls",
+      "app": "Pathfinding Visualizer",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "grid-store",
+      "app": "Pathfinding Visualizer",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { CellStatus, Grid, PathfindingConfig } from '../search-engine/search-engine.ts'; -> inline sibling (used: ['Grid', 'PathfindingConfig'])",
+        "INLINE ../search-engine/search-engine.ts [CellStatus, Grid, PathfindingConfig]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-uv36ha1v/src/node.ts(4,65): error TS2304: Cannot find"
+    },
+    {
+      "node": "forecast-engine",
+      "app": "Budget Planner",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { BudgetRepository } from './budget-repository'; -> inline sibling (used: ['BudgetRepository'])",
+        "NO-REF ./budget-repository"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-x7b52nas/src/node.ts(26,41): error TS2304: Cannot fin"
+    },
+    {
+      "node": "envelope-engine",
+      "app": "Budget Planner",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './budget-setup.ts';"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-0gl27cln/src/node.ts(30,15): error TS18046: 'error' i"
+    },
+    {
+      "node": "budget-store",
+      "app": "Budget Planner",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './envelope-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-qvtkg5ne/src/node.ts(48,40): error TS2304: Cannot fin"
+    },
+    {
+      "node": "crop-tool",
+      "app": "Image Editor Lite",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { editState } from '../edit-state/edit-state.ts'; -> inline sibling (used: ['editState'])",
+        "INLINE ../edit-state/edit-state.ts [editState]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-1ohfrs19/src/node.ts(19,3): error TS18047: 'editState"
+    },
+    {
+      "node": "editor-ui",
+      "app": "Image Editor Lite",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { cropTool, editStateMachine } from '../crop-tool/crop-tool.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-u3ycc1on/src/node.ts(8,1): error TS1434: Unexpected k"
+    },
+    {
+      "node": "image-loader",
+      "app": "Image Editor Lite",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "filter-engine",
+      "app": "Image Editor Lite",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { createImage } from '../image-loader/image-loader.ts'; -> inline sibling (used: ['createImage'])",
+        "SYMBOL-NOT-FOUND ../image-loader/image-loader.ts"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-d62u1eoz/src/node.ts(9,15): error TS7006: Parameter '"
+    },
+    {
+      "node": "edit-state",
+      "app": "Image Editor Lite",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './filter-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-rez953xx/src/node.ts(3,20): error TS2304: Cannot find"
+    },
+    {
+      "node": "schedule-store",
+      "app": "Task Scheduler",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './schedule-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-5pc3no1x/src/node.ts(3,25): error TS2304: Cannot find"
+    },
+    {
+      "node": "conflict-analyzer",
+      "app": "Task Scheduler",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "task-form",
+      "app": "Task Scheduler",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "scheduler-ui",
+      "app": "Task Scheduler",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { ConflictAnalyzer } from '../conflict-analyzer/conflict-analyzer.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-bmf8lucu/src/node.ts(17,3): error TS18047: 'filtersTo"
+    },
+    {
+      "node": "schedule-engine",
+      "app": "Task Scheduler",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { TaskFormProps, createTask, deleteTask, setRecurrence, updateTask } from '../task-form/task-form.ts'; -> inline sibling (used: ['TaskFormProps'])",
+        "INLINE ../task-form/task-form.ts [TaskFormProps, createTask, deleteTask, setRecurrence, updateTask]"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-umivcv30/src/node.ts(27,1): error TS1109: Expression "
+    },
+    {
+      "node": "puzzle-engine",
+      "app": "Escape Room Puzzle",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { RoomInteractions } from '../room-interactions/room-interactions.ts'; -> inline sibling (used: ['RoomInteractions'])",
+        "INLINE ../room-interactions/room-interactions.ts [RoomInteractions]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-_glkdi3o/src/node.ts(68,5): error TS1005: 'try' expec"
+    },
+    {
+      "node": "hint-system",
+      "app": "Escape Room Puzzle",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { GameState, Room } from '../game-state/game-state.ts'; -> inline sibling (used: ['GameState'])",
+        "INLINE ../game-state/game-state.ts [GameState, Room]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ov233ijh/src/node.ts(14,47): error TS2339: Property '"
+    },
+    {
+      "node": "room-interactions",
+      "app": "Escape Room Puzzle",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "game-state",
+      "app": "Escape Room Puzzle",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './puzzle-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-lrzgnqhk/src/node.ts(7,13): error TS2564: Property 't"
+    },
+    {
+      "node": "game-ui",
+      "app": "Escape Room Puzzle",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { HintGenerator } from '../hint-system/hint-system.ts'; -> inline sibling (used: ['HintGenerator'])",
+        "INLINE ../hint-system/hint-system.ts [HintGenerator]"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-2v4kk9_f/src/node.ts(16,5): error TS1109: Expression "
+    },
+    {
+      "node": "chart-builder",
+      "app": "Network Speed Test (Local)",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './result-store.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-zn6ak2rb/src/node.ts(21,1): error TS1435: Unknown key"
+    },
+    {
+      "node": "benchmark-engine",
+      "app": "Network Speed Test (Local)",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "test-controls",
+      "app": "Network Speed Test (Local)",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "result-store",
+      "app": "Network Speed Test (Local)",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "render-engine",
+      "app": "Documentation Site Builder",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './page-editor.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-20if2ra7/src/node.ts(7,27): error TS2304: Cannot find"
+    },
+    {
+      "node": "search-engine",
+      "app": "Documentation Site Builder",
+      "status": "passed",
+      "actions": [
+        "strip side-effect import './doc-store.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "site-ui",
+      "app": "Documentation Site Builder",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { Component } from 'pure-component'; -> inline sibling (used: ['Component'])",
+        "NO-REF pure-component"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-snd8bxqd/src/node.ts(4,23): error TS2304: Cannot find"
+    },
+    {
+      "node": "doc-store",
+      "app": "Documentation Site Builder",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './render-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-3am2rnsw/src/node.ts(9,11): error TS2304: Cannot find"
+    },
+    {
+      "node": "tts-handler",
+      "app": "Language Learning App",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './vocab-store.ts';",
+        "used import import { SpeechSynthesis } from 'web-js-speech-api'; -> inline sibling (used: ['SpeechSynthesis'])",
+        "used import import { getWordPronunciation } from './vocab-store'; -> inline sibling (used: ['getWordPronunciation'])",
+        "NO-REF web-js-speech-api",
+        "NO-REF ./vocab-store"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-yacltvyb/src/node.ts(37,51): error TS2345: Argument o"
+    },
+    {
+      "node": "lesson-engine",
+      "app": "Language Learning App",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './exercise-input.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-_qmawp5s/src/node.ts(4,33): error TS2304: Cannot find"
+    },
+    {
+      "node": "exercise-input",
+      "app": "Language Learning App",
+      "status": "passed",
+      "actions": [
+        "default captureExerciseInput -> named export on declaration"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "vocab-store",
+      "app": "Language Learning App",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { execute } from '../lesson-engine/lesson-engine.ts'; -> inline sibling (used: ['execute'])",
+        "INLINE ../lesson-engine/lesson-engine.ts [execute]",
+        "default VocabStore -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-5v5ccx9o/src/node.ts(26,33): error TS2304: Cannot fin"
+    },
+    {
+      "node": "device-controls",
+      "app": "Smart Home Dashboard",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "home-store",
+      "app": "Smart Home Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './device-engine.ts';"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ub9sb9z2/src/node.ts(54,13): error TS2552: Cannot fin"
+    },
+    {
+      "node": "device-engine",
+      "app": "Smart Home Dashboard",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { ISensorDevice, ISwitchDevice, SwitchNode } from '../device-controls/device-controls.ts'; -> inline sibling (used: ['ISensorDevice', 'ISwitchDevice'])",
+        "INLINE ../device-controls/device-controls.ts [ISensorDevice, ISwitchDevice, SwitchNode]",
+        "default deviceEngine -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-zn9ucrev/src/node.ts(4,24): error TS7006: Parameter '"
+    },
+    {
+      "node": "energy-estimator",
+      "app": "Smart Home Dashboard",
+      "status": "passed",
+      "actions": [
+        "strip side-effect import './home-store.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "snippet-ui",
+      "app": "Code Snippet Manager",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './search-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-v0g6gvv0/src/node.ts(53,8): error TS1134: Variable de"
+    },
+    {
+      "node": "snippet-editor",
+      "app": "Code Snippet Manager",
+      "status": "needs-hand-write",
+      "actions": [],
+      "flags": [
+        "DEFAULT-EXPORT"
+      ],
+      "tsc": "PASS"
+    },
+    {
+      "node": "snippet-store",
+      "app": "Code Snippet Manager",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './highlight-engine.ts';"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT"
+      ],
+      "tsc": "PASS"
+    },
+    {
+      "node": "search-engine",
+      "app": "Code Snippet Manager",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { Snippet } from '../snippet-store/snippet-store.ts'; -> inline sibling (used: ['Snippet'])",
+        "INLINE ../snippet-store/snippet-store.ts [Snippet]"
+      ],
+      "flags": [
+        "DEFAULT-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-bcehdizz/src/node.ts(17,1): error TS1434: Unexpected "
+    },
+    {
+      "node": "survey-builder",
+      "app": "Survey Builder & Analyzer",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "response-engine",
+      "app": "Survey Builder & Analyzer",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './survey-builder.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ru20_hr1/src/node.ts(5,38): error TS2304: Cannot find"
+    },
+    {
+      "node": "survey-store",
+      "app": "Survey Builder & Analyzer",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { ResponseEngine } from '../response-engine/response-engine.ts'; -> inline sibling (used: ['ResponseEngine'])",
+        "INLINE ../response-engine/response-engine.ts [ResponseEngine]"
+      ],
+      "flags": [
+        "NO-EXPORT",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-runa61en/src/node.ts(20,41): error TS2339: Property '"
+    },
+    {
+      "node": "survey-ui",
+      "app": "Survey Builder & Analyzer",
+      "status": "needs-hand-write",
+      "actions": [
+        "used import import { calculateAverageScore, calculateCompletedQuestions } from '../analytics-engine/analytics-engine.ts'; -> inline sibling (used: ['calculateCompletedQuestions'])",
+        "INLINE ../analytics-engine/analytics-engine.ts [calculateAverageScore, calculateCompletedQuestions]"
+      ],
+      "flags": [
+        "PROSE",
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-m4plnwti/src/node.ts(79,20): error TS1005: ',' expect"
+    },
+    {
+      "node": "chat-ui",
+      "app": "AI Chat Client",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "conversation-store",
+      "app": "AI Chat Client",
+      "status": "passed",
+      "actions": [
+        "strip unused import { chatEngine } from '../chat-engine/chat-engine.ts';"
+      ],
+      "flags": [],
+      "tsc": "PASS"
+    },
+    {
+      "node": "message-composer",
+      "app": "AI Chat Client",
+      "status": "needs-hand-write",
+      "actions": [],
+      "flags": [
+        "DEFAULT-EXPORT"
+      ],
+      "tsc": "PASS"
+    },
+    {
+      "node": "chat-engine",
+      "app": "AI Chat Client",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './message-composer.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-dorng5r3/src/node.ts(23,33): error TS2504: Type 'Read"
+    },
+    {
+      "node": "agent-engine",
+      "app": "Traffic Simulation",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './sim-controls.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-pfn69aae/src/node.ts(9,34): error TS2304: Cannot find"
+    },
+    {
+      "node": "sim-state",
+      "app": "Traffic Simulation",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { createTrafficEngineer } from '../agent-engine/agent-engine.ts';",
+        "default TrafficEngineer -> named export on declaration"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-k8v0pwi1/src/node.ts(67,15): error TS2339: Property '"
+    },
+    {
+      "node": "sim-ui",
+      "app": "Traffic Simulation",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { calculateAverageSpeed, calculateQueueLength, sampleHeatmapValues } from '../metrics-engine/metrics-engine.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-ztxu5kgt/src/node.ts(2,29): error TS2591: Cannot find"
+    },
+    {
+      "node": "sim-controls",
+      "app": "Traffic Simulation",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "metrics-engine",
+      "app": "Traffic Simulation",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip side-effect import './sim-state.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-zlniyvh2/src/node.ts(13,62): error TS1005: ',' expect"
+    },
+    {
+      "node": "timeline-engine",
+      "app": "Project Planner",
+      "status": "needs-hand-write",
+      "actions": [
+        "strip unused import { TaskEditorService } from '../task-editor/task-editor.ts';"
+      ],
+      "flags": [
+        "TSC"
+      ],
+      "tsc": "FAIL: data/ab-test/tsc-tmp-4vyu5xyp/src/node.ts(22,55): error TS2355: A function"
+    },
+    {
+      "node": "critical-path",
+      "app": "Project Planner",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    },
+    {
+      "node": "task-editor",
+      "app": "Project Planner",
+      "status": "already-clean",
+      "actions": [],
+      "flags": [],
+      "tsc": ""
+    }
+  ]
+}

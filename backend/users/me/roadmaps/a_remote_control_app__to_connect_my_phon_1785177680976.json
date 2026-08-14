@@ -1,0 +1,185 @@
+{
+  "projectName": "a remote control app, to connect my phon",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1784355032656_3lewg8",
+      "type": "logic",
+      "label": "main.go",
+      "description": "The entry point of the app. Initializes the application and starts the main loop.",
+      "language": "go",
+      "position": {
+        "x": 107,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1784355032656_1baol0",
+      "type": "logic",
+      "label": "config.go",
+      "description": "Configures the application settings such as database connection details, API keys, and other global parameters.",
+      "language": "go",
+      "position": {
+        "x": 128,
+        "y": 138
+      }
+    },
+    {
+      "id": "node_1784355032656_52aybj",
+      "type": "database",
+      "label": "schema.sql",
+      "description": "Defines the database schema for storing app data.",
+      "language": "sql",
+      "position": {
+        "x": -43,
+        "y": 94
+      }
+    },
+    {
+      "id": "node_1784355032656_ub9i4l",
+      "type": "logic",
+      "label": "models.go",
+      "description": "Defines the data models for the app's entities.",
+      "language": "go",
+      "position": {
+        "x": 79,
+        "y": -196
+      }
+    },
+    {
+      "id": "node_1784355032656_2omd7j",
+      "type": "logic",
+      "label": "processor.go",
+      "description": "Processes incoming requests and executes business logic.",
+      "language": "go",
+      "position": {
+        "x": 75,
+        "y": 215
+      }
+    },
+    {
+      "id": "node_1784355032656_t3q8aw",
+      "type": "logic",
+      "label": "auth_middleware.go",
+      "description": "Handles authentication and authorization for the app.",
+      "language": "go",
+      "position": {
+        "x": 219,
+        "y": -43
+      }
+    },
+    {
+      "id": "node_1784355032656_fwn46k",
+      "type": "logic",
+      "label": "user_service.go",
+      "description": "Manages user data and interactions.",
+      "language": "go",
+      "position": {
+        "x": 211,
+        "y": -151
+      }
+    },
+    {
+      "id": "node_1784355032656_mqfhqv",
+      "type": "ui",
+      "label": "app_ui.go",
+      "description": "Handles the user interface for the app.",
+      "language": "go",
+      "position": {
+        "x": -142,
+        "y": -61
+      }
+    },
+    {
+      "id": "node_1784355032656_0zn0nw",
+      "type": "logic",
+      "label": "helpers.go",
+      "description": "Helper and utility functions — shared logic, formatters, and convenience methods.",
+      "language": "go",
+      "position": {
+        "x": 209,
+        "y": -246
+      }
+    },
+    {
+      "id": "node_1784355032656_s5vfak",
+      "type": "database",
+      "label": "seed.sql",
+      "description": "Seed data for development/testing — initial records and test fixtures.",
+      "language": "sql",
+      "position": {
+        "x": -69,
+        "y": 259
+      }
+    },
+    {
+      "id": "node_1784355032657_rthlpo",
+      "type": "logic",
+      "label": "db_config.json",
+      "description": "Database connection configuration — host, port, credentials, and pool settings.",
+      "language": "sql",
+      "position": {
+        "x": -30,
+        "y": -122
+      }
+    },
+    {
+      "id": "node_1784355032657_347k8q",
+      "type": "ui",
+      "label": "styles.css",
+      "description": "UI styles and theme definitions — layout, colors, typography, and responsive design.",
+      "language": "go",
+      "position": {
+        "x": -257,
+        "y": 1
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1784355032656_3lewg8",
+      "target": "node_1784355032656_1baol0"
+    },
+    {
+      "source": "node_1784355032656_3lewg8",
+      "target": "node_1784355032656_52aybj"
+    },
+    {
+      "source": "node_1784355032656_3lewg8",
+      "target": "node_1784355032656_ub9i4l"
+    },
+    {
+      "source": "node_1784355032656_3lewg8",
+      "target": "node_1784355032656_2omd7j"
+    },
+    {
+      "source": "node_1784355032656_3lewg8",
+      "target": "node_1784355032656_t3q8aw"
+    },
+    {
+      "source": "node_1784355032656_3lewg8",
+      "target": "node_1784355032656_fwn46k"
+    },
+    {
+      "source": "node_1784355032656_3lewg8",
+      "target": "node_1784355032656_0zn0nw"
+    },
+    {
+      "source": "node_1784355032656_52aybj",
+      "target": "node_1784355032656_s5vfak"
+    },
+    {
+      "source": "node_1784355032656_52aybj",
+      "target": "node_1784355032657_rthlpo"
+    },
+    {
+      "source": "node_1784355032656_s5vfak",
+      "target": "node_1784355032657_rthlpo"
+    },
+    {
+      "source": "node_1784355032656_mqfhqv",
+      "target": "node_1784355032657_347k8q"
+    }
+  ],
+  "createdAt": "2026-07-27T18:41:20.976Z"
+}

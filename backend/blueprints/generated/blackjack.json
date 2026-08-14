@@ -1,0 +1,52 @@
+{
+  "app_type": "blackjack",
+  "description": "Casino Blackjack with hit/stand/double/split, dealer AI, and chip management — Full Blackjack game with card dealing, hand values (aces as 1/11), hit/stand/double-down/split, dealer AI (hit until 17), blackjack payout, and chip-based betting",
+  "keywords": [
+    "blackjack",
+    "card-game",
+    "casino",
+    "game",
+    "probability",
+    "blackjack",
+    "player actions",
+    "hand engine",
+    "dealer ai",
+    "game state",
+    "table renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Player Actions",
+    "Hand Engine",
+    "Dealer AI",
+    "Game State",
+    "Table Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Player Actions",
+      "destination_module": "Hand Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Hand Engine",
+      "destination_module": "Dealer AI",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Dealer AI",
+      "destination_module": "Game State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Table Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

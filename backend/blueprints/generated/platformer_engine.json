@@ -1,0 +1,60 @@
+{
+  "app_type": "platformer_engine",
+  "description": "2D platformer with tilemap physics, character controller, parallax scrolling, and enemies — 2D platformer engine with tile-based level loading, gravity/jump physics, collision response, animated character sprites, parallax backgrounds, and enemy AI",
+  "keywords": [
+    "platformer",
+    "2d",
+    "physics",
+    "tilemap",
+    "game",
+    "platformer",
+    "engine",
+    "player input",
+    "character controller",
+    "tile collision",
+    "level store",
+    "enemy ai",
+    "camera & renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Player Input",
+    "Character Controller",
+    "Tile Collision",
+    "Level Store",
+    "Enemy AI",
+    "Camera & Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Player Input",
+      "destination_module": "Character Controller",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Character Controller",
+      "destination_module": "Tile Collision",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Tile Collision",
+      "destination_module": "Level Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Level Store",
+      "destination_module": "Enemy AI",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Enemy AI",
+      "destination_module": "Camera & Renderer",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

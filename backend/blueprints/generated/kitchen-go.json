@@ -1,0 +1,52 @@
+{
+  "app_type": "kitchen-go",
+  "description": "point-of-sale: menu management, table state, order lifecycle, kitchen ticket queue, payment reconciliation.",
+  "keywords": [
+    "kitchen-go",
+    "go",
+    "restaurant",
+    "ordering",
+    "pos",
+    "menus",
+    "tables",
+    "orders",
+    "kitchen",
+    "payments"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "menus",
+    "tables",
+    "orders",
+    "kitchen",
+    "payments"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "menus",
+      "destination_module": "tables",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "tables",
+      "destination_module": "orders",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "orders",
+      "destination_module": "kitchen",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "kitchen",
+      "destination_module": "payments",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 33
+}

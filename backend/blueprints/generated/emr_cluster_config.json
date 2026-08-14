@@ -1,0 +1,53 @@
+{
+  "app_type": "emr_cluster_config",
+  "description": "AWS EMR cluster configuration and optimization — Interactive data engineering tool for emr cluster config",
+  "keywords": [
+    "data-engineering",
+    "emr",
+    "cluster",
+    "config",
+    "emr",
+    "cluster",
+    "config",
+    "pipeline config",
+    "data processor",
+    "data store",
+    "orchestrator",
+    "pipeline dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Pipeline Config",
+    "Data Processor",
+    "Data Store",
+    "Orchestrator",
+    "Pipeline Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Pipeline Config",
+      "destination_module": "Data Processor",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Data Processor",
+      "destination_module": "Data Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Orchestrator",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Orchestrator",
+      "destination_module": "Pipeline Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

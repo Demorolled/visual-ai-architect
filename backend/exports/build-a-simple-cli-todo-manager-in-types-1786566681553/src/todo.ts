@@ -1,0 +1,1 @@
+export type TodoItem={title:string,done:boolean};export const addTodo=[];export const listTodos=[];

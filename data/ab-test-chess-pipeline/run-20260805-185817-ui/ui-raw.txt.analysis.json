@@ -1,0 +1,36 @@
+{
+ "gates": {
+  "chars": 20941,
+  "fences": 9,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [],
+  "prose_leak": 5
+ },
+ "meta": {},
+ "check": {
+  "tsc_clean": false,
+  "error_count": 99,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(6,1): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(6,6): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(6,12): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(7,1): error TS1003: Identifier expected.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(7,3): error TS1443: Module declaration names may only use ' or \" quoted strings.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(38,38): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(38,45): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(39,38): error TS1005: ';' expected.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(39,45): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(45,46): error TS1005: ';' expected.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(45,53): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(45,59): error TS1443: Module declaration names may only use ' or \" quoted strings.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(56,51): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(56,58): error TS1434: Unexpected keyword or identifier.",
+   "data/ab-test-chess-pipeline/run-20260805-185817-ui/ui/chess-ui/chess-ui.ts(56,85): error TS1005: ';' expected."
+  ]
+ }
+}

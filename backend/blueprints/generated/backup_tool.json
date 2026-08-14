@@ -1,0 +1,52 @@
+{
+  "app_type": "backup_tool",
+  "description": "File backup with scheduled sync, versioning, dedup, and cloud targets — Desktop backup with full/incremental, scheduled sync, version history, hash-based dedup, cloud targets",
+  "keywords": [
+    "backup",
+    "sync",
+    "file-management",
+    "utility",
+    "backup",
+    "tool",
+    "backup config",
+    "backup engine",
+    "restore mgr",
+    "backup catalog",
+    "backup dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Backup Config",
+    "Backup Engine",
+    "Restore Mgr",
+    "Backup Catalog",
+    "Backup Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Backup Config",
+      "destination_module": "Backup Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Backup Engine",
+      "destination_module": "Restore Mgr",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Restore Mgr",
+      "destination_module": "Backup Catalog",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Backup Catalog",
+      "destination_module": "Backup Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

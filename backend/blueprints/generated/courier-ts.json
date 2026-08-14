@@ -1,0 +1,51 @@
+{
+  "app_type": "courier-ts",
+  "description": "last-mile logistics: courier roster, package registration, pickup scheduling, delivery status, live location tracking with realtime updates.",
+  "keywords": [
+    "courier-ts",
+    "typescript",
+    "courier",
+    "delivery",
+    "couriers",
+    "packages",
+    "pickups",
+    "deliveries",
+    "tracking"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "couriers",
+    "packages",
+    "pickups",
+    "deliveries",
+    "tracking"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "couriers",
+      "destination_module": "packages",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "packages",
+      "destination_module": "pickups",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "pickups",
+      "destination_module": "deliveries",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "deliveries",
+      "destination_module": "tracking",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

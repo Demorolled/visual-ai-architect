@@ -1,0 +1,48 @@
+{
+  "app_type": "tetris_attack",
+  "description": "Panel de Pon style matching puzzle game — an interactive game tool with a visual interface.",
+  "keywords": [
+    "games",
+    "game",
+    "tetris-attack",
+    "puzzle",
+    "matching",
+    "tetris",
+    "attack"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "game_engine",
+    "input_handler",
+    "score_store",
+    "canvas_ui"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "game_engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "game_engine",
+      "destination_module": "input_handler",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "input_handler",
+      "destination_module": "score_store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "score_store",
+      "destination_module": "canvas_ui",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:games"
+}

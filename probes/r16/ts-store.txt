@@ -1,0 +1,19 @@
+export class Store<T> {
+    private items: T[] = [];
+
+    add(item: T): void {
+        this.items.push(item);
+    }
+
+    remove(id: string): void {
+        this.items = this.items.filter(i => i.id !== id);
+    }
+
+    get(id: string): T | undefined {
+        return this.items.find(i => i.id === id);
+    }
+
+    snapshot(): T[] {
+        return [...this.items];
+    }
+}

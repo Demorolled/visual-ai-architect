@@ -1,0 +1,54 @@
+{
+  "app_type": "clicker_idle_game",
+  "description": "Incremental idle game with resource generation, upgrades, and prestige mechanics — Idle clicker with resource clicking, automatic generation, building purchases (multipliers), upgrades, achievement system, and prestige/ascension reset mechanic",
+  "keywords": [
+    "idle-game",
+    "clicker",
+    "incremental",
+    "game",
+    "economy",
+    "clicker",
+    "idle",
+    "game",
+    "click input",
+    "resource engine",
+    "economy manager",
+    "save state",
+    "idle dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Click Input",
+    "Resource Engine",
+    "Economy Manager",
+    "Save State",
+    "Idle Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Click Input",
+      "destination_module": "Resource Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Resource Engine",
+      "destination_module": "Economy Manager",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Economy Manager",
+      "destination_module": "Save State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Save State",
+      "destination_module": "Idle Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

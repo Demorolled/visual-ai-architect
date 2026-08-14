@@ -1,0 +1,136 @@
+{
+  "projectName": "a tic-tac-toe game in TypeScript",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "nodeId": "node_1786613796503_gen995",
+      "nodeLabel": "config.ts",
+      "fileName": "config.ts",
+      "language": "typescript",
+      "dependencies": [],
+      "exports": [
+        "DATABASE_URL"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613796503_w2o73o",
+      "nodeLabel": "types.ts",
+      "fileName": "types.ts",
+      "language": "typescript",
+      "dependencies": [],
+      "exports": [
+        "Cell",
+        "GameState",
+        "Move",
+        "GameEvent",
+        "GameResult",
+        "GameException",
+        "Player",
+        "Game"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613796503_yndwql",
+      "nodeLabel": "ui.css",
+      "fileName": "ui.css",
+      "language": "css",
+      "dependencies": [],
+      "exports": [],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786613796503_85d7o8",
+      "nodeLabel": "ui.ts",
+      "fileName": "ui.ts",
+      "language": "typescript",
+      "dependencies": [
+        "types.ts"
+      ],
+      "exports": [
+        "renderBoard",
+        "handleMove"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786613796503_a6uh76",
+      "nodeLabel": "grid.ts",
+      "fileName": "grid.ts",
+      "language": "typescript",
+      "dependencies": [
+        "types.ts"
+      ],
+      "exports": [
+        "Game"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786613796503_6zfz2d",
+      "nodeLabel": "ai.ts",
+      "fileName": "ai.ts",
+      "language": "typescript",
+      "dependencies": [
+        "types.ts"
+      ],
+      "exports": [
+        "minimax"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786613796501_zhr952",
+      "nodeLabel": "main.ts",
+      "fileName": "main.ts",
+      "language": "typescript",
+      "dependencies": [
+        "config.ts",
+        "ui.ts"
+      ],
+      "exports": [
+        "start"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "preview_gui_wrapper",
+      "nodeLabel": "App Preview (Auto-generated)",
+      "fileName": "index.html",
+      "language": "html",
+      "dependencies": [
+        "config.ts",
+        "types.ts",
+        "ui.ts",
+        "grid.ts",
+        "ai.ts",
+        "main.ts"
+      ],
+      "exports": [],
+      "validated": true
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1786613796503_gen995",
+      "target": "node_1786613796501_zhr952"
+    },
+    {
+      "source": "node_1786613796503_w2o73o",
+      "target": "node_1786613796503_a6uh76"
+    },
+    {
+      "source": "node_1786613796503_w2o73o",
+      "target": "node_1786613796503_6zfz2d"
+    },
+    {
+      "source": "node_1786613796503_w2o73o",
+      "target": "node_1786613796503_85d7o8"
+    },
+    {
+      "source": "node_1786613796503_85d7o8",
+      "target": "node_1786613796501_zhr952"
+    }
+  ]
+}

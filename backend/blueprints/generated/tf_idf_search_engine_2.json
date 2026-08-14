@@ -1,0 +1,55 @@
+{
+  "app_type": "tf_idf_search_engine_2",
+  "description": "TF-IDF information retrieval with term weighting — Interactive tf-idf search engine with real-time visualization and analysis",
+  "keywords": [
+    "search",
+    "tf-idf",
+    "information-retrieval",
+    "ranking",
+    "search",
+    "tf",
+    "idf",
+    "search",
+    "engine",
+    "query input",
+    "search engine",
+    "index & data",
+    "evaluation module",
+    "results display"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Query Input",
+    "Search Engine",
+    "Index & Data",
+    "Evaluation Module",
+    "Results Display"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Query Input",
+      "destination_module": "Search Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search Engine",
+      "destination_module": "Index & Data",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Index & Data",
+      "destination_module": "Evaluation Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Evaluation Module",
+      "destination_module": "Results Display",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

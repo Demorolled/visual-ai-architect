@@ -1,0 +1,65 @@
+{
+  "projectName": "home media player — all codec formats",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "logic",
+      "label": "media_player",
+      "description": "The main entry point for the media player. Handles command-line arguments, initializes the player, and runs the playback logic.",
+      "language": "typescript",
+      "position": {
+        "x": 150,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_1",
+      "type": "logic",
+      "label": "player",
+      "description": "The core player logic. Handles file loading, codec decoding, and audio/video rendering.",
+      "language": "typescript",
+      "position": {
+        "x": 370,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_2",
+      "type": "logic",
+      "label": "player_logic",
+      "description": "Logic for decoding audio and video streams. Defines the CodecDecoder class.",
+      "language": "typescript",
+      "position": {
+        "x": 590,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_3",
+      "type": "logic",
+      "label": "interfaces",
+      "description": "Type definitions for the media player interfaces.",
+      "language": "typescript",
+      "position": {
+        "x": 150,
+        "y": 450
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_0",
+      "target": "node_1"
+    },
+    {
+      "source": "node_1",
+      "target": "node_2"
+    },
+    {
+      "source": "node_2",
+      "target": "node_3"
+    }
+  ],
+  "createdAt": "2026-08-01T20:01:20.106Z"
+}

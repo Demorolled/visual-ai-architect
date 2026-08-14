@@ -1,0 +1,35 @@
+{
+ "gates": {
+  "chars": 4766,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": true,
+  "named_exports": [
+   "render"
+  ],
+  "prose_leak": 0
+ },
+ "check": {
+  "tsc_clean": false,
+  "error_count": 5,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-200804-tuned/ui/chess-ui/chess-ui.ts(77,38): error TS2769: No overload matches this call.",
+   "data/ab-test-chess-pipeline/run-20260805-200804-tuned/ui/chess-ui/chess-ui.ts(89,3): error TS2531: Object is possibly 'null'.",
+   "data/ab-test-chess-pipeline/run-20260805-200804-tuned/ui/chess-ui/chess-ui.ts(109,17): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Difficulty'.",
+   "data/ab-test-chess-pipeline/run-20260805-200804-tuned/ui/chess-ui/chess-ui.ts(126,59): error TS2551: Property 'check' does not exist on type 'GameStatus'. Did you mean 'inCheck'?",
+   "data/ab-test-chess-pipeline/run-20260805-200804-tuned/ui/chess-ui/chess-ui.ts(143,3): error TS2531: Object is possibly 'null'."
+  ]
+ },
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored-dspark",
+  "tag": "tuned",
+  "task": "ui",
+  "elapsed_s": 21.9,
+  "prompt_chars": 6642,
+  "raw_chars": 4766
+ }
+}

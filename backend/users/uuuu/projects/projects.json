@@ -1,0 +1,134 @@
+[
+  {
+    "id": "proj_1786301887386_n3k1s67",
+    "name": "1 level first person shooter game — move",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master-node",
+        "type": "master",
+        "position": {
+          "x": 250,
+          "y": 50
+        },
+        "data": {
+          "label": "App Blueprint",
+          "appGoal": "",
+          "appPurpose": "",
+          "selectedOS": "linux",
+          "status": "pending",
+          "scale": "medium"
+        }
+      },
+      {
+        "id": "node_0",
+        "type": "logic",
+        "position": {
+          "x": 150,
+          "y": 280
+        },
+        "data": {
+          "label": "game",
+          "description": "Game loop and state management",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "1 level first person shooter game — move and hide",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_1",
+        "type": "input",
+        "position": {
+          "x": 370,
+          "y": 280
+        },
+        "data": {
+          "label": "input",
+          "description": "Input handling for player movement and interaction",
+          "type": "input",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "1 level first person shooter game — move and hide",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_2",
+        "type": "logic",
+        "position": {
+          "x": 590,
+          "y": 280
+        },
+        "data": {
+          "label": "scene",
+          "description": "Scene rendering and collision detection",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "1 level first person shooter game — move and hide",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_3",
+        "type": "logic",
+        "position": {
+          "x": 150,
+          "y": 450
+        },
+        "data": {
+          "label": "game",
+          "description": "Game loop and state management",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "1 level first person shooter game — move and hide",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "node_4",
+        "type": "input",
+        "position": {
+          "x": 370,
+          "y": 450
+        },
+        "data": {
+          "label": "index",
+          "description": "Single self-contained GUI page (HTML + CSS + JS inline, no build step) that renders the complete app interface and wires it to the logic. This is what makes the app viewable in the browser preview — build the full UI here. STRICT RULES: (1) do NOT reference external files — no <script src=\"...\">, no <link href=\"...\">, no CSS or JS files; the preview iframe cannot load external files, so inline ALL CSS in a <style> tag and ALL JavaScript in a <script> tag directly in this file; (2) plain browser JavaScript only — no React, no TypeScript, no imports, no JSX, no build step; (3) include working inline code that actually renders the interface so the page is never blank.",
+          "type": "input",
+          "status": "pending",
+          "language": "html",
+          "appGoal": "1 level first person shooter game — move and hide",
+          "appPurpose": ""
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_node_1",
+        "source": "node_0",
+        "target": "node_1"
+      },
+      {
+        "id": "edge_node_2",
+        "source": "node_1",
+        "target": "node_2"
+      },
+      {
+        "id": "edge_node_3",
+        "source": "node_2",
+        "target": "node_3"
+      },
+      {
+        "id": "edge_node_4",
+        "source": "node_3",
+        "target": "node_4"
+      }
+    ],
+    "savedAt": "2026-08-09T18:58:07.386Z",
+    "version": 1
+  }
+]

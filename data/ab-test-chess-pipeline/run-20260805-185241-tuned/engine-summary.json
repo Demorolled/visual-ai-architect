@@ -1,0 +1,51 @@
+{
+ "gates": {
+  "chars": 2813,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [
+   "getBestMove"
+  ],
+  "prose_leak": 0
+ },
+ "contract": {
+  "tsc_clean": false,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(1,10): error TS2300: Duplicate identifier 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(1,22): error TS2300: Duplicate identifier 'createInitialBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(1,42): error TS2300: Duplicate identifier 'Square'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(1,50): error TS2300: Duplicate identifier 'Color'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(1,57): error TS2300: Duplicate identifier 'Piece'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(1,64): error TS2300: Duplicate identifier 'BoardState'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(2,10): error TS2300: Duplicate identifier 'Move'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(2,16): error TS2300: Duplicate identifier 'getPseudoLegalMoves'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(2,37): error TS2300: Duplicate identifier 'isSquareAttacked'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(2,55): error TS2300: Duplicate identifier 'isKingInCheck'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(2,70): error TS2300: Duplicate identifier 'isCastlingLegal'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(4,10): error TS2300: Duplicate identifier 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(4,22): error TS2300: Duplicate identifier 'createInitialBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(4,42): error TS2300: Duplicate identifier 'Square'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(4,50): error TS2300: Duplicate identifier 'Color'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(4,57): error TS2300: Duplicate identifier 'Piece'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(4,64): error TS2300: Duplicate identifier 'BoardState'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(4,82): error TS2307: Cannot find module '../chess-board/chess-board.ts' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(5,10): error TS2300: Duplicate identifier 'Move'.",
+   "data/ab-test-chess-pipeline/run-20260805-185241-tuned/contract/ai-engine.ts(5,16): error TS2300: Duplicate identifier 'getPseudoLegalMoves'."
+  ],
+  "error_count": 31
+ },
+ "functional": {},
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored-dspark",
+  "tag": "tuned",
+  "task": "engine",
+  "elapsed_s": 12.3,
+  "prompt_chars": 2735,
+  "raw_chars": 2813
+ }
+}

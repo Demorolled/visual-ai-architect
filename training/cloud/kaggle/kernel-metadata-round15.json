@@ -1,0 +1,16 @@
+{
+  "id": "__USERNAME__/vaca-qlora-round15",
+  "title": "VACA QLoRA Round15",
+  "subtitle": "Round 15 GUI+3D breadth (R14's own passing GUI apps as generation-framed rows + GUI QA rules + 3D defect rules; resume from R14 LoRA; LR 5e-5; 3 ep; accum 4; seq 3072; single-GPU)",
+  "code_file": "train_r15_gui_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "competition_sources": [],
+  "dataset_sources": [
+    "__USERNAME__/round15-gui",
+    "__USERNAME__/vaca-r14-adapter"
+  ]
+}

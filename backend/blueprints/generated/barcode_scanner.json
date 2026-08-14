@@ -1,0 +1,48 @@
+{
+  "app_type": "barcode_scanner",
+  "description": "Barcode/QR code scanner with product lookup — an interactive desktop utility tool with a visual interface.",
+  "keywords": [
+    "desktop",
+    "desktop",
+    "barcode",
+    "scanner",
+    "utility",
+    "barcode",
+    "scanner"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "core_engine",
+    "input_handler",
+    "local_store",
+    "settings_service"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "core_engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "core_engine",
+      "destination_module": "input_handler",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "input_handler",
+      "destination_module": "local_store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "local_store",
+      "destination_module": "settings_service",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:desktop"
+}

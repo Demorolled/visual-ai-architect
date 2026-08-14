@@ -1,0 +1,61 @@
+{
+  "app_type": "rpg_character_builder",
+  "description": "Character creation tool with stats, classes, skills, inventory, and equipment — RPG character creator with class selection (warrior/mage/rogue), stat allocation, skill trees, inventory management, equipment system with modifiers, and character sheet export",
+  "keywords": [
+    "rpg",
+    "character-builder",
+    "game",
+    "stats",
+    "skills",
+    "rpg",
+    "character",
+    "builder",
+    "character creator",
+    "stats engine",
+    "skill tree",
+    "character data",
+    "combat simulator",
+    "character sheet"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Character Creator",
+    "Stats Engine",
+    "Skill Tree",
+    "Character Data",
+    "Combat Simulator",
+    "Character Sheet"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Character Creator",
+      "destination_module": "Stats Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Stats Engine",
+      "destination_module": "Skill Tree",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Skill Tree",
+      "destination_module": "Character Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Character Data",
+      "destination_module": "Combat Simulator",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Combat Simulator",
+      "destination_module": "Character Sheet",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

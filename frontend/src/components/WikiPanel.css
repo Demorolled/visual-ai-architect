@@ -1,0 +1,250 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   WikiPanel — the VACA wiki view inside the floating preview window.
+   Matches the dark palette of MockupPreviewPanel / SessionHistoryPanel.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.wk-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  background: #12122a;
+}
+
+.wk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.wk-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wk-count {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.wk-refresh {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+  line-height: 1.4;
+}
+
+.wk-refresh:hover:not(:disabled) {
+  color: #7dd3fc;
+  border-color: rgba(125, 211, 252, 0.5);
+}
+
+.wk-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 20px;
+  text-align: center;
+}
+
+.wk-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(125, 211, 252, 0.25);
+  border-top-color: #7dd3fc;
+  border-radius: 50%;
+  animation: wk-spin 0.8s linear infinite;
+}
+
+@keyframes wk-spin {
+  to { transform: rotate(360deg); }
+}
+
+.wk-error-title {
+  color: #f87171;
+  font-weight: 600;
+}
+
+.wk-error-detail {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.wk-retry {
+  background: rgba(74, 158, 255, 0.15);
+  border: 1px solid rgba(74, 158, 255, 0.4);
+  border-radius: 3px;
+  color: #7dd3fc;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 3px 12px;
+}
+
+.wk-search {
+  flex-shrink: 0;
+  padding: 8px 10px 0;
+}
+
+.wk-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 4px;
+  color: #e2e8f0;
+  font-size: 11px;
+  padding: 5px 8px;
+  outline: none;
+}
+
+.wk-search-input:focus {
+  border-color: rgba(125, 211, 252, 0.5);
+}
+
+.wk-search-input::placeholder {
+  color: #64748b;
+}
+
+.wk-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 0;
+  margin-top: 6px;
+}
+
+.wk-list {
+  width: 42%;
+  min-width: 140px;
+  overflow-y: auto;
+  border-right: 1px solid rgba(148, 163, 184, 0.15);
+  padding: 4px 0;
+}
+
+.wk-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1.35;
+  padding: 5px 8px;
+  transition: background 0.1s, color 0.1s;
+}
+
+.wk-item:hover {
+  background: rgba(125, 211, 252, 0.06);
+  color: #cbd5e1;
+}
+
+.wk-item.active {
+  background: rgba(125, 211, 252, 0.1);
+  border-left-color: #7dd3fc;
+  color: #e2e8f0;
+}
+
+.wk-item-num {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #7dd3fc;
+  font-size: 10px;
+  min-width: 18px;
+}
+
+.wk-item-title {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+.wk-empty-list {
+  padding: 10px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.wk-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.wk-content-head {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.wk-content-num {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7dd3fc;
+}
+
+.wk-content-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wk-pre {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  margin: 0;
+  padding: 10px;
+  font-family: 'JetBrains Mono', Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #cbd5e1;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.wk-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 12px;
+}

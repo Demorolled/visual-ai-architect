@@ -1,0 +1,51 @@
+{
+  "app_type": "clinic-csharp",
+  "description": "medical practice: patient records, appointment scheduling, doctor roster, prescriptions, invoice billing.",
+  "keywords": [
+    "clinic-csharp",
+    "csharp",
+    "clinic",
+    "management",
+    "patients",
+    "appointments",
+    "doctors",
+    "prescriptions",
+    "billing"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "patients",
+    "appointments",
+    "doctors",
+    "prescriptions",
+    "billing"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "patients",
+      "destination_module": "appointments",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "appointments",
+      "destination_module": "doctors",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "doctors",
+      "destination_module": "prescriptions",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "prescriptions",
+      "destination_module": "billing",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

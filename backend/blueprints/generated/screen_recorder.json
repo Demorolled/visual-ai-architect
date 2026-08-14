@@ -1,0 +1,52 @@
+{
+  "app_type": "screen_recorder",
+  "description": "Desktop screen recorder with audio, annotations, and GIF/MP4 export — Screen capture with region/window, mic audio, mouse highlight, drawing annotations",
+  "keywords": [
+    "screen-recorder",
+    "capture",
+    "video",
+    "recording",
+    "screen",
+    "recorder",
+    "capture config",
+    "capture engine",
+    "annotation tool",
+    "recording store",
+    "recorder ui"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Capture Config",
+    "Capture Engine",
+    "Annotation Tool",
+    "Recording Store",
+    "Recorder UI"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Capture Config",
+      "destination_module": "Capture Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Capture Engine",
+      "destination_module": "Annotation Tool",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Annotation Tool",
+      "destination_module": "Recording Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Recording Store",
+      "destination_module": "Recorder UI",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

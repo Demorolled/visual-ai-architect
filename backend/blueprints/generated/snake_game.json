@@ -1,0 +1,53 @@
+{
+  "app_type": "snake_game",
+  "description": "Classic Snake with grid movement, growing body, collision detection, and progression — Snake implementation with linked-list body representation, directional input, food collision, self-collision detection, scoring, and speed progression",
+  "keywords": [
+    "snake",
+    "game",
+    "linked-list",
+    "grid",
+    "arcade",
+    "snake",
+    "game",
+    "snake controller",
+    "movement engine",
+    "collision detector",
+    "game state",
+    "grid renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Snake Controller",
+    "Movement Engine",
+    "Collision Detector",
+    "Game State",
+    "Grid Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Snake Controller",
+      "destination_module": "Movement Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Movement Engine",
+      "destination_module": "Collision Detector",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Collision Detector",
+      "destination_module": "Game State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Grid Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

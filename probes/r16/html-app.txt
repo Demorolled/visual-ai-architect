@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo App</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  .todos { margin: 0; padding: 0; list-style: none; }
+  .todos li { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .todos li input[type="text"] { flex: 1; padding: 4px 8px; }
+  .todos li button { padding: 4px 8px; margin-left: 8px; }
+  .todos li button.delete { background: #f87171; color: #fff; }
+  .todos li button.done { background: #4ade80; color: #fff; }
+</style>
+</head>
+<body>
+  <h1>Todo App</h1>
+  <input id="newTodo" placeholder="Add a new todo...">
+  <button id="addTodo">Add</button>
+  <ul id="todos"></ul>
+
+  <script>
+    const todos = [];
+    let nextId = 1;
+
+    function addTodo(text) {
+      const todo = { id: nextId++, text, done: false };
+      todos.push(todo);
+      saveTodos();
+      render();
+    }
+
+    function toggleTodo(id) {
+      const todo = todos.find(t => t.id === id);
+      if (todo) todo.done = !todo.done;
+      saveTodos();
+      render();
+    }
+
+    function deleteTodo(id) {
+      todos.splice(todos.findIndex(t => t.id === id), 1);
+      saveTodos();
+      render();
+    }
+
+    function saveTodos() {
+      try {
+        localStorage.setItem('todos', JSON.stringify(todos));
+      } catch (e) {}
+    }
+
+    function loadTodos() {
+      try {
+        const saved = localStorage.getItem('todos');
+        if (saved) todos.splice(0); // clear
+        todos.push(...JSON.parse(saved));
+      } catch (e) {}
+    }
+
+    function render() {
+      const ul = document.getElementById('todos');
+      ul.innerHTML = todos.map(todo => {
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = todo.done;
+        input.style.display = 'none';
+        input.addEventListener('change', () => toggleTodo(todo.id));
+        const label = document.createElement('span');
+        label.textContent = todo.text;
+        label.style.textDecoration = todo.done ? 'line-through' : 'none';
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '✕';
+        delBtn.style.marginLeft = '8px';
+        delBtn.addEventListener('click', () => deleteTodo(todo.id));
+        return `<li><input type="checkbox" ${input.checked ? 'checked' : ''} style="display:inline-block;vertical-align:middle"><span style="margin-left:8px">${label}</span><button style="margin-left:8px">${delBtn.textContent}</button></li>`;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTodos();
+      document.getElementById('addTodo').addEventListener('click', () => {
+        const input = document.getElementById('newTodo');
+        if (input.value.trim()) addTodo(input.value.trim());
+        input.value = '';
+      });
+      document.getElementById('newTodo').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && document.getElementById('newTodo').value.trim()) addTodo(document.getElementById('newTodo').value.trim());
+      });
+    });
+  </script>
+</body>
+</html>

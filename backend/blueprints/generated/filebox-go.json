@@ -1,0 +1,52 @@
+{
+  "app_type": "filebox-go",
+  "description": "secure file storage: validated uploads, folder hierarchy, share links with expiry, append-only activity log.",
+  "keywords": [
+    "filebox-go",
+    "go",
+    "file",
+    "sharing",
+    "service",
+    "users",
+    "files",
+    "folders",
+    "shares",
+    "activity"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "users",
+    "files",
+    "folders",
+    "shares",
+    "activity"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "users",
+      "destination_module": "files",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "files",
+      "destination_module": "folders",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "folders",
+      "destination_module": "shares",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "shares",
+      "destination_module": "activity",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 33
+}

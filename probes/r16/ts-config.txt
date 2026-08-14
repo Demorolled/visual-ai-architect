@@ -1,0 +1,24 @@
+export const PORT: number = 3000;
+export interface AppConfig {
+  port: number;
+  env: 'dev' | 'test' | 'prod';
+  database: { host: string; port: number; name: string; user: string; password: string };
+}
+export function loadConfig(path: string): AppConfig {
+  try {
+    return {
+      port: 3000,
+      env: 'dev',
+      database: {
+        host: 'localhost',
+        port: 5432,
+        name: 'mydb',
+        user: 'admin',
+        password: 'secret',
+      },
+    };
+  } catch (err) {
+    console.error('Failed to load config:', err);
+    return { port: 0, env: 'dev', database: {} };
+  }
+}

@@ -1,0 +1,91 @@
+:root {
+  --primary: #1a1a2e;
+  --secondary: #2e2e5a;
+  --accent: #00d9ff;
+  --background: #0a0a14;
+  --surface: #1a1a2e;
+  --text: #e0e0f0;
+  --border: #444;
+  --radius: 12px;
+  --shadow: 16px;
+  --speed: 0.2s;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  color: var(--text);
+  margin: 1rem 0 0.5rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; color: #00d9ff; }
+h3 { font-size: 1.4rem; color: #666; }
+
+p { margin: 0 0 1rem; line-height: 1.6; color: var(--text); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all var(--speed);
+  text-align: center;
+  margin: 16px 0;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  transform: translateY(-4px);
+}
+
+.card .card-title { color: #00d9ff; font-size: 1.4rem; margin-bottom: 8px; }
+.card .card-text { color: #888; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px; }
+
+.btn {
+  display: inline-block;
+  padding: 10px 24px;
+  margin: 8px 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  font-family: inherit;
+}
+
+.btn-primary { background: var(--accent); }
+.btn-primary:hover { background: #0099ff; }
+
+.btn-secondary { background: #333; color: #fff; }
+.btn-secondary:hover { background: #4a4a6a; }
+
+.btn-danger { background: #f87171; color: #fff; }
+.btn-danger:hover { background: #f54242; }
+
+.btn-link { color: #00d9ff; text-decoration: underline; }
+.btn-link:hover { color: #0099ff; }
+
+@media (max-width: 750px) {
+  body { padding: 20px; }
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.2rem; }
+  .card { padding: 16px; }
+  .card-title { font-size: 1.3rem; }
+  .card-text { font-size: 0.85rem; }
+}

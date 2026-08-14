@@ -1,0 +1,52 @@
+{
+  "app_type": "signal_lab",
+  "description": "Unix signal handling sandbox: handler install, mask, and delivery flow — Interactive: sigaction, signal masks, handler invocation, signal-safe functions, delivery flow",
+  "keywords": [
+    "signals",
+    "unix",
+    "interrupts",
+    "low-level",
+    "signal",
+    "lab",
+    "signal config",
+    "signal manager",
+    "signal flow",
+    "signal data",
+    "signal viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Signal Config",
+    "Signal Manager",
+    "Signal Flow",
+    "Signal Data",
+    "Signal Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Signal Config",
+      "destination_module": "Signal Manager",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Signal Manager",
+      "destination_module": "Signal Flow",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Signal Flow",
+      "destination_module": "Signal Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Signal Data",
+      "destination_module": "Signal Viewer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

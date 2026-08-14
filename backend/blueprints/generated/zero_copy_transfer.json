@@ -1,0 +1,49 @@
+{
+  "app_type": "zero_copy_transfer",
+  "description": "sendfile/splice/copy_file_range zero-copy I/O lab — an interactive systems tool with a visual interface.",
+  "keywords": [
+    "systems",
+    "systems",
+    "zero-copy",
+    "io",
+    "performance",
+    "zero",
+    "copy",
+    "transfer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "file_loader",
+    "analysis_engine",
+    "visualization_engine",
+    "report_renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "file_loader",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "file_loader",
+      "destination_module": "analysis_engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "analysis_engine",
+      "destination_module": "visualization_engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "visualization_engine",
+      "destination_module": "report_renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:systems"
+}

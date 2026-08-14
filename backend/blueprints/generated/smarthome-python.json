@@ -1,0 +1,52 @@
+{
+  "app_type": "smarthome-python",
+  "description": "home automation: device registry per protocol, room grouping, scene activation, rule-based automations, event audit log.",
+  "keywords": [
+    "smarthome-python",
+    "python",
+    "smart",
+    "home",
+    "hub",
+    "devices",
+    "rooms",
+    "scenes",
+    "automations",
+    "logs"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Python FastAPI",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "devices",
+    "rooms",
+    "scenes",
+    "automations",
+    "logs"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "devices",
+      "destination_module": "rooms",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "rooms",
+      "destination_module": "scenes",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "scenes",
+      "destination_module": "automations",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "automations",
+      "destination_module": "logs",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:python",
+  "file_count": 33
+}

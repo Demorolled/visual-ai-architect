@@ -1,0 +1,52 @@
+{
+  "app_type": "video_converter",
+  "description": "Batch video converter with format profiles, crop, and quality presets — Desktop video converter H.264/H.265/VP9/AV1, batch processing, crop/resize, progress tracking",
+  "keywords": [
+    "video",
+    "converter",
+    "transcoding",
+    "batch",
+    "video",
+    "converter",
+    "file importer",
+    "conversion engine",
+    "batch manager",
+    "job store",
+    "converter ui"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "File Importer",
+    "Conversion Engine",
+    "Batch Manager",
+    "Job Store",
+    "Converter UI"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "File Importer",
+      "destination_module": "Conversion Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Conversion Engine",
+      "destination_module": "Batch Manager",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Batch Manager",
+      "destination_module": "Job Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Job Store",
+      "destination_module": "Converter UI",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

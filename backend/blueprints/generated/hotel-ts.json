@@ -1,0 +1,51 @@
+{
+  "app_type": "hotel-ts",
+  "description": "property catalog, room inventory, reservation lifecycle with date-range availability checks, guest profiles.",
+  "keywords": [
+    "hotel-ts",
+    "typescript",
+    "hotel",
+    "booking",
+    "hotels",
+    "rooms",
+    "reservations",
+    "guests",
+    "availability"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "hotels",
+    "rooms",
+    "reservations",
+    "guests",
+    "availability"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "hotels",
+      "destination_module": "rooms",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "rooms",
+      "destination_module": "reservations",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "reservations",
+      "destination_module": "guests",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "guests",
+      "destination_module": "availability",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

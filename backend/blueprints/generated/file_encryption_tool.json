@@ -1,0 +1,39 @@
+{
+  "app_type": "file_encryption_tool",
+  "description": "AES-256 file encryption/decryption utility — Interactive desktop tool for file encryption tool",
+  "keywords": [
+    "desktop",
+    "file",
+    "encryption",
+    "tool",
+    "file",
+    "encryption",
+    "tool",
+    "data store",
+    "search & filter",
+    "user interface"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Store",
+      "destination_module": "Search & Filter",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search & Filter",
+      "destination_module": "User Interface",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Rook Chess Piece</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #111; }
+    #scene { position: fixed; inset: 0; }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#scene') });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(2.6, 2.0, 4.2);
+    camera.lookAt(0, 0, 0);
+    controls.target.set(0, 0, 0);
+    scene.background = new THREE.Color(0x4a4a4a);
+    scene.fog = new THREE.Fog(0x4a4a4a, 20, 100);
+    const ambient = new THREE.AmbientLight(0x444444);
+    scene.add(ambient);
+    const light = new THREE.PointLight(0xffffff, 2.5);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+    const fill = new THREE.DirectionalLight(0xffffff, 1.2);
+    fill.position.set(-4, 3, -3);
+    scene.add(fill);
+    const rook = new THREE.Group();
+    const base = new THREE.CylinderGeometry(1.1, 1.1, 0.25, 32);
+    const baseMesh = new THREE.Mesh(base, new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.7, roughness: 0.3 }));
+    baseMesh.position.y = -1.5;
+    rook.add(baseMesh);
+    const shaft = new THREE.CylinderGeometry(0.5, 0.9, 1.4, 32);
+    const shaftMesh = new THREE.Mesh(shaft, new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.7, roughness: 0.3 }));
+    shaftMesh.position.y = -0.6;
+    rook.add(shaftMesh);
+    const collar = new THREE.CylinderGeometry(0.6, 0.6, 0.1, 32);
+    const collarMesh = new THREE.Mesh(collar, new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.7, roughness: 0.3 }));
+    collarMesh.position.y = 0.3;
+    rook.add(collarMesh);
+    const crown = new THREE.CylinderGeometry(0.45, 0.45, 0.3, 32);
+    const topMesh = new THREE.Mesh(crown, new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.7, roughness: 0.3 }));
+    topMesh.position.y = 0.5;
+    const battlements = [];
+    for (let i = 0; i < 5; i++) {
+      const battlement = new THREE.CylinderGeometry(0.12, 0.12, 0.25, 32);
+      const mesh = new THREE.Mesh(battlement, new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.7, roughness: 0.3 }));
+      mesh.position.set(0.45 * Math.cos(i * 2 * Math.PI / 5), 0.28, 0.45 * Math.sin(i * 2 * Math.PI / 5));
+      mesh.rotation.x = 0;
+      battlements.push(mesh);
+      topMesh.add(mesh);
+    }
+    topMesh.position.y = 0.6;
+    rook.add(topMesh);
+    scene.add(rook);
+    const clock = new THREE.Clock();
+    function animate() {
+      const t = clock.getElapsedTime();
+      rook.rotation.y = t * 0.1;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>

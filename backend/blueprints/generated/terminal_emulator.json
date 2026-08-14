@@ -1,0 +1,52 @@
+{
+  "app_type": "terminal_emulator",
+  "description": "GPU-accelerated terminal with tabs, themes, and split panes — GPU-accelerated terminal with multiple profiles, tabs, split panes, 256-color, search",
+  "keywords": [
+    "terminal",
+    "emulator",
+    "console",
+    "developer-tools",
+    "terminal",
+    "emulator",
+    "keyboard input",
+    "pty manager",
+    "render engine",
+    "config store",
+    "terminal view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Keyboard Input",
+    "PTY Manager",
+    "Render Engine",
+    "Config Store",
+    "Terminal View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Keyboard Input",
+      "destination_module": "PTY Manager",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "PTY Manager",
+      "destination_module": "Render Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Render Engine",
+      "destination_module": "Config Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Config Store",
+      "destination_module": "Terminal View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

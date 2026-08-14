@@ -1,0 +1,149 @@
+// chess-ui.ts
+
+import './chess-game.ts';
+
+// Constants
+const BOARD_SIZE = 8;
+const SQUARE_SIZE = 60;
+const PIECE_SIZE = SQUARE_SIZE - 16;
+const BOARD_COLOR_DARK = '#1a1a2e';
+const BOARD_COLOR_LIGHT = '#2a2a40';
+const TEXT_COLOR = '#e0e0e0';
+
+// Game state
+let game: any;
+let activePlayer: string;
+
+// Canvas setup
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d')!;
+const pieces: { [key: string]: HTMLImageElement } = {};
+
+// Initialize board
+function initBoard(): void {
+  // Load piece images
+  for (const type of ['K', 'Q', 'R', 'B', 'N', 'P']) {
+    const image = new Image();
+    image.src = `images/${type}.png`;
+    pieces[type] = image;
+  }
+
+  // Render board
+  canvas.width = BOARD_SIZE * SQUARE_SIZE;
+  canvas.height = BOARD_SIZE * SQUARE_SIZE;
+  context.fillStyle = BOARD_COLOR_DARK;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw squares
+  for (let y = 0; y < BOARD_SIZE; y++) {
+    for (let x = 0; x < BOARD_SIZE; x++) {
+      const isDark = (x + y) % 2 === 0;
+      context.fillStyle = isDark ? BOARD_COLOR_DARK : BOARD_COLOR_LIGHT;
+      context.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+    }
+  }
+
+  // Add piece icons
+  const piecesData: any[] = [
+    { x: 0, y: 1, piece: 'P' },
+    { x: 7, y: 0, piece: 'P' },
+    { x: 0, y: 6, piece: 'P' },
+    { x: 7, y: 7, piece: 'P' },
+    { x: 4, y: 0, piece: 'R' },
+    { x: 4, y: 7, piece: 'R' },
+    { x: 7, y: 0, piece: 'Q' },
+    { x: 0, y: 0, piece: 'K' },
+    { x: 0, y: 7, piece: 'K' },
+    { x: 7, y: 7, piece: 'Q' },
+  ];
+
+  piecesData.forEach((piece) => {
+    const x = piece.x * SQUARE_SIZE + (SQUARE_SIZE - PIECE_SIZE) / 2;
+    const y = piece.y * SQUARE_SIZE + (SQUARE_SIZE - PIECE_SIZE) / 2;
+    context.drawImage(pieces[piece.piece], x, y, PIECE_SIZE, PIECE_SIZE);
+  });
+}
+
+// Draw move highlights
+function drawMoveHighlights(): void {
+  // Get legal moves
+  const moves = game.getLegalMovesFor(activePlayer);
+  const start = moves[0].from;
+  const end = moves[0].to;
+
+  // Highlight start square
+  context.fillStyle = '#1a1a2e';
+  context.fillRect(start.x * SQUARE_SIZE, start.y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+
+  // Highlight end square
+  context.fillStyle = '#0f3460';
+  context.fillRect(end.x * SQUARE_SIZE, end.y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+}
+
+// Draw status bar
+function drawStatusBar(): void {
+  // Turn indicator
+  const turn = game.getStatus().turn;
+  const turnColor = turn === activePlayer ? '#0f3460' : '#4a9eff';
+  context.fillStyle = turnColor;
+  context.fillRect(0, 7 * SQUARE_SIZE, 8 * SQUARE_SIZE, SQUARE_SIZE);
+
+  // Check state
+  if (game.getStatus().check) {
+    context.fillStyle = '#d63031';
+    context.fillRect(2 * SQUARE_SIZE, 7 * SQUARE_SIZE, 4 * SQUARE_SIZE, SQUARE_SIZE);
+  }
+
+  // Checkmate state
+  if (game.getStatus().checkmate) {
+    context.fillStyle = '#228c3f';
+    context.fillRect(4 * SQUARE_SIZE, 7 * SQUARE_SIZE, 4 * SQUARE_SIZE, SQUARE_SIZE);
+  }
+}
+
+// Handle mouse events
+function handleMouse(event: MouseEvent): void {
+  // Get coordinates
+  const rect = canvas.getBoundingClientRect();
+  const x = (event.clientX - rect.left) / SQUARE_SIZE | 0;
+  const y = (event.clientY - rect.top) / SQUARE_SIZE | 0;
+
+  // Highlight selected square
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  drawBoard();
+
+  // Highlight selected square
+  const selected = game.getLegalMovesFor(activePlayer).find(
+    (m) => m.from.x === x && m.from.y === y
+  );
+  if (selected) {
+    context.fillStyle = '#1a1a2e';
+    context.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+  }
+
+  // Highlight move path
+  if (selected) {
+    drawMoveHighlights();
+  }
+}
+
+// Main render function
+export function render(container: HTMLElement): void {
+  // Set up board
+  initBoard();
+
+  // Add canvas to container
+  container.appendChild(canvas);
+
+  // Add event listeners
+  canvas.addEventListener('mousemove', handleMouse);
+  canvas.addEventListener('click', () => {
+    const move = game.getLegalMovesFor(activePlayer).find(
+      (m) => m.from.x === x && m.from.y === y
+    );
+    if (move) {
+      game.applyMove(move);
+      activePlayer = game.getStatus().turn;
+    }
+  });
+}

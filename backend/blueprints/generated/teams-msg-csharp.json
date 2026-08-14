@@ -1,0 +1,51 @@
+{
+  "app_type": "teams-msg-csharp",
+  "description": "workplace messaging: team/channel hierarchy, message history, @mentions with notifications, full-text search.",
+  "keywords": [
+    "teams-msg-csharp",
+    "csharp",
+    "enterprise",
+    "messaging",
+    "teams",
+    "channels",
+    "messages",
+    "mentions",
+    "search"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "teams",
+    "channels",
+    "messages",
+    "mentions",
+    "search"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "teams",
+      "destination_module": "channels",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "channels",
+      "destination_module": "messages",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "messages",
+      "destination_module": "mentions",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "mentions",
+      "destination_module": "search",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

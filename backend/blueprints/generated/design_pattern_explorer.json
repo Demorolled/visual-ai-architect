@@ -1,0 +1,61 @@
+{
+  "app_type": "design_pattern_explorer",
+  "description": "Interactive catalog of 23 GoF design patterns with UML diagrams and code generation — Browse and explore creational, structural, and behavioral patterns. Each pattern includes UML class diagram, sequence diagram, TypeScript/Python implementation, and interactive demo showing pattern in action",
+  "keywords": [
+    "design-patterns",
+    "uml",
+    "gof",
+    "software-design",
+    "education",
+    "design",
+    "pattern",
+    "explorer",
+    "pattern browser",
+    "pattern engine",
+    "pattern store",
+    "uml diagram view",
+    "code viewer",
+    "pattern demo runner"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Pattern Browser",
+    "Pattern Engine",
+    "Pattern Store",
+    "UML Diagram View",
+    "Code Viewer",
+    "Pattern Demo Runner"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Pattern Browser",
+      "destination_module": "Pattern Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Pattern Engine",
+      "destination_module": "Pattern Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Pattern Store",
+      "destination_module": "UML Diagram View",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "UML Diagram View",
+      "destination_module": "Code Viewer",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Code Viewer",
+      "destination_module": "Pattern Demo Runner",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

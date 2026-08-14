@@ -1,0 +1,194 @@
+{
+  "projectName": "Ubuntu System Diagnostic Tool",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "input",
+      "label": "System Collector",
+      "description": "Gathers comprehensive system information: CPU (model, cores, freq, load), memory (total, used, swap), disk (mounts, usage, I/O, SMART), network (interfaces, IPs, RX/TX), kernel (version, modules), hardware (sensors, USB, PCI), processes (top consumers, zombie count), and OS details (version, packages, updates). Reads /proc, /sys, uses gopsutil, and shells out to sensors/lsblk/lspci for hardware data.",
+      "language": "go",
+      "position": {
+        "x": 100,
+        "y": 120
+      }
+    },
+    {
+      "id": "node_1",
+      "type": "input",
+      "label": "Journal Reader",
+      "description": "Reads and analyzes systemd journal logs via sd-journal or journalctl. Filters by priority (error/warning/info), detects boot-time failures, slow services, service crashes, and recurring error patterns. Maintains a rolling buffer of recent entries with pattern matching for known Ubuntu error signatures.",
+      "language": "go",
+      "position": {
+        "x": 100,
+        "y": 290
+      }
+    },
+    {
+      "id": "node_2",
+      "type": "logic",
+      "label": "Service Checker",
+      "description": "Verifies systemd service health: lists all services with status (active/failed/enabled/disabled), checks user services, detects flapping services (high restart counts), and validates expected states. Parses systemctl JSON output and maintains service profiles with expected states for deviation detection.",
+      "language": "go",
+      "position": {
+        "x": 100,
+        "y": 460
+      }
+    },
+    {
+      "id": "node_3",
+      "type": "logic",
+      "label": "Health Check Engine",
+      "description": "Runs 8 categories of diagnostic checks against configurable thresholds: CPU (high load, thermal throttling), memory (low free, swap thrashing, OOM risk), disk (space >90%, SMART warnings, high I/O wait), network (interface down, packet loss), kernel (panics, OOM activity), service (failures, flapping), system (time sync, AppArmor, filesystem), and boot (slow boot, failed targets). Returns pass/warn/fail/critical with overall 0-100 health score.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 120
+      }
+    },
+    {
+      "id": "node_4",
+      "type": "logic",
+      "label": "Config Manager",
+      "description": "Manages YAML configuration at ~/.config/sysdiag/config.yaml with threshold overrides, enabled checks, monitoring interval, alert preferences, export settings, database retention, and baseline learning mode. Supports env var overrides (SYSDIAG_*) and CLI flags (highest priority). Validates config on load with sensible defaults and hot-reload via SIGHUP.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 290
+      }
+    },
+    {
+      "id": "node_5",
+      "type": "logic",
+      "label": "Continuous Monitor",
+      "description": "Daemon mode with periodic health checks (default: 5 min intervals). Detects state changes (delta detection), runs anomaly detection against learned baselines, and reports auto-recovery events. Implements resource-aware scheduling that skips heavy collection when system is busy. Runs as a systemd user service with graceful degradation.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 460
+      }
+    },
+    {
+      "id": "node_6",
+      "type": "database",
+      "label": "Diagnostic Database",
+      "description": "SQLite database (pure Go via modernc.org/sqlite) with tables for snapshots (timestamped full system state), checks_history (trending data), thresholds (custom overrides), baselines (learned normal ranges), alerts (deduplication), and config (key-value store). Uses WAL mode for concurrent reads during monitoring, auto-prunes snapshots older than 30 days, maintains rolling window of last 1000 checks per type.",
+      "language": "go",
+      "position": {
+        "x": 700,
+        "y": 290
+      }
+    },
+    {
+      "id": "node_7",
+      "type": "output",
+      "label": "Report Builder",
+      "description": "Generates reports in multiple formats: terminal (color-coded, health score, sectioned details), JSON (machine-parseable for tooling), HTML (single-file with collapsible sections and inline charts), Markdown (for docs/issues/wikis), and plaintext (for piping). Template-based rendering using Go text/template and html/template with embedded templates.",
+      "language": "go",
+      "position": {
+        "x": 1000,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_8",
+      "type": "output",
+      "label": "Alert Engine",
+      "description": "Delivers desktop notifications via D-Bus/libnotify for critical findings. Supports immediate notifications for critical issues, batched digests (every 15 min) for warnings, and recovery notifications with alert references. Deduplicates identical alerts within 1-hour window and rate-limits to max 10/hour. Falls back to notify-send exec if D-Bus library unavailable.",
+      "language": "go",
+      "position": {
+        "x": 1000,
+        "y": 230
+      }
+    },
+    {
+      "id": "node_9",
+      "type": "output",
+      "label": "Export Handler",
+      "description": "Writes diagnostic results to files at ~/sysdiag/exports/<timestamp>-<format>.ext with atomic temp+rename writes and proper permissions (600 config, 644 exports). Supports piping to stdout for chaining (sysdiag report --format json | jq). Can archive multiple snapshots as tar.gz bundles. Auto-creates directories on first export.",
+      "language": "go",
+      "position": {
+        "x": 1000,
+        "y": 410
+      }
+    },
+    {
+      "id": "node_10",
+      "type": "ui",
+      "label": "CLI Commander",
+      "description": "Main entry point powered by cobra CLI with subcommands: sysdiag (quick summary), scan (full diagnostic), monitor (daemon mode), report (generate report), status (health overview), history (trend data), alerts (manage), config (view/edit), export (save to file), baselines (manage), version, help. Interactive TUI mode using bubbletea library with real-time dashboard, tabbed sections (CPU/Memory/Disk/Network/Services/Logs), color-coded health indicators, and keyboard navigation.",
+      "language": "go",
+      "position": {
+        "x": 550,
+        "y": 660
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_0",
+      "target": "node_3"
+    },
+    {
+      "source": "node_1",
+      "target": "node_3"
+    },
+    {
+      "source": "node_2",
+      "target": "node_3"
+    },
+    {
+      "source": "node_3",
+      "target": "node_6"
+    },
+    {
+      "source": "node_4",
+      "target": "node_3"
+    },
+    {
+      "source": "node_4",
+      "target": "node_5"
+    },
+    {
+      "source": "node_5",
+      "target": "node_3"
+    },
+    {
+      "source": "node_5",
+      "target": "node_6"
+    },
+    {
+      "source": "node_5",
+      "target": "node_8"
+    },
+    {
+      "source": "node_6",
+      "target": "node_7"
+    },
+    {
+      "source": "node_6",
+      "target": "node_9"
+    },
+    {
+      "source": "node_7",
+      "target": "node_10"
+    },
+    {
+      "source": "node_8",
+      "target": "node_10"
+    },
+    {
+      "source": "node_9",
+      "target": "node_10"
+    },
+    {
+      "source": "node_10",
+      "target": "node_0"
+    },
+    {
+      "source": "node_10",
+      "target": "node_4"
+    }
+  ],
+  "createdAt": "2026-06-16T12:00:00.000Z"
+}

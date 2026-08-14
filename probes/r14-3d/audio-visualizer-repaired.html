@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Music Visualizer</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #000; }
+  #play-pause { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 10; }
+  .btn { width: 120px; height: 40px; line-height: 40px; font-size: 14px; text-align: center; color: #fff; background: #f00; border: none; cursor: pointer; outline: none; }
+  .btn:hover { background: darken(#f00, 10%); }
+  #controls { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 10; }
+  #hue { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 10; width: 200px; height: 20px; background: linear-gradient(90deg, #0f0, #f0f, #ff0, #f00); }
+  #hue input { width: 100%; height: 100%; position: absolute; top: 0; left: 0; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="play-pause"><button class="btn">PLAY</button></div>
+<canvas id="scene"></canvas>
+<div id="controls">
+  <label><input id="hue" type="range" min="0" max="360" value="120"> Hue</label>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('scene') });
+renderer.setSize(window.innerWidth, window.innerHeight);
+const hue = 120;
+const bars = [];
+const barCount = 20;
+const barWidth = 20;
+const barHeight = 100;
+const barSpacing = 20;
+const barSpeeds = Array(barCount).fill(0).map(() => Math.random() * 0.5 + 0.5);
+const floorGeometry = new THREE.PlaneGeometry(200, 200);
+const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x222222 });
+const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+floor.rotation.x = -Math.PI / 2;
+scene.add(floor);
+const playButton = document.querySelector('#play-pause button');
+let isPlaying = false;
+let beat = 0;
+playButton.addEventListener('click', () => {
+  isPlaying = !isPlaying;
+  playButton.textContent = isPlaying ? 'PAUSE' : 'PLAY';
+});
+const hueSlider = document.querySelector('#hue');
+hueSlider.addEventListener('input', (e) => {
+  hue = e.target.value;
+});
+const colors = Array(barCount).fill(0).map(() => {
+  const h = hue;
+  const s = 100;
+  const l = 50;
+  return `hsl(${h}, ${s}%, ${l}%)`;
+});
+const colorGradient = new THREE.ColorGradient();
+for (let i = 0; i < barCount; i++) {
+  const color = new THREE.Color(colors[i]);
+  colorGradient.addColorStop(i / barCount, color);
+}
+function animate() {
+  requestAnimationFrame(animate);
+  if (isPlaying) {
+    beat += 0.01;
+    for (let i = 0; i < barCount; i++) {
+      const speed = barSpeeds[i];
+      const value = Math.sin(beat * speed + i * 0.1);
+      bars[i].scale.y = value * 100;
+      bars[i].position.y = value * 50;
+    }
+  }
+  renderer.render(scene, camera);
+}
+function createBar(index) {
+  const geometry = new THREE.BoxGeometry(barWidth, 0, barWidth);
+  const material = new THREE.MeshBasicMaterial({ color: colorGradient.getHex(index / barCount) });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.x = index * (barWidth + barSpacing);
+  mesh.position.y = 0;
+  scene.add(mesh);
+  bars.push(mesh);
+}
+for (let i = 0; i < barCount; i++) {
+  createBar(i);
+}
+camera.position.z = 200;
+renderer.setAnimationLoop(() => { });
+animate();
+</script>
+</body>
+</html>

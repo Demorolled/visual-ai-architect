@@ -1,0 +1,53 @@
+{
+  "app_type": "bipartite_matching_2",
+  "description": "Maximum bipartite matching with augmenting paths (Hopcroft-Karp) — Interactive bipartite matching with real-time visualization and analysis",
+  "keywords": [
+    "algorithms",
+    "bipartite",
+    "matching",
+    "graph",
+    "fundamentals",
+    "bipartite",
+    "matching",
+    "data input",
+    "core algorithm",
+    "results store",
+    "analysis engine",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Input",
+    "Core Algorithm",
+    "Results Store",
+    "Analysis Engine",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Input",
+      "destination_module": "Core Algorithm",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Algorithm",
+      "destination_module": "Results Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Results Store",
+      "destination_module": "Analysis Engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Engine",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

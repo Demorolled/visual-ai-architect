@@ -1,0 +1,75 @@
+{
+  "app_type": "sports_stand_alone_app",
+  "description": "sports stand alone app — app connection for information needed",
+  "keywords": [
+    "logic",
+    "ui",
+    "database",
+    "api",
+    "sports",
+    "stand",
+    "alone",
+    "app",
+    "main.go",
+    "sports-stakes-form",
+    "data-repository",
+    "sports-service",
+    "ui-sports-functions",
+    "repository.go",
+    "sports-view-functions",
+    "sports-log"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "main.go",
+    "sports-stakes-form",
+    "data-repository",
+    "sports-service",
+    "ui-sports-functions",
+    "repository.go",
+    "sports-view-functions",
+    "sports-log"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "main.go",
+      "destination_module": "sports-stakes-form",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "sports-stakes-form",
+      "destination_module": "data-repository",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "data-repository",
+      "destination_module": "sports-service",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "sports-service",
+      "destination_module": "ui-sports-functions",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "ui-sports-functions",
+      "destination_module": "repository.go",
+      "data_passed": "updates"
+    },
+    {
+      "source_module": "repository.go",
+      "destination_module": "sports-view-functions",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "sports-view-functions",
+      "destination_module": "sports-log",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

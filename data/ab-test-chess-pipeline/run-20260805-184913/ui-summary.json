@@ -1,0 +1,25 @@
+{
+ "gates": {
+  "chars": 2974,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 1,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [],
+  "prose_leak": 0
+ },
+ "check": {
+  "error": "tsc not found"
+ },
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored-dspark",
+  "tag": "tuned",
+  "task": "ui",
+  "elapsed_s": 14.0,
+  "prompt_chars": 6642,
+  "raw_chars": 2974
+ }
+}

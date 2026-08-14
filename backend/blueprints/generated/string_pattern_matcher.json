@@ -1,0 +1,54 @@
+{
+  "app_type": "string_pattern_matcher",
+  "description": "Visual string matching laboratory with KMP, Rabin-Karp, Z-algorithm, and Aho-Corasick — Interactive pattern matching across multiple algorithms. Shows character-by-character comparison, failure function construction, rolling hash computation, and automaton state transitions",
+  "keywords": [
+    "string-matching",
+    "kmp",
+    "rabin-karp",
+    "z-algorithm",
+    "algorithms",
+    "string",
+    "pattern",
+    "matcher",
+    "pattern config",
+    "match engine",
+    "match store",
+    "text visualizer",
+    "algorithm details"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Pattern Config",
+    "Match Engine",
+    "Match Store",
+    "Text Visualizer",
+    "Algorithm Details"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Pattern Config",
+      "destination_module": "Match Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Match Engine",
+      "destination_module": "Match Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Match Store",
+      "destination_module": "Text Visualizer",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Text Visualizer",
+      "destination_module": "Algorithm Details",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

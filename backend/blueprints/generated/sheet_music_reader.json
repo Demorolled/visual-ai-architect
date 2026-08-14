@@ -1,0 +1,39 @@
+{
+  "app_type": "sheet_music_reader",
+  "description": "Digital sheet music viewer with playback — Interactive desktop tool for sheet music reader",
+  "keywords": [
+    "desktop",
+    "sheet",
+    "music",
+    "reader",
+    "sheet",
+    "music",
+    "reader",
+    "data store",
+    "search & filter",
+    "user interface"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Store",
+      "destination_module": "Search & Filter",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search & Filter",
+      "destination_module": "User Interface",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

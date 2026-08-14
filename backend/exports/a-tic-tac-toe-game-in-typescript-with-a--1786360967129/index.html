@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; }
+        .app { padding: 16px; }
+        .board { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; }
+        .cell { width: 100%; height: 100%; border: 1px solid #ddd; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; }
+        .x { color: red; }
+        .o { color: blue; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <h1>Tic Tac Toe</h1>
+        <div class="board" id="board"></div>
+        <button id="resetBtn" class="btn">Reset</button>
+    </div>
+    <script>
+        const board = document.getElementById('board');
+        const cells = Array.from(board.children);
+        const resetBtn = document.getElementById('resetBtn');
+
+        function initGame() {
+            cells.forEach(cell => cell.textContent = '');
+            resetBtn.style.display = 'block';
+        }
+
+        function handleClick(cell) {
+            if (cell.textContent === '') {
+                const player = cells.findIndex(c => c.textContent === '');
+                if (player % 2 === 0) cell.textContent = 'X';
+                else cell.textContent = 'O';
+                checkWinner();
+            }
+        }
+
+        function checkWinner() {
+            const winningCombos = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+
+            for (const combo of winningCombos) {
+                const [a, b, c] = combo;
+                if (cells[a].textContent !== '' && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                    displayWinner(cells[a].textContent);
+                    return;
+                }
+            }
+
+            if (cells.every(cell => cell.textContent !== '')) {
+                displayWinner('Draw');
+                return;
+            }
+
+            const computerMove = minimax(cells, 'O');
+            if (computerMove) {
+                cells[computerMove].textContent = 'O';
+                checkWinner();
+            } else {
+                displayWinner('Draw');
+            }
+        }
+
+        function displayWinner(winner) {
+            board.style.pointerEvents = 'none';
+            resetBtn.style.display = 'none';
+            cells.forEach(cell => cell.style.pointerEvents = 'none');
+            setTimeout(() => initGame(), 2000);
+            document.getElementById('statusMsg').textContent = `Winner: ${winner}`;
+        }
+
+        function minimax(cells, player) {
+            const winner = checkWinner(cells);
+            if (winner) return { score: winner === 'X' ? -1 : 1 };
+
+            let bestMove = null;
+            let bestScore = player === 'X' ? -Infinity : Infinity;
+
+            for (const cell of cells) {
+                if (cell.textContent === '') {
+                    cell.textContent = player;
+                    const score = minimax(cells, player === 'X' ? 'O' : 'X').score;
+                    cell.textContent = '';
+                    if (player === 'X' && score > bestScore) {
+                        bestScore = score;
+                        bestMove = cells.indexOf(cell);
+                    } else if (player === 'O' && score < bestScore) {
+                        bestScore = score;
+                        bestMove = cells.indexOf(cell);
+                    }
+                }
+            }
+
+            return { score: bestScore, move: bestMove };
+        }
+
+        initGame();
+        board.addEventListener('click', (event) => handleClick(event.target));
+        resetBtn.addEventListener('click', initGame);
+    </script>
+</body>
+</html>

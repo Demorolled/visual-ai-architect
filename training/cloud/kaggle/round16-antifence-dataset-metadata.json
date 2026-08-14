@@ -1,0 +1,12 @@
+{
+  "id": "__USERNAME__/round16-antifence",
+  "title": "VACA R16 Anti-Fence Clean Corpus",
+  "subtitle": "613 clean anti-fence rows — R10-15 re-filtered + verified generations",
+  "isPrivate": true,
+  "licenses": [
+    {
+      "name": "other"
+    }
+  ],
+  "description": "Round-16 remediation corpus for VACA. Rounds 10-14 (the deployed R15 model's lineage, all run on Kaggle) contained training rows whose OUTPUT was markdown-fenced, batched chat format — the exact failure signature in VACA's generated source files. This corpus keeps ONLY rows that pass the same poison gate the VACA app uses (isQualityCode): no ``` fences, no --- separators, no prompt artifacts, no prose explanations, no stub bodies. Clean rows from R10-R14 are new signal (their fence-free form was never trained); R15 clean rows are retention; verified-generations.jsonl (tsc-gated) is added. 552 train / 61 val rows, seq-3072 budget-guarded."
+}

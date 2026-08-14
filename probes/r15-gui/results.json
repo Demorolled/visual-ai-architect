@@ -1,0 +1,116 @@
+[
+ {
+  "name": "interactive-dashboard",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "kanban-board",
+  "raw_pass": false,
+  "repaired_pass": false,
+  "class": "scope/undefined variable",
+  "raw_errs": [
+   "updateDisplay is not defined"
+  ],
+  "repaired_errs": [
+   "updateDisplay is not defined"
+  ]
+ },
+ {
+  "name": "chat-app",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "terminal-os",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "spreadsheet-pro",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "todo-list",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "markdown-previewer",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "weather-widget",
+  "raw_pass": false,
+  "repaired_pass": false,
+  "class": "other",
+  "raw_errs": [
+   "Unexpected identifier 'York'"
+  ],
+  "repaired_errs": [
+   "Unexpected identifier 'York'"
+  ]
+ },
+ {
+  "name": "pomodoro-timer",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "code-editor",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "GUI-fixable (mechanical repair)",
+  "raw_errs": [],
+  "repaired_errs": []
+ },
+ {
+  "name": "music-player",
+  "raw_pass": false,
+  "repaired_pass": false,
+  "class": "asset/network 404",
+  "raw_errs": [
+   "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+  ],
+  "repaired_errs": [
+   "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+  ]
+ },
+ {
+  "name": "quiz-app",
+  "raw_pass": false,
+  "repaired_pass": false,
+  "class": "other",
+  "raw_errs": [
+   "Cannot set properties of null (setting 'textContent')",
+   "Cannot set properties of null (setting 'textContent')"
+  ],
+  "repaired_errs": [
+   "Cannot set properties of null (setting 'textContent')",
+   "Cannot set properties of null (setting 'textContent')"
+  ]
+ }
+]

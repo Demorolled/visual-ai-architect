@@ -1,0 +1,52 @@
+{
+  "app_type": "orbit_simulator",
+  "description": "N-body gravity: Keplerian elements, Lagrange points, trajectories — Orbital: N-body gravity, Kepler elements, Lagrange points, trajectory",
+  "keywords": [
+    "specialized",
+    "computation",
+    "science",
+    "simulation",
+    "orbit",
+    "simulator",
+    "domain input",
+    "core algorithm",
+    "analysis",
+    "data store",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Domain Input",
+    "Core Algorithm",
+    "Analysis",
+    "Data Store",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Domain Input",
+      "destination_module": "Core Algorithm",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Algorithm",
+      "destination_module": "Analysis",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Analysis",
+      "destination_module": "Data Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

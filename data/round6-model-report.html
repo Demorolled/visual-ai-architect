@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Round-6 Trained LLM — VACA Qwen2.5-7B</title>
+<style>
+  :root { --bg:#0d1117; --card:#161b22; --line:#30363d; --fg:#e6edf3; --mut:#8b949e; --acc:#58a6ff; --grn:#3fb950; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--fg); font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; padding:32px; }
+  .wrap { max-width:960px; margin:0 auto; }
+  h1 { font-size:24px; margin-bottom:4px; }
+  .sub { color:var(--mut); margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-bottom:24px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .card .k { color:var(--mut); font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+  .card .v { font-size:18px; font-weight:600; margin-top:4px; }
+  .card .v.grn { color:var(--grn); }
+  .card .v.acc { color:var(--acc); }
+  h2 { font-size:16px; margin:24px 0 10px; }
+  .chart { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td,th { padding:6px 10px; border-bottom:1px solid var(--line); text-align:left; }
+  th { color:var(--mut); font-weight:500; }
+  .tag { display:inline-block; background:#1f6feb22; color:var(--acc); border:1px solid #1f6feb55; border-radius:20px; padding:1px 10px; font-size:12px; margin:2px; }
+  .bad { color:#f85149; }
+  .ok { color:var(--grn); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧠 Round-6 Trained LLM</h1>
+  <div class="sub">VACA fine-tune · Qwen2.5-7B-Instruct-Uncensored · QLoRA r8/α16 · 9h on Kaggle · downloaded &amp; merged locally</div>
+
+  <div class="grid">
+    <div class="card"><div class="k">Final loss</div><div class="v grn">0.234</div></div>
+    <div class="card"><div class="k">Loss drop</div><div class="v grn">-73%</div></div>
+    <div class="card"><div class="k">Steps</div><div class="v">653/662</div></div>
+    <div class="card"><div class="k">Run time</div><div class="v">9h 0m</div></div>
+    <div class="card"><div class="k">Base model</div><div class="v acc" style="font-size:13px">Orion-zhen/Qwen2.5-7B-Instruct-Uncensored</div></div>
+    <div class="card"><div class="k">Deploy GGUF</div><div class="v">Q4_K_M · 4.68 GB</div></div>
+  </div>
+
+  <h2>📉 Training loss curve (33 checkpoints)</h2>
+  <div class="chart"><canvas id="curve" height="240"></canvas></div>
+
+  <h2>📦 Artifacts on disk</h2>
+  <table>
+    <tr><th>Artifact</th><th>Path</th><th>Size</th><th>Status</th></tr>
+    <tr><td>Deployable q4_k_m GGUF</td><td class="mono">models/Qwen2.5-7B-Instruct-Uncensored.R6.Q4_K_M.gguf</td><td>4.68 GB</td><td class="ok">✅ verified + smoke-tested</td></tr>
+    <tr><td>Local GGUF export (source)</td><td class="mono">training/cloud/out/round6-export_gguf/…Q4_K_M.gguf</td><td>4.68 GB</td><td class="ok">✅</td></tr>
+    <tr><td>Merged fp16 model (4 shards)</td><td class="mono">training/cloud/out/round6-merged/</td><td>15.2 GB</td><td class="ok">✅ 339 tensors verified</td></tr>
+    <tr><td>LoRA adapter</td><td class="mono">training/cloud/out/round6-adapter/</td><td>88 MB</td><td class="ok">✅ r8/α16</td></tr>
+    <tr><td>F16 GGUF (Kaggle export)</td><td class="mono">training/cloud/out/round6-gguf/…F16.gguf</td><td>5.35 GB</td><td class="bad">⚠️ truncated — kernel export cell crashed</td></tr>
+  </table>
+
+  <h2>🔧 Training config</h2>
+  <p><span class="tag">QLoRA 4-bit</span><span class="tag">r=8</span><span class="tag">α=16</span><span class="tag">dropout=0.05</span><span class="tag">seq 2048</span><span class="tag">LR 2e-4</span><span class="tag">2,941 rows</span><span class="tag">bible→code + fidelity fixes</span></p>
+
+  <script>
+    const data = [{"loss": 0.8661, "grad": 0.7676, "lr": 0.0002, "epoch": 0.03023}, {"loss": 0.5379, "grad": 0.5519, "lr": 0.0002, "epoch": 0.06047}, {"loss": 0.4282, "grad": 0.556, "lr": 0.0002, "epoch": 0.0907}, {"loss": 0.4407, "grad": 0.745, "lr": 0.0002, "epoch": 0.1209}, {"loss": 0.3073, "grad": 0.638, "lr": 0.0002, "epoch": 0.1512}, {"loss": 0.3843, "grad": 0.4085, "lr": 0.0002, "epoch": 0.1814}, {"loss": 0.3227, "grad": 0.4292, "lr": 0.0002, "epoch": 0.2116}, {"loss": 0.3213, "grad": 0.5072, "lr": 0.0002, "epoch": 0.2419}, {"loss": 0.3196, "grad": 0.4133, "lr": 0.0002, "epoch": 0.2721}, {"loss": 0.2521, "grad": 0.452, "lr": 0.0002, "epoch": 0.3023}, {"loss": 0.3586, "grad": 0.4545, "lr": 0.0002, "epoch": 0.3326}, {"loss": 0.2679, "grad": 0.5266, "lr": 0.0002, "epoch": 0.3628}, {"loss": 0.311, "grad": 0.4986, "lr": 0.0002, "epoch": 0.393}, {"loss": 0.2872, "grad": 0.7556, "lr": 0.0002, "epoch": 0.4233}, {"loss": 0.281, "grad": 0.436, "lr": 0.0002, "epoch": 0.4535}, {"loss": 0.3207, "grad": 0.5016, "lr": 0.0002, "epoch": 0.4837}, {"loss": 0.2388, "grad": 0.5709, "lr": 0.0002, "epoch": 0.514}, {"loss": 0.3331, "grad": 0.3805, "lr": 0.0002, "epoch": 0.5442}, {"loss": 0.2612, "grad": 0.4279, "lr": 0.0002, "epoch": 0.5745}, {"loss": 0.2414, "grad": 0.373, "lr": 0.0002, "epoch": 0.6047}, {"loss": 0.2069, "grad": 0.423, "lr": 0.0002, "epoch": 0.6349}, {"loss": 0.2992, "grad": 0.5885, "lr": 0.0002, "epoch": 0.6652}, {"loss": 0.2685, "grad": 0.5637, "lr": 0.0002, "epoch": 0.6954}, {"loss": 0.2292, "grad": 0.4873, "lr": 0.0002, "epoch": 0.7256}, {"loss": 0.2671, "grad": 0.5385, "lr": 0.0002, "epoch": 0.7559}, {"loss": 0.2913, "grad": 0.4194, "lr": 0.0002, "epoch": 0.7861}, {"loss": 0.2154, "grad": 0.4499, "lr": 0.0002, "epoch": 0.8163}, {"loss": 0.237, "grad": 0.5022, "lr": 0.0002, "epoch": 0.8466}, {"loss": 0.2413, "grad": 0.4485, "lr": 0.0002, "epoch": 0.8768}, {"loss": 0.1883, "grad": 0.4223, "lr": 0.0002, "epoch": 0.907}, {"loss": 0.2723, "grad": 0.5262, "lr": 0.0002, "epoch": 0.9373}, {"loss": 0.2076, "grad": 0.6718, "lr": 0.0002, "epoch": 0.9675}, {"loss": 0.2342, "grad": 0.3373, "lr": 0.0002, "epoch": 0.9977}];
+    const c = document.getElementById('curve'), ctx = c.getContext('2d');
+    const W = c.width = c.parentElement.clientWidth, H = 240, pad = {l:44, r:12, t:12, b:26};
+    const xs = data.map((_,i)=>i), losses = data.map(d=>d.loss);
+    const minL = Math.min(...losses), maxL = Math.max(...losses);
+    const sx = x => pad.l + x/(xs.length-1||1)*(W-pad.l-pad.r);
+    const sy = v => pad.t + (1-(v-minL)/(maxL-minL||1))*(H-pad.t-pad.b);
+    ctx.strokeStyle = '#30363d'; ctx.fillStyle = '#8b949e'; ctx.font = '11px ui-monospace,monospace'; ctx.lineWidth = 1;
+    for (let i=0;i<=4;i++){ const v = minL+(maxL-minL)*i/4, y = sy(v);
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+      ctx.fillText(v.toFixed(2), 4, y+4); }
+    // area
+    ctx.beginPath(); ctx.moveTo(sx(0), H-pad.b);
+    xs.forEach((_,i)=>ctx.lineTo(sx(i), sy(losses[i])));
+    ctx.lineTo(sx(xs.length-1), H-pad.b); ctx.closePath();
+    ctx.fillStyle = 'rgba(88,166,255,.15)'; ctx.fill();
+    // line
+    ctx.beginPath(); xs.forEach((_,i)=> i?ctx.lineTo(sx(i),sy(losses[i])):ctx.moveTo(sx(i),sy(losses[i])));
+    ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.fillStyle = '#58a6ff';
+    xs.forEach((_,i)=>{ ctx.beginPath(); ctx.arc(sx(i),sy(losses[i]),2.5,0,7); ctx.fill(); });
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText('checkpoint', W/2-30, H-8);
+  </script>
+</div>
+</body>
+</html>

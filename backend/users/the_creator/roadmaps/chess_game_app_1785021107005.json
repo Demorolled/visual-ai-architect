@@ -1,0 +1,65 @@
+{
+  "projectName": "chess game app",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785020912874_b78t3d",
+      "type": "input",
+      "label": "main.go",
+      "description": "Entrypoint to the application. It initializes the game loop and handles input from the user.",
+      "language": "go",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1785020912874_kxb0nq",
+      "type": "logic",
+      "label": "game_loop.go",
+      "description": "Contains the game loop that updates the game state and renders the UI. It listens for user input and updates the game state accordingly.",
+      "language": "go",
+      "position": {
+        "x": 300,
+        "y": 100
+      }
+    },
+    {
+      "id": "node_1785020912874_trlqee",
+      "type": "logic",
+      "label": "board.go",
+      "description": "Manages the game board and the state of the pieces. It contains the logic for moving pieces and checking for checkmate.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 100
+      }
+    },
+    {
+      "id": "node_1785020912874_2cvqji",
+      "type": "ui",
+      "label": "ui.go",
+      "description": "Manages the UI components and their layout. It displays the game board and handles user interactions.",
+      "language": "go",
+      "position": {
+        "x": 700,
+        "y": 100
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785020912874_b78t3d",
+      "target": "node_1785020912874_kxb0nq"
+    },
+    {
+      "source": "node_1785020912874_kxb0nq",
+      "target": "node_1785020912874_trlqee"
+    },
+    {
+      "source": "node_1785020912874_trlqee",
+      "target": "node_1785020912874_2cvqji"
+    }
+  ],
+  "createdAt": "2026-07-25T23:11:47.005Z"
+}

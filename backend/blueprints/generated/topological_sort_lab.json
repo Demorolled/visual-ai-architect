@@ -1,0 +1,55 @@
+{
+  "app_type": "topological_sort_lab",
+  "description": "DAG topological ordering with Kahn's algorithm and DFS — an interactive algorithm tool with a visual interface.",
+  "keywords": [
+    "fundamentals",
+    "algorithms",
+    "topological-sort",
+    "dag",
+    "graph",
+    "topological",
+    "sort",
+    "lab"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "canvas_ui",
+    "algorithm_core",
+    "input_handler",
+    "dataset_store",
+    "visualization_engine"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "canvas_ui",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "canvas_ui",
+      "destination_module": "algorithm_core",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "algorithm_core",
+      "destination_module": "input_handler",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "input_handler",
+      "destination_module": "dataset_store",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "dataset_store",
+      "destination_module": "visualization_engine",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "design-specs-v2.json:fundamentals"
+}

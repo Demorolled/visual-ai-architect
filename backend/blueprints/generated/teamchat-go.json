@@ -1,0 +1,51 @@
+{
+  "app_type": "teamchat-go",
+  "description": "Slack-style workspace chat: channel membership, threaded messages, reactions, presence; a WebSocket hub handles realtime delivery.",
+  "keywords": [
+    "teamchat-go",
+    "go",
+    "team",
+    "chat",
+    "channels",
+    "members",
+    "messages",
+    "threads",
+    "reactions"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "channels",
+    "members",
+    "messages",
+    "threads",
+    "reactions"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "channels",
+      "destination_module": "members",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "members",
+      "destination_module": "messages",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "messages",
+      "destination_module": "threads",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "threads",
+      "destination_module": "reactions",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 33
+}

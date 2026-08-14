@@ -1,0 +1,50 @@
+{
+  "projectName": "Untitled Project",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785022022987_p8ucay",
+      "type": "input",
+      "label": "main.ts",
+      "description": "Entry point of the application, bootstraps the calculator functionality.",
+      "language": "typescript",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1785022022987_cap9bh",
+      "type": "logic",
+      "label": "calculator.ts",
+      "description": "Contains the core logic for performing arithmetic operations.",
+      "language": "typescript",
+      "position": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1785022022987_q5hbnu",
+      "type": "ui",
+      "label": "ui/calculator.tsx",
+      "description": "UI component for the calculator, displays inputs and outputs.",
+      "language": "typescript",
+      "position": {
+        "x": 200,
+        "y": 0
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785022022987_p8ucay",
+      "target": "node_1785022022987_cap9bh"
+    },
+    {
+      "source": "node_1785022022987_cap9bh",
+      "target": "node_1785022022987_q5hbnu"
+    }
+  ],
+  "createdAt": "2026-07-25T23:27:47.655Z"
+}

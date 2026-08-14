@@ -1,0 +1,51 @@
+{
+  "app_type": "membership-csharp",
+  "description": "gym/club membership: member records, tiered plans, renewal cycles, benefit entitlements, billing runs.",
+  "keywords": [
+    "membership-csharp",
+    "csharp",
+    "membership",
+    "management",
+    "members",
+    "plans",
+    "renewals",
+    "benefits",
+    "billing"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "members",
+    "plans",
+    "renewals",
+    "benefits",
+    "billing"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "members",
+      "destination_module": "plans",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "plans",
+      "destination_module": "renewals",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "renewals",
+      "destination_module": "benefits",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "benefits",
+      "destination_module": "billing",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

@@ -1,0 +1,19 @@
+{
+  "name": "simple-cli-todo-manager",
+  "version": "1.0.0",
+  "description": "A simple CLI todo manager that adds and lists todos from the command line",
+  "type": "module",
+  "bin": {
+    "todo": "src/main.ts"
+  },
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "build": "tsc --noEmit",
+    "dev": "tsx watch src/main.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}

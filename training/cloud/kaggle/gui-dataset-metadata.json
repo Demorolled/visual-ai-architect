@@ -1,0 +1,10 @@
+{
+  "id": "__USERNAME__/gui-combined-all",
+  "title": "Combined GUI-design training dataset",
+  "subtitle": "714 unique GUI rows (projects corpus + design tokens + synthetic patterns)",
+  "licenses": [
+    {
+      "name": "other"
+    }
+  ]
+}

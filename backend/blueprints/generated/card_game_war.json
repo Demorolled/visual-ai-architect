@@ -1,0 +1,54 @@
+{
+  "app_type": "card_game_war",
+  "description": "Classic War card game with deck building, shuffle, and battle animations — War card game implementation with Fisher-Yates deck shuffle, card comparison, tie/war resolution, deck tracking, and animated card dealing/battling",
+  "keywords": [
+    "card-game",
+    "war",
+    "shuffle",
+    "game",
+    "classic",
+    "card",
+    "game",
+    "war",
+    "game controls",
+    "deck engine",
+    "battle engine",
+    "game state",
+    "card renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Game Controls",
+    "Deck Engine",
+    "Battle Engine",
+    "Game State",
+    "Card Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Game Controls",
+      "destination_module": "Deck Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Deck Engine",
+      "destination_module": "Battle Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Battle Engine",
+      "destination_module": "Game State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Card Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

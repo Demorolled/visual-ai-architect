@@ -1,0 +1,52 @@
+{
+  "app_type": "syscall_tracer",
+  "description": "strace-like syscall tracer with filter, stats, and timeline view — Syscall tracing via ptrace: all syscalls, args, return values, latency stats, timeline",
+  "keywords": [
+    "syscall",
+    "tracing",
+    "ptrace",
+    "debugging",
+    "syscall",
+    "tracer",
+    "tracer config",
+    "ptrace engine",
+    "syscall table",
+    "trace data",
+    "trace viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Tracer Config",
+    "Ptrace Engine",
+    "Syscall Table",
+    "Trace Data",
+    "Trace Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Tracer Config",
+      "destination_module": "Ptrace Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Ptrace Engine",
+      "destination_module": "Syscall Table",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Syscall Table",
+      "destination_module": "Trace Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Trace Data",
+      "destination_module": "Trace Viewer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,52 @@
+{
+  "app_type": "minesweeper_2",
+  "description": "Classic Minesweeper with flood-fill, flagging, timer, and first-click safety — Minesweeper with randomized mine placement (first click safe), flood-fill reveal, flag marking, chord click, timer, and difficulty levels",
+  "keywords": [
+    "minesweeper",
+    "game",
+    "puzzle",
+    "flood-fill",
+    "classic",
+    "minesweeper",
+    "game controls",
+    "mine engine",
+    "game logic",
+    "board data",
+    "board renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Game Controls",
+    "Mine Engine",
+    "Game Logic",
+    "Board Data",
+    "Board Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Game Controls",
+      "destination_module": "Mine Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Mine Engine",
+      "destination_module": "Game Logic",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Game Logic",
+      "destination_module": "Board Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Board Data",
+      "destination_module": "Board Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

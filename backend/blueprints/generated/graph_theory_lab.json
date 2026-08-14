@@ -1,0 +1,53 @@
+{
+  "app_type": "graph_theory_lab",
+  "description": "Graph properties, coloring, max flow, bipartite matching — Graph theory: adjacency matrix, clique, chromatic number, max flow",
+  "keywords": [
+    "mathematics",
+    "visualization",
+    "education",
+    "science",
+    "graph",
+    "theory",
+    "lab",
+    "math input",
+    "math engine",
+    "analysis",
+    "data storage",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Math Input",
+    "Math Engine",
+    "Analysis",
+    "Data Storage",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Math Input",
+      "destination_module": "Math Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Math Engine",
+      "destination_module": "Analysis",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Analysis",
+      "destination_module": "Data Storage",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Data Storage",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,45 @@
+<html>
+<head>
+<style>
+body { font-family: Arial, sans-serif; }
+.row { display: flex; gap: 10px; align-items: center; }
+col { display: flex; flex-direction: column; gap: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.app { max-width: 960px; margin: 0 auto; padding: 24px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="row">
+    <button id="playBtn" class="btn" onclick="play()">▶ Play</button>
+    <button id="saveBtn" class="btn btn-primary" onclick="save()">💾 Save</button>
+    <button id="delBtn" class="btn btn-danger" onclick="remove()">✕ Delete</button>
+  </div>
+  <div id="board" class="grid"></div>
+  <div id="status" class="row"></div>
+</div>
+<script>
+function play() {
+  const board = document.getElementById('board');
+  const status = document.getElementById('status');
+  const game = new Game();
+  game.run(board, status);
+}
+function save() {
+  console.log('Save game');
+}
+function remove() {
+  console.log('Remove game');
+}
+function onSearch(value) {
+  console.log('Search:', value);
+}
+function onFormat(value) {
+  console.log('Format:', value);
+}
+function openItem(id) {
+  console.log('Open item:', id);
+}
+</script>
+</body>
+</html>

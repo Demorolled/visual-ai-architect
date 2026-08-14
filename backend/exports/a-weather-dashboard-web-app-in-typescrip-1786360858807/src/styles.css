@@ -1,0 +1,11 @@
+* { box-sizing: border-box; }
+.app { max-width: 960px; margin: 0 auto; padding: 24px; }
+card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; }
+#weatherDisplay { margin-top: 10px; }
+#weatherInfo { margin: 0 0 12px; }
+.btn { padding: 8px 16px; border: 1px solid #007bff; border-radius: 4px; color: #007bff; background-color: #fff; cursor: pointer; }
+.btn-primary { background-color: #007bff; color: #fff; }
+.btn-danger { background-color: #dc3545; color: #fff; }
+.btn:hover { background-color: #0056b3; color: #fff; }
+.btn-primary:hover { background-color: #0062cc; color: #fff; }
+.btn-danger:hover { background-color: #c82333; color: #fff; }

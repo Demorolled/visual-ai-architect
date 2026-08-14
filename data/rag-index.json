@@ -1,0 +1,137 @@
+{
+  "generatedAt": "2026-08-06T10:57:29.506Z",
+  "dim": 1024,
+  "sources": {
+    "library": 41,
+    "bible": 261,
+    "blueprint": 1228
+  },
+  "total": 1530,
+  "probes": [
+    {
+      "query": "build a shared family movie streaming app for my household",
+      "top": [
+        {
+          "id": "api-cors-middleware/00-index.md",
+          "source": "bible",
+          "score": 0.326
+        },
+        {
+          "id": "circular_buffer_lab",
+          "source": "blueprint",
+          "score": 0.302
+        },
+        {
+          "id": "i_want_a_home_media_streaming_app_to_pla",
+          "source": "blueprint",
+          "score": 0.274
+        },
+        {
+          "id": "inference_engine",
+          "source": "blueprint",
+          "score": 0.261
+        }
+      ]
+    },
+    {
+      "query": "make a complete chess game with an AI opponent and drag and drop pieces",
+      "top": [
+        {
+          "id": "chess_game_2",
+          "source": "blueprint",
+          "score": 0.359
+        },
+        {
+          "id": "ui-drag-drop-list/00-index.md",
+          "source": "bible",
+          "score": 0.326
+        },
+        {
+          "id": "chess_game",
+          "source": "blueprint",
+          "score": 0.312
+        },
+        {
+          "id": "shogi_japanese_chess",
+          "source": "blueprint",
+          "score": 0.248
+        }
+      ]
+    },
+    {
+      "query": "deploy kubernetes containers with gitops and a service mesh",
+      "top": [
+        {
+          "id": "consul_service_mesh",
+          "source": "blueprint",
+          "score": 0.375
+        },
+        {
+          "id": "service_mesh",
+          "source": "blueprint",
+          "score": 0.3
+        },
+        {
+          "id": "17-virtualization-containers/00-index.md",
+          "source": "bible",
+          "score": 0.253
+        },
+        {
+          "id": "auditd_log_viewer",
+          "source": "blueprint",
+          "score": 0.225
+        }
+      ]
+    },
+    {
+      "query": "build a fintech payment dashboard with ledger and escrow",
+      "top": [
+        {
+          "id": "28-fintech-insurance-systems.md",
+          "source": "library",
+          "score": 0.329
+        },
+        {
+          "id": "bigquery_lab",
+          "source": "blueprint",
+          "score": 0.279
+        },
+        {
+          "id": "payment-csharp",
+          "source": "blueprint",
+          "score": 0.258
+        },
+        {
+          "id": "sp_gist_lab",
+          "source": "blueprint",
+          "score": 0.257
+        }
+      ]
+    },
+    {
+      "query": "an iot sensor dashboard with mqtt and edge computing",
+      "top": [
+        {
+          "id": "iot_data_ingestor",
+          "source": "blueprint",
+          "score": 0.358
+        },
+        {
+          "id": "21-iot-embedded-systems.md",
+          "source": "library",
+          "score": 0.305
+        },
+        {
+          "id": "particle_swarm_opt",
+          "source": "blueprint",
+          "score": 0.265
+        },
+        {
+          "id": "streamsets_pipeline",
+          "source": "blueprint",
+          "score": 0.233
+        }
+      ]
+    }
+  ]
+}

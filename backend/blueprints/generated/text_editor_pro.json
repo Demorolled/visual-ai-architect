@@ -1,0 +1,53 @@
+{
+  "app_type": "text_editor_pro",
+  "description": "Full-featured text editor with syntax highlighting, find/replace, file management — Desktop text editor with gap buffer, syntax highlighting, find/replace with regex, tabs, file tree",
+  "keywords": [
+    "text-editor",
+    "editor",
+    "productivity",
+    "desktop",
+    "text",
+    "editor",
+    "pro",
+    "file handler",
+    "gap buffer",
+    "syntax highlighter",
+    "file store",
+    "editor canvas"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "File Handler",
+    "Gap Buffer",
+    "Syntax Highlighter",
+    "File Store",
+    "Editor Canvas"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "File Handler",
+      "destination_module": "Gap Buffer",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Gap Buffer",
+      "destination_module": "Syntax Highlighter",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Syntax Highlighter",
+      "destination_module": "File Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "File Store",
+      "destination_module": "Editor Canvas",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

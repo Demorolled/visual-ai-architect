@@ -1,0 +1,65 @@
+{
+  "projectName": "simple game — ",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "input",
+      "label": "index",
+      "description": "The entry point of the application. It initializes the game loop.",
+      "language": "typescript",
+      "position": {
+        "x": 150,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_1",
+      "type": "logic",
+      "label": "game",
+      "description": "Contains the game loop, update logic, and rendering.",
+      "language": "typescript",
+      "position": {
+        "x": 370,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_2",
+      "type": "input",
+      "label": "input",
+      "description": "Handles keyboard and mouse input for the game.",
+      "language": "typescript",
+      "position": {
+        "x": 590,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_3",
+      "type": "ui",
+      "label": "render",
+      "description": "Responsible for rendering the game state to the screen.",
+      "language": "typescript",
+      "position": {
+        "x": 150,
+        "y": 450
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_0",
+      "target": "node_1"
+    },
+    {
+      "source": "node_1",
+      "target": "node_2"
+    },
+    {
+      "source": "node_2",
+      "target": "node_3"
+    }
+  ],
+  "createdAt": "2026-08-01T21:46:33.462Z"
+}

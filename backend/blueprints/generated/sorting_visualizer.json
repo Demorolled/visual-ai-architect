@@ -1,0 +1,53 @@
+{
+  "app_type": "sorting_visualizer",
+  "description": "Compare 10+ sorting algorithms side-by-side with bar chart animations and complexity stats — Visually demonstrates bubble, selection, insertion, shell, merge, quick, heap, counting, radix, bucket, timsort. Shows comparisons, swaps, and auxiliary memory usage with real-time statistics",
+  "keywords": [
+    "sorting",
+    "algorithms",
+    "visualization",
+    "comparison",
+    "education",
+    "sorting",
+    "visualizer",
+    "sort controller",
+    "algorithm runner",
+    "data store",
+    "bar chart view",
+    "stats dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Sort Controller",
+    "Algorithm Runner",
+    "Data Store",
+    "Bar Chart View",
+    "Stats Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Sort Controller",
+      "destination_module": "Algorithm Runner",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Algorithm Runner",
+      "destination_module": "Data Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Bar Chart View",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Bar Chart View",
+      "destination_module": "Stats Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

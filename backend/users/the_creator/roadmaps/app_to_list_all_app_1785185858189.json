@@ -1,0 +1,107 @@
+{
+  "projectName": "app to list all app",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785181398346_zbt679",
+      "type": "logic",
+      "label": "entry点",
+      "description": "Entry point of the application. Parses CLI flags, loads configuration, starts server.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1785181398346_7rmu9q",
+      "type": "logic",
+      "label": "config文件",
+      "description": "Configuration management file. Reads system settings like home dir and PATH.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785181398346_aqmonc",
+      "type": "database",
+      "label": "repository数据层",
+      "description": "Data access layer. Handles SQLite storage for all installed apps data.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785181398346_xsreol",
+      "type": "logic",
+      "label": "services逻辑层",
+      "description": "Business logic layer. Contains functions for app listing, display, and management.",
+      "language": "go",
+      "position": {
+        "x": 600,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785181398346_34lfx0",
+      "type": "ui",
+      "label": "ui用户界面",
+      "description": "GUI layer. Provides CLI entry and app listing display with selection.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 400
+      }
+    },
+    {
+      "id": "node_1785181398346_jmulpi",
+      "type": "logic",
+      "label": "coverage测试数据层",
+      "description": "Tests collection for continuous integration/dependencies management. Maintains coverage stats.",
+      "language": "go",
+      "position": {
+        "x": 570,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785181398346_1ho2rm",
+      "type": "logic",
+      "label": "tests测试节点",
+      "description": "Unit tests and E2E tests for functionality verification.",
+      "language": "go",
+      "position": {
+        "x": 430,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785181398346_f3g2px",
+      "type": "ui",
+      "label": "web界面组件",
+      "description": "Web-based entry point. Provides CLI-like interface with app list display.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 400
+      }
+    },
+    {
+      "id": "node_1785181398346_7djiyo",
+      "type": "api",
+      "label": "handlers.go",
+      "description": "API request handlers. Routes incoming requests to business logic, validates input, formats JSON responses. Handles HTTP methods (GET, POST, PUT, DELETE). Imports: service, types.",
+      "language": "go",
+      "position": {
+        "x": 700,
+        "y": 800
+      }
+    }
+  ],
+  "edges": [],
+  "createdAt": "2026-07-27T20:57:38.188Z"
+}

@@ -1,0 +1,24 @@
+customtkinter>=5.2.0
+tkinterdnd2>=0.4.4
+matplotlib>=3.8.0
+Pillow>=10.0.0
+httpx>=0.25.0
+PyPDF2>=3.0.0
+pyarrow>=14.0.0
+PyYAML>=6.0
+datasets>=2.14.0
+torch>=2.1.0
+transformers>=4.36.0
+accelerate>=0.25.0
+peft>=0.7.0
+# kernels pin: v0.15+ has huggingface_hub dataclass compatibility issue with str | None types
+kernels<=0.14.0
+# huggingface_hub pin: v1.x breaks peft which requires <1.0
+huggingface-hub>=0.34.0,<1.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
+safetensors>=0.4.0
+faiss-cpu>=1.7.0
+sentence-transformers>=2.2.0
+fastapi>=0.111.0
+uvicorn>=0.29.0

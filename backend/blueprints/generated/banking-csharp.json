@@ -1,0 +1,51 @@
+{
+  "app_type": "banking-csharp",
+  "description": "accounts, transfers, a double-entry ledger, statements, audit logging.",
+  "keywords": [
+    "banking-csharp",
+    "csharp",
+    "banking",
+    "backend",
+    "accounts",
+    "double-entry ledger",
+    "transfers",
+    "statements",
+    "audit log"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "accounts",
+    "double-entry ledger",
+    "transfers",
+    "statements",
+    "audit log"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "accounts",
+      "destination_module": "double-entry ledger",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "double-entry ledger",
+      "destination_module": "transfers",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "transfers",
+      "destination_module": "statements",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "statements",
+      "destination_module": "audit log",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 26
+}

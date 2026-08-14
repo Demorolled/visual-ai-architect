@@ -1,0 +1,24 @@
+{
+  "app_type": "generic_fullstack_app",
+  "description": "A flexible full-stack web application with a user interface, an API layer, business logic, and persistent storage. Serves as the safe default when no specific blueprint matches.",
+  "keywords": ["app", "web app", "application", "fullstack", "full stack", "web", "website", "platform", "software", "tool", "utility", "system", "interface", "service"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "core_models",
+    "data_store",
+    "business_logic",
+    "api_routes"
+  ],
+  "wiring_graph": [
+    { "source_module": "ui_screens", "destination_module": "api_routes", "data_passed": "user_requests" },
+    { "source_module": "api_routes", "destination_module": "business_logic", "data_passed": "validated_commands" },
+    { "source_module": "business_logic", "destination_module": "data_store", "data_passed": "persistence_operations" },
+    { "source_module": "core_models", "destination_module": "data_store", "data_passed": "schemas" },
+    { "source_module": "core_models", "destination_module": "business_logic", "data_passed": "domain_types" }
+  ]
+}

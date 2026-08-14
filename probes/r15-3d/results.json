@@ -1,0 +1,142 @@
+[
+ {
+  "name": "city-skyline",
+  "raw_pass": false,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [
+   "THREE.OrbitControls is not a constructor"
+  ],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "galaxy-spiral",
+  "raw_pass": false,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [
+   "THREE.OrbitControls is not a constructor"
+  ],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "ocean-waves",
+  "raw_pass": false,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [
+   "THREE.OrbitControls is not a constructor"
+  ],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "dna-helix",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "lava-lamp",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "snow-globe",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "molecule-viewer",
+  "raw_pass": false,
+  "repaired_pass": false,
+  "class": "other",
+  "raw_errs": [
+   "Unexpected token '}'"
+  ],
+  "repaired_errs": [
+   "Unexpected token '}'"
+  ],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "voxel-castle",
+  "raw_pass": true,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "butterfly-swarm",
+  "raw_pass": false,
+  "repaired_pass": false,
+  "class": "wiring (addon missing)",
+  "raw_errs": [
+   "THREE.OrbitControls is not a constructor"
+  ],
+  "repaired_errs": [
+   "buildButterfly is not defined"
+  ],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "donut-shop",
+  "raw_pass": false,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [
+   "THREE.OrbitControls is not a constructor"
+  ],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "shooting-stars",
+  "raw_pass": false,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [
+   "THREE.OrbitControls is not a constructor"
+  ],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ },
+ {
+  "name": "audio-visualizer",
+  "raw_pass": false,
+  "repaired_pass": true,
+  "class": "wiring-only (fixed by addon injection)",
+  "raw_errs": [
+   "THREE.OrbitControls is not a constructor"
+  ],
+  "repaired_errs": [],
+  "raw_webgl": true,
+  "repaired_webgl": true
+ }
+]

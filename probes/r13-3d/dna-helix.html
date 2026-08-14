@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D DNA Double Helix</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; font-family: system-ui, sans-serif; }
+  #scene { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('black');
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 8);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+  
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  
+  const group = new THREE.Group();
+  scene.add(group);
+  
+  const colors = ['#f0d9b5', '#d6b4a5'];
+  
+  const buildHelix = (radius, height, segments, count) => {
+    const geometry = new THREE.CylinderGeometry(radius, radius, height, segments);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+    const mesh = new THREE.Mesh(geometry, material);
+    const group = new THREE.Group();
+    for (let i = 0; i < count; i++) {
+      const child = mesh.clone();
+      child.position.y = i * height;
+      group.add(child);
+    }
+    return group;
+  };
+  
+  const strand = buildHelix(0.2, 0.4, 32, 120);
+  strand.traverse((o) => o.castShadow = true);
+  group.add(strand);
+  
+  const rungs = [];
+  for (let i = 0; i < 120; i++) {
+    const geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.2, 32);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(Math.sin(i * 3.14 * 2 / 120) * 2.5, i * 0.4, Math.cos(i * 3.14 * 2 / 120) * 2.5);
+    group.add(mesh);
+    rungs.push(mesh);
+  }
+  
+  const beads = [];
+  for (let i = 0; i < 120; i++) {
+    const geometry = new THREE.SphereGeometry(0.1, 32, 32);
+    const material = new THREE.MeshBasicMaterial({ color: colors[i % 2] });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(Math.sin(i * 3.14 * 2 / 120) * 2.5, i * 0.4, Math.cos(i * 3.14 * 2 / 120) * 2.5);
+    group.add(mesh);
+    beads.push(mesh);
+  }
+  
+  const light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(-1, 2, 4);
+  scene.add(light);
+  const ambient = new THREE.AmbientLight(0x222222);
+  scene.add(ambient);
+  
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  
+  let time = 0;
+  const animate = () => {
+    requestAnimationFrame(animate);
+    group.rotation.x += 0.005;
+    group.rotation.y += 0.003;
+    beads.forEach((b, i) => {
+      b.scale.y = 1 + 0.05 * Math.cos(time * 0.1 + i * 3.14 * 2 / 120);
+    });
+    time += 0.01;
+    renderer.render(scene, camera);
+  };
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
+</body>
+</html>

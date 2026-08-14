@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-09T02:07:02.601Z",
+  "request": "a python habit tracker named main.py that tracks a 'exercise' habit across 3 consecutive days (day 1, day 2, day 3 all completed) and prints 'Current streak: 3'\n\n[REPAIR — previous build failed acceptance testing]\nmissing expected output: 'Current streak: 3'\nACTUAL OUTPUT: Current streak: 0\n\n",
+  "intent": {
+    "goal": "python habit tracker named main.py that tracks a 'exercise' habit across 3 consecutive days (day 1, day 2, day 3 all completed) and prints 'Current streak: 3' [",
+    "targetUser": "",
+    "coreFeatures": [
+      "habit tracking / streaks"
+    ],
+    "uiStyle": "",
+    "language": "python"
+  },
+  "questions": [
+    {
+      "key": "storage",
+      "question": "How should we persist the streak state? Should it be in-memory or should we use a file-based store?",
+      "options": [
+        "in-memory",
+        "file-based"
+      ]
+    }
+  ],
+  "answers": {
+    "storage": "in-memory"
+  },
+  "planFiles": [
+    {
+      "path": "main.py",
+      "summary": "Habit tracker entry point: handles state and streak logic",
+      "language": "python",
+      "exports": []
+    }
+  ],
+  "mode": "per-file",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nmodelVeronice.txt sections: 1. PROJECT OVERVIEW, 2. RUNNING SERVICES (as of scan time), 3. RUNTIME TOOLS, 4. FRONTEND APPLICATION, 5. BACKEND APPLICATION, 6. LLM CONFIGURATION, 7. INSTALLED OLLAMA MODELS, 8. LOCAL GGUF MODELS, 9. DATA & KNOWLEDGE STORES, 10. TRAINING SYSTEM, 11. SYSTEM MONITOR DAEMON, 12. GENERATED PROJECTS (projects/), 13. PROFILE & USER\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node (python).\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-patter\n…(truncated)",
+  "files": [
+    "main.py"
+  ]
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Maze Explorer</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #canvas { width: 100vw; height: 100vh; }
+        #minimap { position: absolute; top: 10px; left: 10px; width: 200px; height: 200px; background: rgba(0, 0, 0, 0.5); color: white; border-radius: 10px; padding: 10px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="minimap"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas')
+        const scene = new THREE.Scene()
+        const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth/canvas.clientHeight, 0.1, 1000)
+        camera.position.set(0, 5, 10)
+        const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true})
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight)
+        const controls = new THREE.OrbitControls(camera, canvas)
+        controls.target.set(0, 1, 0)
+        controls.update()
+        const clock = new THREE.Clock()
+        const maze = new Array(10).fill().map(() => new Array(10).fill(true))
+        const colors = ['#FF0000', '#00FF00', '#0000FF']
+        const goal = new THREE.Vector3(5, 1, 5)
+        const goalMarker = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), new THREE.MeshBasicMaterial({color: 0xFFFF00}))
+        goalMarker.position.set(5, 1, 5)
+        scene.add(goalMarker)
+        const mazeMeshes = []
+        for (let x = 0; x < 10; x++) {
+            for (let y = 0; y < 10; y++) {
+                const wall = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({color: colors[Math.floor(Math.random() * colors.length)]}))
+                wall.position.set(x, 0.5, y)
+                wall.rotation.x = Math.PI / 2
+                if (!maze[x][y]) wall.visible = false
+                scene.add(wall)
+                mazeMeshes.push(wall)
+            }
+        }
+        const raycaster = new THREE.Raycaster()
+        const mouse = new THREE.Vector2()
+        function update() {
+            const time = clock.getElapsedTime()
+            const speed = 0.2
+            const dt = clock.getDelta()
+            const delta = new THREE.Vector3(0, 0, 0)
+            if (input.w) delta.z += speed
+            if (input.s) delta.z -= speed
+            if (input.a) delta.x -= speed
+            if (input.d) delta.x += speed
+            if (delta.length() > 0) {
+                raycaster.setFromCamera(new THREE.Vector3(0, 0, 1), camera)
+                const intersects = raycaster.intersectObjects(mazeMeshes)
+                if (intersects.length > 0 && intersects[0].distance < delta.length()) {
+                    if (delta.x !== 0) delta.x = 0
+                    if (delta.z !== 0) delta.z = 0
+                } else {
+                    camera.position.add(delta.clone().multiplyScalar(dt))
+                }
+                if (camera.position.distanceTo(goal) < 1) {
+                    scene.remove(goalMarker)
+                    alert('You win!')
+                }
+            }
+            controls.update()
+            renderer.render(scene, camera)
+        }
+        function onWindowResize() {
+            camera.aspect = canvas.clientWidth/canvas.clientHeight
+            camera.updateProjectionMatrix()
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight)
+        }
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / canvas.clientWidth) * 2 - 1
+            mouse.y = -(event.clientY / canvas.clientHeight) * 2 + 1
+            raycaster.setFromCamera(mouse, camera)
+            const intersects = raycaster.intersectObjects([goalMarker])
+            if (intersects.length > 0) {
+                minimap.style.opacity = 1
+                minimap.style.transform = `translate(-50%, -50%) scale(${canvas.clientWidth / 200}, ${canvas.clientHeight / 200})`
+                minimap.style.left = `${50 - canvas.clientWidth / 2}%`
+                minimap.style.top = `${50 - canvas.clientHeight / 2}%`
+                minimap.innerHTML = `
+                    <div style="width: ${100 * canvas.clientWidth / 200}px; height: ${100 * canvas.clientHeight / 200}px; background: #000; border-radius: 10px; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">${Math.round(clock.getElapsedTime())}</div>
+                    <div style="width: ${100 * canvas.clientWidth / 200}px; height: ${100 * canvas.clientHeight / 200}px; background: rgba(0, 0, 0, 0.5); border-radius: 10px; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center;"></div>
+                `
+            } else {
+                minimap.style.opacity = 0
+            }
+        }
+        function onPointerDown(event) {
+            if (event.button === 0) {
+                const raycaster = new THREE.Raycaster()
+                const mouse = new THREE.Vector2()
+                mouse.x = (event.clientX / canvas.clientWidth) * 2 - 1
+                mouse.y = -(event.clientY / canvas.clientHeight) * 2 + 1
+                raycaster.setFromCamera(mouse, camera)
+                const intersects = raycaster.intersectObjects([goalMarker])
+                if (intersects.length > 0) {
+                    goalMarker.position.set(goal.x, goal.y, goal.z)
+                }
+            }
+        }
+        const input = {w: false, s: false, a: false, d: false}
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'w') input.w = true
+            if (event.key === 's') input.s = true
+            if (event.key === 'a') input.a = true
+            if (event.key === 'd') input.d = true
+        })
+        document.addEventListener('keyup', (event) => {
+            if (event.key === 'w') input.w = false
+            if (event.key === 's') input.s = false
+            if (event.key === 'a') input.a = false
+            if (event.key === 'd') input.d = false
+        })
+        function animate() {
+            update()
+            requestAnimationFrame(animate)
+        }
+        window.addEventListener('resize', onWindowResize)
+        window.addEventListener('mousemove', onMouseMove)
+        window.addEventListener('mousedown', onPointerDown)
+        animate()
+    </script>
+</body>
+</html>

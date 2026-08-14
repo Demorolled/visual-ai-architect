@@ -1,0 +1,91 @@
+{
+  "projectName": "chess game",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785180509076_80q8al",
+      "type": "logic",
+      "label": "index.go",
+      "description": "Entry point bringing all other components together. Handles cli flags, starts game and serves API.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1785180509076_nhjd23",
+      "type": "logic",
+      "label": "repository.go",
+      "description": "SQL database layer with all game state management.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785180509076_2tbx0y",
+      "type": "api",
+      "label": "service.go",
+      "description": "Main logic layer with chess game state and piece management.",
+      "language": "go",
+      "position": {
+        "x": 600,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785180509076_nf10am",
+      "type": "api",
+      "label": "handler.go",
+      "description": "HTTP API handling game operations.",
+      "language": "go",
+      "position": {
+        "x": 800,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785180509076_x6qdn7",
+      "type": "ui",
+      "label": "ui.go",
+      "description": "User-facing interface for playing chess.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 400
+      }
+    },
+    {
+      "id": "node_1785180509076_3volna",
+      "type": "database",
+      "label": "repository.go",
+      "description": "Data persistence layer. Manages application data in SQLite. Handles CRUD operations, connection pooling, and data validation. Exports: Create, Read, Update, Delete, List methods.",
+      "language": "go",
+      "position": {
+        "x": 900,
+        "y": 650
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785180509076_3volna",
+      "target": "node_1785180509076_2tbx0y"
+    },
+    {
+      "source": "node_1785180509076_2tbx0y",
+      "target": "node_1785180509076_nf10am"
+    },
+    {
+      "source": "node_1785180509076_nf10am",
+      "target": "node_1785180509076_80q8al"
+    },
+    {
+      "source": "node_1785180509076_x6qdn7",
+      "target": "node_1785180509076_nf10am"
+    }
+  ],
+  "createdAt": "2026-07-27T19:31:10.289Z"
+}

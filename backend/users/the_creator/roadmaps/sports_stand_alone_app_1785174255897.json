@@ -1,0 +1,132 @@
+{
+  "projectName": "sports stand alone app",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785173429164_fjhv18",
+      "type": "logic",
+      "label": "main.go",
+      "description": "Main CLI entry point that boots the entire application.",
+      "language": "go",
+      "position": {
+        "x": 50,
+        "y": 137
+      }
+    },
+    {
+      "id": "node_1785173429164_1lv5ic",
+      "type": "ui",
+      "label": "sports-stakes-form",
+      "description": "Windows form interface for sports scheduling and management.",
+      "language": "c#",
+      "position": {
+        "x": 386,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1785173429164_sm7tu1",
+      "type": "database",
+      "label": "data-repository",
+      "description": "SQLite data storage layer with basic CRUD operations for sports records.",
+      "language": "sqlite",
+      "position": {
+        "x": 271,
+        "y": 360
+      }
+    },
+    {
+      "id": "node_1785173429164_ef4qcx",
+      "type": "logic",
+      "label": "sports-service",
+      "description": "Service that handles dynamic match status updates and tournament management.",
+      "language": "go",
+      "position": {
+        "x": 547,
+        "y": 183
+      }
+    },
+    {
+      "id": "node_1785173429164_ciqgfy",
+      "type": "logic",
+      "label": "ui-sports-functions",
+      "description": "UI components for sports-related functions like view bracket or manage teams.",
+      "language": "c#",
+      "position": {
+        "x": 547,
+        "y": 182
+      }
+    },
+    {
+      "id": "node_1785173429164_o9eb6n",
+      "type": "database",
+      "label": "repository.go",
+      "description": "SQLite repository for sports-related data queries and updates.",
+      "language": "go",
+      "position": {
+        "x": 396,
+        "y": 274
+      }
+    },
+    {
+      "id": "node_1785173429164_3j12gu",
+      "type": "logic",
+      "label": "sports-view-functions",
+      "description": "Viewports for detailed sports information management in windows.",
+      "language": "c#",
+      "position": {
+        "x": 396,
+        "y": 274
+      }
+    },
+    {
+      "id": "node_1785173429164_jj7bca",
+      "type": "logic",
+      "label": "sports-log",
+      "description": "Logs and error handler for sports-related functions.",
+      "language": "go",
+      "position": {
+        "x": 507,
+        "y": 316
+      }
+    },
+    {
+      "id": "node_1785173429164_z5lx24",
+      "type": "api",
+      "label": "handlers.cs",
+      "description": "API request handlers. Routes incoming requests to business logic, validates input, formats JSON responses. Handles HTTP methods (GET, POST, PUT, DELETE). Imports: service, types.",
+      "language": "csharp",
+      "position": {
+        "x": 647,
+        "y": 760
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785173429164_o9eb6n",
+      "target": "node_1785173429164_3j12gu"
+    },
+    {
+      "source": "node_1785173429164_3j12gu",
+      "target": "node_1785173429164_jj7bca"
+    },
+    {
+      "source": "node_1785173429164_3j12gu",
+      "target": "node_1785173429164_ef4qcx"
+    },
+    {
+      "source": "node_1785173429164_jj7bca",
+      "target": "node_1785173429164_ef4qcx"
+    },
+    {
+      "source": "node_1785173429164_ef4qcx",
+      "target": "node_1785173429164_sm7tu1"
+    },
+    {
+      "source": "node_1785173429164_sm7tu1",
+      "target": "node_1785173429164_fjhv18"
+    }
+  ],
+  "createdAt": "2026-07-27T17:44:15.897Z"
+}

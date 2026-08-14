@@ -1,0 +1,35 @@
+{
+  "projectName": "stand alone tic tac toe game — ",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "logic",
+      "label": "game",
+      "description": "Tic Tac Toe game loop: handles game state, turn order, input validation, move validation, and UI rendering",
+      "language": "typescript",
+      "position": {
+        "x": 150,
+        "y": 280
+      }
+    },
+    {
+      "id": "node_1",
+      "type": "input",
+      "label": "index",
+      "description": "Single self-contained GUI page (HTML + CSS + JS inline, no build step) that renders the complete app interface and wires it to the logic. This is what makes the app viewable in the browser preview — build the full UI here. STRICT RULES: (1) do NOT reference external files — no <script src=\"...\">, no <link href=\"...\">, no CSS or JS files; the preview iframe cannot load external files, so inline ALL CSS in a <style> tag and ALL JavaScript in a <script> tag directly in this file; (2) plain browser JavaScript only — no React, no TypeScript, no imports, no JSX, no build step; (3) include working inline code that actually renders the interface so the page is never blank.",
+      "language": "html",
+      "position": {
+        "x": 370,
+        "y": 280
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_0",
+      "target": "node_1"
+    }
+  ],
+  "createdAt": "2026-08-08T15:52:14.625Z"
+}

@@ -1,0 +1,51 @@
+{
+  "app_type": "wallet-ts",
+  "description": "fintech wallet: balance tracking, categorized transactions, peer transfers with idempotency, virtual cards, monthly statements.",
+  "keywords": [
+    "wallet-ts",
+    "typescript",
+    "digital",
+    "wallet",
+    "wallets",
+    "transactions",
+    "transfers",
+    "cards",
+    "statements"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "wallets",
+    "transactions",
+    "transfers",
+    "cards",
+    "statements"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "wallets",
+      "destination_module": "transactions",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "transactions",
+      "destination_module": "transfers",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "transfers",
+      "destination_module": "cards",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "cards",
+      "destination_module": "statements",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

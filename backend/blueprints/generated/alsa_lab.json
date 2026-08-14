@@ -1,0 +1,52 @@
+{
+  "app_type": "alsa_lab",
+  "description": "Linux ALSA PCM capture/playback, MIDI, and audio DSP effects — ALSA audio lab: PCM hw/sw params, mmap, xrun, MIDI I/O, DSP effects, latency measure",
+  "keywords": [
+    "alsa",
+    "audio",
+    "linux",
+    "sound",
+    "alsa",
+    "lab",
+    "audio config",
+    "alsa engine",
+    "dsp processor",
+    "audio store",
+    "audio dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Audio Config",
+    "ALSA Engine",
+    "DSP Processor",
+    "Audio Store",
+    "Audio Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Audio Config",
+      "destination_module": "ALSA Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "ALSA Engine",
+      "destination_module": "DSP Processor",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "DSP Processor",
+      "destination_module": "Audio Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Audio Store",
+      "destination_module": "Audio Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

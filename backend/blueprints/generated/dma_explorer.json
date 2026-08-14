@@ -1,0 +1,52 @@
+{
+  "app_type": "dma_explorer",
+  "description": "DMA controller simulator: scatter-gather, descriptor rings, interrupts — DMA simulation: mem-to-mem/device, descriptor rings, scatter-gather, interrupt on completion",
+  "keywords": [
+    "dma",
+    "hardware",
+    "memory",
+    "low-level",
+    "dma",
+    "explorer",
+    "transfer config",
+    "dma controller",
+    "scatter-gather",
+    "transfer store",
+    "dma viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Transfer Config",
+    "DMA Controller",
+    "Scatter-Gather",
+    "Transfer Store",
+    "DMA Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Transfer Config",
+      "destination_module": "DMA Controller",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "DMA Controller",
+      "destination_module": "Scatter-Gather",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Scatter-Gather",
+      "destination_module": "Transfer Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Transfer Store",
+      "destination_module": "DMA Viewer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

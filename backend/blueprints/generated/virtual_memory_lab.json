@@ -1,0 +1,53 @@
+{
+  "app_type": "virtual_memory_lab",
+  "description": "Virtual memory simulator: page tables, TLB, MMU, paging, swapping — Educational VM sim: multi-level page tables, TLB LRU, page faults, swapping, addr translation",
+  "keywords": [
+    "virtual-memory",
+    "mmu",
+    "paging",
+    "tlb",
+    "virtual",
+    "memory",
+    "lab",
+    "memory config",
+    "mmu simulator",
+    "page fault handler",
+    "memory state",
+    "memory viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Memory Config",
+    "MMU Simulator",
+    "Page Fault Handler",
+    "Memory State",
+    "Memory Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Memory Config",
+      "destination_module": "MMU Simulator",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "MMU Simulator",
+      "destination_module": "Page Fault Handler",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Page Fault Handler",
+      "destination_module": "Memory State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Memory State",
+      "destination_module": "Memory Viewer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

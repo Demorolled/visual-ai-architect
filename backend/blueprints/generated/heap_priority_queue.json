@@ -1,0 +1,54 @@
+{
+  "app_type": "heap_priority_queue",
+  "description": "Min-heap and max-heap visualizer with heapify, push/pop, and heap sort animations — Visualizes binary heap operations: sift-up, sift-down, heapify, extract-min/max, decrease-key. Shows array representation alongside tree view with complete/invariant check",
+  "keywords": [
+    "heap",
+    "priority-queue",
+    "heapify",
+    "heap-sort",
+    "data-structures",
+    "heap",
+    "priority",
+    "queue",
+    "heap controller",
+    "heap engine",
+    "array store",
+    "tree view",
+    "array view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Heap Controller",
+    "Heap Engine",
+    "Array Store",
+    "Tree View",
+    "Array View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Heap Controller",
+      "destination_module": "Heap Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Heap Engine",
+      "destination_module": "Array Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Array Store",
+      "destination_module": "Tree View",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Tree View",
+      "destination_module": "Array View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

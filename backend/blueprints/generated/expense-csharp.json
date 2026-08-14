@@ -1,0 +1,51 @@
+{
+  "app_type": "expense-csharp",
+  "description": "finance manager: account tracking, categorized transactions, budget envelopes, report queries.",
+  "keywords": [
+    "expense-csharp",
+    "csharp",
+    "personal",
+    "finance",
+    "accounts",
+    "transactions",
+    "budgets",
+    "categories",
+    "reports"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "accounts",
+    "transactions",
+    "budgets",
+    "categories",
+    "reports"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "accounts",
+      "destination_module": "transactions",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "transactions",
+      "destination_module": "budgets",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "budgets",
+      "destination_module": "categories",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "categories",
+      "destination_module": "reports",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

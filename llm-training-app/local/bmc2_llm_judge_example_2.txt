@@ -1,0 +1,27 @@
+{
+  'sql_prompt': 'How many faculty lines are there in the university that conferred the most number of degrees in year 2002?',
+  'sql_context': 'CREATE TABLE campuses (id VARCHAR); CREATE TABLE faculty (faculty VARCHAR); CREATE TABLE degrees (Id VARCHAR)',
+  'sql': 'SELECT T2.faculty FROM campuses AS T1 JOIN faculty AS T2 ON T1.id = t2.campus JOIN degrees AS T3 ON T1.id = t3.campus AND t2.year = t3.year WHERE t2.year = 2002 ORDER BY t3.degrees DESC LIMIT 1',
+  'llmj': {
+    'criterion_a': {
+      'score': 0,
+      'reasoning': 'The generated SQL query does not adhere to the instructions provided. It does not attempt to find the university that conferred the most number of degrees in 2002 before counting the faculty lines. Instead, it directly tries to select ‘faculty’ aliased as ‘T2’ without the necessary aggregation to find the maximum, and there is no count of faculty lines.'
+    },
+    'criterion_b': {
+      'score': 0,
+      'reasoning': "The query does not execute properly according to the prompt. It fails to determine which university conferred the most degrees in 2002, and doesn't perform a count of faculty lines. Additionally, the query references columns 't2.campus', 't2.year', and 't3.degrees' that do not exist based on the context provided, and it uses an ORDER BY clause incorrectly expecting to find a maximum value."
+    },
+    'criterion_c': {
+      'score': 1,
+      'reasoning': "The code is difficult to read due to a lack of formatting and consistent alias use — for example, 'T1.id = t2.campus' mixes lowercase and uppercase. The use of T1, T2, T3 as aliases does not provide clear context for what each table represents, reducing readability."
+    },
+    'criterion_d': {
+      'score': 1,
+      'reasoning': 'The query is not designed to scale due to incorrect logic and lack of proper aggregation functions. This would lead to performance issues when dealing with larger datasets and more complex queries, as the ORDER BY clause won’t suffice for determining the university with the most degrees conferred.'
+    },
+    'criterion_e': {
+      'score': 1,
+      'reasoning': 'While the query follows some basic SQL syntax, it lacks adherence to best practices, such as providing descriptive aliases and ensuring proper use of JOIN clauses with existing columns. The attempt to order results before aggregating to find a maximum is also not standard SQL practice.'
+    }
+  }
+}

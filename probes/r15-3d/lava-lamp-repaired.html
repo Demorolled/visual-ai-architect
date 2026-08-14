@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>3D Lava Lamp</title>
+	<style>
+		body { margin: 0; overflow: hidden; background: #000; }
+		#scene { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; }
+	</style>
+</head>
+<body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+	<script>
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		const light = new THREE.DirectionalLight(0xffffff, 1);
+		light.position.set(-1, 2, 2);
+		scene.add(light);
+		const ambient = new THREE.AmbientLight(0x404040);
+		scene.add(ambient);
+
+		const glass = new THREE.CylinderGeometry(2, 2, 3, 32);
+		const glassMat = new THREE.MeshBasicMaterial({ color: 0x6666ff, transparent: true, opacity: 0.5 });
+		const glassMesh = new THREE.Mesh(glass, glassMat);
+		scene.add(glassMesh);
+
+		const blobs = [];
+		for (let i = 0; i < 50; i++) {
+			const blob = new THREE.Mesh(new THREE.SphereGeometry(0.25 + Math.random() * 0.5, 32, 32), new THREE.MeshBasicMaterial({ color: 0xff6633, transparent: true, opacity: 0.8 }));
+			blob.position.set((Math.random() - 0.5) * 4, 0, (Math.random() - 0.5) * 4);
+			blob.velocity = new THREE.Vector3(0, 0, 0);
+			blobs.push(blob);
+			scene.add(blob);
+		}
+
+		camera.position.z = 5;
+
+		function animate() {
+			requestAnimationFrame(animate);
+			blobs.forEach(blob => {
+				blob.position.y += blob.velocity.y * 0.01;
+				if (blob.position.y > 2.5) {
+					blob.velocity.y = -(0.5 + Math.random() * 0.5);
+					blob.position.y = 2.5;
+				}
+				if (blob.position.y < -2.5) {
+					blob.velocity.y = (0.5 + Math.random() * 0.5);
+					blob.position.y = -2.5;
+				}
+				blob.rotation.x += 0.01;
+				blob.rotation.y += 0.01;
+				blob.scale.set(1 + Math.pow(Math.sin(blob.position.y * 2), 2) * 0.2, 1 + Math.pow(Math.sin(blob.position.y * 2), 2) * 0.2, 1 + Math.pow(Math.sin(blob.position.y * 2), 2) * 0.2);
+				blob.velocity.y += 0.01;
+			});
+			renderer.render(scene, camera);
+		}
+		animate();
+	</script>
+</body>
+</html>

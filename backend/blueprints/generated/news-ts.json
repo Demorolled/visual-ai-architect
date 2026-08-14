@@ -1,0 +1,51 @@
+{
+  "app_type": "news-ts",
+  "description": "RSS-style aggregation: feed subscriptions, deduped article ingestion, user bookmarks, keyword alerts.",
+  "keywords": [
+    "news-ts",
+    "typescript",
+    "news",
+    "aggregator",
+    "feeds",
+    "articles",
+    "users",
+    "bookmarks",
+    "alerts"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "feeds",
+    "articles",
+    "users",
+    "bookmarks",
+    "alerts"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "feeds",
+      "destination_module": "articles",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "articles",
+      "destination_module": "users",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "users",
+      "destination_module": "bookmarks",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "bookmarks",
+      "destination_module": "alerts",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

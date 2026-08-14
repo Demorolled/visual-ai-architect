@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spiral Galaxy</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: system-ui, sans-serif; }
+  #scene { position: fixed; inset: 0; }
+  canvas { display: block; }
+  #controls { position: fixed; bottom: 12px; left: 12px; z-index: 10; }
+  #controls button { background: rgba(10,10,20,0.82); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 6px 14px; font-size: 13px; cursor: pointer; outline: none; transition: transform 0.125s, background 0.125s, color 0.125s; }
+  #controls button:hover { transform: translateX(2px); }
+  #controls button:active { transform: translateX(2px) scale(0.975); }
+  #count { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 10; color: rgba(255,255,255,0.3); font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="controls">
+  <button id="regen">Regenerate</button>
+  <div id="count">8 arms</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('scene').appendChild(renderer.domElement);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+camera.position.set(0, 12, 20);
+const light = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+const core = new THREE.SphereGeometry(2, 20, 20);
+const coreMat = new THREE.MeshBasicMaterial({ color: 0xff9050, transparent: true, opacity: 0.5 });
+const coreMesh = new THREE.Mesh(core, coreMat);
+scene.add(coreMesh);
+const armCount = 8;
+const armLength = 32;
+const armWidth = 0.3;
+const armDepth = 0.2;
+const armSegments = 60;
+const armMat = new THREE.MeshBasicMaterial({ color: 0x4080ff, transparent: true, opacity: 0.85 });
+const arms = [];
+for (let i = 0; i < armCount; i++) {
+  const angle = i * (2 * Math.PI / armCount);
+  const arm = new THREE.CylinderGeometry(armWidth, armWidth, armLength, armSegments);
+  const mesh = new THREE.Mesh(arm, armMat);
+  mesh.position.set(Math.cos(angle) * armLength, 0, Math.sin(angle) * armLength);
+  mesh.rotation.x = Math.PI / 2;
+  scene.add(mesh);
+  arms.push(mesh);
+}
+const update = () => {
+  arms.forEach((arm, i) => {
+    const angle = i * (2 * Math.PI / armCount);
+    const t = Math.sin(Date.now() / 1000) * Math.PI / 2 + angle;
+    arm.position.set(Math.cos(t) * armLength, 0, Math.sin(t) * armLength);
+    arm.rotation.z = (Date.now() / 1000) * 0.25;
+  });
+  renderer.render(scene, camera);
+};
+const regen = () => {
+  scene.remove(coreMesh);
+  scene.remove(...arms);
+  arms.length = 0;
+  scene.remove(light);
+  coreMesh.geometry.dispose();
+  coreMesh.material.dispose();
+  coreMat.dispose();
+  coreMesh = null;
+  core = null;
+  light = null;
+  coreMat = null;
+  for (let i = 0; i < armCount; i++) {
+    arms[i].geometry.dispose();
+    arms[i].material.dispose();
+    arms[i] = null;
+  }
+  core = new THREE.SphereGeometry(2, 20, 20);
+  coreMat = new THREE.MeshBasicMaterial({ color: 0xff9050, transparent: true, opacity: 0.5 });
+  coreMesh = new THREE.Mesh(core, coreMat);
+  scene.add(coreMesh);
+  for (let i = 0; i < armCount; i++) {
+    const arm = new THREE.CylinderGeometry(armWidth, armWidth, armLength, armSegments);
+    const mesh = new THREE.Mesh(arm, armMat);
+    mesh.position.set(Math.cos(i * (2 * Math.PI / armCount)) * armLength, 0, Math.sin(i * (2 * Math.PI / armCount)) * armLength);
+    mesh.rotation.x = Math.PI / 2;
+    scene.add(mesh);
+    arms.push(mesh);
+  }
+  light = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+  scene.add(light);
+  window.requestAnimationFrame(update);
+};
+window.requestAnimationFrame(update);
+document.getElementById('regen').addEventListener('click', regen);
+</script>
+</body>
+</html>

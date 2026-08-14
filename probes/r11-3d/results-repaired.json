@@ -1,0 +1,150 @@
+[
+  {
+    "pass": false,
+    "file": "solar-system-repaired.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitPath is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/solar-system-repaired-shot.png",
+    "name": "solar-system",
+    "repaired": true
+  },
+  {
+    "pass": false,
+    "file": "chess-repaired.html",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "Failed to load resource: the server responded with a status of 404 ()"
+    ],
+    "pageErrors": [],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/chess-repaired-shot.png",
+    "name": "chess",
+    "repaired": true
+  },
+  {
+    "pass": true,
+    "file": "maze-explorer-repaired.html",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/maze-explorer-repaired-shot.png",
+    "name": "maze-explorer",
+    "repaired": true
+  },
+  {
+    "pass": false,
+    "file": "terrain-viewer-repaired.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OctaveNoise is not a constructor",
+      "Cannot read properties of undefined (reading 'animate')"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/terrain-viewer-repaired-shot.png",
+    "name": "terrain-viewer",
+    "repaired": true
+  },
+  {
+    "pass": false,
+    "file": "fireworks.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "Identifier 'firework' has already been declared"
+    ],
+    "canvas": {
+      "found": false
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/fireworks-repaired-shot.png",
+    "name": "fireworks",
+    "repaired": false
+  },
+  {
+    "pass": true,
+    "file": "product-showcase-repaired.html",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/product-showcase-repaired-shot.png",
+    "name": "product-showcase",
+    "repaired": true
+  },
+  {
+    "pass": false,
+    "file": "bar-chart-repaired.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "Cannot read properties of null (reading 'style')"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/bar-chart-repaired-shot.png",
+    "name": "bar-chart",
+    "repaired": true
+  },
+  {
+    "pass": true,
+    "file": "rubiks-cube-repaired.html",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r11-3d/rubiks-cube-repaired-shot.png",
+    "name": "rubiks-cube",
+    "repaired": true
+  }
+]

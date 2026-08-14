@@ -1,0 +1,52 @@
+{
+  "app_type": "mcu_simulator",
+  "description": "ARM Cortex-M MCU simulator with GPIO, timers, UART, and interrupts — Simulated MCU: ARM Thumb-2, GPIO, timers/PWM, NVIC, UART, SPI, I2C, ADC cycle-level",
+  "keywords": [
+    "embedded",
+    "simulator",
+    "arm",
+    "mcu",
+    "mcu",
+    "simulator",
+    "peripheral config",
+    "cpu simulator",
+    "peripheral models",
+    "sim state",
+    "debug dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Peripheral Config",
+    "CPU Simulator",
+    "Peripheral Models",
+    "Sim State",
+    "Debug Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Peripheral Config",
+      "destination_module": "CPU Simulator",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "CPU Simulator",
+      "destination_module": "Peripheral Models",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Peripheral Models",
+      "destination_module": "Sim State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Sim State",
+      "destination_module": "Debug Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

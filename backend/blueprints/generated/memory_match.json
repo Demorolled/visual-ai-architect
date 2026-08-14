@@ -1,0 +1,53 @@
+{
+  "app_type": "memory_match",
+  "description": "Card matching memory game with flip animation, timer, and score tracking — Match pairs of cards from a shuffled deck with face-down/face-up flip animation, card matching logic, move counting, timer, and score tracking",
+  "keywords": [
+    "memory",
+    "game",
+    "matching",
+    "puzzle",
+    "classic",
+    "memory",
+    "match",
+    "card grid input",
+    "match engine",
+    "game state",
+    "memory board",
+    "score hud"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Card Grid Input",
+    "Match Engine",
+    "Game State",
+    "Memory Board",
+    "Score HUD"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Card Grid Input",
+      "destination_module": "Match Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Match Engine",
+      "destination_module": "Game State",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Memory Board",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Memory Board",
+      "destination_module": "Score HUD",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,51 @@
+{
+  "app_type": "jobboard-go",
+  "description": "recruitment platform: company profiles, job listings, candidate resumes, applications with status flow, skill-based matching.",
+  "keywords": [
+    "jobboard-go",
+    "go",
+    "job",
+    "board",
+    "companies",
+    "jobs",
+    "candidates",
+    "applications",
+    "matches"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "companies",
+    "jobs",
+    "candidates",
+    "applications",
+    "matches"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "companies",
+      "destination_module": "jobs",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "jobs",
+      "destination_module": "candidates",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "candidates",
+      "destination_module": "applications",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "applications",
+      "destination_module": "matches",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 33
+}

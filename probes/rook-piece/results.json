@@ -1,0 +1,16 @@
+{
+ "instruction": "Build a 3D Rook chess piece",
+ "raw_pass": false,
+ "repaired_pass": true,
+ "raw_errors": [
+  "Identifier 'top' has already been declared"
+ ],
+ "repaired_errors": [],
+ "functional": {
+  "meshCount": 9,
+  "cylCount": 9,
+  "boxCount": 0,
+  "hasScene": true
+ },
+ "functional_ok": true
+}

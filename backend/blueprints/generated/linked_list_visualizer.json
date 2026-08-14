@@ -1,0 +1,61 @@
+{
+  "app_type": "linked_list_visualizer",
+  "description": "Interactive singly/doubly/circular linked list with pointer manipulation visualization — Teaches pointer-based data structures through visual node-link diagrams. Supports insert/delete/reverse/cycle detection with step animations showing next/prev pointer updates",
+  "keywords": [
+    "linked-list",
+    "pointers",
+    "data-structures",
+    "visualization",
+    "education",
+    "linked",
+    "list",
+    "visualizer",
+    "list controller",
+    "pointer engine",
+    "node store",
+    "cycle detector",
+    "node graph renderer",
+    "pointer inspector"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "List Controller",
+    "Pointer Engine",
+    "Node Store",
+    "Cycle Detector",
+    "Node Graph Renderer",
+    "Pointer Inspector"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "List Controller",
+      "destination_module": "Pointer Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Pointer Engine",
+      "destination_module": "Node Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Node Store",
+      "destination_module": "Cycle Detector",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Cycle Detector",
+      "destination_module": "Node Graph Renderer",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Node Graph Renderer",
+      "destination_module": "Pointer Inspector",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,243 @@
+{
+  "generated": "2026-08-06T09:26:10",
+  "endpoint": "http://127.0.0.1:8000/v1/chat/completions",
+  "samples": 15,
+  "temperature": 0.2,
+  "parse_rate_pct": 86.7,
+  "keys_rate_pct": 86.7,
+  "types_rate_pct": 86.7,
+  "known_app_type_rate_pct": 80.0,
+  "exact_app_type_rate_pct": 80.0,
+  "full_fidelity_rate_pct": 66.7,
+  "overall_ok_rate_pct": 66.7,
+  "cases": [
+    {
+      "instruction": "Build me an app for Content management system with articles, categories, tags, comments, author editing workflows, and publishing controls.",
+      "expected_app_type": "blog_cms",
+      "got_app_type": "content_manager",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": false
+      },
+      "ok": false,
+      "elapsed_s": 3.5,
+      "output_preview": "{\"app_type\":\"content_manager\",\"description\":\"Content management system with articles, categories, tags, comments, author editing workflows, and publishing controls.\",\"keywords\":[\"content\",\"manager\",\"articles\",\"categories\",\"tags\",\"comments\",\"author\",\"edit\",\"publishing\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"article_models\",\"category_models\",\"tag_models\",\"comment_models\",\"author_models\",\"publishing_models\"],\"wiri"
+    },
+    {
+      "instruction": "I need a tool that COW page sharing and fork optimization visualization — Interactive copy-on-write lab with real-time visualization and analysis",
+      "expected_app_type": "copy_on_write_lab_2",
+      "got_app_type": "copy_on_write_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.07,
+      "output_preview": "{\"app_type\":\"copy_on_write_lab_2\",\"description\":\"COW page sharing and fork optimization visualization — Interactive copy-on-write lab with real-time visualization and analysis\",\"keywords\":[\"systems\",\"copy-on-write\",\"memory\",\"fork\",\"systems\",\"copy\",\"on\",\"write\",\"lab\",\"system config\",\"core engine\",\"data collection\",\"analysis module\",\"dashboard view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"System Config\",\"Core Engine\",\"Data Col"
+    },
+    {
+      "instruction": "I need a tool that Color Palette Generator. 🎨 Color Palette Generator",
+      "expected_app_type": "color_palette",
+      "got_app_type": "color_palette",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 2.09,
+      "output_preview": "{\"app_type\":\"color_palette\",\"description\":\"Color Palette Generator. 🎨 Color Palette Generator\",\"keywords\":[\"color\",\"palette\",\"generator\",\"color\",\"palette\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"d"
+    },
+    {
+      "instruction": "I want a Currency Converter 2 app. Currency converter with live rates and historical charts — Interactive currency converter with real-time visualization and analysis",
+      "expected_app_type": "currency_converter_2",
+      "got_app_type": "currency_converter_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 2.85,
+      "output_preview": "{\"app_type\":\"currency_converter_2\",\"description\":\"Currency converter with live rates and historical charts — Interactive currency converter with real-time visualization and analysis\",\"keywords\":[\"currency\",\"converter\",\"exchange\",\"finance\",\"currency\",\"converter\",\"currency selector\",\"exchange engine\",\"rate store\",\"chart renderer\",\"dashboard view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Currency Selector\",\"Exchange Engine\",\"Rat"
+    },
+    {
+      "instruction": "I need a tool that Loki LogQL query builder for log aggregation — Interactive loki logql lab with real-time visualization and analysis",
+      "expected_app_type": "loki_logql_lab_2",
+      "got_app_type": "loki_logql_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.22,
+      "output_preview": "{\"app_type\":\"loki_logql_lab_2\",\"description\":\"Loki LogQL query builder for log aggregation — Interactive loki logql lab with real-time visualization and analysis\",\"keywords\":[\"devops\",\"loki\",\"logql\",\"logging\",\"devops\",\"loki\",\"logql\",\"lab\",\"config input\",\"orchestrator\",\"state store\",\"analysis engine\",\"ops dashboard\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Config Input\",\"Orchestrator\",\"State Store\",\"Analysis Engine\",\"Ops Dashb"
+    },
+    {
+      "instruction": "I need a tool that Stackful coroutine implementation with yield/resume — Interactive coroutine lab with real-time visualization and analysis",
+      "expected_app_type": "coroutine_lab_2",
+      "got_app_type": "coroutine_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 2.92,
+      "output_preview": "{\"app_type\":\"coroutine_lab_2\",\"description\":\"Stackful coroutine implementation with yield/resume — Interactive coroutine lab with real-time visualization and analysis\",\"keywords\":[\"systems\",\"coroutine\",\"async\",\"concurrency\",\"systems\",\"coroutine\",\"lab\",\"system config\",\"core engine\",\"data collection\",\"analysis module\",\"dashboard view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"System Config\",\"Core Engine\",\"Data Collection\",\"Analy"
+    },
+    {
+      "instruction": "I want a Naive Bayes Lab 2 app. Naive Bayes classifier with probability visualization — Interactive naive bayes lab with real-time visualization and analysis",
+      "expected_app_type": "naive_bayes_lab_2",
+      "got_app_type": "naive_bayes_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.08,
+      "output_preview": "{\"app_type\":\"naive_bayes_lab_2\",\"description\":\"Naive Bayes classifier with probability visualization — Interactive naive bayes lab with real-time visualization and analysis\",\"keywords\":[\"mathematics\",\"naive-bayes\",\"probability\",\"classification\",\"mathematics\",\"naive\",\"bayes\",\"lab\",\"math input\",\"math engine\",\"data storage\",\"analysis module\",\"visualization\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Math Input\",\"Math Engine\",\"Data"
+    },
+    {
+      "instruction": "Build a Normalization Tool 2 with features for database, schema-design, education, query/config",
+      "expected_app_type": "normalization_tool_2",
+      "got_app_type": "normalization_tool_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.05,
+      "output_preview": "{\"app_type\":\"normalization_tool_2\",\"description\":\"Database normalization tool with schema designer, data migration, and education features — Interactive database tool with real-time visualization and analysis\",\"keywords\":[\"database\",\"database\",\"normalization\",\"schema-design\",\"education\",\"normalization\",\"tool\",\"data store\",\"schema designer\",\"query & config\",\"data engine\",\"results display\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\""
+    },
+    {
+      "instruction": "I'm looking for a Lock Manager Lab 2. Database lock manager with deadlock detection — Interactive lock manager lab with real-time visualization and analysis",
+      "expected_app_type": "lock_manager_lab_2",
+      "got_app_type": "lock_manager_lab_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.01,
+      "output_preview": "{\"app_type\":\"lock_manager_lab_2\",\"description\":\"Database lock manager with deadlock detection — Interactive lock manager lab with real-time visualization and analysis\",\"keywords\":[\"database\",\"lock-manager\",\"concurrency\",\"deadlock\",\"education\",\"lock\",\"manager\",\"lab\",\"query/config\",\"database engine\",\"data store\",\"analysis module\",\"results display\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Query/Config\",\"Database Engine\",\"Data St"
+    },
+    {
+      "instruction": "I need a tool that Raw socket packet crafting and network analysis — Interactive raw socket tool with real-time visualization and analysis",
+      "expected_app_type": "raw_socket_tool_2",
+      "got_app_type": "raw_socket_tool_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.1,
+      "output_preview": "{\"app_type\":\"raw_socket_tool_2\",\"description\":\"Raw socket packet crafting and network analysis — Interactive raw socket tool with real-time visualization and analysis\",\"keywords\":[\"networking\",\"raw-socket\",\"packet\",\"networking\",\"raw\",\"socket\",\"tool\",\"packet builder\",\"raw socket engine\",\"packet analyzer\",\"network visualizer\",\"session store\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Packet Builder\",\"Raw Socket Engine\",\"Packet An"
+    },
+    {
+      "instruction": "I want a Pong Evolution 2 app. Pong with power-ups and AI difficulty levels — Interactive pong evolution with real-time visualization and analysis",
+      "expected_app_type": "pong_evolution_2",
+      "got_app_type": "pong_evolution_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 3.0,
+      "output_preview": "{\"app_type\":\"pong_evolution_2\",\"description\":\"Pong with power-ups and AI difficulty levels — Interactive pong evolution with real-time visualization and analysis\",\"keywords\":[\"game\",\"pong\",\"arcade\",\"physics\",\"games\",\"pong\",\"evolution\",\"game controller\",\"game engine\",\"game state\",\"ai opponent\",\"render view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Game Controller\",\"Game Engine\",\"Game State\",\"AI Opponent\",\"Render View\"],\"wiring"
+    },
+    {
+      "instruction": "Help me build Code Editor. 💻 Code Editor",
+      "expected_app_type": "code_editor",
+      "got_app_type": "code_editor",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": false
+      },
+      "ok": false,
+      "elapsed_s": 2.0,
+      "output_preview": "{\"app_type\":\"code_editor\",\"description\":\"Code Editor. 💻 Code Editor\",\"keywords\":[\"code\",\"editor\",\"code\",\"editor\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"ui_screens\",\"core_engine\",\"input_handler\",\"data_store\"],\"wiring_graph\":[{\"source_module\":\"ui_screens\",\"destination_module\":\"core_engine\",\"data_passed\":\"requests\"},{\"source_module\":\"core_engine\",\"destination_module\":\"input_handler\",\"data_passed\":\"results\"},{\"source_module\":\"i"
+    },
+    {
+      "instruction": "Make me a Terminal Os — Terminal OS.",
+      "expected_app_type": "terminal_os",
+      "got_app_type": null,
+      "checks": {
+        "parse": false
+      },
+      "ok": false,
+      "elapsed_s": 7.84,
+      "output_preview": "# Terminal OS\n\n> Terminal OS. A minimal Linux distribution for the terminal.\n\n## Features\n\n- **Minimal**: Only essential packages.\n- **Customizable**: Build your own ISO with `make`.\n- **Self-contained**: All dependencies are included.\n- **Fast**: No GUI, just the essentials.\n\n## Getting Started\n\n### Prerequisites\n\n- `make` (for building the ISO)\n- `qemu` (for running the ISO in a virtual machine)\n\n### Building the ISO\n\n```bash\n# Clone the repository\ngit clone https://github.com/yourusername/ter"
+    },
+    {
+      "instruction": "Create an application: Text Adventure. ⚔️ Text Adventure",
+      "expected_app_type": "text_adventure",
+      "got_app_type": null,
+      "checks": {
+        "parse": false
+      },
+      "ok": false,
+      "elapsed_s": 13.09,
+      "output_preview": "# Text Adventure. ⚔️ Text Adventure\n\n## Game Design\n\n| Feature | Description |\n|---|---|\n| **Game Type** | Text-based adventure |\n| **Target Platform** | Terminal-based |\n| **Core Mechanics** | Movement, combat, inventory, dialogue |\n| **Win/Lose Condition** | Reach the final boss, collect all items |\n\n## Project Structure\n\n```\ntext-adventure/\n├ src/\n│   ├── game/\n│   │   ├── engine.ts\n│   │   ├── world.ts\n│   │   └── entities.ts\n│   ├── ui/\n│   │   ├── terminal.ts\n│   │   └── menu.ts\n│   ├── in"
+    },
+    {
+      "instruction": "Build a Candy Crush Style 2 with features for game, puzzle, match-3, games",
+      "expected_app_type": "candy_crush_style_2",
+      "got_app_type": "candy_crush_style_2",
+      "checks": {
+        "parse": true,
+        "keys": true,
+        "types": true,
+        "known": true,
+        "exact": true,
+        "fidelity": true
+      },
+      "ok": true,
+      "elapsed_s": 2.87,
+      "output_preview": "{\"app_type\":\"candy_crush_style_2\",\"description\":\"Candy Crush Style 2 — Interactive games tool for candy crush style\",\"keywords\":[\"games\",\"candy\",\"crush\",\"style\",\"candy\",\"crush\",\"style\",\"game controller\",\"game engine\",\"game state\",\"ai opponent\",\"render view\"],\"target_stack\":{\"frontend\":\"React\",\"backend\":\"Node.js Express\",\"database\":\"SQLite\"},\"architecture_checklist\":[\"Game Controller\",\"Game Engine\",\"Game State\",\"AI Opponent\",\"Render View\"],\"wiring_graph\":[{\"source_module\":\"Game Controller\",\"desti"
+    }
+  ]
+}

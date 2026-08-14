@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Shooting Star Field</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+    #scene { position: fixed; inset: 0; }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('scene') });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.z = 300;
+    let cometCount = 0;
+    const cometSpeed = 10;
+    const cometLife = 100;
+    const cometParticles = new Array(100);
+    const cometColors = ['#ff6666', '#f39c12', '#3498db', '#9b59b6'];
+    const starCount = 1000;
+    const starColors = ['#ffffff', '#d9d9d9', '#bfbfbf'];
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i++) starPositions[i] = (Math.random() - 0.5) * 800;
+    const starGeometry = new THREE.BufferGeometry();
+    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({ size: 2, color: 0xffffff, vertexColors: true });
+    const starPoints = new THREE.Points(starGeometry, starMaterial);
+    scene.add(starPoints);
+    const cometGeometry = new THREE.BufferGeometry();
+    const cometPositions = new Float32Array(3 * 3 * cometCount);
+    cometGeometry.setAttribute('position', new THREE.Float32BufferAttribute(cometPositions, 3));
+    const cometMaterial = new THREE.PointsMaterial({ size: 2, vertexColors: true });
+    const cometPoints = new THREE.Points(cometGeometry, cometMaterial);
+    scene.add(cometPoints);
+    const cometGroup = new THREE.Group();
+    scene.add(cometGroup);
+    function launchComet() {
+      const comet = new THREE.Points(cometGeometry, cometMaterial);
+      cometGroup.add(comet);
+      cometPositions.set([
+        Math.random() * 800 - 400, Math.random() * 800 - 400, 0,
+        Math.random() * 800 - 400, Math.random() * 800 - 400, 0,
+        Math.random() * 800 - 400, Math.random() * 800 - 400, 0
+      ], cometCount * 3 * 3);
+      cometPositions.copy(cometPositions.slice(0, 3 * 3));
+      cometPositions.copy(cometPositions.slice(3 * 3, 3 * 3 * 2));
+      cometPositions.copy(cometPositions.slice(3 * 3 * 2, 3 * 3 * 3));
+      cometPositions[0] += (Math.random() - 0.5) * 200;
+      cometPositions[1] += (Math.random() - 0.5) * 200;
+      cometPositions[2] += (Math.random() - 0.5) * 200;
+      cometPositions[3] += (Math.random() - 0.5) * 200;
+      cometPositions[4] += (Math.random() - 0.5) * 200;
+      cometPositions[5] += (Math.random() - 0.5) * 200;
+      cometPositions[6] += (Math.random() - 0.5) * 200;
+      cometPositions[7] += (Math.random() - 0.5) * 200;
+      cometPositions[8] += (Math.random() - 0.5) * 200;
+      cometColors.forEach((color, i) => {
+        cometColors[i] = new THREE.Color(color);
+        cometColors[i + cometCount] = new THREE.Color(color);
+        cometColors[i + cometCount * 2] = new THREE.Color(color);
+      });
+      cometPoints.material.color = cometColors[0];
+      cometPoints.geometry.attributes.color.needsUpdate = true;
+      cometPoints.geometry.attributes.position.needsUpdate = true;
+      cometCount++;
+      cometPoints.geometry.dispose();
+      cometPoints.geometry = cometGeometry;
+      cometPoints.geometry.attributes.color.needsUpdate = true;
+      cometPoints.geometry.attributes.position.needsUpdate = true;
+      cometGroup.add(cometPoints);
+      return cometPoints;
+    }
+    function animate() {
+      requestAnimationFrame(animate);
+      cometGroup.rotation.y += 0.005;
+      const cometPoints = cometGroup.children;
+      for (let i = 0; i < cometPoints.length; i++) {
+        const comet = cometPoints[i];
+        comet.position.x += cometSpeed * Math.cos(comet.position.z / 100) * 0.01;
+        comet.position.y += cometSpeed * Math.sin(comet.position.z / 100) * 0.01;
+        comet.position.z -= 0.1;
+        if (comet.position.z < -cometLife) {
+          cometGroup.remove(comet);
+          cometPoints.splice(i, 1);
+          cometCount--;
+          i--;
+          continue;
+        }
+        cometColors.forEach((color, j) => {
+          cometColors[j] = cometColors[j + cometCount];
+        });
+        cometColors.pop();
+        cometColors.push(new THREE.Color(cometColors[0]));
+        cometPoints[i].material.color = cometColors[0];
+        cometPoints[i].geometry.attributes.color.needsUpdate = true;
+      }
+      starPositions.forEach((pos, i) => {
+        starPositions[i] += 0.01;
+        if (starPositions[i] > 800) starPositions[i] = -400;
+      });
+      starGeometry.attributes.position.needsUpdate = true;
+      renderer.render(scene, camera);
+    }
+    animate();
+    const launchButton = document.createElement('button');
+    launchButton.textContent = 'Launch Comet';
+    document.body.appendChild(launchButton);
+    launchButton.addEventListener('click', () => {
+      const comet = launchComet();
+      comet.position.set(Math.random() * 800 - 400, Math.random() * 800 - 400, 0);
+      cometColors.forEach((color, i) => {
+        cometColors[i + cometCount] = new THREE.Color(color);
+        cometColors[i + cometCount * 2] = new THREE.Color(color);
+      });
+      cometPoints.material.color = cometColors[0];
+      cometPoints.geometry.attributes.color.needsUpdate = true;
+      cometPoints.geometry.attributes.position.needsUpdate = true;
+      cometGroup.add(cometPoints);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "User",
+  "created_at": "2026-06-27T05:16:11.731494",
+  "last_active": "2026-06-27T05:16:11.731500",
+  "occupation": "",
+  "interests": [],
+  "communication_style": "balanced",
+  "expertise_level": "intermediate",
+  "primary_use": "",
+  "timezone": "",
+  "programming_languages": [],
+  "bio": "",
+  "learned_facts": [],
+  "interview_progress": {
+    "completed_questions": [],
+    "conversations_since_last_question": 0,
+    "total_conversations": 0
+  }
+}

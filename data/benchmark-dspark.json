@@ -1,0 +1,155 @@
+{
+  "timestamp": "2026-08-06T16:21:20.204399+00:00",
+  "mode": "now",
+  "steps": {
+    "before_deploy_historical": {
+      "source": "/home/final-flash1/Desktop/visual-ai-architect/scripts/dspark.log (cached \u2014 fresh log rejected: 1 sample(s), mean 9.2)",
+      "last_measured": [
+        47.2,
+        47.6,
+        47.8,
+        47.3,
+        47.7,
+        47.7
+      ],
+      "mean": 47.55,
+      "fresh_rejected": {
+        "last_measured": [
+          9.2
+        ],
+        "mean": 9.2
+      },
+      "corrected_mean": 47.55,
+      "corrected_source": "data/historical-stock-baseline.json (pre-training stock baseline; the 5.2 reading above is a smoke-test artifact)"
+    },
+    "deployed_health": {
+      "status": "ok",
+      "model": "qwen2.5-7b-instruct-uncensored-dspark",
+      "draft_mode": "none",
+      "speculative_decoding": false,
+      "stats": {
+        "tokens_per_sec": 9.18,
+        "avg_latency_ms": 435.8,
+        "total_completion_tokens": 4,
+        "requests": 1
+      }
+    },
+    "tuned_benchmark": {
+      "runs": [
+        {
+          "completion_tokens": 200,
+          "prompt_tokens": 73,
+          "elapsed_s": 3.298,
+          "client_tps": 60.65
+        },
+        {
+          "completion_tokens": 200,
+          "prompt_tokens": 73,
+          "elapsed_s": 3.256,
+          "client_tps": 61.42
+        },
+        {
+          "completion_tokens": 200,
+          "prompt_tokens": 73,
+          "elapsed_s": 3.264,
+          "client_tps": 61.27
+        }
+      ],
+      "client_tps_mean": 61.11,
+      "health_stats": {
+        "tokens_per_sec": 58.92,
+        "avg_latency_ms": 2562.8,
+        "total_completion_tokens": 604,
+        "requests": 4
+      }
+    },
+    "draft_mode": {
+      "ok": true,
+      "health": {
+        "model": "qwen2.5-7b-instruct-uncensored-dspark",
+        "draft_mode": "model",
+        "speculative_decoding": true,
+        "draft": "sha256-20693aeb02c63304e263a72453b6ab89e1c700a87c6948cac523ac1e6f7cade0"
+      },
+      "generation": {
+        "runs": [
+          {
+            "completion_tokens": 200,
+            "prompt_tokens": 73,
+            "elapsed_s": 3.548,
+            "client_tps": 56.37
+          }
+        ],
+        "client_tps_mean": 56.37,
+        "health_stats": {
+          "tokens_per_sec": 56.39,
+          "avg_latency_ms": 3546.6,
+          "total_completion_tokens": 200,
+          "requests": 1
+        }
+      }
+    },
+    "restore_after_draft": {
+      "status": "ok",
+      "model": "qwen2.5-7b-instruct-uncensored-dspark",
+      "draft_mode": "none",
+      "speculative_decoding": false,
+      "stats": {
+        "tokens_per_sec": null,
+        "avg_latency_ms": null,
+        "total_completion_tokens": 0,
+        "requests": 0
+      }
+    },
+    "stock_benchmark": {
+      "runs": [
+        {
+          "completion_tokens": 200,
+          "prompt_tokens": 73,
+          "elapsed_s": 3.783,
+          "client_tps": 52.86
+        },
+        {
+          "completion_tokens": 200,
+          "prompt_tokens": 73,
+          "elapsed_s": 3.26,
+          "client_tps": 61.36
+        },
+        {
+          "completion_tokens": 200,
+          "prompt_tokens": 73,
+          "elapsed_s": 3.273,
+          "client_tps": 61.11
+        }
+      ],
+      "client_tps_mean": 58.44,
+      "health_stats": {
+        "tokens_per_sec": 58.22,
+        "avg_latency_ms": 3435.5,
+        "total_completion_tokens": 600,
+        "requests": 3
+      }
+    },
+    "final_health": {
+      "status": "ok",
+      "model": "qwen2.5-7b-instruct-uncensored-dspark",
+      "draft_mode": "none",
+      "speculative_decoding": false,
+      "stats": {
+        "tokens_per_sec": null,
+        "avg_latency_ms": null,
+        "total_completion_tokens": 0,
+        "requests": 0
+      }
+    }
+  },
+  "model_identity": {
+    "verified_at": "2026-08-06",
+    "tuned_gguf": "/home/final-flash1/Desktop/visual-ai-architect/models/Qwen2.5-7B-Instruct-Uncensored.Q4_K_M.gguf",
+    "tuned_sha256": "969de8b3c2361e57ac067cebfe1d1e86508f9db33af8bf0debd5e07dcc1e771d",
+    "tuned_round": "round-4 (25-failure fine-tune, Change 25/26)",
+    "stock_gguf": "/home/final-flash1/Desktop/visual-ai-architect/models/qwen2.5-7b-instruct-uncensored-q4_k_m.gguf",
+    "stock_sha256": "88fe5248dcbf96da5804fe333e43451d707",
+    "note": "tuned_sha256 == models_gguf export sha256 (byte-identical); previous round-1 tuned was 84619b75\u2026 (overwritten by round-4 deploy)"
+  }
+}

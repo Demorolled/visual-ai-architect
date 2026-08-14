@@ -1,0 +1,53 @@
+{
+  "app_type": "space_shooter",
+  "description": "Asteroids-style space shooter with ship physics, projectile combat, and waves — Top-down space shooter with ship thrust/rotation physics, asteroid splitting, projectile collision, wave progression, score tracking, and particle explosions",
+  "keywords": [
+    "space-shooter",
+    "game",
+    "asteroids",
+    "physics",
+    "arcade",
+    "space",
+    "shooter",
+    "ship controls",
+    "ship physics",
+    "combat engine",
+    "world state",
+    "game renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Ship Controls",
+    "Ship Physics",
+    "Combat Engine",
+    "World State",
+    "Game Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Ship Controls",
+      "destination_module": "Ship Physics",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Ship Physics",
+      "destination_module": "Combat Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Combat Engine",
+      "destination_module": "World State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "World State",
+      "destination_module": "Game Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

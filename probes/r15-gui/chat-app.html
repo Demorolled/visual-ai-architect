@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💬 Chat Messenger</title>
+    <style>
+        body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; background: #222; font-family: system-ui, sans-serif; }
+        #chat { flex: 1; margin: 20px; padding: 20px; background: #000; border-radius: 12px; display: flex; flex-direction: column; }
+        .message { margin: 8px 0; }
+        .message.user { align-self: flex-start; }
+        .message.bot { align-self: flex-end; }
+        .message p { padding: 12px 16px; background: #111; border-radius: 8px; max-width: 65%; word-break: break-all; }
+        .message.user p { background: #ff7e7e; color: #000; }
+        .message.bot p { background: #3aa1e0; color: #fff; }
+        .message.user::before { content: ''; display: block; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 12px solid #ff7e7e; position: absolute; transform: translate(-100%, -50%) rotate(180deg); }
+        .message.bot::before { content: ''; display: block; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 12px solid #3aa1e0; position: absolute; transform: translate(100%, -50%); }
+        .input-row { display: flex; align-items: center; }
+        .input-row input { flex: 1; padding: 12px 16px; margin-left: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 14px; }
+        .input-row button { padding: 12px 16px; background: #ff7e7e; border: none; border-radius: 8px; color: #fff; font-size: 14px; cursor: pointer; transition: background 0.15s; }
+        .input-row button:hover { background: #ff5e5e; }
+        .typing { margin: 12px 0; color: #fff; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div id="chat"></div>
+    <div class="input-row">
+        <input id="msgInput" placeholder="Type a message..." autocomplete="off">
+        <button id="sendBtn">Send</button>
+    </div>
+    <script>
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('msgInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        let typingTimeout;
+
+        input.addEventListener('input', () => {
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                chat.innerHTML += '<div class="message"><p>Typing...</p></div>';
+                setTimeout(() => { chat.innerHTML = chat.innerHTML.replace(/<div class="message"><p>Typing...\s*<\/p><\/div>/, ''); }, 3000);
+            }, 500);
+        });
+
+        sendBtn.addEventListener('click', () => {
+            const msg = input.value.trim();
+            if (!msg) return;
+            input.value = '';
+            input.focus();
+
+            chat.innerHTML += '<div class="message user"><p>' + encodeURIComponent(msg) + '</p></div>';
+            renderMessages();
+
+            setTimeout(() => {
+                chat.innerHTML += '<div class="message bot"><p>Chatbot: You are awesome! 🚀</p></div>';
+                renderMessages();
+            }, 1000);
+
+            setTimeout(() => {
+                chat.scrollTop = chat.scrollHeight;
+            }, 1500);
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                sendBtn.click();
+                return;
+            }
+        });
+
+        function renderMessages() {
+            const messages = chat.querySelectorAll('.message');
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage) {
+                lastMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    </script>
+</body>
+</html>

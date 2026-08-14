@@ -1,0 +1,19 @@
+{
+  "id": "__USERNAME__/vaca-qlora-rounds-3-4",
+  "title": "VACA QLoRA Rounds 3-4",
+  "subtitle": "Round 4 of 4 (resumes round-3 adapter, LR 2.5e-5) \u00b7 single-GPU (no torchrun) \u00b7 Qwen2.5-7B-Instruct-Uncensored \u00b7 GGUF q4_k_m",
+  "code_file": "train_round4_kaggle.ipynb",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "language": "python",
+  "kernel_type": "notebook",
+  "dataset_sources": [
+    "__USERNAME__/vaca-campaign50-dataset",
+    "__USERNAME__/vaca-rounds12-adapter"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}

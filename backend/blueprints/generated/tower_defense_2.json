@@ -1,0 +1,53 @@
+{
+  "app_type": "tower_defense_2",
+  "description": "Tower defense game with path-based enemies, tower placement, upgrades, and waves — Tower defense with grid-based tower placement, predefined enemy paths, multiple tower types (arrow/cannon/magic/sniper), upgrade system, wave management, and resource economy",
+  "keywords": [
+    "tower-defense",
+    "game",
+    "strategy",
+    "pathfinding",
+    "wave",
+    "tower",
+    "defense",
+    "tower placement",
+    "enemy ai",
+    "tower engine",
+    "game state",
+    "field renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Tower Placement",
+    "Enemy AI",
+    "Tower Engine",
+    "Game State",
+    "Field Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Tower Placement",
+      "destination_module": "Enemy AI",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Enemy AI",
+      "destination_module": "Tower Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Tower Engine",
+      "destination_module": "Game State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Field Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

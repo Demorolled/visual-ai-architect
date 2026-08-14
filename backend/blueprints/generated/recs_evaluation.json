@@ -1,0 +1,52 @@
+{
+  "app_type": "recs_evaluation",
+  "description": "Eval: offline metrics, counterfactual estimation, interleaving — RecSys eval: precision/recall/NDCG, counterfactual, interleaving",
+  "keywords": [
+    "search",
+    "recommendations",
+    "personalization",
+    "ranking",
+    "recs",
+    "evaluation",
+    "search/recs config",
+    "search engine",
+    "evaluation",
+    "index & data",
+    "results display"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Search/Recs Config",
+    "Search Engine",
+    "Evaluation",
+    "Index & Data",
+    "Results Display"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Search/Recs Config",
+      "destination_module": "Search Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search Engine",
+      "destination_module": "Evaluation",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Evaluation",
+      "destination_module": "Index & Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Index & Data",
+      "destination_module": "Results Display",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

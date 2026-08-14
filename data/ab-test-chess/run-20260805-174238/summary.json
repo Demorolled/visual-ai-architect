@@ -1,0 +1,79 @@
+{
+  "knight_js_tuned": {
+    "seconds": 3.4,
+    "fences": 0,
+    "over_escapes": 0,
+    "prose": false,
+    "stub": false,
+    "imports": 0,
+    "default_export": false,
+    "len": 215,
+    "tests": {
+      "pass": true,
+      "detail": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "parse": true,
+    "parse_error": null
+  },
+  "knight_js_stock": {
+    "seconds": 4.2,
+    "fences": 4,
+    "over_escapes": 0,
+    "prose": true,
+    "stub": false,
+    "imports": 0,
+    "default_export": false,
+    "len": 841,
+    "tests": {
+      "pass": false,
+      "error": "/tmp/tmpi33gvq7b.js:33\nconsole.log('ABTEST:' + JSON.stringify({pass: _r.every(x=>x), detail: _r}));\n                                        "
+    },
+    "parse": false,
+    "parse_error": "/tmp/tmp9x1i2uos.js:26"
+  },
+  "board_ts_tuned": {
+    "seconds": 17.7,
+    "fences": 0,
+    "over_escapes": 0,
+    "prose": false,
+    "stub": false,
+    "imports": 0,
+    "default_export": false,
+    "len": 3508,
+    "tsc": true,
+    "tsc_errors": [],
+    "parse": false,
+    "parse_error": "/tmp/tmpu6lwivou.js:2"
+  },
+  "board_ts_stock": {
+    "seconds": 17.2,
+    "fences": 3,
+    "over_escapes": 0,
+    "prose": true,
+    "stub": false,
+    "imports": 0,
+    "default_export": false,
+    "len": 3377,
+    "tsc": true,
+    "tsc_errors": [],
+    "parse": false,
+    "parse_error": "/tmp/tmpwfm0272f.js:28"
+  },
+  "persona_tuned": {
+    "reply": "I am VACA, your AI code architect assistant.",
+    "seconds": 0.3,
+    "error": null
+  },
+  "persona_stock": {
+    "reply": "I am an AI assistant.",
+    "seconds": 0.3,
+    "error": null
+  }
+}

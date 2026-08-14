@@ -1,0 +1,31 @@
+{
+  "generated": "2026-08-06T06:46:23",
+  "examples": 1230,
+  "blueprints": {
+    "total": 1228,
+    "covered": 1228,
+    "retention_pct": 100.0
+  },
+  "blueprint_bytes": {
+    "total": 1076642,
+    "covered": 1076642,
+    "in_outputs": 1141779,
+    "retention_pct": 100.0
+  },
+  "designs": {
+    "total": 811,
+    "matched": 810,
+    "retention_pct": 99.9
+  },
+  "bible_chunks": {
+    "total": 204,
+    "tag_hits": 200,
+    "retention_pct": 98.0
+  },
+  "contract": {
+    "total": 1230,
+    "valid": 1230,
+    "retention_pct": 100.0
+  },
+  "blended_retention_index_pct": 99.6
+}

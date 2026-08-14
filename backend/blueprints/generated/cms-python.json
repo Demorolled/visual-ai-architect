@@ -1,0 +1,59 @@
+{
+  "app_type": "cms-python",
+  "description": "content types, drafts, publishing workflow, media uploads, roles.",
+  "keywords": [
+    "cms-python",
+    "python",
+    "multi",
+    "tenant",
+    "cms",
+    "tenants",
+    "content types",
+    "entries/drafts",
+    "publishing workflow",
+    "media",
+    "roles"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Python FastAPI",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "tenants",
+    "content types",
+    "entries/drafts",
+    "publishing workflow",
+    "media",
+    "roles"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "tenants",
+      "destination_module": "content types",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "content types",
+      "destination_module": "entries/drafts",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "entries/drafts",
+      "destination_module": "publishing workflow",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "publishing workflow",
+      "destination_module": "media",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "media",
+      "destination_module": "roles",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "large-program-blueprints.md:python",
+  "file_count": 25
+}

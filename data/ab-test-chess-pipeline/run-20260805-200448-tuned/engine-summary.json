@@ -1,0 +1,42 @@
+{
+ "gates": {
+  "chars": 1950,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [
+   "getBestMove"
+  ],
+  "prose_leak": 0
+ },
+ "contract": {
+  "tsc_clean": false,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(7,24): error TS2304: Cannot find name 'evaluateBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(17,27): error TS2304: Cannot find name 'createCopy'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(18,9): error TS2304: Cannot find name 'makeMove'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(30,24): error TS2304: Cannot find name 'isCheckmate'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(30,51): error TS2304: Cannot find name 'evaluateBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(33,46): error TS2304: Cannot find name 'maxDepth'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(33,57): error TS2304: Cannot find name 'evaluateBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(38,31): error TS2304: Cannot find name 'createCopy'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(39,13): error TS2304: Cannot find name 'makeMove'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(49,31): error TS2304: Cannot find name 'createCopy'.",
+   "data/ab-test-chess-pipeline/run-20260805-200448-tuned/contract/chess-ai-engine/chess-ai-engine.ts(50,13): error TS2304: Cannot find name 'makeMove'."
+  ],
+  "error_count": 11
+ },
+ "functional": {},
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored-dspark",
+  "tag": "tuned",
+  "task": "engine",
+  "elapsed_s": 8.4,
+  "prompt_chars": 2735,
+  "raw_chars": 1950
+ }
+}

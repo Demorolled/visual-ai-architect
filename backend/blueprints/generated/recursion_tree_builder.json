@@ -1,0 +1,54 @@
+{
+  "app_type": "recursion_tree_builder",
+  "description": "Visualize recursive algorithms as tree diagrams with stack frame animation — Builds recursion trees for Fibonacci, factorial, Towers of Hanoi, permutations, and N-Queens. Shows stack frame push/pop with variable values, return propagation, and base case highlighting",
+  "keywords": [
+    "recursion",
+    "backtracking",
+    "call-stack",
+    "visualization",
+    "education",
+    "recursion",
+    "tree",
+    "builder",
+    "recursion picker",
+    "recursion engine",
+    "call stack store",
+    "recursion tree view",
+    "stack frame panel"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Recursion Picker",
+    "Recursion Engine",
+    "Call Stack Store",
+    "Recursion Tree View",
+    "Stack Frame Panel"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Recursion Picker",
+      "destination_module": "Recursion Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Recursion Engine",
+      "destination_module": "Call Stack Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Call Stack Store",
+      "destination_module": "Recursion Tree View",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Recursion Tree View",
+      "destination_module": "Stack Frame Panel",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

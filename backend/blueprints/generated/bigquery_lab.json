@@ -1,0 +1,51 @@
+{
+  "app_type": "bigquery_lab",
+  "description": "Google BigQuery query analysis and slot monitoring — Interactive data engineering tool for bigquery lab",
+  "keywords": [
+    "data-engineering",
+    "bigquery",
+    "lab",
+    "bigquery",
+    "lab",
+    "pipeline config",
+    "data processor",
+    "data store",
+    "orchestrator",
+    "pipeline dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Pipeline Config",
+    "Data Processor",
+    "Data Store",
+    "Orchestrator",
+    "Pipeline Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Pipeline Config",
+      "destination_module": "Data Processor",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Data Processor",
+      "destination_module": "Data Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Orchestrator",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Orchestrator",
+      "destination_module": "Pipeline Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

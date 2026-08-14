@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Snow Globe</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: system-ui, sans-serif; }
+    #scene { position: fixed; inset: 0; }
+    #shake { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 10; }
+    #shake button { padding: 10px 24px; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; transition: all 0.2s; }
+    #shake button:hover { background: rgba(255,255,255,0.15); }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div id="shake">
+    <button>shake</button>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+    const renderer = document.createElement('canvas');
+    document.body.appendChild(renderer);
+    renderer.width = innerWidth;
+    renderer.height = innerHeight;
+    scene.add(camera);
+    const orbit = new THREE.OrbitControls(camera, renderer);
+    camera.position.z = 400;
+    const snow = [];
+    for (let i = 0; i < 1000; i++) {
+      const geometry = new THREE.SphereGeometry(0.5, 32, 32);
+      const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set((Math.random() - 0.5) * 500, (Math.random() - 0.5) * 500, (Math.random() - 0.5) * 500);
+      mesh.velocity = (Math.random() - 0.5) * 1;
+      scene.add(mesh);
+      snow.push(mesh);
+    }
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(300, 300, 20, 32), new THREE.MeshStandardMaterial({ color: 0x8b4513 }));
+    scene.add(base);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(350, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+    scene.add(dome);
+    const house = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshStandardMaterial({ color: 0x8b4513 }));
+    house.position.set(0, 0, 0);
+    scene.add(house);
+    const tree = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), new THREE.MeshStandardMaterial({ color: 0x228b22 }));
+    tree.position.set(0, 0, 0);
+    scene.add(tree);
+    let spinning = false;
+    document.querySelector('#shake button').addEventListener('click', () => {
+      spinning = !spinning;
+      dome.rotation.y = Math.random() * Math.PI * 2;
+    });
+    function animate() {
+      requestAnimationFrame(animate);
+      snow.forEach((s, i) => {
+        s.position.y += s.velocity;
+        if (s.position.y > 500) s.position.y = -500;
+        s.position.x = (s.position.x + 1) % 1000 - 500;
+        s.position.z = (s.position.z + 1) % 1000 - 500;
+      });
+      if (spinning) dome.rotation.y += 0.005;
+      renderer.getContext('2d').fillStyle = 'black';
+      renderer.getContext('2d')..fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'white';
+      for (let i = 0; i < 500; i++) {
+        const x = (Math.random() - 0.5) * renderer.width;
+        const y = (Math.random() - 0.5) * renderer.height;
+        renderer.getContext('2d')..fillRect(x, y, 1, 1);
+      }
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.1)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.05)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.02)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.01)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.0000000000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000000000005)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000000000002)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.00000000000000001)';
+      renderer.getContext('2d').fillRect(0, 0, renderer.width, renderer.height);
+      renderer.getContext('2d').fillStyle = 'rgba(255,255,255,0.000000

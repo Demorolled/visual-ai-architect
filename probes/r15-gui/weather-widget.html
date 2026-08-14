@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>/weather</title>
+<style>
+  body { font-family: system-ui, sans-serif; }
+  .container { max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+  h1 { margin-bottom: 20px; }
+  input { width: 100%; padding: 10px; margin-bottom: 20px; }
+  .card { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  .card .temp { font-size: 2rem; font-weight: 700; margin-bottom: 10px; }
+  .card .icon { display: inline-block; width: 100px; height: 100px; background-size: cover; margin-right: 10px; }
+  .card .condition { font-size: 1.2rem; margin-bottom: 10px; }
+  .card .details { display: flex; justify-content: space-between; font-size: 1rem; }
+  .forecast { display: flex; justify-content: space-around; }
+  .forecast .card { width: 140px; padding: 15px; margin: 0; border-radius: 4px; box-shadow: none; }
+  .toggle { display: flex; justify-content: center; margin-top: 20px; }
+  .toggle label { margin: 0 10px; }
+  .toggle input { accent-color: #007bff; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>/weather</h1>
+  <input id="cityInput" placeholder="Search a city...">
+  <div id="currentCard" class="card"></div>
+  <div id="forecast" class="forecast"></div>
+  <div class="toggle">
+    <label><input type="checkbox" id="tempUnit"> °C</label>
+  </div>
+</div>
+
+<script>
+const cityData = {
+  London: { temp: 13, condition: '☀️', humidity: 60, wind: 5 },
+  Paris: { temp: 11, condition: '☁️', humidity: 80, wind: 3 },
+  Tokyo: { temp: 22, condition: '☀️', humidity: 40, wind: 8 },
+  Sydney: { temp: 20, condition: '☀️', humidity: 30, wind: 6 },
+  Moscow: { temp: -5, condition: '❄️', humidity: 70, wind: 10 },
+  New York: { temp: 8, condition: '❄️', humidity: 90, wind: 2 },
+};
+
+document.getElementById('cityInput').addEventListener('input', () => {
+  const card = document.getElementById('currentCard');
+  card.innerHTML = '';
+  const city = document.getElementById('cityInput').value.trim();
+  if (!city) return;
+  const data = cityData[city] || { temp: 15, condition: '☀️', humidity: 50, wind: 4 };
+  const cardEl = document.createElement('div');
+  cardEl.className = 'card';
+  cardEl.innerHTML = `
+    <div class="temp">${data.temp}°<span id="tempUnit">C</span></div>
+    <div class="icon" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="${data.condition === '☀️' ? '#ffd700' : data.condition === '☁️' ? '#87ceeb' : data.condition === '❄️' ? '#00bcd4' : '#fff"}"></rect><text x="50" y="50" dominant-baseline="middle" text-anchor="middle" fill="#fff">${data.condition}</text></svg>')"></div>
+    <div class="condition">${data.condition}</div>
+    <div class="details">
+      <div>Humidity: ${data.humidity}%</div>
+      <div>Wind: ${data.wind} km/h</div>
+    </div>
+  `;
+  card.appendChild(cardEl);
+  document.getElementById('forecast').innerHTML = '';
+  const forecastEl = document.createElement('div');
+  forecastEl.className = 'forecast';
+  for (let i = 0; i < 5; i++) {
+    const forecastCardEl = document.createElement('div');
+    forecastCardEl.className = 'card';
+    forecastCardEl.innerHTML = `
+      <div class="temp">${15 + i}°<span id="tempUnit">C</span></div>
+      <div class="icon" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="${(i % 2) === 0 ? '#ffd700' : '#87ceeb'}"></rect><text x="50" y="50" dominant-baseline="middle" text-anchor="middle" fill="#fff">${(i % 2) === 0 ? '☀️' : '☁️'}</text></svg>')"></div>
+      <div class="condition">${(i % 2) === 0 ? '☀️' : '☁️'}</div>
+      <div class="details">
+        <div>Humidity: 60%</div>
+        <div>Wind: 5 km/h</div>
+      </div>
+    `;
+    forecastEl.appendChild(forecastCardEl);
+  }
+  document.getElementById('forecast').appendChild(forecastEl);
+});
+
+document.getElementById('tempUnit').addEventListener('change', () => {
+  document.querySelectorAll('.temp').forEach(card => {
+    const temp = parseFloat(card.textContent.split('°')[0]);
+    card.textContent = temp + (document.getElementById('tempUnit').checked ? '°C' : '°F');
+  });
+});
+</script>
+</body>
+</html>

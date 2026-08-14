@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      background-color: #181b28;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      background-color: #343a40;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      border-radius: 5px;
+    }
+
+    .turn {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .win {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="turn">X's turn</div>
+    <div class="board"></div>
+    <div class="win"></div>
+  </div>
+  <script>
+    class TicTacToeGame {
+      constructor() {
+        this.board = new Array(3).fill().map(() => new Array(3).fill(null));
+        this.currentPlayer = 'X';
+        this.winner = null;
+      }
+
+      renderBoard() {
+        const cells = document.querySelector('.board').children;
+        for (let i = 0; i < 9; i++) {
+          const cell = cells[i];
+          const value = this.board[Math.floor(i / 3)][i % 3];
+          cell.textContent = value;
+          cell.style.background = value ? 'red' : '#343a40';
+        }
+      }
+
+      makeMove(row, col) {
+        if (this.board[row][col] || this.winner) return false;
+        this.board[row][col] = this.currentPlayer;
+        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+        return this.checkWin();
+      }
+
+      checkWin() {
+        for (let row = 0; row < 3; row++) {
+          if (this.board[row][0] && this.board[row][0] === this.board[row][1] && this.board[row][1] === this.board[row][2]) return true;
+        }
+        for (let col = 0; col < 3; col++) {
+          if (this.board[0][col] && this.board[0][col] === this.board[1][col] && this.board[1][col] === this.board[2][col]) return true;
+        }
+        if (this.board[0][0] && this.board[0][0] === this.board[1][1] && this.board[1][1] === this.board[2][2]) return true;
+        if (this.board[0][2] && this.board[0][2] === this.board[1][1] && this.board[1][1] === this.board[2][0]) return true;
+        return false;
+      }
+    }
+
+    const game = new TicTacToeGame();
+    const board = document.querySelector('.board');
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.setAttribute('data-row-col', i);
+      cell.addEventListener('click', () => {
+        const [row, col] = (cell.getAttribute('data-row-col') || '').split(',').map(Number);
+        if (game.makeMove(row, col)) {
+          if (game.winner) {
+            document.querySelector('.win').textContent = `Game over! ${game.winner} wins!`;
+            board.removeEventListener('click', () => {}, { once: true });
+          } else {
+            document.querySelector('.turn').textContent = game.currentPlayer === 'X' ? 'X's turn' : 'O's turn';
+          }
+        }
+      });
+      board.appendChild(cell);
+    }
+
+    game.renderBoard();
+    document.querySelector('.turn').textContent = 'X's turn';
+  </script>
+</body>
+
+</html>

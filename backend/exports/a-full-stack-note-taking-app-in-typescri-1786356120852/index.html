@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Taker</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .btn { padding: 8px 16px; margin: 4px; }
+    .btn-primary { background-color: #007bff; color: white; }
+    .btn-danger { background-color: #dc3545; color: white; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Note Taker</h1>
+    <form>
+      <label for="titleInput">Title</label>
+      <input id="titleInput" type="text" placeholder="Enter title" value="">
+      <input id="qtyInput" type="number" min="0" step="1" value="1">
+      <input id="searchInput" type="search" placeholder="Search…" oninput="onSearch(this.value)"/>
+      <select id="formatSelect" onchange="onFormat(this.value)">
+        <option value="mp4">MP4</option>
+        <option value="avi">AVI</option>
+        <option value="mkv">MKV</option>
+      </select>
+    </form>
+    <div class="grid" id="notesGrid"></div>
+    <div id="statusMsg" role="status" style="padding:8px 12px;border-radius:8px;margin-top:10px"></div>
+  </div>
+  <script>
+    const onSearch = (value) => {
+      // Search logic
+    }
+    const onFormat = (value) => {
+      // Format selection logic
+    }
+    const openItem = (id) => {
+      // Open item logic
+    }
+  </script>
+</body>
+</html>

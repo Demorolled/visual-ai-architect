@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>3D Molecule Viewer</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b0c11;font-family:system-ui,sans-serif;}
+  #scene{position:fixed;top:0;left:0;right:0;bottom:0;}
+  #caption{position:fixed;bottom:12px;left:12px;z-index:10;color:#e0e0e0;background:rgba(0,0,0,0.4);padding:8px 12px;border-radius:8px;font-size:12px;line-height:1.25;text-shadow:1px 1px 1px rgba(0,0,0,0.5);backdrop-filter:blur(2px);pointer-events:none;}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="caption">3D Molecule Viewer</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const molecules = {
+  water: {
+    atoms: [{x: 0, y: 0, z: 0, color: 0x87cefa}, {x: 0.76, y: 0, z: 0, color: 0xff4500}, {x: -0.38, y: 0.76, z: 0, color: 0xff4500}],
+    bonds: [[0, 1], [0, 2]],
+  },
+  methane: {
+    atoms: [{x: 0, y: 0, z: 0, color: 0xff4500}, {x: 0.866, y: 0.5, z: 0, color: 0x00ff00}, {x: -0.433, y: 0.866, z: 0, color: 0x00ff00}, {x: -0.433, y: -0.866, z: 0, color: 0x00ff00}, {x: 0.866, y: -0.5, z: 0, color: 0x00ff00}],
+    bonds: [[0, 1], [0, 2], [0, 3], [0, 4]],
+  },
+  benzene: {
+    atoms: [{x: 0, y: 0, z: 0, color: 0xff4500}, {x: 1.1547, y: 0, z: 0, color: 0x00ff00}, {x: 2.1192, y: 0, z: 0, color: 0x00ff00}, {x: 2.7047, y: 1.2247, z: 0, color: 0x00ff00}, {x: 2.7047, y: -1.2247, z: 0, color: 0x00ff00}, {x: 1.1547, y: 2.4494, z: 0, color: 0x00ff00}, {x: 1.1547, y: -2.4494, z: 0, color: 0x00ff00}],
+    bonds: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 0]],
+  },
+};
+let currentMolecule = 0;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('scene').appendChild(renderer.domElement);
+camera.position.z = 5;
+const caption = document.getElementById('caption');
+const group = new THREE.Group();
+scene.add(group);
+const orbit = new THREE.OrbitControls(camera, renderer.domElement);
+camera.position.set(2, 2, 2);
+orbit.update();
+function addAtom(x, y, z, color) {
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 32), new THREE.MeshBasicMaterial({color: color}));
+  sphere.position.set(x, y, z);
+  group.add(sphere);
+  return sphere;
+}
+function addBond(a1, a2) {
+  const geometry = new THREE.BufferGeometry();
+  const vertices = new Float32Array([a1.position.x, a1.position.y, a1.position.z, a2.position.x, a2.position.y, a2.position.z]);
+  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0xffffff, opacity: 0.5, transparent: true}));
+  group.add(line);
+}
+function updateCaption() {
+  caption.textContent = '3D Molecule Viewer: ' + Object.keys(molecules)[currentMolecule];
+}
+function createMolecule() {
+  group.traverse((o) => { if (o.geometry) { scene.remove(o); } });
+  group.children.length = 0;
+  const mol = Object.values(molecules)[currentMolecule];
+  mol.atoms.forEach((a) => { addAtom(a.x, a.y, a.z, a.color); });
+  mol.bonds.forEach((b) => { addBond(group.children[b[0]], group.children[b[1]]); });
+}
+function cycleMolecule() {
+  currentMolecule = (currentMolecule + 1) % Object.keys(molecules).length;
+  updateCaption();
+  createMolecule();
+}
+updateCaption();
+createMolecule();
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+renderer.setAnimationLoop(() => {
+  orbit.update();
+  renderer.render(scene, camera);
+});
+document.getElementById('scene').addEventListener('click', cycleMolecule);
+</script>
+</body>
+</html>

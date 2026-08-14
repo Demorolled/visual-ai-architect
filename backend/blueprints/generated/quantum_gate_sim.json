@@ -1,0 +1,53 @@
+{
+  "app_type": "quantum_gate_sim",
+  "description": "Quantum gates: single/qubit, Bell states, Grover's, circuit visualization — Quantum sim: qubit gates, Bell states, Grover's algorithm, circuits",
+  "keywords": [
+    "specialized",
+    "computation",
+    "science",
+    "simulation",
+    "quantum",
+    "gate",
+    "sim",
+    "domain input",
+    "core algorithm",
+    "analysis",
+    "data store",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Domain Input",
+    "Core Algorithm",
+    "Analysis",
+    "Data Store",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Domain Input",
+      "destination_module": "Core Algorithm",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Algorithm",
+      "destination_module": "Analysis",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Analysis",
+      "destination_module": "Data Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>3D Chess Game</title>
+	<style>
+		body { margin: 0; }
+		canvas { width: 100%; height: 100%; display: block; }
+	</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.min.js"></script>
+<script>
+	// Scene
+	var scene = new THREE.Scene();
+	scene.background = new THREE.Color('grey');
+	// Camera
+	var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+	camera.position.set(0, 0, 10);
+	// Renderer
+	var renderer = new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+	// Orbit Controls
+	var controls = new THREE.OrbitControls(camera, renderer.domElement);
+	controls.enableDamping = true;
+	controls.dampingFactor = 0.05;
+	// Light
+	var light = new THREE.DirectionalLight(0xffffff, 0.5);
+	light.position.set(1, 1, 1).normalize();
+	scene.add(light);
+	// Board
+	var boardTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/wood.jpg');
+	var boardGeometry = new THREE.BoxGeometry(8, 8, 0.1);
+	var boardMaterial = new THREE.MeshBasicMaterial({ map: boardTexture, side: THREE.DoubleSide });
+	var board = new THREE.Mesh(boardGeometry, boardMaterial);
+	scene.add(board);
+	// Pieces
+	var pieceTextures = ['https://threejs.org/examples/textures/chess1.png', 'https://threejs.org/examples/textures/chess2.png'];
+	var pieceGeometries = [];
+	var pieceMaterials = [];
+	for (var i = 0; i < 32; i++) {
+		var geometry = new THREE.BoxGeometry(1, 1, 0.1);
+		var material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(pieceTextures[Math.floor(Math.random() * 2)]), side: THREE.DoubleSide });
+		pieceGeometries.push(geometry);
+		pieceMaterials.push(material);
+	}
+	var pieces = [];
+	for (var i = 0; i < 32; i++) {
+		var mesh = new THREE.Mesh(pieceGeometries[i], pieceMaterials[i]);
+		pieces.push(mesh);
+		scene.add(mesh);
+	}
+	// Move
+	var selectedPiece = null;
+	var selectedSquare = null;
+	var movePiece = function(mesh, square) {
+		// Update position
+		mesh.position.set(square.x * 1.5, square.y * 1.5, -0.5);
+		// Clear selection
+		selectedPiece = null;
+		selectedSquare = null;
+	};
+	var highlightSquare = function(square) {
+		// Highlight square
+		var highlightGeometry = new THREE.BoxGeometry(1.5, 1.5, 0.1);
+		var highlightMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+		var highlightMesh = new THREE.Mesh(highlightGeometry, highlightMaterial);
+		highlightMesh.position.set(square.x * 1.5, square.y * 1.5, -0.5);
+		scene.add(highlightMesh);
+		// Clear previous highlights
+		var children = scene.children.filter(function(child) { return child.name === 'highlight'; });
+		for (var i = 0; i < children.length; i++) {
+			scene.remove(children[i]);
+		}
+	};
+	// Turn
+	var turn = 0;
+	var turnIndicator = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+	turnIndicator.position.set(9 * 1.5, 0, -0.5);
+	turnIndicator.name = 'turnIndicator';
+	scene.add(turnIndicator);
+	// Render
+	var render = function() {
+		requestAnimationFrame(render);
+		// Update position
+		if (selectedPiece) {
+			var square = selectedSquare;
+			var piece = selectedPiece;
+			// Check move
+			if (turn % 2 === 0) {
+				// White turn
+				// ...
+			} else {
+				// Black turn
+				// ...
+			}
+			// Move piece
+			movePiece(piece, square);
+			// Highlight square
+			highlightSquare(square);
+		}
+		// Update camera
+		controls.update();
+		// Render
+		renderer.render(scene, camera);
+	};
+	// Start
+	render();
+</script>
+</body>
+</html>

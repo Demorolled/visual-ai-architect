@@ -1,0 +1,49 @@
+{
+  "app_type": "tempo_traceql_lab",
+  "description": "Tempo TraceQL query builder for distributed tracing — an interactive devops tool with a visual interface.",
+  "keywords": [
+    "devops",
+    "devops",
+    "tempo",
+    "tracing",
+    "traceql",
+    "tempo",
+    "traceql",
+    "lab"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "config_engine",
+    "validator_core",
+    "input_handler",
+    "export_service"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "config_engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "config_engine",
+      "destination_module": "validator_core",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "validator_core",
+      "destination_module": "input_handler",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "input_handler",
+      "destination_module": "export_service",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:devops"
+}

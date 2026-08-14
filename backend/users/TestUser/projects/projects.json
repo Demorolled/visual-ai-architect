@@ -1,0 +1,408 @@
+[
+  {
+    "id": "proj_1781645133538_vo70pd1",
+    "name": "Simple Todo App",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master-node",
+        "type": "master",
+        "position": {
+          "x": 250,
+          "y": 50
+        },
+        "data": {
+          "label": "App Blueprint",
+          "appGoal": "Simple Todo App",
+          "appPurpose": "Create, read, update, and delete todo items.",
+          "selectedOS": "linux",
+          "status": "pending"
+        }
+      },
+      {
+        "id": "node_1781645133527_gbejq1",
+        "type": "logic",
+        "position": {
+          "x": 0,
+          "y": 10
+        },
+        "data": {
+          "label": "config/app_settings.ts",
+          "description": "Central configuration for the application including database paths, port numbers, and environment-specific constants. Uses TypeScript to ensure type safety for all system configurations.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "service.ts",
+            "helpers.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_y5uysh",
+        "type": "logic",
+        "position": {
+          "x": 100,
+          "y": 10
+        },
+        "data": {
+          "label": "domain/todo_types.ts",
+          "description": "Defines the core TypeScript interfaces and types for todo items (e.g., TodoObject), categories, and status enums. Used by both services and UI layers to ensure contract consistency.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "service.ts",
+            "helpers.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_kkmzmm",
+        "type": "logic",
+        "position": {
+          "x": 100,
+          "y": 30
+        },
+        "data": {
+          "label": "utils/validator.ts",
+          "description": "Provides validation logic for user inputs such as required fields, character limits, and date formats. Used by the service layer before any data is persisted.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "service.ts",
+            "helpers.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_jn83jy",
+        "type": "logic",
+        "position": {
+          "x": 100,
+          "y": 50
+        },
+        "data": {
+          "label": "utils/date_formatter.ts",
+          "description": "Helper functions for converting database timestamps into human-readable formats and calculating pending dates.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "service.ts",
+            "helpers.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_slappu",
+        "type": "database",
+        "position": {
+          "x": 200,
+          "y": 10
+        },
+        "data": {
+          "label": "infrastructure/db_connection.ts",
+          "description": "Handles the connection to the SQLite database file. Manages connection pooling (if necessary) and initialization of tables on startup.",
+          "type": "database",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "schema.sql",
+            "seed.sql",
+            "config.json",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_73waqp",
+        "type": "database",
+        "position": {
+          "x": 300,
+          "y": 10
+        },
+        "data": {
+          "label": "infrastructure/repository.ts",
+          "description": "Contains raw SQL queries and database interaction logic for creating, reading, updating, and deleting todo records from SQLite.",
+          "type": "database",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "schema.sql",
+            "seed.sql",
+            "config.json",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_lehobp",
+        "type": "logic",
+        "position": {
+          "x": 300,
+          "y": 30
+        },
+        "data": {
+          "label": "infrastructure/logger.ts",
+          "description": "Provides a standardized logging utility that integrates with the Linux systemd journal for backend operations and error reporting.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "service.ts",
+            "helpers.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_tu7kwi",
+        "type": "logic",
+        "position": {
+          "x": 400,
+          "y": 10
+        },
+        "data": {
+          "label": "services/todo_manager.ts",
+          "description": "Core business logic layer. Coordinates between the repository and validators to handle 'Create', 'Update', and 'Complete' actions.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "service.ts",
+            "helpers.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_butcpg",
+        "type": "api",
+        "position": {
+          "x": 500,
+          "y": 10
+        },
+        "data": {
+          "label": "interface/api_routes.ts",
+          "description": "Defines Express or Fastify routes for the backend; provides REST endpoints like GET /todos, POST /tasks, and DELETE /task/:id.",
+          "type": "api",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "routes.ts",
+            "client.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_bfu0r3",
+        "type": "api",
+        "position": {
+          "x": 600,
+          "y": 10
+        },
+        "data": {
+          "label": "interface/controllers.ts",
+          "description": "Maps HTTP requests from the API routes to relevant methods in the todo_manager service while handling error responses.",
+          "type": "api",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "routes.ts",
+            "client.ts",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_qpf1h5",
+        "type": "ui",
+        "position": {
+          "x": 800,
+          "y": 10
+        },
+        "data": {
+          "label": "ui/main_app.tsx",
+          "description": "The primary entry point for the frontend UI; manages state routing between the list view and task detail views.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "component.tsx",
+            "styles.css",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_qfxl4p",
+        "type": "ui",
+        "position": {
+          "x": 800,
+          "y": 30
+        },
+        "data": {
+          "label": "ui/task_list.tsx",
+          "description": "Renders the main list of todo items, fetching data from the API and handling interactions-specific animations.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "component.tsx",
+            "styles.css",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_csuv4a",
+        "type": "ui",
+        "position": {
+          "x": 1000,
+          "y": 30
+        },
+        "data": {
+          "label": "ui/task_item.tsx",
+          "description": "Represents a single todo card item; includes buttons to toggle completion status and delete the entry.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "component.tsx",
+            "styles.css",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_rnetul",
+        "type": "ui",
+        "position": {
+          "x": 1000,
+          "y": 50
+        },
+        "data": {
+          "label": "ui/add_task_form.tsx",
+          "description": "A modal or form component providing input fields for task titles and description for creating new items.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "component.tsx",
+            "styles.css",
+            "README.md"
+          ]
+        }
+      },
+      {
+        "id": "node_1781645133528_f0chmr",
+        "type": "ui",
+        "position": {
+          "x": 1000,
+          "y": 70
+        },
+        "data": {
+          "label": "ui/global_styles.css",
+          "description": "Base CSS for the application including layout definitions and colors for the Linux desktop environment.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "resourceFiles": [
+            "component.tsx",
+            "styles.css",
+            "README.md"
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_node_1781645133527_gbejq1_node_1781645133528_slappu",
+        "source": "node_1781645133527_gbejq1",
+        "target": "node_1781645133528_slappu",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_y5uysh_node_1781645133528_tu7kwi",
+        "source": "node_1781645133528_y5uysh",
+        "target": "node_1781645133528_tu7kwi",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_y5uysh_node_1781645133528_bfu0r3",
+        "source": "node_1781645133528_y5uysh",
+        "target": "node_1781645133528_bfu0r3",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_kkmzmm_node_1781645133528_tu7kwi",
+        "source": "node_1781645133528_kkmzmm",
+        "target": "node_1781645133528_tu7kwi",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_jn83jy_node_1781645133528_tu7kwi",
+        "source": "node_1781645133528_jn83jy",
+        "target": "node_1781645133528_tu7kwi",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_slappu_node_1781645133528_73waqp",
+        "source": "node_1781645133528_slappu",
+        "target": "node_1781645133528_73waqp",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_lehobp_node_1781645133528_tu7kwi",
+        "source": "node_1781645133528_lehobp",
+        "target": "node_1781645133528_tu7kwi",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_73waqp_node_1781645133528_tu7kwi",
+        "source": "node_1781645133528_73waqp",
+        "target": "node_1781645133528_tu7kwi",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_tu7kwi_node_1781645133528_bfu0r3",
+        "source": "node_1781645133528_tu7kwi",
+        "target": "node_1781645133528_bfu0r3",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_butcpg_node_1781645133528_bfu0r3",
+        "source": "node_1781645133528_butcpg",
+        "target": "node_1781645133528_bfu0r3",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_qpf1h5_node_1781645133528_qfxl4p",
+        "source": "node_1781645133528_qpf1h5",
+        "target": "node_1781645133528_qfxl4p",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_qfxl4p_node_1781645133528_csuv4a",
+        "source": "node_1781645133528_qfxl4p",
+        "target": "node_1781645133528_csuv4a",
+        "type": "default"
+      },
+      {
+        "id": "edge_node_1781645133528_rnetul_node_1781645133528_butcpg",
+        "source": "node_1781645133528_rnetul",
+        "target": "node_1781645133528_butcpg",
+        "type": "default"
+      }
+    ],
+    "savedAt": "2026-06-16T21:25:33.538Z",
+    "version": 1
+  }
+]

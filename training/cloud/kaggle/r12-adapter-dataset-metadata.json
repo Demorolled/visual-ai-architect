@@ -1,0 +1,10 @@
+{
+  "id": "__USERNAME__/vaca-r12-adapter",
+  "title": "VACA R12 LoRA adapter",
+  "subtitle": "Resume round-13 from the round-12 trained LoRA (defects round)",
+  "licenses": [
+    {
+      "name": "other"
+    }
+  ]
+}

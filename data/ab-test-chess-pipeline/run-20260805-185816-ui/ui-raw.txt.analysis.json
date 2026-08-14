@@ -1,0 +1,33 @@
+{
+ "gates": {
+  "chars": 1217,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [],
+  "prose_leak": 0
+ },
+ "meta": {},
+ "check": {
+  "tsc_clean": false,
+  "error_count": 12,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ai-engine/chess-ai-engine.ts(1,43): error TS2307: Cannot find module './chess-board' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ai-engine/chess-ai-engine.ts(2,22): error TS2307: Cannot find module './chess-move-rules' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-game/chess-game.ts(1,43): error TS2307: Cannot find module './chess-board' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-game/chess-game.ts(2,22): error TS2307: Cannot find module './chess-move-rules' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(4,23): error TS2440: Import declaration conflicts with local declaration of 'setDifficulty'.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(14,32): error TS2339: Property 'render' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(17,24): error TS2339: Property 'getStatus' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(27,9): error TS2339: Property 'undoMove' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(32,9): error TS2339: Property 'resetGame' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(33,34): error TS2339: Property 'render' does not exist on type 'ChessBoard'.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(38,16): error TS2693: 'Difficulty' only refers to a type, but is being used as a value here.",
+   "data/ab-test-chess-pipeline/run-20260805-185816-ui/ui/chess-ui/chess-ui.ts(39,9): error TS2339: Property 'setDifficulty' does not exist on type 'ChessBoard'."
+  ]
+ }
+}

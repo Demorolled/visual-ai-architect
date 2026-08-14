@@ -1,0 +1,26 @@
+export function shuffle<T>(arr: T[]): T[] {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+export function clamp(n: number, lo: number, hi: number): number {
+  return Math.min(Math.max(n, lo), hi);
+}
+
+export function groupBy<T>(items: T[], key: keyof T): Map<string, T[]> {
+  const map = new Map<string, T[]>();
+  items.forEach(item => {
+    const k = item[key];
+    const list = map.get(k);
+    if (list) {
+      list.push(item);
+    } else {
+      map.set(k, [item]);
+    }
+  });
+  return map;
+}

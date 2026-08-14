@@ -1,0 +1,215 @@
+[
+  {
+    "pass": false,
+    "file": "city-skyline.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/city-skyline-shot.png",
+    "name": "city-skyline"
+  },
+  {
+    "pass": false,
+    "file": "galaxy-spiral.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/galaxy-spiral-shot.png",
+    "name": "galaxy-spiral"
+  },
+  {
+    "pass": false,
+    "file": "ocean-waves.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/ocean-waves-shot.png",
+    "name": "ocean-waves"
+  },
+  {
+    "pass": false,
+    "file": "dna-helix.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/dna-helix-shot.png",
+    "name": "dna-helix"
+  },
+  {
+    "pass": false,
+    "file": "lava-lamp.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/lava-lamp-shot.png",
+    "name": "lava-lamp"
+  },
+  {
+    "pass": false,
+    "file": "snow-globe.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/snow-globe-shot.png",
+    "name": "snow-globe"
+  },
+  {
+    "pass": false,
+    "file": "molecule-viewer.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/molecule-viewer-shot.png",
+    "name": "molecule-viewer"
+  },
+  {
+    "pass": false,
+    "file": "voxel-castle.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/voxel-castle-shot.png",
+    "name": "voxel-castle"
+  },
+  {
+    "pass": false,
+    "file": "butterfly-swarm.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/butterfly-swarm-shot.png",
+    "name": "butterfly-swarm"
+  },
+  {
+    "pass": false,
+    "file": "donut-shop.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/donut-shop-shot.png",
+    "name": "donut-shop"
+  },
+  {
+    "pass": false,
+    "file": "shooting-stars.html",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "canvas": {
+      "found": false
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": false
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/shooting-stars-shot.png",
+    "name": "shooting-stars"
+  },
+  {
+    "pass": false,
+    "file": "audio-visualizer.html",
+    "consoleErrors": [],
+    "pageErrors": [
+      "THREE.OrbitControls is not a constructor"
+    ],
+    "canvas": {
+      "found": true,
+      "webgl": true
+    },
+    "fallbackVisible": false,
+    "probes": {
+      "window.THREE !== undefined": true
+    },
+    "screenshot": "/home/final-flash1/Desktop/visual-ai-architect/probes/r13-3d/audio-visualizer-shot.png",
+    "name": "audio-visualizer"
+  }
+]

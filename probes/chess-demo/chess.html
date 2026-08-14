@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Chess</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0c0c12; }
+  #scene { position: fixed; inset: 0; }
+  canvas { display: block; }
+  .controls { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 100; }
+  .controls button { width: 28px; height: 28px; border: none; background: rgba(255,255,255,0.12); color: #fff; font-size: 12px; border-radius: 4px; cursor: pointer; user-select: none; }
+  .controls button:hover { background: rgba(255,255,255,0.2); }
+  .controls button:active { background: rgba(255,255,255,0.1); }
+  #hint { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); z-index: 100; color: #d0d0d0; font-size: 14px; white-space: nowrap; }
+  #hint::before { content: ' '; position: fixed; inset: 0; display: block; background: linear-gradient(135deg, #0b0b10 0%, #07070e 100%); backdrop-filter: blur(8px); z-index: -1; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="hint"></div>
+<div class="controls">
+  <button id="hintBtn">Hint</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('black');
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 2000);
+camera.position.set(0, 0, 7);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('scene').appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.minDistance = 3.5; controls.maxDistance = 12; controls.target.set(0, 0, 0); controls.enableDamping = true; controls.dampingFactor = 0.08;
+
+const board = new THREE.Group();
+scene.add(board);
+
+const boardGeometry = new THREE.CubeGeometry(5.6, 5.6, 0.01);
+const boardMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25, metalness: 0.95 });
+const boardMesh = new THREE.Mesh(boardGeometry, boardMaterial);
+board.add(boardMesh);
+
+const rows = 8; const cols = 8;
+const pieceGeometries = {
+  pawn: new THREE.CylinderGeometry(0.9, 0.8, 1.2, 18),
+  rook: new THREE.CylinderGeometry(0.85, 0.85, 2.3, 18),
+  knight: new THREE.CylinderGeometry(0.85, 0.85, 2.3, 18),
+  bishop: new THREE.CylinderGeometry(0.85, 0.85, 2.3, 18),
+  queen: new THREE.CylinderGeometry(0.85, 0.85, 2.3, 18),
+  king: new THREE.CylinderGeometry(0.85, 0.85, 2.3, 18),
+};
+const pieceMaterials = {
+  white: { color: 0xf0e0d0 },
+  black: { color: 0x222222 },
+};
+for (let i = 0; i < rows; i++) {
+  for (let j = 0; j < cols; j++) {
+    const isWhite = (i + j) % 2 === 0;
+    const geometry = isWhite ? new THREE.CylinderGeometry(0.9, 0.8, 1.2, 18) : new THREE.CylinderGeometry(0.9, 0.8, 1.2, 18);
+    const material = new THREE.MeshStandardMaterial({ color: isWhite ? 0xf0e0d0 : 0x222222, roughness: 0.25, metalness: 0.95 });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set((j - 3.5) * 1.1, 0, (3 - i) * -1.1);
+    mesh.castShadow = true;
+    board.add(mesh);
+  }
+}
+
+const pieces = {};
+const piecePositions = {
+  'p': { 'a2': 1, 'b2': 1, 'c2': 1, 'd2': 1, 'e2': 1, 'f2': 1, 'g2': 1, 'h2': 1 },
+  'r': { 'a1': 1, 'h1': 1 },
+  'n': { 'b1': 1, 'g1': 1 },
+  'b': { 'c1': 1, 'f1': 1 },
+  'q': { 'd1': 1 },
+  'k': { 'e1': 1 },
+};
+for (const piece of ['p', 'r', 'n', 'b', 'q', 'k']) {
+  for (const pos in piecePositions[piece]) {
+    const isBlack = piece === 'p' ? pos[1] === '2' : pos[1] === '7';
+    const mesh = new THREE.Mesh(pieceGeometries[piece], new THREE.MeshStandardMaterial({ color: isBlack ? 0x222222 : 0xf0e0d0, roughness: 0.25, metalness: 0.95 }));
+    mesh.position.set(7 - pos.charCodeAt(0), 0, 8 - pos.charCodeAt(1));
+    mesh.castShadow = true;
+    board.add(mesh);
+    pieces[pos] = { mesh, isBlack, piece };
+  }
+}
+
+const starfield = new THREE.Group();
+scene.add(starfield);
+const starCount = 1500;
+for (let i = 0; i < starCount; i++) {
+  const geometry = new THREE.SphereGeometry(0.005, 8, 8);
+  const material = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.75, roughness: 0.25, metalness: 0.85 });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set((Math.random() - 0.5) * 50, 0, (Math.random() - 0.5) * 50);
+  mesh.scale.set(1, 1, 1);
+  starfield.add(mesh);
+}
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const clock = new THREE.Clock();
+const state = {
+  turn: 'white',
+  moveHistory: [],
+  enPassantTarget: null,
+  castlingRights: { white: { king: true, queen: true }, black: { king: true, queen: true } },
+  check: false,
+};
+function updateBoard() {
+  board.rotation.y += 0.025;
+  board.children.forEach((piece) => {
+    if (piece.isBlack) {
+      piece.material.color.setHex(0x222222);
+    } else {
+      piece.material.color.setHex(0xf0e0d0);
+    }
+  });
+  for (const pos in pieces) {
+    const piece = pieces[pos];
+    if (state.moveHistory[state.moveHistory.length - 1] === pos) {
+      piece.mesh.material.color.setHex(0x880000);
+    } else {
+      piece.mesh.material.color.setHex(0xffffff);
+    }
+  }
+}
+function highlightMoves(moves) {
+  for (const pos of board.children) {
+    pos.material.color.setHex(0xffffff);
+  }
+  for (const move of moves) {
+    board.children[move].material.color.setHex(0xff0000);
+  }
+}
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  controls.update();
+  renderer.render(scene, camera);
+  updateBoard();
+  if (state.check) {
+    highlightMoves(state.check);
+  }
+  if (state.moveHistory.length > 0) {
+    const lastMove = state.moveHistory[state.moveHistory.length - 1];
+    const lastPiece = pieces[lastMove];
+    lastPiece.mesh.position.set((7 - lastMove.charCodeAt(0)) * 1.1, 0, (8 - lastMove.charCodeAt(1)) * -1.1);
+    const target = state.moveHistory[state.moveHistory.length - 2];
+    const targetPiece = pieces[target];
+    targetPiece.mesh.position.set((7 - target.charCodeAt(0)) * 1.1, 0, (8 - target.charCodeAt(1)) * -1.1);
+    const t = Math.min(clock.getElapsedTime() / 1.25, 1);
+    targetPiece.mesh.position.lerp(lastPiece.mesh.position, t);
+    lastPiece.mesh.position.lerp(targetPiece.mesh.position, t);
+  }
+}
+animate();
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+document.getElementById('hintBtn').addEventListener('click', () => {
+  const hint = document.getElementById('hint');
+  hint.textContent = 'Hint: Move your knight to g5 to capture the black pawn.';
+  setTimeout(() => { hint.textContent = ''; }, 5000);
+});
+
+</script>
+</body>
+</html>

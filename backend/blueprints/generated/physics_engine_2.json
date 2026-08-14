@@ -1,0 +1,53 @@
+{
+  "app_type": "physics_engine_2",
+  "description": "2D physics engine with rigid bodies, collisions, constraints — Interactive physics engine with real-time visualization and analysis",
+  "keywords": [
+    "specialized",
+    "physics-engine",
+    "simulation",
+    "2d",
+    "specialized",
+    "physics",
+    "engine",
+    "domain input",
+    "core algorithm",
+    "data store",
+    "analysis engine",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Domain Input",
+    "Core Algorithm",
+    "Data Store",
+    "Analysis Engine",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Domain Input",
+      "destination_module": "Core Algorithm",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Algorithm",
+      "destination_module": "Data Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Analysis Engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Engine",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

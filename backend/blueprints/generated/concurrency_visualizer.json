@@ -1,0 +1,53 @@
+{
+  "app_type": "concurrency_visualizer",
+  "description": "Interactive thread/process visualization with mutex, semaphore, and deadlock detection — Simulates concurrent programs with multiple threads, mutex locks, semaphores, condition variables, and barriers. Shows thread states (running/blocked/ready), context switches, and deadlock detection with cycle detection",
+  "keywords": [
+    "concurrency",
+    "threads",
+    "mutex",
+    "deadlock",
+    "visualization",
+    "concurrency",
+    "visualizer",
+    "thread config",
+    "scheduler sim",
+    "thread state store",
+    "deadlock detector",
+    "thread timeline"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Thread Config",
+    "Scheduler Sim",
+    "Thread State Store",
+    "Deadlock Detector",
+    "Thread Timeline"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Thread Config",
+      "destination_module": "Scheduler Sim",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Scheduler Sim",
+      "destination_module": "Thread State Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Thread State Store",
+      "destination_module": "Deadlock Detector",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Deadlock Detector",
+      "destination_module": "Thread Timeline",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

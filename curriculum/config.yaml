@@ -1,0 +1,39 @@
+# curriculum — config. Point this at ANY app's docs+source and re-run.
+app:
+  name: VACA
+  tiers: 5
+  judge_batch: 4                 # tests per batched teacher judge call (validate/eval)
+  corpus:
+    files:
+      - data/VACA-MASTER-KNOWLEDGE.md
+      - data/build-knowledge.md
+      - data/design-manifesto.md
+    dirs:
+      - backend/src
+    extensions: [.md, .ts, .py, .json, .yaml]
+    exclude: [node_modules, dist, out, .git, test, spec, __pycache__]
+    max_files_per_dir: 40          # biggest files first
+    max_bytes_per_file: 200000
+    chunk_size: 6000               # chars per dictionary-extraction chunk
+
+# teacher = the POWERFUL model that reads the app, writes tests, judges.
+#
+# WORKING MODE (default): dna5rm/gemma4:12b-8k — fits ONE RTX 3060 → ~34 tok/s,
+#   stable, JSON grammar-enforced. Verified usable for full live loops.
+#
+# QUALITY MODE (overnight, slow): qwen3.6:27b-q4_K_M — stronger but decodes at
+#   ~1 tok/s on the dual-GPU split and WEDGES llama-server under sustained load
+#   (runner pegs CPU ~280%, verified this session). Switch back for offline
+#   overnight runs only; stop/start the model between stages.
+teacher:
+  base_url: http://127.0.0.1:11434
+  model: dna5rm/gemma4:12b-8k
+  temperature: 0.4
+  max_tokens: 2000
+
+# student = the model being tested and fine-tuned.
+student:
+  base_url: http://127.0.0.1:8000
+  model: qwen2.5-7b-instruct-uncensored-dspark
+
+out_dir: curriculum/out

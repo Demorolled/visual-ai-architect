@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>3D Ocean with Waves</title>
+<style>
+	body { margin:0; display:flex; align-items:center; justify-content:center; height:100vh; background:#0c0c10; overflow:hidden; }
+	.scene { width:100vw; height:100vh; }
+	button { position:fixed; top:10px; left:10px; z-index:100; padding:10px 20px; font-size:14px; cursor:pointer; background:rgba(255,255,255,0.2); color:#fff; border:0; border-radius:10px; }
+</style>
+</head>
+<body>
+<div id="scene" class="scene"></div>
+<button id="wireframe">Toggle Wireframe</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+	const scene = new THREE.Scene();
+	const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+	const renderer = new THREE.WebGLRenderer({ antialias:true });
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.getElementById('scene').appendChild(renderer.domElement);
+	const controls = new THREE.OrbitControls(camera, renderer.domElement);
+	camera.position.z = 15;
+	scene.background = new THREE.Color(0x0c0c10);
+	scene.fog = new THREE.Fog(0x0c0c10, 30, 100);
+	const wireframe = document.getElementById('wireframe');
+	const clock = new THREE.Clock();
+	const waves = new THREE.BufferAttribute(new Float32Array(200 * 40 * 3), 3);
+	waves.needsUpdate = true;
+	const mesh = new THREE.Mesh(
+		new THREE.PlaneGeometry(200, 40, 200 - 1, 40 - 1),
+		new THREE.ShaderMaterial({
+			uniforms: {
+				time: { value: 0 },
+				waveAmplitude: { value: 0.5 },
+				waveSpeed: { value: 0.02 },
+				waveFrequency: { value: 0.01 },
+				wireframe: { value: false },
+			},
+			transparent: true,
+			vertexColors: true,
+			side: THREE.DoubleSide,
+			depthWrite: false,
+			depthTest: false,
+			vertexShader: `
+				varying vec2 vUv;
+				void main() {
+					vUv = uv;
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+				}
+			`,
+			fragmentShader: `
+				uniform float time;
+				uniform float waveAmplitude;
+				uniform float waveSpeed;
+				uniform float waveFrequency;
+				uniform bool wireframe;
+				varying vec2 vUv;
+				void main() {
+					float wave = waveAmplitude * sin(vUv.x * waveFrequency + time * waveSpeed);
+					float height = position.y + wave;
+					gl_FragColor = vec4(vec3(height), 1.0);
+					if (wireframe) discard;
+				}
+			`
+		})
+	);
+	mesh.rotation.x = -Math.PI / 2;
+	scene.add(mesh);
+	for (let i = 0; i < 5; i++) {
+		const bob = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3, roughness: 0.8 }));
+		bob.position.set((Math.random() - 0.5) * 100, 1.5, (Math.random() - 0.5) * 100);
+		bob.userData = { height: 0 };
+		scene.add(bob);
+		const target = new THREE.Vector3();
+		const raycaster = new THREE.Raycaster();
+		const mouse = new THREE.Vector2();
+		const animateBuoys = () => {
+			const t = clock.getElapsedTime();
+			const speed = 0.5 + Math.random() * 2;
+			bob.userData.height = Math.sin(t * speed) * 0.5 + 0.5;
+			bob.position.y = bob.userData.height;
+			raycaster.setFromCamera(mouse, camera);
+			raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), target);
+			bob.position.set(target.x, target.y, target.z);
+		};
+		const handleWindowResize = () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		};
+		window.addEventListener('resize', handleWindowResize);
+		const handlePointerMove = (e) => {
+			mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+			mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+			raycaster.setFromCamera(mouse, camera);
+		};
+		wireframe.addEventListener('click', () => {
+			material.uniforms.wireframe.value = !material.uniforms.wireframe.value;
+		});
+		const animate = () => {
+			requestAnimationFrame(animate);
+			mesh.rotation.y += 0.01;
+			const t = clock.getElapsedTime();
+			const speed = 0.02 + Math.random() * 0.02;
+			waves.array.forEach((v, i) => {
+				v[0] = (i % 40) / 40 - 0.5;
+				v[1] = Math.sin(t * speed + i / 40) * 0.5 * (i / 40 + 1);
+				v[2] = (Math.floor(i / 40) % 200) / 400 - 0.5;
+			});
+			waves.needsUpdate = true;
+			material.uniforms.time.value = t;
+			bob.userData.height = Math.sin(t * speed) * 0.5 + 0.5;
+			bob.position.y = bob.userData.height;
+			raycaster.setFromCamera(mouse, camera);
+			raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), target);
+			bob.position.set(target.x, target.y, target.z);
+			renderer.render(scene, camera);
+		};
+		handleWindowResize();
+		handlePointerMove({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+		animate();
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+{
+  "projectName": "a command line todo list manager in TypeScript",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "nodeId": "node_1786613382026_7sr9sd",
+      "nodeLabel": "main.ts",
+      "fileName": "main.ts",
+      "language": "typescript",
+      "dependencies": [],
+      "exports": [
+        "Task",
+        "TaskStore",
+        "InputHandler",
+        "start"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786613382026_7wtoig",
+      "nodeLabel": "config.ts",
+      "fileName": "config.ts",
+      "language": "typescript",
+      "dependencies": [],
+      "exports": [
+        "Config",
+        "config",
+        "validateConfig"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613382026_ix4xyp",
+      "nodeLabel": "tests.ts",
+      "fileName": "tests.ts",
+      "language": "typescript",
+      "dependencies": [],
+      "exports": [
+        "TaskStore",
+        "handleInput",
+        "main"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786613382026_4pvitb",
+      "nodeLabel": "guiLayout.ts",
+      "fileName": "guilayout.ts",
+      "language": "typescript",
+      "dependencies": [],
+      "exports": [
+        "Task",
+        "App",
+        "renderTasks",
+        "renderEmptyState",
+        "render",
+        "addTask",
+        "toggleTask",
+        "removeTask",
+        "clearAll"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613382026_nzpxt0",
+      "nodeLabel": "taskModels.ts",
+      "fileName": "taskmodels.ts",
+      "language": "typescript",
+      "dependencies": [],
+      "exports": [
+        "Task",
+        "TaskList"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613382026_n81g72",
+      "nodeLabel": "types.ts",
+      "fileName": "types.ts",
+      "language": "typescript",
+      "dependencies": [
+        "tests.ts"
+      ],
+      "exports": [
+        "Task",
+        "Command",
+        "TaskList"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613382026_0pd733",
+      "nodeLabel": "uiFunctions.ts",
+      "fileName": "uifunctions.ts",
+      "language": "typescript",
+      "dependencies": [
+        "ui.ts",
+        "guiLayout.ts"
+      ],
+      "exports": [
+        "renderCLIPrompt"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "node_1786613382026_52r8hh",
+      "nodeLabel": "ui.ts",
+      "fileName": "ui.ts",
+      "language": "typescript",
+      "dependencies": [
+        "uiFunctions.ts"
+      ],
+      "exports": [
+        "runApp"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613382026_ni04lz",
+      "nodeLabel": "businessLogic.ts",
+      "fileName": "businesslogic.ts",
+      "language": "typescript",
+      "dependencies": [
+        "inputHandler.ts",
+        "tests.ts"
+      ],
+      "exports": [
+        "ProcessCommand"
+      ],
+      "validated": true
+    },
+    {
+      "nodeId": "node_1786613382026_wez5a7",
+      "nodeLabel": "inputHandler.ts",
+      "fileName": "inputhandler.ts",
+      "language": "typescript",
+      "dependencies": [
+        "businessLogic.ts",
+        "tests.ts"
+      ],
+      "exports": [
+        "handleCommand"
+      ],
+      "validated": false
+    },
+    {
+      "nodeId": "preview_gui_wrapper",
+      "nodeLabel": "App Preview (Auto-generated)",
+      "fileName": "index.html",
+      "language": "html",
+      "dependencies": [
+        "main.ts",
+        "config.ts",
+        "tests.ts",
+        "guiLayout.ts",
+        "taskModels.ts",
+        "types.ts",
+        "uiFunctions.ts",
+        "ui.ts",
+        "businessLogic.ts",
+        "inputHandler.ts"
+      ],
+      "exports": [],
+      "validated": true
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1786613382026_wez5a7",
+      "target": "node_1786613382026_ni04lz"
+    },
+    {
+      "source": "node_1786613382026_52r8hh",
+      "target": "node_1786613382026_0pd733"
+    },
+    {
+      "source": "node_1786613382026_ni04lz",
+      "target": "node_1786613382026_wez5a7"
+    },
+    {
+      "source": "node_1786613382026_0pd733",
+      "target": "node_1786613382026_52r8hh"
+    },
+    {
+      "source": "node_1786613382026_4pvitb",
+      "target": "node_1786613382026_0pd733"
+    },
+    {
+      "source": "node_1786613382026_ix4xyp",
+      "target": "node_1786613382026_n81g72"
+    },
+    {
+      "source": "node_1786613382026_ix4xyp",
+      "target": "node_1786613382026_wez5a7"
+    },
+    {
+      "source": "node_1786613382026_ix4xyp",
+      "target": "node_1786613382026_ni04lz"
+    }
+  ]
+}

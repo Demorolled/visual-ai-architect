@@ -1,0 +1,19 @@
+{
+  "projectName": "Untitled Project",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_0",
+      "type": "output",
+      "label": "Bible.txt",
+      "description": "A text file containing a full list of all functions identified in the directory, updated by scanning the root folder outward.",
+      "language": "text",
+      "position": {
+        "x": 313.7464060260323,
+        "y": 300
+      }
+    }
+  ],
+  "edges": [],
+  "createdAt": "2026-06-29T09:11:44.687Z"
+}

@@ -1,0 +1,131 @@
+{
+  "projectName": "tic tac toe game",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785106894062_mnkbgw",
+      "type": "logic",
+      "label": "main.go",
+      "description": "Tic Tac Toe game entry point. Parses CLI arguments, initializes game state.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 50
+      }
+    },
+    {
+      "id": "node_1785106894062_mb0r3j",
+      "type": "logic",
+      "label": "config/env.go",
+      "description": "Configuration file for game settings and playstyle options. Handles user input and defaults.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785106894062_hq4clz",
+      "type": "logic",
+      "label": "types/models.go",
+      "description": "Model definition for game state. Includes GameState and Move.",
+      "language": "go",
+      "position": {
+        "x": 400,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785106894062_7ygl3h",
+      "type": "database",
+      "label": "repository.go",
+      "description": "SQLite database repository for game states.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 220
+      }
+    },
+    {
+      "id": "node_1785106894062_khiy8b",
+      "type": "logic",
+      "label": "service.go",
+      "description": "Business logic layer for tic tac toe rules and game flow.",
+      "language": "go",
+      "position": {
+        "x": 500,
+        "y": 750
+      }
+    },
+    {
+      "id": "node_1785106894062_om4mhf",
+      "type": "logic",
+      "label": "data/gamestate.go",
+      "description": "Game state representation storing gameId, currentPlayer, and game data.",
+      "language": "go",
+      "position": {
+        "x": 350,
+        "y": 290
+      }
+    },
+    {
+      "id": "node_1785106894062_84b3oi",
+      "type": "logic",
+      "label": "describe/tic_tac_toe_description",
+      "description": "Tic Tac Toe game description template.",
+      "language": "go",
+      "position": {
+        "x": 250,
+        "y": 640
+      }
+    },
+    {
+      "id": "node_1785106894062_1wm3ez",
+      "type": "logic",
+      "label": "ui/components/tic_tac_toe_conso.svelte",
+      "description": "Console scraper for Tic Tac Toe UI. Displays game board and handles user input.",
+      "language": "svelte",
+      "position": {
+        "x": 350,
+        "y": 170
+      }
+    },
+    {
+      "id": "node_1785106894062_w9arv8",
+      "type": "logic",
+      "label": "nodes:tests",
+      "description": "Test suite for functional verification of application features.",
+      "language": "go",
+      "position": {
+        "x": 650,
+        "y": 640
+      }
+    },
+    {
+      "id": "node_1785106894062_n543n9",
+      "type": "logic",
+      "label": "nodes:harness",
+      "description": "Application orchestration configuration and execution setup.",
+      "language": "none",
+      "position": {
+        "x": 250,
+        "y": 810
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785106894062_7ygl3h",
+      "target": "node_1785106894062_khiy8b"
+    },
+    {
+      "source": "node_1785106894062_khiy8b",
+      "target": "node_1785106894062_mnkbgw"
+    },
+    {
+      "source": "node_1785106894062_hq4clz",
+      "target": "node_1785106894062_khiy8b"
+    }
+  ],
+  "createdAt": "2026-07-26T23:05:10.726Z"
+}

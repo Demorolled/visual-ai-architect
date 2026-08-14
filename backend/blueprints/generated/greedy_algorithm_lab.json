@@ -1,0 +1,54 @@
+{
+  "app_type": "greedy_algorithm_lab",
+  "description": "Interactive greedy algorithm laboratory with exchange argument visualizations — Demonstrates greedy algorithms: interval scheduling, fractional knapsack, Huffman coding, MST (Kruskal/Prim), Dijkstra. Shows greedy choice property proofs with exchange argument animations",
+  "keywords": [
+    "greedy",
+    "algorithms",
+    "optimization",
+    "exchange-argument",
+    "education",
+    "greedy",
+    "algorithm",
+    "lab",
+    "problem selector",
+    "greedy engine",
+    "solution store",
+    "step visualizer",
+    "proof assistant"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Problem Selector",
+    "Greedy Engine",
+    "Solution Store",
+    "Step Visualizer",
+    "Proof Assistant"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Problem Selector",
+      "destination_module": "Greedy Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Greedy Engine",
+      "destination_module": "Solution Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Solution Store",
+      "destination_module": "Step Visualizer",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Step Visualizer",
+      "destination_module": "Proof Assistant",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

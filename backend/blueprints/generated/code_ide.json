@@ -1,0 +1,53 @@
+{
+  "app_type": "code_ide",
+  "description": "Lightweight IDE with project management, Git, LSP, and debugging — Desktop IDE with project tree, Git status/diff/blame, LSP client, debugger, terminal",
+  "keywords": [
+    "ide",
+    "code-editor",
+    "git",
+    "developer-tools",
+    "lsp",
+    "code",
+    "ide",
+    "project manager",
+    "code intel",
+    "git integration",
+    "index store",
+    "ide workspace"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Project Manager",
+    "Code Intel",
+    "Git Integration",
+    "Index Store",
+    "IDE Workspace"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Project Manager",
+      "destination_module": "Code Intel",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Code Intel",
+      "destination_module": "Git Integration",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Git Integration",
+      "destination_module": "Index Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Index Store",
+      "destination_module": "IDE Workspace",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

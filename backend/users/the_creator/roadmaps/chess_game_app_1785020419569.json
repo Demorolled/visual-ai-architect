@@ -1,0 +1,84 @@
+{
+  "projectName": "chess game app",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1785020317678_fm3est",
+      "type": "input",
+      "label": "main.go",
+      "description": "Entrypoint of the app. Initializes the game state, sets up the UI, and handles user input. Imports the game logic and UI components. Exports the game state and UI events.",
+      "language": "go",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1785020317678_kbk6sr",
+      "type": "logic",
+      "label": "game_logic.go",
+      "description": "Contains the core game logic. Manages the game state, rules, and AI. Exports functions for moving pieces, checking for check/checkmate, and determining the winner.",
+      "language": "go",
+      "position": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1785020317678_h1yajc",
+      "type": "ui",
+      "label": "ui.go",
+      "description": "Handles the UI components and their interactions. Imports the game logic and UI components. Exports the UI state and events.",
+      "language": "go",
+      "position": {
+        "x": 200,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1785020317678_vl2ppa",
+      "type": "logic",
+      "label": "ai.go",
+      "description": "Contains the AI logic. Imports the game logic and UI components. Exports functions for making AI moves.",
+      "language": "go",
+      "position": {
+        "x": 300,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1785020317678_clv4rz",
+      "type": "database",
+      "label": "game_state.sql",
+      "description": "Database table for storing the game state. Imports the game logic and UI components. Exports the game state.",
+      "language": "sql",
+      "position": {
+        "x": 400,
+        "y": 0
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1785020317678_fm3est",
+      "target": "node_1785020317678_kbk6sr"
+    },
+    {
+      "source": "node_1785020317678_kbk6sr",
+      "target": "node_1785020317678_h1yajc"
+    },
+    {
+      "source": "node_1785020317678_kbk6sr",
+      "target": "node_1785020317678_vl2ppa"
+    },
+    {
+      "source": "node_1785020317678_h1yajc",
+      "target": "node_1785020317678_clv4rz"
+    },
+    {
+      "source": "node_1785020317678_vl2ppa",
+      "target": "node_1785020317678_clv4rz"
+    }
+  ],
+  "createdAt": "2026-07-25T23:00:19.569Z"
+}

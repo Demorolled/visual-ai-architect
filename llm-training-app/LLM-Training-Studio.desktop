@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=LLM Training Studio
+Comment=Standalone desktop app for LLM training and dataset curation
+Exec=bash -c "cd $(dirname %k) && bash start.sh"
+Icon=applications-science
+Terminal=true
+Categories=Development;Science;AI;

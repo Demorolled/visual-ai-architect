@@ -1,0 +1,54 @@
+{
+  "app_type": "rabin_karp_matcher_2",
+  "description": "Rolling hash string matching with hash collision handling — Interactive rabin-karp matcher with real-time visualization and analysis",
+  "keywords": [
+    "algorithms",
+    "rabin-karp",
+    "rolling-hash",
+    "string",
+    "fundamentals",
+    "rabin",
+    "karp",
+    "matcher",
+    "data input",
+    "core algorithm",
+    "results store",
+    "analysis engine",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Input",
+    "Core Algorithm",
+    "Results Store",
+    "Analysis Engine",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Input",
+      "destination_module": "Core Algorithm",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Algorithm",
+      "destination_module": "Results Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Results Store",
+      "destination_module": "Analysis Engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Engine",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

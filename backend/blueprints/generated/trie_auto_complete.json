@@ -1,0 +1,54 @@
+{
+  "app_type": "trie_auto_complete",
+  "description": "Prefix tree auto-complete engine with visualization, search suggestions, and compression — Builds a trie from a word list, demonstrates prefix search with auto-complete suggestions, shows trie structure with node compression (radix tree), and displays traversal paths",
+  "keywords": [
+    "trie",
+    "prefix-tree",
+    "auto-complete",
+    "search",
+    "data-structures",
+    "trie",
+    "auto",
+    "complete",
+    "dictionary loader",
+    "trie builder",
+    "trie node store",
+    "search & suggest",
+    "trie visualizer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Dictionary Loader",
+    "Trie Builder",
+    "Trie Node Store",
+    "Search & Suggest",
+    "Trie Visualizer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Dictionary Loader",
+      "destination_module": "Trie Builder",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Trie Builder",
+      "destination_module": "Trie Node Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Trie Node Store",
+      "destination_module": "Search & Suggest",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Search & Suggest",
+      "destination_module": "Trie Visualizer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

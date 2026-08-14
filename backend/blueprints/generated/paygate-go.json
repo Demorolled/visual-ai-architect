@@ -1,0 +1,51 @@
+{
+  "app_type": "paygate-go",
+  "description": "merchant onboarding, payment capture with idempotency, payout scheduling, webhook delivery, end-of-day reconciliation.",
+  "keywords": [
+    "paygate-go",
+    "go",
+    "payment",
+    "gateway",
+    "merchants",
+    "payments",
+    "payouts",
+    "webhooks",
+    "reconciliation"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "merchants",
+    "payments",
+    "payouts",
+    "webhooks",
+    "reconciliation"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "merchants",
+      "destination_module": "payments",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "payments",
+      "destination_module": "payouts",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "payouts",
+      "destination_module": "webhooks",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "webhooks",
+      "destination_module": "reconciliation",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 33
+}

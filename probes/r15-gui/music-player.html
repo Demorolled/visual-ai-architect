@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #000; font-family: system-ui, sans-serif; }
+        .player { width: 100%; max-width: 600px; padding: 20px; background: rgba(0, 0, 0, 0.7); border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; gap: 10px; }
+        .album-art { width: 100%; max-width: 300px; height: 300px; background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .album-art img { max-width: 100%; max-height: 100%; border-radius: 12px; }
+        .controls { display: flex; align-items: center; gap: 10px; }
+        .controls button { width: 40px; height: 40px; border: none; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 16px; cursor: pointer; outline: none; transition: all 0.2s; }
+        .controls button:hover { background: rgba(255, 255, 255, 0.05); }
+        .controls button:active { transform: translateY(1px); }
+        .seek { width: 100%; max-width: 300px; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; position: relative; }
+        .seek-fill { height: 100%; border-radius: 6px; position: absolute; left: 0; bottom: 0; }
+        .track-title { font-size: 18px; color: #fff; }
+        .playlist { width: 100%; max-width: 300px; height: 200px; overflow-y: scroll; padding: 10px; background: rgba(0, 0, 0, 0.8); border-radius: 12px; margin-top: 20px; }
+        .playlist::-webkit-scrollbar { width: 6px; }
+        .playlist::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); }
+        .playlist::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 6px; }
+        .playlist li { padding: 8px 12px; color: #fff; cursor: pointer; }
+        .playlist li:hover { background: rgba(255, 255, 255, 0.05); }
+        .playlist li.active { background: rgba(255, 255, 255, 0.1); }
+        .volume { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+        .volume label { color: #fff; font-size: 14px; }
+        .volume input { width: 20px; height: 20px; accent-color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="player">
+        <div class="album-art">
+            <img src="https://via.placeholder.com/300" alt="Album Art">
+        </div>
+        <div class="controls">
+            <button id="prev">❮</button>
+            <button id="play">▶</button>
+            <button id="next">❯</button>
+        </div>
+        <div class="track-title">Track Title</div>
+        <div class="seek">
+            <div class="seek-fill"></div>
+        </div>
+        <ul class="playlist">
+            <li data-track="0" class="active">Track 1</li>
+            <li data-track="1">Track 2</li>
+            <li data-track="2">Track 3</li>
+            <li data-track="3">Track 4</li>
+            <li data-track="4">Track 5</li>
+        </ul>
+        <div class="volume">
+            <label for="volume">Vol:</label>
+            <input type="range" id="volume" min="0" max="100" value="100">
+        </div>
+    </div>
+
+    <script>
+        const albumArt = document.querySelector('.album-art img');
+        const playButton = document.getElementById('play');
+        const prevButton = document.getElementById('prev');
+        const nextButton = document.getElementById('next');
+        const seek = document.querySelector('.seek-fill');
+        const trackTitle = document.querySelector('.track-title');
+        const playlist = document.querySelectorAll('.playlist li');
+        const volumeInput = document.getElementById('volume');
+
+        let trackIndex = 0;
+        let isPlaying = false;
+        let trackDuration = 0;
+        let trackTime = 0;
+        let timer;
+
+        const tracks = [
+            { title: 'Track 1', artist: 'Artist 1', duration: 240, src: 'track1.mp3' },
+            { title: 'Track 2', artist: 'Artist 2', duration: 220, src: 'track2.mp3' },
+            { title: 'Track 3', artist: 'Artist 3', duration: 260, src: 'track3.mp3' },
+            { title: 'Track 4', artist: 'Artist 4', duration: 230, src: 'track4.mp3' },
+            { title: 'Track 5', artist: 'Artist 5', duration: 250, src: 'track5.mp3' },
+        ];
+
+        function updateTrackDisplay() {
+            const { title, artist, duration } = tracks[trackIndex];
+            trackTitle.textContent = title;
+            albumArt.dataset.src = `https://via.placeholder.com/300?text=${encodeURIComponent(title)}`;
+            trackDuration = duration;
+            seek.style.width = 0;
+        }
+
+        function playTrack() {
+            isPlaying = true;
+            playButton.textContent = '❚❚';
+            timer = setInterval(updateTrackProgress, 100);
+            playAudio();
+        }
+
+        function pauseTrack() {
+            isPlaying = false;
+            playButton.textContent = '▶';
+            clearInterval(timer);
+        }
+
+        function updateTrackProgress() {
+            const ratio = trackTime / trackDuration;
+            seek.style.width = ratio * 100 + '%';
+            trackTime += 1;
+        }
+
+        function playAudio() {
+            const audio = new Audio(tracks[trackIndex].src);
+            audio.volume = volumeInput.value / 100;
+            audio.play();
+        }
+
+        function onPlayButtonClick() {
+            if (isPlaying) {
+                pauseTrack();
+            } else {
+                playTrack();
+            }
+        }
+
+        function onPrevButtonClick() {
+            trackIndex = (trackIndex - 1 + tracks.length) % tracks.length;
+            updateTrackDisplay();
+            pauseTrack();
+        }
+
+        function onNextButtonClick() {
+            trackIndex = (trackIndex + 1) % tracks.length;
+            updateTrackDisplay();
+            pauseTrack();
+        }
+
+        function onSeekChange() {
+            const ratio = seek.clientWidth / 100;
+            trackTime = ratio * trackDuration;
+        }
+
+        function onPlaylistItemClick(e) {
+            const index = e.target.dataset.track;
+            if (index !== undefined) {
+                trackIndex = index;
+                updateTrackDisplay();
+                pauseTrack();
+            }
+        }
+
+        playButton.addEventListener('click', onPlayButtonClick);
+        prevButton.addEventListener('click', onPrevButtonClick);
+        nextButton.addEventListener('click', onNextButtonClick);
+        seek.addEventListener('input', onSeekChange);
+        document.querySelector('.playlist').addEventListener('click', onPlaylistItemClick);
+        volumeInput.addEventListener('input', () => {
+            const audio = document.querySelector('audio');
+            if (audio) {
+                audio.volume = volumeInput.value / 100;
+            }
+        });
+
+        updateTrackDisplay();
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "app_type": "graph_pathfinder",
+  "description": "Complete graph algorithm visualizer with BFS/DFS, Dijkstra, A*, Bellman-Ford, Floyd-Warshall — Interactive graph editor and algorithm runner. Add vertices/edges with weights, run shortest path algorithms with step animation, see priority queue operations, relaxation steps, and final path highlighting",
+  "keywords": [
+    "graph",
+    "pathfinding",
+    "dijkstra",
+    "bfs",
+    "dfs",
+    "algorithms",
+    "graph",
+    "pathfinder",
+    "graph editor",
+    "graph engine",
+    "graph store",
+    "path algorithm runner",
+    "graph canvas",
+    "algorithm console",
+    "path result viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Graph Editor",
+    "Graph Engine",
+    "Graph Store",
+    "Path Algorithm Runner",
+    "Graph Canvas",
+    "Algorithm Console",
+    "Path Result Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Graph Editor",
+      "destination_module": "Graph Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Graph Engine",
+      "destination_module": "Graph Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Graph Store",
+      "destination_module": "Path Algorithm Runner",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Path Algorithm Runner",
+      "destination_module": "Graph Canvas",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Graph Canvas",
+      "destination_module": "Algorithm Console",
+      "data_passed": "updates"
+    },
+    {
+      "source_module": "Algorithm Console",
+      "destination_module": "Path Result Viewer",
+      "data_passed": "requests"
+    }
+  ],
+  "source": "designs.json"
+}

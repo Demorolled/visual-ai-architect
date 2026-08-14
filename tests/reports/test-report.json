@@ -1,0 +1,2529 @@
+{
+  "timestamp": "2026-07-26T12:47:39.708Z",
+  "summary": {
+    "apps": 92,
+    "tests": 336,
+    "passed": 244,
+    "failed": 92,
+    "consoleErrors": 0,
+    "passRate": "72.6%"
+  },
+  "byCategory": {
+    "Uncategorized": {
+      "apps": 92,
+      "tests": 336,
+      "passed": 244,
+      "failed": 92
+    }
+  },
+  "apps": [
+    {
+      "file": "chess-engine.html",
+      "name": "Chess Engine Pro",
+      "passed": 6,
+      "total": 7,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Board has 64 squares",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Chess move test — move count: 2, highlights: 2, rows: 1",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Chess undo test — move count: 1",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage chess_data saved",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→2→2) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "paint-studio.html",
+      "name": "Paint Studio Pro",
+      "passed": 6,
+      "total": 7,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Paint layers — 2 layers found",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Paint undo test — layers after undo: 2",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "4 tool buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "12 filter buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/10 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "terminal-os.html",
+      "name": "Terminal OS",
+      "passed": 4,
+      "total": 5,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Terminal element found",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Has interactive elements",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Has heading tags: No h1-h6 tags found · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "music-daw.html",
+      "name": "Music DAW",
+      "passed": 6,
+      "total": 7,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "DAW tracks — 5 tracks found",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "DAW play button clicked",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Has slider controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/10 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "dungeon-crawler.html",
+      "name": "Dungeon Crawler",
+      "passed": 4,
+      "total": 5,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Dungeon player stats — HP: 20/20",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Has control buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "calculator.html",
+      "name": "Calculator",
+      "passed": 4,
+      "total": 5,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Number buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Calculator — display shows: \"3\"",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "card-designer.html",
+      "name": "Card Designer",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h4): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/35 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "color-picker.html",
+      "name": "Color Picker",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Color picker UI",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/4 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "connect4.html",
+      "name": "Connect 4",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Game board",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "countdown.html",
+      "name": "Countdown",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "note-pad.html",
+      "name": "Note Pad",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Editor",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "stopwatch.html",
+      "name": "Stopwatch",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "tictactoe.html",
+      "name": "Tic Tac Toe",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tic tac toe grid",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "timer.html",
+      "name": "Timer",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "todo-list.html",
+      "name": "Todo List",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Todo list elements",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "unit-converter.html",
+      "name": "Unit Converter",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/4 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "weather-widget.html",
+      "name": "Weather Widget",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "memory-game.html",
+      "name": "Memory Game",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Memory game — 54 cards, clicked 2",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "quote-generator.html",
+      "name": "Quote Generator",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Generate button",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "pomodoro-timer.html",
+      "name": "Pomodoro Timer",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "quiz-app.html",
+      "name": "Quiz App",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Quiz buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "sketch-pad.html",
+      "name": "Sketch Pad",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Canvas element exists",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tool buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "markdown-previewer.html",
+      "name": "Markdown Previewer",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Editor",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "music-player.html",
+      "name": "Music Player",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Player controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "expense-tracker.html",
+      "name": "Expense Tracker",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ✅ Keyboard/focus support: 2 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "typing-test.html",
+      "name": "Typing Test",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Text area",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "kanban-board.html",
+      "name": "Kanban Board",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Kanban columns",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "chat-app.html",
+      "name": "Chat App",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Message input",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "interactive-dashboard.html",
+      "name": "Interactive Dashboard",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Dashboard widgets",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "password-manager.html",
+      "name": "Password Manager",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 5/13 inputs labeled (38%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "habit-tracker.html",
+      "name": "Habit Tracker",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/4 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "calendar-planner.html",
+      "name": "Calendar Planner",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Calendar header/nav",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "spreadsheet.html",
+      "name": "Spreadsheet",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Spreadsheet grid",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "whiteboard.html",
+      "name": "Whiteboard",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Canvas element exists",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tool buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "code-editor.html",
+      "name": "Code Editor",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Editor",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "file-explorer.html",
+      "name": "File Explorer",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Explorer panels",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "photo-editor.html",
+      "name": "Photo Editor",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Canvas element exists",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tool buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "timeline-maker.html",
+      "name": "Timeline Maker",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Timeline items",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "data-visualizer.html",
+      "name": "Data Visualizer",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Canvas element exists",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "text-adventure.html",
+      "name": "Text Adventure",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Game interface",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "inventory-manager.html",
+      "name": "Inventory Manager",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Inventory list",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/10 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "email-client.html",
+      "name": "Email Client",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Email navigation",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/4 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "project-planner.html",
+      "name": "Project Planner",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Project planner controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→2→3→2) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/8 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "music-studio.html",
+      "name": "Music Studio",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Studio interface",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h3): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "video-editor.html",
+      "name": "Video Editor",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Video canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Editor buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3→2→2) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/13 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "vector-editor.html",
+      "name": "Vector Editor",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Vector editor UI",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tool buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/9 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "code-playground.html",
+      "name": "Code Playground",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Code editor + preview",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "finance-portfolio.html",
+      "name": "Finance Portfolio",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Portfolio widgets",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3→2) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/4 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "gantt-chart.html",
+      "name": "Gantt Chart",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Gantt chart header",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→2→2) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/14 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "data-pipeline.html",
+      "name": "Data Pipeline",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Pipeline nodes",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "whiteboard-collab.html",
+      "name": "Whiteboard Collab",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Whiteboard canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tool buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "particle-sim.html",
+      "name": "Particle Simulator",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Particle canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Preset controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/8 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "brainstorm-map.html",
+      "name": "Brainstorm Map",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Mind map",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "photo-editor-pro.html",
+      "name": "Photo Editor Pro",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Photo canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Editor buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/6 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "geometry-dash.html",
+      "name": "Geometry Dash",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Game canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "spreadsheet-pro.html",
+      "name": "Spreadsheet Pro",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Spreadsheet grid",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "collage-maker.html",
+      "name": "Collage Maker",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Collage canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/3 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "charts-studio.html",
+      "name": "Charts Studio",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Chart canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "pixel-art.html",
+      "name": "Pixel Art",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Pixel canvas exists",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Color palette",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "sudoku-solver.html",
+      "name": "Sudoku Solver",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Sudoku grid",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/81 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "n-queens.html",
+      "name": "N-Queens",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Chess board",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "maze-solver.html",
+      "name": "Maze Solver",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Maze canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "pathfinder.html",
+      "name": "Pathfinder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Pathfinder grid canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "logic-gates.html",
+      "name": "Logic Gates",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Gate elements",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "truth-table.html",
+      "name": "Truth Table",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Truth table",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "inference-engine.html",
+      "name": "Inference Engine",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3→3→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ✅ Keyboard/focus support: 2 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "binary-tree.html",
+      "name": "Binary Tree",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tree canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ✅ Keyboard/focus support: 1 elements with keyboard/focus attrs"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "sorting-viz.html",
+      "name": "Sorting Viz",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Sorting viz — triggered sort",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "knapsack.html",
+      "name": "Knapsack",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Knapsack controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "cellular-auto.html",
+      "name": "Cellular Automaton",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "CA canvas",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "regex-tester.html",
+      "name": "Regex Tester",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Regex inputs",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/7 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "turing-machine.html",
+      "name": "Turing Machine",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/1 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "graph-theory.html",
+      "name": "Graph Theory",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Graph theory — 1 mode buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "huffman-coding.html",
+      "name": "Huffman Coding",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/2 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "form-builder.html",
+      "name": "Form Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Form builder — 10 palette items",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/6 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "layout-builder.html",
+      "name": "Layout Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Builder controls — 19 controls found (button, select)",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "theme-builder.html",
+      "name": "Theme Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Theme builder — clicked a preset",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/10 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "icon-builder.html",
+      "name": "Icon Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Icon builder — 1 canvas(es), 0 tools",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/4 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "button-maker.html",
+      "name": "Button Maker",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/17 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "card-builder.html",
+      "name": "Card Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Color pickers",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (0/4)",
+          "status": "⚠️",
+          "detail": "⚠️ Heading hierarchy: hSkipped from h1 to h3 (1→3) · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/11 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "navbar-builder.html",
+      "name": "Navbar Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/13 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "table-builder.html",
+      "name": "Table Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Table element",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/35 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "modal-builder.html",
+      "name": "Modal Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Buttons",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/12 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "tab-builder.html",
+      "name": "Tab Builder",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Tab elements",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/11 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "dashboard-widgets.html",
+      "name": "Dashboard Widgets",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Dashboard builder UI",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/7 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "animation-studio.html",
+      "name": "Animation Studio",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Animation controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/16 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "form-validator.html",
+      "name": "Form Validator",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Validator controls",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "component-playground.html",
+      "name": "Component Playground",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Code editor",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/3 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "color-palette.html",
+      "name": "Color Palette",
+      "passed": 3,
+      "total": 4,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Color picker",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "localStorage",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (1/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h1): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ⚠️ Form input labels: 0/5 inputs labeled (0%) · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "evaluation-report.html",
+      "name": "Evaluation Report",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Title",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h2): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "evaluation-report-batch2.html",
+      "name": "Eval Report Batch 2",
+      "passed": 2,
+      "total": 3,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "Has headers",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h3): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "file": "improvements.html",
+      "name": "Improvements Blueprint",
+      "passed": 1,
+      "total": 2,
+      "results": [
+        {
+          "name": "Loads without errors",
+          "status": "✅",
+          "detail": ""
+        },
+        {
+          "name": "♿ Accessibility (2/4)",
+          "status": "⚠️",
+          "detail": "✅ Heading hierarchy (h1→h3): · ⚠️ ARIA attributes: ⚠️  Zero ARIA attributes found — needs accessibility pass · ✅ Form input labels: No form inputs to label · ⚠️ Keyboard/focus support: No keyboard event listeners or tabindex found"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

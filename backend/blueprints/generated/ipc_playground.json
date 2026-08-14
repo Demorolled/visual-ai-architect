@@ -1,0 +1,52 @@
+{
+  "app_type": "ipc_playground",
+  "description": "IPC demos: pipes, shared memory, msg queues, sockets with latency metrics — Interactive IPC sandbox: pipe, FIFO, shm, mq, Unix sockets, D-Bus with latency/throughput",
+  "keywords": [
+    "ipc",
+    "pipes",
+    "shared-memory",
+    "sockets",
+    "ipc",
+    "playground",
+    "ipc config",
+    "ipc engine",
+    "metrics engine",
+    "bench data",
+    "ipc dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "IPC Config",
+    "IPC Engine",
+    "Metrics Engine",
+    "Bench Data",
+    "IPC Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "IPC Config",
+      "destination_module": "IPC Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "IPC Engine",
+      "destination_module": "Metrics Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Metrics Engine",
+      "destination_module": "Bench Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Bench Data",
+      "destination_module": "IPC Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Particle Fireworks</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #000; }
+  #launch { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); }
+  #launch button { background: #f00; border: none; padding: 10px 20px; color: #fff; font-size: 16px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="launch"><button>Launch</button></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+function createFirework(scene, camera, renderer, width, height, scale = 1) {
+  const particles = [];
+  const colors = ['#f00', '#ff0', '#0f0', '#0ff', '#00f'];
+  const count = 100;
+
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(count * 3);
+  const colorsArray = new Float32Array(count * 3);
+
+  for (let i = 0; i < count * 3; i++) positions[i] = 0;
+  for (let i = 0; i < count * 3; i++) colorsArray[i] = 0;
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
+
+  const material = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 2 * scale,
+    sizeAttenuation: false,
+    vertexColors: true
+  });
+
+  const points = new THREE.Points(geometry, material);
+  scene.add(points);
+
+  const clock = new THREE.Clock();
+
+  function animate() {
+    const t = clock.getElapsedTime();
+    const speed = 1;
+    const gravity = -0.1;
+    const life = 10;
+
+    points.rotation.y += 0.01;
+
+    for (let i = 0; i < count; i++) {
+      const p = particles[i];
+      if (!p) continue;
+      p.y += speed * Math.cos(t * 2) * 0.1;
+      p.y += speed * Math.sin(t * 2) * 0.1;
+      p.y += gravity * t * 0.1;
+      p.z += Math.random() * 0.01 - 0.005;
+      p.l -= 0.01;
+      if (p.y < 0 || p.l < 0) { particles[i] = null; continue; }
+      positions[i * 3 + 0] = p.x;
+      positions[i * 3 + 1] = p.y;
+      positions[i * 3 + 2] = p.z;
+      colorsArray[i * 3 + 0] = colors[p.color][0];
+      colorsArray[i * 3 + 1] = colors[p.color][1];
+      colorsArray[i * 3 + 2] = colors[p.color][2];
+    }
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.color.needsUpdate = true;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+
+  function launch() {
+    for (let i = 0; i < count; i++) {
+      if (particles[i] === null) {
+        particles[i] = {
+          x: Math.random() * width * 0.7 - width * 0.35,
+          y: -height * 0.45,
+          z: Math.random() * 100 - 50,
+          color: Math.floor(Math.random() * colors.length),
+          l: 100
+        };
+        break;
+      }
+    }
+    animate();
+  }
+
+  return { launch };
+}
+
+const canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
+
+const width = canvas.clientWidth;
+const height = canvas.clientHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas });
+
+camera.position.z = 200;
+
+function resize() {
+  const newWidth = canvas.clientWidth;
+  const newHeight = canvas.clientHeight;
+  if (newWidth !== width || newHeight !== height) {
+    renderer.setSize(newWidth, newHeight);
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+    width = newWidth;
+    height = newHeight;
+  }
+}
+
+window.addEventListener('resize', resize);
+
+const firework = createFirework(scene, camera, renderer, width, height);
+
+const launchButton = document.querySelector('#launch button');
+launchButton.addEventListener('click', firework.launch);
+
+let isRunning = true;
+setInterval(() => {
+  if (isRunning) firework.launch();
+}, 2000);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "app_type": "tic_tac_toe",
+  "description": "Tic-Tac-Toe with unbeatable minimax AI, 3x3 grid, and score tracking — Simple Tic-Tac-Toe with perfect AI opponent (minimax), win/draw detection, score tracking across rounds, and player/computer turn management",
+  "keywords": [
+    "tictactoe",
+    "game",
+    "ai",
+    "minimax",
+    "classic",
+    "tic",
+    "tac",
+    "toe",
+    "grid input",
+    "minimax ai",
+    "win/tie check",
+    "game state",
+    "board & score"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Grid Input",
+    "Minimax AI",
+    "Win/Tie Check",
+    "Game State",
+    "Board & Score"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Grid Input",
+      "destination_module": "Minimax AI",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Minimax AI",
+      "destination_module": "Win/Tie Check",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Win/Tie Check",
+      "destination_module": "Game State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Board & Score",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

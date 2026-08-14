@@ -1,0 +1,956 @@
+.filedrop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.06);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.filedrop-overlay.dragging {
+  border: 3px dashed var(--color-accent);
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.filedrop-overlay .filedrop-hint {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-shadow: 0 0 20px rgba(37, 99, 235, 0.2);
+  pointer-events: none;
+  user-select: none;
+}
+
+.filedrop-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filedrop-dialog {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  width: 520px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-xl);
+}
+
+.filedrop-dialog h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.filedrop-file-list {
+  max-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+  background: var(--color-bg-raised);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.filedrop-file-list span {
+  background: var(--color-bg-surface);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  border: 1px solid var(--color-border);
+}
+
+.filedrop-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filedrop-field label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.filedrop-field input,
+.filedrop-field select,
+.filedrop-field textarea {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--color-text);
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.filedrop-field input:focus,
+.filedrop-field select:focus,
+.filedrop-field textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filedrop-field textarea {
+  resize: vertical;
+  min-height: 50px;
+}
+
+.filedrop-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.filedrop-actions .nn-btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-weight: 500;
+}
+
+.filedrop-actions .nn-cancel {
+  background: var(--color-bg-raised);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-strong);
+}
+
+.filedrop-actions .nn-cancel:hover {
+  background: var(--color-bg-elevated);
+}
+
+.filedrop-actions .nn-confirm {
+  background: var(--color-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.filedrop-actions .nn-confirm:hover {
+  background: var(--color-accent-hover);
+}
+
+.filedrop-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-accent);
+  padding: 8px 12px;
+  background: var(--color-accent-light);
+  border-radius: var(--radius-sm);
+  border: 1px solid #bfdbfe;
+}
+
+.filedrop-status.error {
+  color: var(--color-error);
+  border-color: #fecaca;
+  background: var(--color-error-light);
+}
+
+.filedrop-status .spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(37, 99, 235, 0.2);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: filedrop-spin 0.6s linear infinite;
+}
+
+@keyframes filedrop-spin {
+  to { transform: rotate(360deg); }
+}
+
+.filedrop-opt-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filedrop-opt-group h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.filedrop-opt-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.filedrop-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.filedrop-divider::before,
+.filedrop-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--color-border);
+}
+
+.filedrop-deepscan-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.filedrop-deepscan-actions.column {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filedrop-deepscan-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--color-purple);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filedrop-deepscan-btn:hover {
+  background: #6d28d9;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.3);
+}
+
+.filedrop-deepscan-btn:active {
+  transform: translateY(0);
+}
+
+.filedrop-scanning {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.filedrop-spinner-lg {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(124, 58, 237, 0.15);
+  border-top-color: var(--color-purple);
+  border-radius: 50%;
+  animation: filedrop-spin 0.7s linear infinite;
+}
+
+.filedrop-scan-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-purple);
+}
+
+.filedrop-scan-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.filedrop-scan-hint {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-text-dim);
+  font-style: italic;
+}
+
+.filedrop-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 550px;
+  overflow-y: auto;
+}
+
+.filedrop-preview-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filedrop-source-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-source-badge.llm {
+  background: #f5f3ff;
+  color: var(--color-purple);
+  border: 1px solid #ddd6fe;
+}
+
+.filedrop-source-badge.rule-based {
+  background: var(--color-warning-light);
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.filedrop-preview-project {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.filedrop-preview-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.filedrop-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.filedrop-stat-num {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-purple);
+}
+
+.filedrop-stat-label {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filedrop-preview-frameworks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filedrop-framework-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: var(--color-accent-light);
+  border: 1px solid #bfdbfe;
+  color: var(--color-accent);
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-preview-section-title {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filedrop-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.filedrop-preview-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  transition: border-color 0.15s;
+}
+
+.filedrop-preview-node:hover {
+  border-color: var(--color-border-strong);
+}
+
+.filedrop-node-type {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  min-width: 48px;
+  text-align: center;
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-node-type.type-input { background: #d1fae5; color: #065f46; }
+.filedrop-node-type.type-output { background: #fee2e2; color: #991b1b; }
+.filedrop-node-type.type-logic { background: #dbeafe; color: #1e40af; }
+.filedrop-node-type.type-api { background: #ede9fe; color: #5b21b6; }
+.filedrop-node-type.type-database { background: #fef3c7; color: #92400e; }
+.filedrop-node-type.type-ui { background: #fce7f3; color: #9d174d; }
+
+.filedrop-node-label {
+  flex: 1;
+  color: var(--color-text);
+}
+
+.filedrop-node-files {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.filedrop-preview-node-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.filedrop-preview-file {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', Menlo, Consolas, monospace;
+  color: var(--color-text-muted);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--color-border);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-preview-file.more {
+  color: var(--color-accent);
+  border-style: dashed;
+}
+
+.filedrop-preview-apps,
+.filedrop-preview-external {
+  margin-top: 10px;
+}
+
+.filedrop-preview-app-list,
+.filedrop-preview-external-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 130px;
+  overflow-y: auto;
+}
+
+.filedrop-app-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid #c4b5fd;
+  color: #7c3aed;
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-preview-external-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+}
+
+.filedrop-external-icon {
+  font-size: 13px;
+}
+
+.filedrop-external-name {
+  flex: 1;
+  font-family: 'JetBrains Mono', Menlo, Consolas, monospace;
+  color: var(--color-text);
+}
+
+.filedrop-external-kind {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.filedrop-external-count {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.filedrop-external-more {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding: 2px 4px;
+}
+
+.filedrop-preview-edge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.filedrop-preview-edge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.filedrop-edge-source {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.filedrop-edge-arrow {
+  color: var(--color-purple);
+  font-weight: 700;
+}
+
+.filedrop-edge-target {
+  color: var(--color-purple);
+  font-weight: 500;
+}
+
+.filedrop-preview-notice {
+  margin: 0;
+  font-size: 11px;
+  color: #92400e;
+  font-style: italic;
+  padding: 6px 10px;
+  background: var(--color-warning-light);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-scan-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.filedrop-error-icon {
+  font-size: 32px;
+  margin: 0;
+}
+
+.filedrop-error-text {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-error);
+}
+
+.filedrop-retry-btn {
+  padding: 10px 20px;
+  background: var(--color-error-light);
+  border: 1px solid #fecaca;
+  color: var(--color-error);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.filedrop-retry-btn:hover {
+  background: #fee2e2;
+}
+
+.filedrop-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.filedrop-done-icon {
+  font-size: 36px;
+  margin: 0;
+}
+
+.filedrop-done-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.filedrop-clear-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  margin-top: 8px;
+  background: var(--color-warning-light);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-clear-confirm-icon {
+  font-size: 28px;
+}
+
+.filedrop-clear-confirm-text {
+  margin: 0;
+  font-size: 13px;
+  color: #92400e;
+  text-align: center;
+  font-weight: 500;
+}
+
+.filedrop-clear-confirm-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filedrop-clear-btn {
+  padding: 8px 14px;
+  background: var(--color-error-light);
+  border: 1px solid #fecaca;
+  color: var(--color-error);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.filedrop-clear-btn:hover {
+  background: #fee2e2;
+  border-color: var(--color-error);
+}
+
+/* ── Veronica Scan & Repair Styles ── */
+
+.filedrop-veronica-group {
+  border: 2px solid #bc8cff;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background: rgba(188, 140, 255, 0.04);
+  position: relative;
+}
+
+.filedrop-veronica-group::before {
+  content: '⭐ RECOMMENDED';
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background: #bc8cff;
+  color: #0a0a1a;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 10px;
+  letter-spacing: 0.5px;
+  border-radius: var(--radius-sm);
+}
+
+.filedrop-veronica-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #bc8cff 0%, #7c3aed 100%);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.2);
+}
+
+.filedrop-veronica-btn:hover {
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+  transform: translateY(-1px);
+}
+
+.filedrop-veronica-btn:active {
+  transform: translateY(0);
+}
+
+.filedrop-describe-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background: transparent;
+  border: 1px solid #bc8cff;
+  border-radius: var(--radius-sm);
+  color: #bc8cff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filedrop-describe-btn:hover {
+  background: rgba(188, 140, 255, 0.12);
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.25);
+}
+
+.filedrop-describe-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Play Web App (dropped folder served as a static site) ── */
+.filedrop-play-group {
+  border: 1px solid rgba(0, 217, 255, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.08), rgba(124, 58, 237, 0.10));
+}
+
+.filedrop-play-group h3 {
+  color: #00d9ff;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filedrop-play-btn {
+  width: 100%;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #00d9ff 0%, #4a9eff 100%);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #06121a;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 16px rgba(0, 217, 255, 0.35);
+}
+
+.filedrop-play-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 217, 255, 0.5);
+}
+
+.filedrop-play-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.filedrop-play-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.filedrop-play-error {
+  color: #f87171;
+  font-size: 12px;
+  margin: 0;
+}
+
+.filedrop-veronica-logs {
+  width: 100%;
+  max-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+}
+
+.filedrop-veronica-log-entry {
+  display: flex;
+  gap: 8px;
+  padding: 2px 4px;
+}
+
+.filedrop-veronica-log-tool {
+  color: #bc8cff;
+  font-weight: 600;
+  min-width: 60px;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.filedrop-veronica-log-msg {
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filedrop-veronica-done {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filedrop-veronica-done-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.filedrop-veronica-done-icon {
+  font-size: 20px;
+}
+
+.filedrop-veronica-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filedrop-veronica-section-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filedrop-veronica-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.filedrop-veronica-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+}
+
+.filedrop-veronica-item.fixed {
+  border-left: 3px solid #4ade80;
+}
+
+.filedrop-veronica-item.error {
+  border-left: 3px solid #ef4444;
+}
+
+.filedrop-veronica-item.skipped {
+  border-left: 3px solid #f59e0b;
+}
+
+.filedrop-veronica-item.severity-critical,
+.filedrop-veronica-item.severity-high {
+  border-left: 3px solid #ef4444;
+}
+
+.filedrop-veronica-item.severity-medium {
+  border-left: 3px solid #f59e0b;
+}
+
+.filedrop-veronica-item.severity-low {
+  border-left: 3px solid #3b82f6;
+}
+
+.filedrop-veronica-item-file {
+  color: var(--color-accent);
+  font-weight: 500;
+  min-width: 100px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filedrop-veronica-item-action,
+.filedrop-veronica-item-severity {
+  font-size: 10px;
+  font-weight: 600;
+  min-width: 60px;
+  text-transform: uppercase;
+}
+
+.filedrop-veronica-item-action {
+  color: #4ade80;
+}
+
+.filedrop-veronica-item-severity {
+  color: #f59e0b;
+}
+
+.filedrop-veronica-item.severity-critical .filedrop-veronica-item-severity,
+.filedrop-veronica-item.severity-high .filedrop-veronica-item-severity {
+  color: #ef4444;
+}
+
+.filedrop-veronica-item-detail {
+  color: var(--color-text-muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filedrop-veronica-summary {
+  padding: 10px;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Dashboard</title>
+  <style>
+* { box-sizing: border-box; }
+.app { max-width: 960px; margin: 0 auto; padding: 24px; }
+card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; }
+#weatherDisplay { margin-top: 10px; }
+#weatherInfo { margin: 0 0 12px; }
+.btn { padding: 8px 16px; border: 1px solid #007bff; border-radius: 4px; color: #007bff; background-color: #fff; cursor: pointer; }
+.btn-primary { background-color: #007bff; color: #fff; }
+.btn-danger { background-color: #dc3545; color: #fff; }
+.btn:hover { background-color: #0056b3; color: #fff; }
+.btn-primary:hover { background-color: #0062cc; color: #fff; }
+.btn-danger:hover { background-color: #c82333; color: #fff; }
+
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="grid">
+      <div id="weatherDisplay" class="card" style="background:#15152a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px">
+        <h3>Weather Data</h3>
+        <p id="weatherInfo"></p>
+        <button class="btn" onclick="fetchWeatherData()">Fetch</button>
+      </div>
+    </div>
+  </div>
+  <script>
+exports.displayWeatherData = exports.fetchWeatherData = void 0;
+const fetchWeatherData = async () => {
+    try {
+        const data = await fetch('https://api.openweathermap.org/data/2.5/weather?q=London&appid=YOUR_API_KEY');
+        const json = await data.json();
+        (0, exports.displayWeatherData)(json);
+    }
+    catch (error) {
+        console.error('Failed to fetch weather data:', error);
+    }
+};
+
+const displayWeatherData = (data) => {
+    var _a;
+    (_a = document.getElementById('weatherInfo')) === null || _a === void 0 ? void 0 : _a.textContent = `Temperature: ${data.main.temp}°C, Humidity: ${data.main.humidity}%`;
+};
+</script>
+</body>
+</html>

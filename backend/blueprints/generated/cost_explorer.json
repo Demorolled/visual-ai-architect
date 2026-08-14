@@ -1,0 +1,52 @@
+{
+  "app_type": "cost_explorer",
+  "description": "Cloud costs: resource attribution, savings plans, budgets, alerts — Multi-cloud cost: resource attribution, savings recommendations, budgets",
+  "keywords": [
+    "devops",
+    "sre",
+    "monitoring",
+    "ci-cd",
+    "cost",
+    "explorer",
+    "config input",
+    "orchestration",
+    "analysis",
+    "state store",
+    "ops dashboard"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Config Input",
+    "Orchestration",
+    "Analysis",
+    "State Store",
+    "Ops Dashboard"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Config Input",
+      "destination_module": "Orchestration",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Orchestration",
+      "destination_module": "Analysis",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Analysis",
+      "destination_module": "State Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "State Store",
+      "destination_module": "Ops Dashboard",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

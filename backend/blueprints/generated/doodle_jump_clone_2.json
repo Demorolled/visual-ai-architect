@@ -1,0 +1,54 @@
+{
+  "app_type": "doodle_jump_clone_2",
+  "description": "Vertical platform jumper with procedural generation — Interactive doodle jump clone with real-time visualization and analysis",
+  "keywords": [
+    "game",
+    "platformer",
+    "jump",
+    "arcade",
+    "games",
+    "doodle",
+    "jump",
+    "clone",
+    "game controller",
+    "game engine",
+    "game state",
+    "ai opponent",
+    "render view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Game Controller",
+      "destination_module": "Game Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Game Engine",
+      "destination_module": "Game State",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "AI Opponent",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "AI Opponent",
+      "destination_module": "Render View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

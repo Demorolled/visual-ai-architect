@@ -1,0 +1,52 @@
+{
+  "app_type": "perf_analyzer",
+  "description": "Statistical profiler with sampling, call graph, and flame graph generation — Perf profiling: timer sampling, trace capture, call graph, hotspot detection, flame graph",
+  "keywords": [
+    "profiling",
+    "performance",
+    "flame-graph",
+    "optimization",
+    "perf",
+    "analyzer",
+    "profiling target",
+    "sampling engine",
+    "call graph builder",
+    "profile data",
+    "flame graph"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Profiling Target",
+    "Sampling Engine",
+    "Call Graph Builder",
+    "Profile Data",
+    "Flame Graph"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Profiling Target",
+      "destination_module": "Sampling Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Sampling Engine",
+      "destination_module": "Call Graph Builder",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Call Graph Builder",
+      "destination_module": "Profile Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Profile Data",
+      "destination_module": "Flame Graph",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

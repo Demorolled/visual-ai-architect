@@ -1,0 +1,37 @@
+{
+  "app_type": "i_want_a_home_media_streamming_app_with",
+  "description": "i want a home media streamming app, with the neew node i added fill out the rest of the design",
+  "keywords": [
+    "input",
+    "logic",
+    "database",
+    "ui",
+    "i",
+    "want",
+    "a",
+    "home",
+    "media",
+    "streamming",
+    "app",
+    "with",
+    "data storage",
+    "user interface"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Storage",
+    "User Interface"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Storage",
+      "destination_module": "User Interface",
+      "data_passed": "requests"
+    }
+  ],
+  "source": "designs.json"
+}

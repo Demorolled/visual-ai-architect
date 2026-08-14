@@ -1,0 +1,40 @@
+{
+  "app_type": "qr_code_generator_2",
+  "description": "QR code generation with content types and styling — Interactive qr code generator with real-time visualization and analysis",
+  "keywords": [
+    "desktop",
+    "qr-code",
+    "utility",
+    "encoding",
+    "desktop",
+    "qr",
+    "code",
+    "generator",
+    "data store",
+    "search & filter",
+    "user interface"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Store",
+      "destination_module": "Search & Filter",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search & Filter",
+      "destination_module": "User Interface",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

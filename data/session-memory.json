@@ -1,0 +1,37 @@
+{
+  "lastBuild": {
+    "projectName": "full 3d chess game",
+    "targetOS": "linux",
+    "nodeCount": 5,
+    "edgeCount": 4,
+    "filesCreated": [],
+    "exportPath": null,
+    "nodeStatuses": [],
+    "completedNodeCount": 0,
+    "totalNodeCount": 5,
+    "progress": 0,
+    "pendingFiles": [],
+    "completedFiles": [],
+    "timestamp": "2026-08-13T22:47:27.200Z"
+  },
+  "buildHistory": [
+    {
+      "projectName": "full 3d chess game",
+      "targetOS": "linux",
+      "nodeCount": 5,
+      "edgeCount": 4,
+      "filesCreated": [],
+      "exportPath": null,
+      "nodeStatuses": [],
+      "completedNodeCount": 0,
+      "totalNodeCount": 5,
+      "progress": 0,
+      "pendingFiles": [],
+      "completedFiles": [],
+      "timestamp": "2026-08-13T22:47:27.200Z"
+    }
+  ],
+  "recentFiles": [],
+  "recentLocations": [],
+  "notes": []
+}

@@ -1,0 +1,80 @@
+datasheets:
+  - id: blueprint-pairs
+    title: "Blueprint JSON fine-tuning dataset (Hybrid Strategy prong 1)"
+    version: 1.0
+    path: training/dataset/blueprint-pairs.jsonl
+    splits: [train, val, test]
+    examples: 1230
+    format: alpaca-jsonl
+    contract:
+      - app_type
+      - description
+      - keywords
+      - target_stack
+      - architecture_checklist
+      - wiring_graph
+    sources:
+      - backend/blueprints/*.json
+      - backend/blueprints/generated/*.json
+      - data/designs.json
+    builder: scripts/build-blueprint-finetune-dataset.py
+    doc: training/datasheets/blueprint-finetune.md
+    notes: >
+      Trains the model to map any natural-language app request to valid,
+      uncorrupted Blueprint JSON (shape fidelity via fine-tuning). Covers 100%
+      of the blueprint library (1,228/1,228 app types). Knowledge (which
+      modules exist) stays external in the bible for RAG injection.
+  - id: code-bible-expansion
+    title: "Atomic code chunk library v3 (+700 chunks, 28 new categories)"
+    version: 3.0
+    path: data/code-bible/*.py
+    splits: [chunk-db]
+    examples: 700
+    format: python-dict-chunk-db -> bible-reference/<slug>/00-index.md
+    contract:
+      - id
+      - name
+      - category
+      - lang
+      - when
+      - why
+      - tags
+      - iface
+      - code
+      - provides
+    sources:
+      - data/code-bible/11-ml.py .. 38-embedded.py
+      - backend/src/ai/libraryContext.ts (BIBLE_LEVEL_TOPICS + node/lang maps)
+    builder: scripts/wire-bible-chunks-into-context.py + scripts/scaffold-bible-curriculum.py
+    doc: training/datasheets/code-bible-expansion.md
+    notes: >
+      Expands the RAG-injected atomic chunk library from 204 to 904 chunks
+      (300 batch-2 across ml/llm/devops/db/obs/sec/brw/mob/test/gfx/mth/rtc
+      + 400 batch-3 across alg/arch/str/col/fsys/time/msg/http/acc/i18n/
+      fin/edu/gen/viz/cli/embed). 100% unique ids (0 overlap across all 38
+      files), 960 BIBLE_LEVEL_TOPICS keys, curated node/lang maps keep
+      per-call context bounded, backend tsc clean, deterministic rebuild.
+
+  - id: round6-bible-10h
+    title: "Round-6 Q4 fine-tune dataset — bible knowledge + previous-run error fixes (10h)"
+    version: 1.0
+    path: training/dataset/round6-bible-10h.jsonl
+    splits: [train]
+    examples: 2941
+    format: alpaca-jsonl (instruction/input/output)
+    sources:
+      - data/code-bible/*.py (904 chunks x 2 phrasings = 1808 rows)
+      - training/dataset/blueprint-pairs-train.jsonl (800-row clean sample)
+      - training/dataset/round4-failures.jsonl (401 rows, reinforcement)
+      - backend/blueprints/{generated,}/*.json (33 failing prompts -> canonical, 99 rows)
+      - data/blueprint-fidelity-validation.json (alias normalization, 20 rows)
+    builder: scripts/build-round6-bible-dataset.py
+    doc: training/ROUND6_TRAINING_RUNBOOK.md
+    notes: >
+      Sized for ~10.9 h of Q4 QLoRA on a Colab T4 at 2 epochs (2,941 rows x 2 x
+      ~6.7 s/row). Folds in the previous-run error profile: 33 failing
+      validation prompts paired with canonical blueprints, plus 20 alias
+      normalization rows that fix the round-4 app_type drift
+      (alertmanager_config_lab -> alertmanager_config_2). New retention sample
+      excludes all 122 eval pairs; test/val presence is inherited from the
+      round-4 failures file (historical, documented in round6-stats.json).

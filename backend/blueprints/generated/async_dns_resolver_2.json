@@ -1,0 +1,54 @@
+{
+  "app_type": "async_dns_resolver_2",
+  "description": "Non-blocking DNS resolution with caching — Interactive async dns resolver with real-time visualization and analysis",
+  "keywords": [
+    "systems",
+    "dns",
+    "async",
+    "networking",
+    "systems",
+    "async",
+    "dns",
+    "resolver",
+    "system config",
+    "core engine",
+    "data collection",
+    "analysis module",
+    "dashboard view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "System Config",
+    "Core Engine",
+    "Data Collection",
+    "Analysis Module",
+    "Dashboard View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "System Config",
+      "destination_module": "Core Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Engine",
+      "destination_module": "Data Collection",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Collection",
+      "destination_module": "Analysis Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Module",
+      "destination_module": "Dashboard View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

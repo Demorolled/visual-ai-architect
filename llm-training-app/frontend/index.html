@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Training Studio</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">
+      <span class="logo-icon">&#9670;</span>
+      <h1>LLM Training Studio</h1>
+    </div>
+    <div class="header-controls">
+      <div id="ollamaStatus" class="ollama-status">Ollama: checking...</div>
+      <div class="queue-zone" id="dropZone">
+        <span class="queue-label">Training Queue</span>
+        <span class="queue-count" id="queueCount">0</span>
+        <div class="queue-hint">Drop files/categories here</div>
+      </div>
+      <button class="btn btn-danger kill-switch" id="killSwitch">&#9632; Stop</button>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <aside class="sidebar">
+      <section class="panel upload-panel">
+        <h2>Ingest Data</h2>
+        <div class="drop-area" id="dropArea">
+          <div class="drop-content">
+            <div class="drop-icon">&#8682;</div>
+            <p>Drag & drop files here</p>
+            <p class="drop-sub">.txt .jsonl .pdf .csv .md .json</p>
+          </div>
+          <input type="file" id="fileInput" multiple hidden accept=".txt,.jsonl,.pdf,.csv,.md,.json">
+        </div>
+        <div class="file-stats" id="fileStats">
+          <span>Total: <strong id="totalFiles">0</strong></span>
+          <span class="badge ready-badge">Ready: <strong id="readyCount">0</strong></span>
+          <span class="badge review-badge">Review: <strong id="reviewCount">0</strong></span>
+          <span class="badge unusable-badge">Bad: <strong id="unusableCount">0</strong></span>
+        </div>
+      </section>
+
+      <section class="panel categories-panel">
+        <h2>Files by Category</h2>
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search files by name, theme, content..." class="search-input">
+        </div>
+        <div class="category-tabs">
+          <button class="tab active" data-cat="all">All</button>
+          <button class="tab tab-ready" data-cat="Ready for Training">Ready</button>
+          <button class="tab tab-review" data-cat="Needs Review">Review</button>
+          <button class="tab tab-unusable" data-cat="Unusable">Unusable</button>
+        </div>
+        <div class="file-list" id="fileList">
+          <div class="empty-state">No files uploaded yet</div>
+        </div>
+        <div class="pagination" id="pagination">
+          <button class="pagination-btn" id="prevPageBtn" disabled>&#9664; Prev</button>
+          <span class="pagination-info" id="pageInfo">Page 1 / 1</span>
+          <button class="pagination-btn" id="nextPageBtn" disabled>Next &#9654;</button>
+          <span class="pagination-sep"></span>
+          <label class="pagination-label">Per page:</label>
+          <select id="perPageSelect" class="pagination-select">
+            <option value="25">25</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="panel experiments-panel">
+        <h2>Experiments</h2>
+        <div class="exp-list" id="expList">
+          <div class="empty-state">No experiments saved</div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panel training-panel">
+        <div class="training-header">
+          <h2>Training Controller</h2>
+          <div class="model-selector">
+            <label>Model:</label>
+            <select id="modelSelect" class="model-dropdown">
+              <option value="simulated">Simulated (default)</option>
+              <option value="mindspace-rnn">🧠 MindSpace RNN/LSTM</option>
+            </select>
+            <button class="btn btn-sm btn-secondary" id="refreshModelsBtn" title="Refresh model list">&#8635;</button>
+          </div>
+        </div>
+        <div class="training-controls">
+          <div class="control-group"><label>Epochs:</label><input type="number" id="epochInput" value="3" min="1" max="100" class="epoch-input"></div>
+          <div class="control-group"><label>Batch Size:</label><input type="number" id="batchInput" value="1" min="1" max="64" class="epoch-input"></div>
+          <div class="control-group"><label>Learning Rate:</label><input type="number" id="lrInput" value="0.001" min="0.00001" max="1" step="0.0001" class="epoch-input"></div>
+        </div>
+        <div class="training-buttons">
+          <button class="btn btn-primary" id="startBtn">&#9654; Start Training</button>
+          <button class="btn btn-warning" id="pauseBtn" disabled>&#10074;&#10074; Pause</button>
+          <button class="btn btn-secondary" id="resetBtn">&#8635; Reset</button>
+          <button class="btn btn-secondary" id="exportBtn">&#8681; Export</button>
+        </div>
+        <div class="training-progress">
+          <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="progress-info">
+            <span id="progressText">Idle</span>
+            <span id="stepText">Step: 0 / 0</span>
+            <span id="epochText">Epoch: 0 / 0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel monitor-panel">
+        <h2>Model Monitoring</h2>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Parameters</div>
+            <div class="metric-value" id="paramValue">100M</div>
+            <canvas id="paramChart" height="80"></canvas>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Vector Store</div>
+            <div class="metric-value" id="vectorValue">10 MB</div>
+            <canvas id="vectorChart" height="80"></canvas>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Accuracy</div>
+            <div class="metric-value" id="accuracyValue">0%</div>
+            <canvas id="accuracyChart" height="80"></canvas>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Loss</div>
+            <div class="metric-value" id="lossValue">2.5000</div>
+            <canvas id="lossChart" height="80"></canvas>
+          </div>
+        </div>
+        <div class="eval-section">
+          <h3>Autonomous Evaluation</h3>
+          <div class="eval-grid" id="evalResults">
+            <div class="eval-item"><span class="eval-name">Tokens Processed:</span><span class="eval-value" id="tokensValue">0</span></div>
+            <div class="eval-item"><span class="eval-name">BLEU Score:</span><span class="eval-value" id="bleuValue">0.00</span></div>
+            <div class="eval-item"><span class="eval-name">Perplexity:</span><span class="eval-value" id="perplexityValue">--</span></div>
+            <div class="eval-item"><span class="eval-name">QA Accuracy:</span><span class="eval-value" id="qaValue">0%</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel resource-panel">
+        <h2>Resource Monitor  <span class="resource-badge" id="resourceBadge">live</span></h2>
+        <div class="resource-grid">
+          <div class="resource-item">
+            <div class="resource-header">
+              <span class="resource-icon">&#9881;</span>
+              <span class="resource-label">CPU</span>
+              <span class="resource-pct" id="cpuPct">0%</span>
+            </div>
+            <div class="progress-bar-container resource-bar-bg">
+              <div class="progress-bar resource-bar-cpu" id="cpuBar"></div>
+            </div>
+          </div>
+          <div class="resource-item">
+            <div class="resource-header">
+              <span class="resource-icon">&#9776;</span>
+              <span class="resource-label">RAM</span>
+              <span class="resource-pct" id="ramPct">0%</span>
+            </div>
+            <div class="progress-bar-container resource-bar-bg">
+              <div class="progress-bar resource-bar-ram" id="ramBar"></div>
+            </div>
+            <div class="resource-sub" id="ramText">0.0 / 0.0 GB</div>
+          </div>
+        </div>
+        <div id="gpuContainer"></div>
+        <div class="resource-device" id="trainingDevice">Training on: idle</div>
+      </section>
+
+      <section class="panel rag-panel">
+        <h2>RAG Pipeline <span class="rag-badge" id="ragBadge">off</span></h2>
+        <div class="rag-controls">
+          <div class="rag-toggle-row">
+            <label class="rag-switch">
+              <input type="checkbox" id="ragToggle">
+              <span class="rag-slider"></span>
+            </label>
+            <span class="rag-toggle-label">Enable RAG during training</span>
+          </div>
+          <div class="rag-config-row" id="ragConfigRow" style="display:none">
+            <div class="rag-group">
+              <label>Top-K:</label>
+              <input type="number" id="ragTopK" value="5" min="1" max="20" class="rag-input">
+            </div>
+            <div class="rag-group">
+              <label>Chunk Size:</label>
+              <input type="number" id="ragChunkSize" value="512" min="128" max="2048" step="128" class="rag-input">
+            </div>
+            <div class="rag-group">
+              <label>Overlap:</label>
+              <input type="number" id="ragOverlap" value="128" min="0" max="512" step="64" class="rag-input">
+            </div>
+            <div class="rag-group">
+              <label>Embedding:</label>
+              <select id="ragModelSelect" class="rag-select">
+                <option value="all-MiniLM-L6-v2">all-MiniLM-L6-v2</option>
+                <option value="all-mpnet-base-v2">all-mpnet-base-v2</option>
+                <option value="multi-qa-MiniLM-L6-cos-v1">multi-qa-MiniLM</option>
+              </select>
+            </div>
+          </div>
+          <div class="rag-actions">
+            <button class="btn btn-primary" id="ragIndexBtn">&#9878; Index Queue</button>
+            <button class="btn btn-secondary" id="ragClearBtn">&#128465; Clear Index</button>
+            <button class="btn btn-secondary" id="ragQueryBtn">&#128269; Query</button>
+          </div>
+          <div class="rag-stats" id="ragStats">
+            <span>Passages: <strong id="ragPassageCount">0</strong></span>
+            <span>Files: <strong id="ragFileCount">0</strong></span>
+            <span>Model: <strong id="ragEmbedModel">-</strong></span>
+          </div>
+          <div class="rag-progress" id="ragProgress" style="display:none">
+            <div class="progress-bar-container"><div class="progress-bar rag-progress-bar" id="ragProgressBar"></div></div>
+            <div class="rag-status" id="ragStatusText">Indexing...</div>
+          </div>
+          <div class="rag-query-section" id="ragQuerySection" style="display:none">
+            <input type="text" id="ragQueryInput" placeholder="Search indexed documents..." class="search-input">
+            <div class="rag-results" id="ragQueryResults"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel compile-panel">
+        <h2>Compile / Export Model <span class="compile-badge" id="compileStatusBadge">idle</span></h2>
+        <div class="compile-controls">
+          <div class="compile-row">
+            <div class="compile-group">
+              <label>Target Format:</label>
+              <select id="compileFormatSelect" class="compile-select">
+                <option value="pytorch">PyTorch (.pt)</option>
+                <option value="safetensors">SafeTensors (.safetensors)</option>
+                <option value="onnx">ONNX (.onnx)</option>
+                <option value="gguf">GGUF (.gguf)</option>
+                <option value="torchscript">TorchScript (.pt)</option>
+              </select>
+            </div>
+            <div class="compile-group" id="quantGroup" style="display:none">
+              <label>Quantization:</label>
+              <select id="compileQuantSelect" class="compile-select">
+                <option value="q4_0">Q4_0 (small, fast)</option>
+                <option value="q4_1">Q4_1 (better quality)</option>
+                <option value="q5_0">Q5_0</option>
+                <option value="q5_1">Q5_1</option>
+                <option value="q8_0">Q8_0 (high quality)</option>
+                <option value="f16">F16 (full quality)</option>
+              </select>
+            </div>
+            <div class="compile-group">
+              <label>Model Source:</label>
+              <select id="compileModelSelect" class="compile-select">
+                <option value="current">Current Training Model</option>
+              </select>
+            </div>
+          </div>
+          <div class="compile-actions">
+            <button class="btn btn-primary" id="compileBtn">&#9881; Compile Model</button>
+            <button class="btn btn-secondary" id="downloadCompiledBtn" style="display:none">&#8681; Download</button>
+          </div>
+          <div class="compile-progress" id="compileProgress" style="display:none">
+            <div class="progress-bar-container"><div class="progress-bar" id="compileProgressBar"></div></div>
+            <div class="compile-status" id="compileStatusText">Preparing...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel compare-panel" id="comparePanel" style="display:none">
+        <h2>Experiment Comparison <button class="btn btn-sm btn-secondary" id="closeCompareBtn">&#10005;</button></h2>
+        <div class="compare-charts">
+          <div class="compare-chart"><canvas id="compareLossChart" height="120"></canvas></div>
+          <div class="compare-chart"><canvas id="compareAccChart" height="120"></canvas></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div id="modalOverlay" class="modal-overlay" style="display:none">
+  <div class="modal" id="editorModal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Edit Dataset Entry</span>
+      <button class="btn btn-sm btn-secondary" id="closeModalBtn">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="editorContent" class="editor-textarea" spellcheck="false"></textarea>
+    </div>
+    <div class="modal-footer">
+      <span id="editorInfo" class="editor-info"></span>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveEditBtn">&#10003; Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+<script src="app.js"></script>
+</body>
+</html>

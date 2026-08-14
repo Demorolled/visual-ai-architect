@@ -1,0 +1,45 @@
+{
+  "app_type": "build_me_a_app_to_scan_linux_ubuntu_and",
+  "description": "build me a app to scan linux ubuntu and detect catalog errors with the o/s . Errors with installed app and scripts,. Give me a report when open the app, and suggestions, on fixing the errors.",
+  "keywords": [
+    "input",
+    "logic",
+    "database",
+    "ui",
+    "build",
+    "me",
+    "a",
+    "app",
+    "to",
+    "scan",
+    "linux",
+    "ubuntu",
+    "and",
+    "data storage",
+    "user interface",
+    "the code, for all the nodes"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Storage",
+    "User Interface",
+    "The code, for all the nodes"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Storage",
+      "destination_module": "User Interface",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "User Interface",
+      "destination_module": "The code, for all the nodes",
+      "data_passed": "results"
+    }
+  ],
+  "source": "designs.json"
+}

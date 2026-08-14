@@ -1,0 +1,144 @@
+import { ChessBoard, createInitialBoard, Square, Color, Piece, BoardState } from '../chess-board/chess-board';
+import { Move, getPseudoLegalMoves, isSquareAttacked, isKingInCheck, isCastlingLegal } from '../chess-move-rules/chess-move-rules';
+import { createGame, applyMove, getLegalMovesFor, getStatus, undoMove, Game, GameStatus } from '../chess-game/chess-game';
+import { getBestMove, setDifficulty, getDifficulty, Difficulty } from '../chess-ai-engine/chess-ai-engine';
+
+// Chess UI — 8x8 board with light/dark squares, pieces, turn status, Undo/New buttons
+
+// UI Widgets
+const board = document.createElement('div');
+const statusBar = document.createElement('div');
+const undoButton = document.createElement('button');
+const newGameButton = document.createElement('button');
+const difficultySelect = document.createElement('select');
+
+// Board
+const boardSize = 8;
+const squareSize = 60;
+const boardContainer = document.createElement('div');
+const squares: HTMLDivElement[] = [];
+
+for (let y = 0; y < boardSize; y++) {
+  const row = document.createElement('div');
+  for (let x = 0; x < boardSize; x++) {
+    const isDark = (x + y) % 2 === 0;
+    const square = document.createElement('div');
+    square.style.backgroundColor = isDark ? '#212a46' : '#1a1f3e';
+    square.style.width = `${squareSize}px`;
+    square.style.height = `${squareSize}px`;
+    row.appendChild(square);
+    squares.push(square);
+  }
+  boardContainer.appendChild(row);
+}
+
+// UI Styles
+const container = document.createElement('div');
+container.style.display = 'flex';
+container.style.flexDirection = 'column';
+container.style.gap = '16px';
+container.style.backgroundColor = '#1a1a2e';
+container.style.padding = '24px';
+container.style.maxWidth = '960px';
+container.style.margin = '0 auto';
+
+// Board
+board.style.backgroundColor = '#1a1a2e';
+board.style.width = `${boardSize * squareSize}px`;
+board.style.height = `${boardSize * squareSize}px`;
+board.style.borderRadius = '8px';
+board.style.display = 'flex';
+board.style.flexDirection = 'column';
+boardContainer.style.display = 'flex';
+boardContainer.style.flexDirection = 'column';
+boardContainer.style.gap = '10px';
+
+// StatusBar
+statusBar.style.display = 'flex';
+statusBar.style.alignItems = 'center';
+statusBar.style.gap = '8px';
+statusBar.style.fontFamily = 'monospace';
+statusBar.style.fontSize = '12px';
+statusBar.style.color = '#607d8b';
+statusBar.style.padding = '4px 8px';
+statusBar.style.borderRadius = '4px';
+statusBar.style.backgroundColor = '#1a1a2e';
+statusBar.style.width = '100%';
+
+// Undo Button
+undoButton.textContent = 'Undo';
+undoButton.style.backgroundColor = '#25325c';
+undoButton.style.color = '#e0e0e0';
+undoButton.style.border = 'none';
+undoButton.style.padding = '8px 16px';
+undoButton.style.borderRadius = '4px';
+undoButton.style.cursor = 'pointer';
+undoButton.style.marginRight = '8px';
+undoButton.addEventListener('click', undoMove);
+
+// New Game Button
+newGameButton.textContent = 'New Game';
+newGameButton.style.backgroundColor = '#25325c';
+newGameButton.style.color = '#e0e0e0';
+newGameButton.style.border = 'none';
+newGameButton.style.padding = '8px 16px';
+newGameButton.style.borderRadius = '4px';
+newGameButton.style.cursor = 'pointer';
+newGameButton.addEventListener('click', function () {
+  const game = createGame();
+  document.getElementById('moveLog').textContent = '';
+  setDifficulty(getDifficulty());
+  render(game);
+});
+
+// Difficulty Select
+const difficultyOptions = [
+  { value: 1, label: 'Easy' },
+  { value: 2, label: 'Medium' },
+  { value: 3, label: 'Hard' },
+  { value: 4, label: 'Impossible' },
+];
+for (const opt of difficultyOptions) {
+  const option = document.createElement('option');
+  option.value = String(opt.value);
+  option.textContent = opt.label;
+  difficultySelect.appendChild(option);
+}
+difficultySelect.style.width = '100px';
+difficultySelect.addEventListener('change', function () {
+  setDifficulty(Number(this.value));
+});
+
+// Render
+export function render(game: any) {
+  // Render Board
+  for (let i = 0; i < 64; i++) {
+    const piece = game.getPieceAt(i);
+    if (piece) {
+      const square = squares[i] as HTMLElement;
+      square.textContent = piece;
+      square.style.color = piece === 'K' || piece === 'k' ? '#d35400' : '#fff';
+    }
+  }
+
+  // Render Status
+  const status = getStatus(game);
+  statusBar.textContent = `Turn: ${status.turn} (${status.check ? 'Check' : ''})`;
+  if (status.checkmate) {
+    statusBar.textContent += ` — ${status.checkmate}`;
+  }
+
+  // Render Container
+  container.innerHTML = '';
+  container.appendChild(board);
+  container.appendChild(document.createElement('div')); // Spacing
+  container.appendChild(boardContainer);
+  container.appendChild(document.createElement('div')); // Spacing
+  container.appendChild(document.createElement('div')); // Spacing
+  container.appendChild(statusBar);
+  container.appendChild(document.createElement('div')); // Spacing
+  container.appendChild(newGameButton);
+  container.appendChild(undoButton);
+  container.appendChild(difficultySelect);
+  document.getElementById('app-container').appendChild(container);
+}

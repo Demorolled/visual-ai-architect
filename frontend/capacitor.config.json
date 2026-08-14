@@ -1,0 +1,19 @@
+{
+  "appId": "com.visualai.architect",
+  "appName": "VisualAIArchitect",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "hostname": "localhost",
+    "cleartext": true,
+    "allowNavigation": [
+      "10.0.2.2:*",
+      "192.168.*.*:*",
+      "localhost:*"
+    ]
+  },
+  "android": {
+    "allowMixedContent": true
+  },
+  "backgroundColor": "#0d0d1a"
+}

@@ -1,0 +1,52 @@
+{
+  "app_type": "music_organizer",
+  "description": "Music library manager with tag editing, duplicate finder, and playlists — Desktop music organizer with ID3 tag editing, fingerprint-based dedup, smart playlists, album art",
+  "keywords": [
+    "music",
+    "organizer",
+    "audio",
+    "library",
+    "music",
+    "organizer",
+    "library import",
+    "tag editor",
+    "dedup finder",
+    "music db",
+    "library browser"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Library Import",
+    "Tag Editor",
+    "Dedup Finder",
+    "Music DB",
+    "Library Browser"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Library Import",
+      "destination_module": "Tag Editor",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Tag Editor",
+      "destination_module": "Dedup Finder",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Dedup Finder",
+      "destination_module": "Music DB",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Music DB",
+      "destination_module": "Library Browser",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

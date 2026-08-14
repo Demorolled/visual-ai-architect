@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .question { margin-bottom: 20px; }
+        .options input { margin-right: 10px; }
+        .score { margin-top: 20px; text-align: center; }
+        .restart { display: block; margin: 20px auto; width: 150px; padding: 10px; text-align: center; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>Quiz App</h1>
+    <div id="question"></div>
+    <div id="options"></div>
+    <div id="progress"></div>
+    <div id="score"></div>
+    <button id="restart" class="restart">Restart</button>
+    <script>
+        const questions = [
+            { question: 'What is the capital of France?', options: ['Berlin', 'Paris', 'Madrid', 'Rome'], answer: 1 },
+            { question: 'Which planet is known as the Red Planet?', options: ['Venus', 'Mars', 'Jupiter', 'Saturn'], answer: 1 },
+            { question: 'What is the largest organ in the human body?', options: ['Liver', 'Skin', 'Lungs', 'Heart'], answer: 1 },
+            { question: 'Which programming language is used for building React applications?', options: ['JavaScript', 'Python', 'Ruby', 'C#'], answer: 0 },
+            { question: 'What is the chemical symbol for water?', options: ['CO2', 'H2O', 'O2', 'N2'], answer: 1 },
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timer;
+
+        function generateQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('options').innerHTML = '';
+            const progressBar = document.getElementById('progress');
+            progressBar.style.width = ((currentQuestion + 1) / questions.length) * 100 + '%';
+            const optionsContainer = document.getElementById('options');
+            question.options.forEach((option, index) => {
+                const label = document.createElement('label');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'option';
+                input.value = index;
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(option));
+                optionsContainer.appendChild(label);
+            });
+        }
+
+        function checkAnswer() {
+            const selected = document.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+            const index = parseInt(selected.value);
+            if (index === questions[currentQuestion].answer) {
+                score++;
+                document.getElementById('options').innerHTML = '<p>Correct!</p>';
+            } else {
+                document.getElementById('options').innerHTML = '<p>Wrong!</p>';
+            }
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                setTimeout(generateQuestion, 1000);
+            } else {
+                document.getElementById('question').textContent = 'Quiz finished!';
+                document.getElementById('options').innerHTML = '';
+                document.getElementById('score').textContent = `Your score: ${score} / ${questions.length}`;
+                document.getElementById('restart').style.display = 'block';
+                clearInterval(timer);
+            }
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                const minutes = Math.floor((questions.length - currentQuestion) * 100 / 6000);
+                const seconds = ((questions.length - currentQuestion) * 100) % 6000;
+                document.getElementById('timer').textContent = `Time left: ${minutes}m ${seconds}s`;
+                if (currentQuestion === questions.length) {
+                    clearInterval(timer);
+                }
+            }, 100);
+        }
+
+        document.getElementById('restart').addEventListener('click', () => {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('question').textContent = '';
+            document.getElementById('options').innerHTML = '';
+            document.getElementById('score').textContent = '';
+            document.getElementById('restart').style.display = 'none';
+            document.getElementById('timer').textContent = '';
+            generateQuestion();
+            startTimer();
+        });
+
+        generateQuestion();
+        startTimer();
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "app_type": "eventbook-python",
+  "description": "ticketing: event catalog, ticket types, order checkout with seat selection, attendee check-in.",
+  "keywords": [
+    "eventbook-python",
+    "python",
+    "event",
+    "booking",
+    "events",
+    "tickets",
+    "orders",
+    "attendees",
+    "seats"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Python FastAPI",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "events",
+    "tickets",
+    "orders",
+    "attendees",
+    "seats"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "events",
+      "destination_module": "tickets",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "tickets",
+      "destination_module": "orders",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "orders",
+      "destination_module": "attendees",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "attendees",
+      "destination_module": "seats",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:python",
+  "file_count": 33
+}

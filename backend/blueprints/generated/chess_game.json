@@ -1,0 +1,60 @@
+{
+  "app_type": "chess_game",
+  "description": "Complete chess with move generation, check/checkmate detection, and minimax AI — Full chess implementation with FEN/PGN parsing, all legal move generation (including castling, en passant, promotion), check/checkmate/stalemate detection, and minimax with alpha-beta pruning AI",
+  "keywords": [
+    "chess",
+    "game",
+    "ai",
+    "minimax",
+    "board-game",
+    "chess",
+    "game",
+    "chess input",
+    "move generator",
+    "game rules engine",
+    "board state",
+    "ai engine",
+    "board renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Chess Input",
+    "Move Generator",
+    "Game Rules Engine",
+    "Board State",
+    "AI Engine",
+    "Board Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Chess Input",
+      "destination_module": "Move Generator",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Move Generator",
+      "destination_module": "Game Rules Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Game Rules Engine",
+      "destination_module": "Board State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Board State",
+      "destination_module": "AI Engine",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "AI Engine",
+      "destination_module": "Board Renderer",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

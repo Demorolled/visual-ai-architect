@@ -1,0 +1,115 @@
+[
+  {
+    "id": "proj_1781651676750_6olmpno",
+    "name": "i need  a home media steaming app.",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master-node",
+        "type": "master",
+        "position": {
+          "x": 75,
+          "y": -540
+        },
+        "data": {
+          "label": "App Blueprint",
+          "appGoal": "i need  a home media steaming app.",
+          "appPurpose": "need a merdia streaming app, with screen selectable to streaming whatever im watching to the rest of my houe. ",
+          "selectedOS": "linux",
+          "status": "pending",
+          "selectedDistro": "ubuntu"
+        }
+      },
+      {
+        "id": "node_0",
+        "type": "input",
+        "position": {
+          "x": -660,
+          "y": 210
+        },
+        "data": {
+          "label": "User Input",
+          "description": "Handle user input and validate entries.",
+          "type": "input",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "i need  a home media steaming app.",
+          "appPurpose": "need a merdia streaming app, with screen selectable to streaming whatever im watching to the rest of my houe. "
+        }
+      },
+      {
+        "id": "node_1",
+        "type": "logic",
+        "position": {
+          "x": 150,
+          "y": 375
+        },
+        "data": {
+          "label": "Core Logic",
+          "description": "Main application processing logic.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "i need  a home media steaming app.",
+          "appPurpose": "need a merdia streaming app, with screen selectable to streaming whatever im watching to the rest of my houe. "
+        }
+      },
+      {
+        "id": "node_2",
+        "type": "database",
+        "position": {
+          "x": -870,
+          "y": 660
+        },
+        "data": {
+          "label": "Data Storage",
+          "description": "Store and retrieve application data.",
+          "type": "database",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "i need  a home media steaming app.",
+          "appPurpose": "need a merdia streaming app, with screen selectable to streaming whatever im watching to the rest of my houe. "
+        }
+      },
+      {
+        "id": "node_3",
+        "type": "ui",
+        "position": {
+          "x": -465,
+          "y": 960
+        },
+        "data": {
+          "label": "User Interface",
+          "description": "Render the app interface.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "i need  a home media steaming app.",
+          "appPurpose": "need a merdia streaming app, with screen selectable to streaming whatever im watching to the rest of my houe. "
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0_1",
+        "source": "node_0",
+        "target": "node_1",
+        "type": "default"
+      },
+      {
+        "id": "edge_1_2",
+        "source": "node_1",
+        "target": "node_2",
+        "type": "default"
+      },
+      {
+        "id": "edge_1_3",
+        "source": "node_1",
+        "target": "node_3",
+        "type": "default"
+      }
+    ],
+    "savedAt": "2026-06-16T23:25:57.566Z",
+    "version": 2
+  }
+]

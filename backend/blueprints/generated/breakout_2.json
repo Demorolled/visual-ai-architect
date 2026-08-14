@@ -1,0 +1,52 @@
+{
+  "app_type": "breakout_2",
+  "description": "Classic Breakout with paddle physics, brick types, power-ups, and level progression — Breakout implementation with paddle reflection physics, multiple brick types (normal/hard/unbreakable), power-up drops (multi-ball, wide paddle), and level progression",
+  "keywords": [
+    "breakout",
+    "game",
+    "physics",
+    "brick-breaker",
+    "arcade",
+    "breakout",
+    "paddle input",
+    "ball physics",
+    "brick engine",
+    "game state",
+    "game view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Paddle Input",
+    "Ball Physics",
+    "Brick Engine",
+    "Game State",
+    "Game View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Paddle Input",
+      "destination_module": "Ball Physics",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Ball Physics",
+      "destination_module": "Brick Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Brick Engine",
+      "destination_module": "Game State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Game View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

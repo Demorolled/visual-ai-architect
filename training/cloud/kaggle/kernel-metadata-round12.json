@@ -1,0 +1,16 @@
+{
+  "id": "__USERNAME__/vaca-qlora-round12",
+  "title": "VACA QLoRA Round12",
+  "subtitle": "Round 12 defects (3D probe-failure fix; resume from the REAL R11 LoRA; LR 5e-5; 3 ep; accum 4; seq 3072; single-GPU; merged 16-bit)",
+  "code_file": "train_r12_defects_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "competition_sources": [],
+  "dataset_sources": [
+    "__USERNAME__/round12-defects",
+    "__USERNAME__/vaca-r11-adapter"
+  ]
+}

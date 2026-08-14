@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 0; }
+    .container { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: #121212; }
+    .content { width: 100%; max-width: 600px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 16px; }
+    .title { font-size: 24px; font-weight: 600; margin: 0; }
+    .todos { width: 100%; max-height: 300px; overflow-y: auto; }
+    .todo { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .todo input { width: 100%; padding: 8px; font-size: 14px; }
+    .todo button { padding: 6px 12px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; }
+    .todo button.delete { background: #ff4d4d; color: #fff; }
+    .todo button.save { background: #22c55e; color: #fff; }
+    .empty { padding: 16px; text-align: center; color: rgba(255,255,255,0.5); }
+    .add { display: flex; gap: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <h1 class="title">Todo List</h1>
+      <div class="todos">
+        <div class="add">
+          <input id="newTodo" type="text" placeholder="Add a new task...">
+          <button id="addBtn" class="btn">Add</button>
+        </div>
+        <div class="todo" id="todo-1">
+          <input type="text" value="Write a blog post" disabled>
+          <button class="save">✓</button>
+          <button class="delete">✕</button>
+        </div>
+        <div class="todo" id="todo-2">
+          <input type="text" value="Read a book" disabled>
+          <button class="save">✓</button>
+          <button class="delete">✕</button>
+        </div>
+        <div class="empty" id="empty">Start adding tasks to get started...</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const todos = [];
+    const addBtn = document.getElementById('addBtn');
+    const newTodoInput = document.getElementById('newTodo');
+    const emptyMsg = document.getElementById('empty');
+
+    addBtn.addEventListener('click', () => {
+      const value = newTodoInput.value.trim();
+      if (!value) return;
+      todos.push({ id: Date.now(), title: value, completed: false });
+      updateUI();
+      newTodoInput.value = '';
+    });
+
+    document.querySelectorAll('.todo .save').forEach(button => {
+      button.addEventListener('click', () => {
+        const todo = button.parentElement;
+        const input = todo.querySelector('input');
+        input.disabled = !input.disabled;
+        input.focus();
+      });
+    });
+
+    document.querySelectorAll('.todo .delete').forEach(button => {
+      button.addEventListener('click', () => {
+        const todo = button.parentElement;
+        const id = todo.dataset.id;
+        todos.splice(todos.findIndex(t => t.id === Number(id)), 1);
+        updateUI();
+      });
+    });
+
+    function updateUI() {
+      document.querySelectorAll('.todo').forEach(todo => todo.remove());
+      todos.forEach(todo => {
+        const div = document.createElement('div');
+        div.className = 'todo';
+        div.dataset.id = todo.id;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = todo.title;
+        input.disabled = true;
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'save';
+        saveBtn.textContent = todo.completed ? '✓' : '✓';
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete';
+        deleteBtn.textContent = '✕';
+        div.appendChild(input);
+        div.appendChild(saveBtn);
+        div.appendChild(deleteBtn);
+        document.querySelector('.todos').appendChild(div);
+      });
+      emptyMsg.style.display = todos.length === 0 ? 'block' : 'none';
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>

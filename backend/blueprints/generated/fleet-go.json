@@ -1,0 +1,51 @@
+{
+  "app_type": "fleet-go",
+  "description": "vehicle registry, driver assignment, route planning, shipment status, GPS telemetry ingestion.",
+  "keywords": [
+    "fleet-go",
+    "go",
+    "fleet",
+    "management",
+    "vehicles",
+    "drivers",
+    "routes",
+    "shipments",
+    "telemetry"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "vehicles",
+    "drivers",
+    "routes",
+    "shipments",
+    "telemetry"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "vehicles",
+      "destination_module": "drivers",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "drivers",
+      "destination_module": "routes",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "routes",
+      "destination_module": "shipments",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "shipments",
+      "destination_module": "telemetry",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 33
+}

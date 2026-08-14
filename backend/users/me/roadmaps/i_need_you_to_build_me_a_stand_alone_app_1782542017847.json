@@ -1,0 +1,193 @@
+{
+  "projectName": "i need you to build me a stand alone app",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "node_1782541385195_eigq3k",
+      "type": "logic",
+      "label": "config.ts",
+      "description": "Configuration and constant definitions for the layout editor. Imports: none. Exports: a constant 'LAYOUT_CONFIG' object containing default dimensions, widget types, and file paths for the Jarvis metadata. Handles: default settings for the canvas and file paths for the 'jarvis' core data.",
+      "language": "typescript",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1782541385195_g0gbgl",
+      "type": "logic",
+      "label": "types.ts",
+      "description": "Centralized type definitions for the application. Imports: none. Exports: interfaces for Widget (id, type, x, y, width, height), Layout (id, items: Widget[]), and AppConfig. Ensures strict typing across the editor and the core logic.",
+      "language": "typescript",
+      "position": {
+        "x": 0,
+        "y": 100
+      }
+    },
+    {
+      "id": "node_1782541385195_8yr97r",
+      "type": "input",
+      "label": "jarvis-scanner.py",
+      "description": "A Python script designed to scan the 'Jarvis' main application source or directory to extract available widget definitions. Imports: os, json. Exports: a list of widget schemas. Handles: file system traversal, parsing of Jarvis-specific configuration files, and filtering of valid widgets.",
+      "language": "python",
+      "position": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1782541385195_jgrj2x",
+      "type": "logic",
+      "label": "widget_loader.ts",
+      "description": "Logic to ingest the output from the jarvis-scanner.py and map it to the internal 'Widget' type. Imports: types.ts. Exports: a function 'loadAvailableWidgets()' returning an array of objects. Handles: empty scan results and malformed widget data.",
+      "language": "typescript",
+      "position": {
+        "x": 300,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1782541385195_rw9t2b",
+      "type": "logic",
+      "label": "canvas_manager.ts",
+      "description": "Manages the state of the drag-and-drop canvas. Imports: types.ts. Exports: a class 'CanvasManager' with methods like 'moveWidget(id, x, y)', 'addWidget(type)', and 'getCurrentLayout()'. Handles: collision detection, snapping to grid, and coordinate validation.",
+      "language": "typescript",
+      "position": {
+        "x": 500,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1782541385195_kmpeeo",
+      "type": "logic",
+      "label": "persistence_service.ts",
+      "description": "Handles saving and loading the layout JSON file. Imports: types.ts. Exports: 'saveLayout(data: Layout)' and 'loadLayout()'. Handles: File System errors, permission issues, and invalid JSON formatting.",
+      "language": "typescript",
+      "position": {
+        "x": 700,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1782541385195_u7xv6b",
+      "type": "ui",
+      "label": "ui_main_canvas.tsx",
+      "description": "The primary React component for the drag-and-drop interface. Imports: canvas_manager.ts, widget_loader.ts. Exports: the rendered canvas component. Handles: mouse events for dragging, selection highlighting, and rendering of the canvas grid.",
+      "language": "typescript",
+      "position": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1782541385195_tzyzc6",
+      "type": "ui",
+      "label": "ui_widget_library.tsx",
+      "description": "A sidebar component listing all widgets discovered by the scanner. Imports: widget_loader.ts. Exports: a list of selectable widgets. Handles: empty states and selection highlighting.",
+      "language": "typescript",
+      "position": {
+        "x": 900,
+        "y": 200
+      }
+    },
+    {
+      "id": "node_1782541385195_eptu5d",
+      "type": "ui",
+      "label": "ui_toolbar.tsx",
+      "description": "Top bar containing action buttons like 'Save Layout', 'Reset', and 'Preview'. Imports: persistence_service.ts. Exports: the UI component. Handles: click events for state changes.",
+      "language": "typescript",
+      "position": {
+        "x": 900,
+        "y": 400
+      }
+    },
+    {
+      "id": "node_1782541385195_aehle3",
+      "type": "logic",
+      "label": "main_entry.ts",
+      "description": "The entry point for the layout editor application. Imports: ui_main_canvas.tsx, ui_widget_library.tsx, ui_toolbar.tsx. Exports: the application root. Handles: initial state setup and global error boundaries.",
+      "language": "typescript",
+      "position": {
+        "x": 1100,
+        "y": 0
+      }
+    },
+    {
+      "id": "node_1782541385195_73fldz",
+      "type": "logic",
+      "label": "test_persistence.spec.ts",
+      "description": "Unit tests for the persistence_service.ts. Imports: persistence_service.ts. Ensures that file I/O works correctly and handles edge cases like read-only directories.",
+      "language": "typescript",
+      "position": {
+        "x": 700,
+        "y": 300
+      }
+    },
+    {
+      "id": "node_1782541385195_tx5o8y",
+      "type": "logic",
+      "label": "test_canvas_logic.spec.ts",
+      "description": "Unit tests for canvas_manager.ts. Imports: canvas_manager.ts. Validates move calculations and coordinate wrapping.",
+      "language": "typescript",
+      "position": {
+        "x": 500,
+        "y": 300
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node_1782541385195_jgrj2x",
+      "target": "node_1782541385195_u7xv6b"
+    },
+    {
+      "source": "node_1782541385195_jgrj2x",
+      "target": "node_1782541385195_tzyzc6"
+    },
+    {
+      "source": "node_1782541385195_g0gbgl",
+      "target": "node_1782541385195_jgrj2x"
+    },
+    {
+      "source": "node_1782541385195_g0gbgl",
+      "target": "node_1782541385195_rw9t2b"
+    },
+    {
+      "source": "node_1782541385195_g0gbgl",
+      "target": "node_1782541385195_kmpeeo"
+    },
+    {
+      "source": "node_1782541385195_rw9t2b",
+      "target": "node_1782541385195_u7xv6b"
+    },
+    {
+      "source": "node_1782541385195_kmpeeo",
+      "target": "node_1782541385195_eptu5d"
+    },
+    {
+      "source": "node_1782541385195_kmpeeo",
+      "target": "node_1782541385195_73fldz"
+    },
+    {
+      "source": "node_1782541385195_rw9t2b",
+      "target": "node_1782541385195_tx5o8y"
+    },
+    {
+      "source": "node_1782541385195_jgrj2x",
+      "target": "node_1782541385195_aehle3"
+    },
+    {
+      "source": "node_1782541385195_u7xv6b",
+      "target": "node_1782541385195_aehle3"
+    },
+    {
+      "source": "node_1782541385195_tzyzc6",
+      "target": "node_1782541385195_aehle3"
+    },
+    {
+      "source": "node_1782541385195_eptu5d",
+      "target": "node_1782541385195_aehle3"
+    }
+  ],
+  "createdAt": "2026-06-27T06:33:37.846Z"
+}

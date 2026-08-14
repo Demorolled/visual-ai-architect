@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Shooting Star Field </title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  #scene { position: fixed; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('scene').appendChild(renderer.domElement);
+camera.position.z = 300;
+
+const starGeometry = new THREE.BufferGeometry();
+const starPositions = new Float32Array(10000 * 3);
+for (let i = 0; i < 10000 * 3; i++) starPositions[i] = (Math.random() - 0.5) * 3000;
+starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1, sizeAttenuation: false });
+const stars = new THREE.Points(starGeometry, starMaterial);
+scene.add(stars);
+
+const cometGeometry = new THREE.BufferGeometry();
+const cometPositions = new Float32Array(100 * 3);
+for (let i = 0; i < 100 * 3; i++) cometPositions[i] = (Math.random() - 0.5) * 3000;
+cometGeometry.setAttribute('position', new THREE.Float32BufferAttribute(cometPositions, 3));
+const cometMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 2, sizeAttenuation: false });
+const comets = new THREE.Points(cometGeometry, cometMaterial);
+scene.add(comets);
+
+let cometCount = 0;
+function launchComet() {
+  cometCount++;
+  const comet = comets.children[cometCount % 100];
+  comet.geometry.attributes.position.array = cometPositions;
+  comet.geometry.attributes.position.needsUpdate = true;
+  comet.position.set((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, 2000);
+  comet.scale.set(2, 2, 2);
+  comet.rotation.x = Math.random() * Math.PI;
+  comet.rotation.y = Math.random() * Math.PI;
+  comet.rotation.z = Math.random() * Math.PI;
+  comet.material.color.setHSL(Math.random(), 1, 0.5);
+  comet.material.opacity = 1;
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 0x000000, shininess: 100, opacity: 0.5, transparent: true });
+  comet.material BlinnPhongMaterial = new THREE.BlinnPhongMaterial({ color: 0xffffff, emissive: 

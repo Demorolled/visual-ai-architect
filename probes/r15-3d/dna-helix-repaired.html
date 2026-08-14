@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+  #scene { position: fixed; inset: 0; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.querySelector('#scene').appendChild(renderer.domElement);
+
+const ambient = new THREE.AmbientLight(0x222222);
+scene.add(ambient);
+
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(-1, 2, 2).normalize();
+scene.add(light);
+
+const geo = new THREE.CylinderGeometry(0.1, 0.1, 2, 16);
+const mat = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+const helix = new THREE.Group();
+for (let i = 0; i < 100; i++) {
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(Math.cos(i * Math.PI * 2) * 20, 0, Math.sin(i * Math.PI * 2) * 20);
+  mesh.position.y = i * 2 - 20;
+  helix.add(mesh);
+}
+scene.add(helix);
+
+const geo2 = new THREE.CylinderGeometry(0.05, 0.05, 2, 16);
+const mat2 = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+
+const helix2 = new THREE.Group();
+for (let i = 0; i < 100; i++) {
+  const mesh = new THREE.Mesh(geo2, mat2);
+  mesh.position.set(Math.cos(i * Math.PI * 2) * 20, 0, Math.sin(i * Math.PI * 2) * 20);
+  mesh.position.y = i * 2 - 20;
+  helix2.add(mesh);
+}
+scene.add(helix2);
+
+const rungGeo = new THREE.CylinderGeometry(0.05, 0.05, 1.5, 16);
+const rungMat = new THREE.MeshBasicMaterial({ color: 0x8888ff });
+
+for (let i = 0; i < 100; i++) {
+  const mesh = new THREE.Mesh(rungGeo, rungMat);
+  mesh.position.set(Math.cos(i * Math.PI * 2) * 20, 0.75, Math.sin(i * Math.PI * 2) * 20);
+  mesh.position.y = i * 2 - 20;
+  scene.add(mesh);
+}
+
+camera.position.z = 40;
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  helix.rotation.y = t * 0.25;
+  helix2.rotation.y = -t * 0.25;
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

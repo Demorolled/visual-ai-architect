@@ -1,0 +1,61 @@
+{
+  "app_type": "hash_table_demo",
+  "description": "Interactive hash table with multiple collision resolution strategies visualization — Explores hashing strategies: separate chaining, open addressing (linear/quadratic/double), cuckoo hashing, and Robin Hood. Shows hash function output, bucket placement, load factor, and resize events",
+  "keywords": [
+    "hash-table",
+    "hashing",
+    "collision",
+    "data-structures",
+    "visualization",
+    "hash",
+    "table",
+    "demo",
+    "hash configurator",
+    "hash function engine",
+    "bucket store",
+    "collision resolver",
+    "table visualizer",
+    "hash inspector"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Hash Configurator",
+    "Hash Function Engine",
+    "Bucket Store",
+    "Collision Resolver",
+    "Table Visualizer",
+    "Hash Inspector"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Hash Configurator",
+      "destination_module": "Hash Function Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Hash Function Engine",
+      "destination_module": "Bucket Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Bucket Store",
+      "destination_module": "Collision Resolver",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Collision Resolver",
+      "destination_module": "Table Visualizer",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Table Visualizer",
+      "destination_module": "Hash Inspector",
+      "data_passed": "updates"
+    }
+  ],
+  "source": "designs.json"
+}

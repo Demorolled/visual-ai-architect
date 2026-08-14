@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { background-color: #15152a; color: white; font-family: Arial, sans-serif; }
+.app { max-width: 960px; margin: 0 auto; padding: 24px; }
+.board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.cell { height: 100px; width: 100px; background-color: #15152a; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+.cell.x { background-color: #ff0000; }
+.cell.o { background-color: #0000ff; }
+</style>
+</head>
+<body>
+<div class="app">
+<div class="board" id="board"></div>
+<button id="playBtn" class="btn" onclick="play()">▶ Play</button>
+</div>
+<script>
+const board = document.getElementById('board');
+const cells = Array.from(board.children);
+const currentPlayer = 'x';
+
+function drawBoard() {
+  board.innerHTML = '';
+  for (let i = 0; i < 9; i++) {
+    board.appendChild(document.createElement('div').addClass('cell'));
+  }
+}
+
+function play() {
+  currentPlayer = 'x';
+  drawBoard();
+}
+
+function handleClick(i) {
+  if (cells[i].classList.contains('x') || cells[i].classList.contains('o')) return;
+  cells[i].classList.add(currentPlayer);
+  if (checkWin()) return;
+  currentPlayer = currentPlayer === 'x' ? 'o' : 'x';
+}
+
+function checkWin() {
+  const winningCombinations = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  for (let combination of winningCombinations) {
+    if (cells[combination[0]].classList.contains(currentPlayer) &&
+        cells[combination[1]].classList.contains(currentPlayer) &&
+        cells[combination[2]].classList.contains(currentPlayer)) {
+      statusMsg.textContent = `${currentPlayer.toUpperCase()} wins!`;
+      return true;
+    }
+  }
+
+  if (cells.every(cell => cell.classList.contains('x') || cell.classList.contains('o'))) {
+    statusMsg.textContent = 'Tie game!';
+    return true;
+  }
+
+  return false;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+ "memory_3fact": 3,
+ "memory_notes_total": 13,
+ "emotion_w1": true,
+ "emotion_w2": true,
+ "blueprint_dangling": 0,
+ "blueprint": "app_type=fitness_tracker nodes=4 edges=3 dangling=0",
+ "codegen_chat": {
+  "def": true,
+  "cache": true,
+  "test": true
+ },
+ "at": "2026-08-07T21:26:17Z"
+}

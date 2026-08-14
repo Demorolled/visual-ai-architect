@@ -1,0 +1,52 @@
+{
+  "app_type": "ecommerce-go",
+  "description": "user accounts, product catalog, cart, checkout, orders.",
+  "keywords": [
+    "ecommerce-go",
+    "go",
+    "e",
+    "commerce",
+    "platform",
+    "users",
+    "product catalog",
+    "cart",
+    "checkout",
+    "orders"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "users",
+    "product catalog",
+    "cart",
+    "checkout",
+    "orders"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "users",
+      "destination_module": "product catalog",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "product catalog",
+      "destination_module": "cart",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "cart",
+      "destination_module": "checkout",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "checkout",
+      "destination_module": "orders",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 26
+}

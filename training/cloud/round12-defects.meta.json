@@ -1,0 +1,58 @@
+{
+  "generated": "2026-08-10",
+  "round": 12,
+  "mix": "defects",
+  "total_rows": 74,
+  "by_source": {
+    "chunk-3d-defects.jsonl": 18,
+    "chunk-3d.jsonl": 22,
+    "round11-mixa-train.jsonl": 34
+  },
+  "split": {
+    "train": 67,
+    "val": 7,
+    "seed": 42
+  },
+  "seq_budget": {
+    "max_seq": 3072,
+    "rows_input_trimmed": 3,
+    "rows_output_truncated_by_kernel": 5,
+    "rows": [
+      {
+        "instruction": "Build a 3D Chess game",
+        "est_tokens": 9194,
+        "source": "round12:3d-reexposure"
+      },
+      {
+        "instruction": "Build a 3D solar system",
+        "est_tokens": 3341,
+        "source": "round12:3d-reexposure"
+      },
+      {
+        "instruction": "Build a 3D product showcase",
+        "est_tokens": 3263,
+        "source": "round12:3d-reexposure"
+      },
+      {
+        "instruction": "Build a 3D terrain viewer",
+        "est_tokens": 3226,
+        "source": "round12:3d-reexposure"
+      },
+      {
+        "instruction": "Build a System Improvement Blueprint application",
+        "est_tokens": 3064,
+        "source": "round12:retention-r11"
+      }
+    ]
+  },
+  "kernel_config": {
+    "epochs": 3,
+    "grad_accum": 4,
+    "seq": 3072,
+    "lr": 5e-05,
+    "optimizer_steps": 48,
+    "resume_from": "vaca-r11-adapter (real R11 LoRA e3b7e7cc)"
+  },
+  "projected_t4_time": "~0.6 h (48 steps @ ~45 s/step)",
+  "note": "chunk-3d + round11-mixa slice are deliberate re-exposure (exempt from dedupe); chunk-3d-defects is the fresh defect-fix signal."
+}

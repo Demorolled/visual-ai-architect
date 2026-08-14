@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Cheese Game</title>
+  <style>
+    body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #000; }
+    canvas { width: 100vw; height: 100vh; }
+    #status { position: fixed; bottom: 10px; left: 10px; color: white; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <div id="status">Awaiting game start</div>
+  <script type="module">
+    import initCanvas, { gameLoop, updateStatus } from './game.ts';
+    const canvas = document.getElementById('gameCanvas');
+    const status = document.getElementById('status');
+    let gameRunning = false;
+    function startGame() {
+      if (gameRunning) return;
+      gameRunning = true;
+      status.textContent = 'Game started';
+      initCanvas(canvas);
+      gameLoop();
+      const t = (0);
+      updateStatus((t) => { status.textContent = `Time: ${t.toFixed(1)}` });
+    }
+    canvas.addEventListener('click', startGame);
+  </script>
+</body>
+</html>

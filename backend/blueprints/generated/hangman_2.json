@@ -1,0 +1,52 @@
+{
+  "app_type": "hangman_2",
+  "description": "Word guessing game with category selection, letter tracking, and visual hangman — Hangman with word bank by category, letter-by-letter guessing, correct/incorrect tracking, visual hangman progression, and win/loss detection",
+  "keywords": [
+    "hangman",
+    "word-game",
+    "game",
+    "classic",
+    "educational",
+    "hangman",
+    "letter input",
+    "word engine",
+    "game logic",
+    "game state",
+    "hangman renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Letter Input",
+    "Word Engine",
+    "Game Logic",
+    "Game State",
+    "Hangman Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Letter Input",
+      "destination_module": "Word Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Word Engine",
+      "destination_module": "Game Logic",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Game Logic",
+      "destination_module": "Game State",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "Hangman Renderer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,52 @@
+{
+  "app_type": "image_viewer",
+  "description": "Image viewer with basic editing, filters, and format conversion — Desktop image viewer PNG/JPG/GIF/WEBP with crop, resize, rotate, filters, batch convert",
+  "keywords": [
+    "image-viewer",
+    "photo",
+    "filters",
+    "desktop",
+    "image",
+    "viewer",
+    "image loader",
+    "image processor",
+    "filter engine",
+    "image cache",
+    "viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Image Loader",
+    "Image Processor",
+    "Filter Engine",
+    "Image Cache",
+    "Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Image Loader",
+      "destination_module": "Image Processor",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Image Processor",
+      "destination_module": "Filter Engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Filter Engine",
+      "destination_module": "Image Cache",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Image Cache",
+      "destination_module": "Viewer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

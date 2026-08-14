@@ -1,0 +1,279 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SessionHistoryPanel — "session history" view inside the floating preview
+   window. Matches the dark palette of MockupPreviewPanel / LivePreviewPanel.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.shp-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  background: #12122a;
+}
+
+.shp-tabs {
+  display: flex;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.shp-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 4px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.shp-tab:hover {
+  color: #cbd5e1;
+}
+
+.shp-tab.active {
+  color: #7dd3fc;
+  border-bottom-color: #7dd3fc;
+}
+
+.shp-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shp-hint {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.shp-state {
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.shp-retry {
+  margin-left: 8px;
+  background: rgba(74, 158, 255, 0.15);
+  border: 1px solid rgba(74, 158, 255, 0.4);
+  border-radius: 3px;
+  color: #7dd3fc;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 8px;
+}
+
+.shp-empty {
+  font-size: 12px;
+  color: #64748b;
+  padding: 18px 6px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.shp-empty code {
+  color: #7dd3fc;
+  background: rgba(125, 211, 252, 0.1);
+  padding: 0 4px;
+}
+
+/* ── Conversation tab ── */
+
+.shp-chat-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.shp-chat-row.user {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.shp-chat-row.ai {
+  background: rgba(125, 211, 252, 0.06);
+}
+
+.shp-chat-role {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #7dd3fc;
+  white-space: nowrap;
+}
+
+.shp-chat-row.user .shp-chat-role {
+  color: #93c5fd;
+}
+
+.shp-chat-text {
+  flex: 1;
+  color: #cbd5e1;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.shp-chat-time {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* ── Builds tab ── */
+
+.shp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shp-build-card {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shp-build-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.shp-build-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shp-build-ago {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.shp-build-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.shp-build-nodes,
+.shp-build-files {
+  flex-shrink: 0;
+}
+
+.shp-progress {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+}
+
+.shp-progress-fill {
+  height: 100%;
+  background: #7dd3fc;
+  border-radius: 2px;
+}
+
+.shp-progress-text {
+  flex-shrink: 0;
+}
+
+.shp-progress-text.done {
+  color: #4ade80;
+}
+
+/* ── Sessions tab ── */
+
+.shp-session-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px;
+}
+
+.shp-session-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.shp-session-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shp-session-code {
+  font-size: 10px;
+  color: #7dd3fc;
+  font-family: monospace;
+}
+
+.shp-session-ago {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.shp-load-btn {
+  flex-shrink: 0;
+  background: rgba(74, 158, 255, 0.15);
+  border: 1px solid rgba(74, 158, 255, 0.4);
+  border-radius: 3px;
+  color: #7dd3fc;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  transition: background 0.15s;
+}
+
+.shp-load-btn:hover:not(:disabled) {
+  background: rgba(74, 158, 255, 0.3);
+}
+
+.shp-load-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.shp-load-status {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #94a3b8;
+}

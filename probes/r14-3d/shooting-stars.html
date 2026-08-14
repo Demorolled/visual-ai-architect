@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Shooting Star Field </title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  #scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+  #comet { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="comet">Launch comet</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/Three.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('scene').appendChild(renderer.domElement);
+camera.position.z = 500;
+const stars = [];
+for (let i = 0; i < 5000; i++) {
+  const geometry = new THREE.SphereGeometry(0.1, 8, 8);
+  const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
+  const star = new THREE.Mesh(geometry, material);
+  star.position.set((Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 1000);
+  scene.add(star);
+  stars.push(star);
+}
+const cometGeo = new THREE.BufferGeometry();
+const cometPos = new Float32Array(3 * 100);
+for (let i = 0; i < 100; i++) cometPos[i * 3] = (Math.random() - 0.5) * 200;
+  cometGeo.setAttribute('position', new THREE.BufferAttribute(cometPos, 3));
+const cometMat = new THREE.PointsMaterial({ color: 0xff00ff, size: 1, sizeAttenuation: false });
+const comet = new THREE.Points(cometGeo, cometMat);
+scene.add(comet);
+let cometSpeed = 0;
+function updateComet(dt) {
+  cometPos.forEach((p, i) => cometPos[i] += cometSpeed * dt);
+  cometPos.forEach((p, i) => {
+    if (p > 500) cometPos[i] = -500;
+    if (p < -500) cometPos[i] = 500;
+  });
+  cometGeo.attributes.position.needsUpdate = true;
+}
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+renderer.setAnimationLoop(() => {
+  renderer.render(scene, camera);
+  stars.forEach(s => s.rotation.y += 0.01);
+  updateComet(0.0166);
+});
+document.getElementById('comet').addEventListener('click', () => {
+  cometSpeed = 100;
+  setTimeout(() => cometSpeed = 0, 3000);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D Voxel Castle</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html,body { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; font-family: system-ui, sans-serif; }
+  #scene { width: 100vw; height: 100vh; }
+  #hint { position: absolute; left: 12px; bottom: 12px; color: #e9e9ff; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+function buildCastle(scene) {
+  const s = 0.7;
+  const c = (p) => new THREE.BoxGeometry(1*s, 1*s, 1*s).translate(...p);
+  const m = (t) => new THREE.MeshBasicMaterial({ color: t });
+
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 10),
+    new THREE.MeshBasicMaterial({ color: 0x222233, side: THREE.DoubleSide })
+  ).position.y = -3;
+  scene.add(floor);
+
+  const wall = c([0, 0, 0]);
+  wall.materials = [m(0x333344), m(0x111122), m(0x111122), m(0x333344), m(0x333344), m(0x333344)];
+  scene.add(wall);
+
+  const towers = [];
+  const addTower = (p) => {
+    const t = c(p);
+    t.materials = [m(0x333344), m(0x333344), m(0x111122), m(0x333344), m(0x333344), m(0x333344)];
+    scene.add(t);
+    towers.push(t);
+  };
+  addTower([3, 1, 3]);
+  addTower([-3, 1, -3]);
+  addTower([-3, 1, 3]);
+  addTower([3, 1, -3]);
+
+  const battlements = [];
+  const addBattlement = (p) => {
+    const b = c(p);
+    b.materials = [m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344)];
+    scene.add(b);
+    battlements.push(b);
+  };
+  addBattlement([2.25, 2.15, 0]);
+  addBattlement([-2.25, 2.15, 0]);
+  addBattlement([0, 2.15, 2.25]);
+  addBattlement([0, 2.15, -2.25]);
+
+  const keep = c([0, 2, 0]);
+  keep.materials = [m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344)];
+  scene.add(keep);
+
+  const roof = [];
+  const addRoof = (p) => {
+    const r = c(p);
+    r.materials = [m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344)];
+    scene.add(r);
+    roof.push(r);
+  };
+  addRoof([2, 3, 0]);
+  addRoof([-2, 3, 0]);
+  addRoof([0, 3, 2]);
+  addRoof([0, 3, -2]);
+
+  const flag = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 0.3, 0.3),
+    new THREE.MeshBasicMaterial({ color: 0xffaa00 })
+  ).position.set(0, 3.2, 0);
+
+  const hint = document.querySelector('#hint');
+  const regenerate = () => {
+    hint.textContent = 'New Castle';
+    scene.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.visible = false;
+    });
+    setTimeout(() => {
+      floor.position.y = -3;
+      wall.materials = [m(0x333344), m(0x111122), m(0x111122), m(0x333344), m(0x333344), m(0x333344)];
+      towers.forEach((t) => { t.materials = [m(0x333344), m(0x333344), m(0x111122), m(0x333344), m(0x333344), m(0x333344)]; });
+      battlements.forEach((b) => { b.materials = [m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344)]; });
+      keep.materials = [m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344)];
+      roof.forEach((r) => { r.materials = [m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344), m(0x333344)]; });
+      hint.textContent = '';
+      flag.position.set(0, 3.2, 0);
+      floor.materials[0].color.setHex(0x222233);
+      scene.traverse((o) => { if (o instanceof THREE.Mesh) o.visible = true; });
+    }, 1000);
+  };
+  document.querySelector('#scene').addEventListener('click', regenerate);
+  regenerate();
+}
+const scene = document.querySelector('#scene');
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+scene.appendChild(renderer.domElement);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+camera.position.set(2, 2, 5);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+buildCastle(scene);
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

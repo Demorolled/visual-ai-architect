@@ -1,0 +1,54 @@
+{
+  "app_type": "whack_a_mole_2",
+  "description": "Arcade whack-a-mole with scoring and speed increase — Interactive whack-a-mole with real-time visualization and analysis",
+  "keywords": [
+    "game",
+    "whack-a-mole",
+    "arcade",
+    "reaction",
+    "games",
+    "whack",
+    "a",
+    "mole",
+    "game controller",
+    "game engine",
+    "game state",
+    "ai opponent",
+    "render view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Game Controller",
+      "destination_module": "Game Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Game Engine",
+      "destination_module": "Game State",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Game State",
+      "destination_module": "AI Opponent",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "AI Opponent",
+      "destination_module": "Render View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

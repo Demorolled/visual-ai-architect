@@ -1,0 +1,147 @@
+const DIRECTIONS = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+function isInside(x: number, y: number, board: string[][]): boolean {
+  return x >= 0 && x < 8 && y >= 0 && y < 8;
+}
+function getLegalMoves(board: string[][], color: 'w' | 'b'): [number, number][][] {
+  const moves: [number, number][][] = [[], []];
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      if (board[y][x] === '') continue;
+      const piece = board[y][x];
+      const player = piece === 'w' ? 'w' : 'b';
+      if (player !== color) continue;
+      const captures: [number, number][] = [];
+      const singleMoves: [number, number][] = [];
+      for (const [dx, dy] of DIRECTIONS) {
+        const [nx, ny] = [x + dx, y + dy];
+        if (!isInside(nx, ny, board)) continue;
+        if (board[ny][nx] === '') {
+          singleMoves.push([nx, ny]);
+          continue;
+        }
+        const [nx2, ny2] = [nx + dx, ny + dy];
+        if (!isInside(nx2, ny2, board)) continue;
+        if (board[ny2][nx2] === '') {
+          const target = board[ny][nx];
+          board[ny][nx] = '';
+          board[ny2][nx2] = target;
+          if (canPromote(target, ny2)) singleMoves.push([nx2, ny2]);
+          board[ny][nx] = target;
+          board[ny2][nx2] = '';
+        } else if (board[ny2][nx2] !== player) {
+          captures.push([nx, ny, nx2, ny2]);
+        }
+      }
+      if (captures.length > 0) moves[0].push(...captures);
+      if (singleMoves.length > 0) moves[1].push(...singleMoves);
+    }
+  }
+  return moves;
+}
+function minimax(board: string[][], color: 'w' | 'b', depth: number, alpha: number, beta: number): number {
+  const moves = getLegalMoves(board, color);
+  if (depth === 0 || moves[0].length === 0) {
+    const score = evaluateBoard(board, color);
+    return score;
+  }
+  if (color === 'w') {
+    let best = -Infinity;
+    for (const [fromX, fromY] of moves[1]) {
+      for (const [toX, toY] of moves[1]) {
+        const newBoard = [...board];
+        const piece = newBoard[fromY][fromX];
+        newBoard[fromY][fromX] = '';
+        newBoard[toY][toX] = piece;
+        if (canPromote(piece, toY)) newBoard[toY][toX] = 'w' + (toY === 7 ? 'Q' : 'q');
+        const score = minimax(newBoard, 'b', depth - 1, alpha, beta);
+        best = Math.max(best, score);
+        alpha = Math.max(alpha, score);
+        if (beta <= alpha) break;
+      }
+    }
+    return best;
+  } else {
+    let best = Infinity;
+    for (const [fromX, fromY] of moves[0]) {
+      for (const [toX, toY] of moves[0]) {
+        const newBoard = [...board];
+        const piece = newBoard[fromY][fromX];
+        newBoard[fromY][fromX] = '';
+        newBoard[toY][toX] = piece;
+        if (canPromote(piece, toY)) newBoard[toY][toX] = 'b' + (toY === 0 ? 'Q' : 'q');
+        const score = minimax(newBoard, 'w', depth - 1, alpha, beta);
+        best = Math.min(best, score);
+        beta = Math.min(beta, score);
+        if (beta <= alpha) break;
+      }
+    }
+    return best;
+  }
+}
+function evaluateBoard(board: string[][], color: 'w' | 'b'): number {
+  let score = 0;
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      const piece = board[y][x];
+      if (piece === '') continue;
+      const player = piece === 'w' ? 'w' : 'b';
+      if (player === color) score += PIECE_VALUES[piece];
+      else score -= PIECE_VALUES[piece];
+    }
+  }
+  if (color === 'w') {
+    if (canCastle(board, 'w', 'k')) score += 10;
+    if (canCastle(board, 'w', 'q')) score += 10;
+  } else {
+    if (canCastle(board, 'b', 'k')) score += 10;
+    if (canCastle(board, 'b', 'q')) score += 10;
+  }
+  return score;
+}
+function canCastle(board: string[][], player: 'w' | 'b', side: 'k' | 'q'): boolean {
+  const startX = player === 'w' ? 7 : 0;
+  const endX = player === 'w' ? 0 : 7;
+  const rookSide = side === 'k' ? 7 : 0;
+  const rook = board[startX][rookSide];
+  if (rook === '') return false;
+  if (rook !== 'r') return false;
+  let moved = false;
+  for (let x = startX + 1; x < endX; x++) {
+    if (board[startX][x] !== '') return false;
+    if (board[startX][x] !== '') moved = true;
+  }
+  return !moved;
+}
+function canPromote(piece: string, y: number): boolean {
+  return (piece === 'p' && y === 7) || (piece === 'P' && y === 0);
+}
+function chooseMove(board: string[][]): { from: [number, number]; to: [number, number] } {
+  const bestMoves: { from: [number, number]; to: [number, number] }[] = [];
+  const moves = getLegalMoves(board, 'w');
+  const captures = moves[0];
+  const singleMoves = moves[1];
+  const maxDepth = 2;
+  let bestScore = -Infinity;
+  for (const [fromX, fromY] of singleMoves) {
+    for (const [toX, toY] of singleMoves) {
+      const newBoard = [...board];
+      const piece = newBoard[fromY][fromX];
+      newBoard[fromY][fromX] = '';
+      newBoard[toY][toX] = piece;
+      if (canPromote(piece, toY)) newBoard[toY][toX] = 'w' + (toY === 7 ? 'Q' : 'q');
+      const score = minimax(newBoard, 'b', maxDepth, -Infinity, Infinity);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMoves.length = 0;
+        bestMoves.push({ from: [fromX, fromY], to: [toX, toY] });
+      } else if (score === bestScore) {
+        bestMoves.push({ from: [fromX, fromY], to: [toX, toY] });
+      }
+    }
+  }
+  if (bestMoves.length > 0) {
+    const move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+    return move;
+  }
+  return { from: [0, 0], to: [0, 0] };
+}

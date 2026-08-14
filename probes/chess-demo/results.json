@@ -1,0 +1,22 @@
+{
+ "model": "R13 (dspark, Q4_K_M)",
+ "instruction": "Build a 3D Chess game",
+ "generated_chars": 7098,
+ "completion_tokens": 0,
+ "raw_pass": false,
+ "repaired_pass": true,
+ "raw_errors": [
+  "THREE.CubeGeometry is not a constructor"
+ ],
+ "repaired_errors": [],
+ "raw_webgl": true,
+ "repaired_webgl": true,
+ "files": [
+  "chess-repaired-shot.png",
+  "chess-repaired.html",
+  "chess-shot.png",
+  "results.json",
+  "chess.html",
+  "REPORT.md"
+ ]
+}

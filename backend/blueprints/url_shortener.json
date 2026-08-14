@@ -1,0 +1,26 @@
+{
+  "app_type": "url_shortener",
+  "description": "Shorten long URLs into compact links, redirect visitors to the original destination, and track per-link click statistics.",
+  "keywords": ["url", "link", "shortener", "short url", "shorten", "redirect", "links", "tiny url", "qr", "bitly"],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "link_models",
+    "link_store",
+    "redirect_service",
+    "api_routes",
+    "stats_service"
+  ],
+  "wiring_graph": [
+    { "source_module": "ui_screens", "destination_module": "api_routes", "data_passed": "create_and_query_links" },
+    { "source_module": "api_routes", "destination_module": "redirect_service", "data_passed": "redirect_requests" },
+    { "source_module": "redirect_service", "destination_module": "link_store", "data_passed": "resolve_slug_and_log_click" },
+    { "source_module": "api_routes", "destination_module": "stats_service", "data_passed": "stats_requests" },
+    { "source_module": "stats_service", "destination_module": "link_store", "data_passed": "aggregate_click_queries" },
+    { "source_module": "link_models", "destination_module": "link_store", "data_passed": "schemas" }
+  ]
+}

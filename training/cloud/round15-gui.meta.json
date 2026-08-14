@@ -1,0 +1,59 @@
+{
+  "generated": "2026-08-11",
+  "round": 15,
+  "mix": "gui-vision",
+  "total_rows": 108,
+  "by_source": {
+    "chunk-gui-verified.jsonl": 13,
+    "chunk-3d-r14probe.jsonl": 7,
+    "chunk-3d-rook.jsonl": 2,
+    "chunk-3d-chess.jsonl": 2,
+    "chunk-3d-genfix.jsonl": 20,
+    "chunk-3d-random.jsonl": 22,
+    "chunk-3d-defects.jsonl": 18,
+    "chunk-3d.jsonl": 22,
+    "round14-genfix-train.jsonl": 2
+  },
+  "split": {
+    "train": 97,
+    "val": 11,
+    "seed": 42
+  },
+  "seq_budget": {
+    "max_seq": 3072,
+    "rows_input_trimmed": 3,
+    "rows_output_truncated_by_kernel": 4,
+    "rows": [
+      {
+        "instruction": "Build a 3D Chess game",
+        "est_tokens": 9194,
+        "source": "round15:3d-reexposure"
+      },
+      {
+        "instruction": "Build a 3D solar system",
+        "est_tokens": 3341,
+        "source": "round15:3d-reexposure"
+      },
+      {
+        "instruction": "Build a 3D product showcase",
+        "est_tokens": 3263,
+        "source": "round15:3d-reexposure"
+      },
+      {
+        "instruction": "Build a 3D terrain viewer",
+        "est_tokens": 3226,
+        "source": "round15:3d-reexposure"
+      }
+    ]
+  },
+  "kernel_config": {
+    "epochs": 3,
+    "grad_accum": 4,
+    "seq": 3072,
+    "lr": 5e-05,
+    "optimizer_steps": 72,
+    "resume_from": "vaca-r14-adapter (R14 trained LoRA, chained)"
+  },
+  "projected_t4_time": "~54.0 h (72 steps @ ~45 s/step)",
+  "note": "chunk-gui-verified is the fresh GUI signal (R14's own passing GUI apps + GUI QA rules); r14probe/rook/chess are the fresh 3D rules; re-exposure of the whole 3D corpus is deliberate repetition; retention is an R14 slice."
+}

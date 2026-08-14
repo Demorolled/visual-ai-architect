@@ -1,0 +1,49 @@
+{
+  "app_type": "raft_consensus_lab",
+  "description": "Raft distributed consensus with leader election and log replication — an interactive database tool with a visual interface.",
+  "keywords": [
+    "database",
+    "database",
+    "raft",
+    "consensus",
+    "distributed",
+    "raft",
+    "consensus",
+    "lab"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "ui_screens",
+    "storage_engine",
+    "query_engine",
+    "visualization_engine",
+    "dataset_store"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "ui_screens",
+      "destination_module": "storage_engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "storage_engine",
+      "destination_module": "query_engine",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "query_engine",
+      "destination_module": "visualization_engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "visualization_engine",
+      "destination_module": "dataset_store",
+      "data_passed": "data"
+    }
+  ],
+  "source": "design-specs-v2.json:database"
+}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; max-width: 640px; }
+        .progress-track { width: 100%; height: 8px; background: #eee; border-radius: 4px; margin: 12px 0; }
+        #progress { height: 100%; background: #4caf50; width: 0%; border-radius: 4px; transition: width 0.3s; }
+        .options label { display: block; padding: 8px; margin: 6px 0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; }
+        .options label:hover { background: #f5f5f5; }
+        .options input { margin-right: 10px; }
+        .feedback { margin: 12px 0; font-weight: bold; }
+        .score { margin-top: 20px; text-align: center; font-size: 1.2rem; }
+        #timer { margin-top: 8px; color: #666; }
+        .restart { display: none; margin: 20px auto; width: 150px; padding: 10px; text-align: center; font-size: 14px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Quiz App</h1>
+    <div id="timer"></div>
+    <div class="progress-track"><div id="progress"></div></div>
+    <div id="question"></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback"></div>
+    <div id="score" class="score"></div>
+    <button id="restart" class="restart">Restart</button>
+    <script>
+        const questions = [
+            { question: 'What is the capital of France?', options: ['Berlin', 'Paris', 'Madrid', 'Rome'], answer: 1 },
+            { question: 'Which planet is known as the Red Planet?', options: ['Venus', 'Mars', 'Jupiter', 'Saturn'], answer: 1 },
+            { question: 'What is the largest organ in the human body?', options: ['Liver', 'Skin', 'Lungs', 'Heart'], answer: 1 },
+            { question: 'Which programming language is used for building React applications?', options: ['JavaScript', 'Python', 'Ruby', 'C#'], answer: 0 },
+            { question: 'What is the chemical symbol for water?', options: ['CO2', 'H2O', 'O2', 'N2'], answer: 1 },
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timerInterval = null;
+        let timePerQuestion = 30;
+        let timeLeft = timePerQuestion;
+        let answered = false;  // answer lock: one answer per question
+
+        function generateQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('feedback').textContent = '';
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            document.getElementById('progress').style.width =
+                ((currentQuestion) / questions.length) * 100 + '%';
+            answered = false;
+            question.options.forEach((option, index) => {
+                const label = document.createElement('label');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'option';
+                input.value = index;
+                input.addEventListener('change', checkAnswer);
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(option));
+                optionsContainer.appendChild(label);
+            });
+            timeLeft = timePerQuestion;
+            document.getElementById('timer').textContent =
+                `Time left: ${timeLeft}s`;
+        }
+
+        function checkAnswer() {
+            if (answered) return;  // answer lock: one answer per question
+            answered = true;
+            document.querySelectorAll('#options input').forEach(inp => inp.disabled = true);
+            const selected = document.querySelector('input[name="option"]:checked');
+            if (!selected) return;
+            const index = parseInt(selected.value, 10);
+            const correct = index === questions[currentQuestion].answer;
+            if (correct) {
+                score++;
+                document.getElementById('feedback').textContent = 'Correct!';
+                document.getElementById('feedback').style.color = '#4caf50';
+            } else {
+                document.getElementById('feedback').textContent =
+                    `Wrong! The answer was: ${questions[currentQuestion].options[questions[currentQuestion].answer]}`;
+                document.getElementById('feedback').style.color = '#e53935';
+            }
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                setTimeout(generateQuestion, 900);
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('progress').style.width = '100%';
+            document.getElementById('question').textContent = 'Quiz finished!';
+            document.getElementById('options').innerHTML = '';
+            document.getElementById('score').textContent = `Your score: ${score} / ${questions.length}`;
+            document.getElementById('restart').style.display = 'block';
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent =
+                    `Time left: ${Math.max(0, timeLeft)}s`;
+                if (timeLeft <= 0) {
+                    if (currentQuestion < questions.length) {
+                        currentQuestion++;
+                        if (currentQuestion < questions.length) {
+                            generateQuestion();
+                        } else {
+                            finishQuiz();
+                        }
+                    } else {
+                        finishQuiz();
+                    }
+                }
+            }, 1000);
+        }
+
+        document.getElementById('restart').addEventListener('click', () => {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('score').textContent = '';
+            document.getElementById('restart').style.display = 'none';
+            generateQuestion();
+            startTimer();
+        });
+
+        generateQuestion();
+        startTimer();
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Ocean</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; }
+    #scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+    #toggle { position: fixed; bottom: 10px; left: 10px; z-index: 100; }
+  </style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="toggle"> Wireframe </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('scene').appendChild(renderer.domElement);
+    scene.background = new THREE.Color('black');
+    const cameraControl = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(0, 10, 20);
+    let wireframe = false;
+    const toggleButton = document.getElementById('toggle');
+    toggleButton.addEventListener('click', () => { wireframe = !wireframe; });
+    const geometry = new THREE.PlaneGeometry(50, 50, 50, 50);
+    geometry.rotateX(-Math.PI / 2);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x0044ff,
+      roughness: 0.3,
+      vertexColors: true
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(1, 1, 1).normalize();
+    scene.add(light);
+    const shadowHelper = new THREE.CameraHelper(light.shadow.camera);
+    scene.add(shadowHelper);
+    const bobGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+    const bobMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    const bobs = [];
+    for (let i = 0; i < 20; i++) {
+      const bob = new THREE.Mesh(bobGeometry, bobMaterial);
+      bob.position.set(
+        (Math.random() - 0.5) * 20,
+        1,
+        (Math.random() - 0.5) * 20
+      );
+      scene.add(bob);
+      bobs.push(bob);
+    }
+    const clock = new THREE.Clock();
+    const animate = () => {
+      requestAnimationFrame(animate);
+      const time = clock.getElapsedTime();
+      geometry.attributes.position.array.slice(1).forEach((v, i) => {
+        const t = (i / geometry.attributes.position.array.length) * Math.PI * 2;
+        const a = 0.2 * Math.sin(t + time) + 0.2 * Math.sin(t + time * 2) + 0.1 * Math.sin(t + time * 3);
+        geometry.attributes.position.array[i + 1] = a;
+      });
+      geometry.attributes.position.needsUpdate = true;
+      bobs.forEach((b) => {
+        const t = clock.getElapsedTime();
+        b.position.y = 1 + 0.3 * Math.sin(t) + 0.1 * Math.sin(t * 2);
+      });
+      renderer.render(scene, camera);
+      renderer.shadowMap.needsUpdate = true;
+    };
+    animate();
+    toggleButton.addEventListener('click', () => {
+      material.wireframe = wireframe;
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+export type Board = string[]; export type Move = { index: number }; export type Player = 'X' | 'O';

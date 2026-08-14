@@ -1,0 +1,52 @@
+{
+  "app_type": "app_launcher",
+  "description": "Keyboard-driven app launcher with fuzzy search, calculator, and plugins — Desktop launcher like Spotlight/Alfred: fuzzy search, calculations, web search, file search",
+  "keywords": [
+    "app-launcher",
+    "search",
+    "productivity",
+    "plugin",
+    "app",
+    "launcher",
+    "quick input",
+    "search engine",
+    "plugin system",
+    "index store",
+    "launcher ui"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Quick Input",
+    "Search Engine",
+    "Plugin System",
+    "Index Store",
+    "Launcher UI"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Quick Input",
+      "destination_module": "Search Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Search Engine",
+      "destination_module": "Plugin System",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Plugin System",
+      "destination_module": "Index Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Index Store",
+      "destination_module": "Launcher UI",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

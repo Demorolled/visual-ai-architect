@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List</title>
+  <style>
+    body { background: #141414; color: #d0d0d0; font-family: system-ui, sans-serif; margin: 0; padding: 0; }
+    .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+    .title { font-size: 2.5rem; margin-bottom: 2rem; }
+    .todos { list-style: none; margin: 0; padding: 0; }
+    .todos li { margin: 0.5rem 0; padding: 0.5rem 1rem; background: rgba(0,0,0,0.2); border-radius: 4px; display: flex; align-items: center; gap: 0.5rem; width: fit-content; cursor: pointer; }
+    .todos li input { width: 100%; padding: 0.5rem 1rem; flex: 1; }
+    .todos li button { padding: 0.5rem 1rem; background: #222; border: 1px solid rgba(255,255,255,0.1); color: #808080; font-size: 1rem; cursor: pointer; }
+    .todos li button:hover { background: rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Todo List</h1>
+    <ul class="todos" id="todos"></ul>
+    <form onsubmit="addTodo(event)">
+      <input type="text" placeholder="Add new todo">
+      <button type="submit">Add</button>
+    </form>
+  </div>
+  <script>
+    const todosEl = document.getElementById('todos');
+    const todos = [];
+
+    function render() {
+      todosEl.innerHTML = '';
+      todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.draggable = true;
+        li.innerHTML = `
+          <input type="text" value="${todo}" readonly>
+          <button onclick="removeTodo('${todo}')">X</button>
+        `;
+        li.addEventListener('click', () => {
+          if (li.firstElementChild) li.firstElementChild.focus();
+        });
+        todosEl.appendChild(li);
+      });
+    }
+
+    function addTodo(event) {
+      const input = event.target.previousElementSibling;
+      const value = input.value.trim();
+      if (!value) return;
+      todos.push(value);
+      input.value = '';
+      render();
+    }
+
+    function removeTodo(todo) {
+      todos = todos.filter(t => t !== todo);
+      render();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{
+  "app_type": "udp_server_template",
+  "description": "UDP echo server with packet handling patterns — Interactive systems tool for udp server template",
+  "keywords": [
+    "systems",
+    "udp",
+    "server",
+    "template",
+    "udp",
+    "server",
+    "template",
+    "system config",
+    "core engine",
+    "data collection",
+    "analysis module",
+    "dashboard view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "System Config",
+    "Core Engine",
+    "Data Collection",
+    "Analysis Module",
+    "Dashboard View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "System Config",
+      "destination_module": "Core Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Engine",
+      "destination_module": "Data Collection",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Collection",
+      "destination_module": "Analysis Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Module",
+      "destination_module": "Dashboard View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

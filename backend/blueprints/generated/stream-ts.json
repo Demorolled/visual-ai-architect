@@ -1,0 +1,51 @@
+{
+  "app_type": "stream-ts",
+  "description": "streaming catalog: artist/album/track hierarchy, user playlists, playback history for recommendations.",
+  "keywords": [
+    "stream-ts",
+    "typescript",
+    "music",
+    "streaming",
+    "artists",
+    "albums",
+    "tracks",
+    "playlists",
+    "history"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "artists",
+    "albums",
+    "tracks",
+    "playlists",
+    "history"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "artists",
+      "destination_module": "albums",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "albums",
+      "destination_module": "tracks",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "tracks",
+      "destination_module": "playlists",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "playlists",
+      "destination_module": "history",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:typescript",
+  "file_count": 33
+}

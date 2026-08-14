@@ -1,0 +1,54 @@
+{
+  "app_type": "memory_pool_allocator_2",
+  "description": "Fixed-size memory pool allocator with O(1) alloc/free — Interactive memory pool allocator with real-time visualization and analysis",
+  "keywords": [
+    "systems",
+    "memory-pool",
+    "allocator",
+    "performance",
+    "systems",
+    "memory",
+    "pool",
+    "allocator",
+    "system config",
+    "core engine",
+    "data collection",
+    "analysis module",
+    "dashboard view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "System Config",
+    "Core Engine",
+    "Data Collection",
+    "Analysis Module",
+    "Dashboard View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "System Config",
+      "destination_module": "Core Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Engine",
+      "destination_module": "Data Collection",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Collection",
+      "destination_module": "Analysis Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Module",
+      "destination_module": "Dashboard View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

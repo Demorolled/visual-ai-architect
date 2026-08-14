@@ -1,0 +1,26 @@
+{
+ "gates": {
+  "chars": 18561,
+  "fences": 21,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [],
+  "prose_leak": 12
+ },
+ "contract": {
+  "error": "tsc not found"
+ },
+ "functional": {},
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored",
+  "tag": "stock",
+  "task": "engine",
+  "elapsed_s": 82.0,
+  "prompt_chars": 2735,
+  "raw_chars": 18561
+ }
+}

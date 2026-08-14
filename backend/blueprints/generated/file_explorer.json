@@ -1,0 +1,52 @@
+{
+  "app_type": "file_explorer",
+  "description": "Dual-pane file manager with tree navigation, search, and file operations — Desktop file manager with tree/list view, copy/move/delete/rename, file search, context menu",
+  "keywords": [
+    "file-explorer",
+    "file-manager",
+    "desktop",
+    "utility",
+    "file",
+    "explorer",
+    "nav bar",
+    "dir engine",
+    "file ops",
+    "file index",
+    "file list view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Nav Bar",
+    "Dir Engine",
+    "File Ops",
+    "File Index",
+    "File List View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Nav Bar",
+      "destination_module": "Dir Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Dir Engine",
+      "destination_module": "File Ops",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "File Ops",
+      "destination_module": "File Index",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "File Index",
+      "destination_module": "File List View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

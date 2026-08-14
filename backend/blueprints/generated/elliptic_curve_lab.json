@@ -1,0 +1,53 @@
+{
+  "app_type": "elliptic_curve_lab",
+  "description": "Elliptic curve arithmetic and point addition — Interactive mathematics tool for elliptic curve lab",
+  "keywords": [
+    "mathematics",
+    "elliptic",
+    "curve",
+    "lab",
+    "elliptic",
+    "curve",
+    "lab",
+    "math input",
+    "math engine",
+    "data storage",
+    "analysis module",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Math Input",
+    "Math Engine",
+    "Data Storage",
+    "Analysis Module",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Math Input",
+      "destination_module": "Math Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Math Engine",
+      "destination_module": "Data Storage",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Data Storage",
+      "destination_module": "Analysis Module",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Module",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

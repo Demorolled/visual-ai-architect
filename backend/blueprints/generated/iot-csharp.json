@@ -1,0 +1,52 @@
+{
+  "app_type": "iot-csharp",
+  "description": "industrial telemetry: sensor registry, high-frequency readings, threshold rules, alert dispatch, live dashboards.",
+  "keywords": [
+    "iot-csharp",
+    "csharp",
+    "industrial",
+    "iot",
+    "monitoring",
+    "sensors",
+    "readings",
+    "thresholds",
+    "alerts",
+    "dashboards"
+  ],
+  "target_stack": {
+    "frontend": "Blazor",
+    "backend": "C# .NET",
+    "database": "SQL Server"
+  },
+  "architecture_checklist": [
+    "sensors",
+    "readings",
+    "thresholds",
+    "alerts",
+    "dashboards"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "sensors",
+      "destination_module": "readings",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "readings",
+      "destination_module": "thresholds",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "thresholds",
+      "destination_module": "alerts",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "alerts",
+      "destination_module": "dashboards",
+      "data_passed": "data"
+    }
+  ],
+  "source": "large-program-blueprints.md:csharp",
+  "file_count": 34
+}

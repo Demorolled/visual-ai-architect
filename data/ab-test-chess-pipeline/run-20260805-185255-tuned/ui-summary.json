@@ -1,0 +1,30 @@
+{
+ "gates": {
+  "chars": 1217,
+  "fences": 0,
+  "overesc_backtick": 0,
+  "overesc_dollar": 0,
+  "todos": 0,
+  "export_default": 0,
+  "jsx_tags": 0,
+  "has_render": false,
+  "named_exports": [],
+  "prose_leak": 0
+ },
+ "check": {
+  "tsc_clean": false,
+  "error_count": 2,
+  "errors": [
+   "data/ab-test-chess-pipeline/run-20260805-185255-tuned/ui/chess-ui.ts(1,59): error TS2307: Cannot find module './chess-game.ts' or its corresponding type declarations.",
+   "data/ab-test-chess-pipeline/run-20260805-185255-tuned/ui/chess-ui.ts(34,16): error TS2552: Cannot find name 'Difficulty'. Did you mean 'setDifficulty'?"
+  ]
+ },
+ "meta": {
+  "model": "qwen2.5-7b-instruct-uncensored-dspark",
+  "tag": "tuned",
+  "task": "ui",
+  "elapsed_s": 6.0,
+  "prompt_chars": 6642,
+  "raw_chars": 1217
+ }
+}

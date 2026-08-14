@@ -1,0 +1,58 @@
+# System Awareness Daemon — systemd user service
+# ================================================
+# Installed as a user service so it runs as the current logged-in user
+# and can access X11 for window title detection (xdotool/xprop).
+#
+# Install:
+#   cp system-monitor.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable system-monitor
+#   systemctl --user start system-monitor
+#
+# Check status:
+#   systemctl --user status system-monitor
+#
+# View logs:
+#   journalctl --user -u system-monitor -f
+#
+# Uninstall:
+#   systemctl --user stop system-monitor
+#   systemctl --user disable system-monitor
+#   rm ~/.config/systemd/user/system-monitor.service
+#   systemctl --user daemon-reload
+
+[Unit]
+Description=Veronica System Awareness Daemon — monitors processes, active window, and system load for the AI terminal
+Documentation=https://github.com/visual-ai-architect
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Use the project's Python (miniconda3)
+ExecStart=/home/final-flash1/miniconda3/bin/python3 /media/final-flash1/48bbab2a-d2b0-42c9-a3bc-e561a3099f7d/visual-ai-architect/backend/system-agent/system_monitor.py --backend http://localhost:3001
+
+# Working directory for log output
+WorkingDirectory=/media/final-flash1/48bbab2a-d2b0-42c9-a3bc-e561a3099f7d/visual-ai-architect/backend/system-agent
+
+# Restart policy — keep it alive
+Restart=on-failure
+RestartSec=5
+
+# Rate-limit restart frequency
+StartLimitBurst=5
+StartLimitIntervalSec=30
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+
+# Environment
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/final-flash1/.Xauthority
+
+[Install]
+WantedBy=default.target

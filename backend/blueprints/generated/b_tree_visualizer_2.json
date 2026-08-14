@@ -1,0 +1,53 @@
+{
+  "app_type": "b_tree_visualizer_2",
+  "description": "Interactive B+Tree insert/delete/search with page split/merge animations — B+Tree visualization: page splits/merges, fanout, height, leaf traversal",
+  "keywords": [
+    "database",
+    "sql",
+    "nosql",
+    "performance",
+    "b",
+    "tree",
+    "visualizer",
+    "query/config",
+    "db engine",
+    "analysis",
+    "data store",
+    "results viewer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Query/Config",
+    "DB Engine",
+    "Analysis",
+    "Data Store",
+    "Results Viewer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Query/Config",
+      "destination_module": "DB Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "DB Engine",
+      "destination_module": "Analysis",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Analysis",
+      "destination_module": "Data Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Data Store",
+      "destination_module": "Results Viewer",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

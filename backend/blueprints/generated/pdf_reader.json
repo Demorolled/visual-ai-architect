@@ -1,0 +1,52 @@
+{
+  "app_type": "pdf_reader",
+  "description": "PDF reader with text selection, bookmarks, annotations, and form filling — Desktop PDF reader with page rendering, text search, annotations, form filling, bookmarks",
+  "keywords": [
+    "pdf-reader",
+    "document",
+    "annotations",
+    "productivity",
+    "pdf",
+    "reader",
+    "doc input",
+    "pdf engine",
+    "annotation sys",
+    "doc store",
+    "reader view"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Doc Input",
+    "PDF Engine",
+    "Annotation Sys",
+    "Doc Store",
+    "Reader View"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Doc Input",
+      "destination_module": "PDF Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "PDF Engine",
+      "destination_module": "Annotation Sys",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Annotation Sys",
+      "destination_module": "Doc Store",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Doc Store",
+      "destination_module": "Reader View",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,52 @@
+{
+  "app_type": "thread_debugger",
+  "description": "Multi-thread debugger with race condition and deadlock detection — Thread debugging: thread states, lock ownership, wait graphs, deadlock detection, data race detection",
+  "keywords": [
+    "threads",
+    "debugger",
+    "race-detection",
+    "concurrency",
+    "thread",
+    "debugger",
+    "debug config",
+    "thread tracker",
+    "race detector",
+    "debug data",
+    "debugger ui"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Debug Config",
+    "Thread Tracker",
+    "Race Detector",
+    "Debug Data",
+    "Debugger UI"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Debug Config",
+      "destination_module": "Thread Tracker",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Thread Tracker",
+      "destination_module": "Race Detector",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Race Detector",
+      "destination_module": "Debug Data",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Debug Data",
+      "destination_module": "Debugger UI",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

@@ -1,0 +1,80 @@
+{
+  "projectName": "full 3d chess game",
+  "targetOS": "linux",
+  "nodes": [
+    {
+      "id": "mod_0",
+      "type": "ui",
+      "label": "ui_screens",
+      "description": "Module \"ui_screens\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests).",
+      "language": "typescript",
+      "position": {
+        "x": 60,
+        "y": 120
+      }
+    },
+    {
+      "id": "mod_1",
+      "type": "logic",
+      "label": "core_engine",
+      "description": "Module \"core_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests); core_engine → input_handler (results).",
+      "language": "typescript",
+      "position": {
+        "x": 380,
+        "y": 120
+      }
+    },
+    {
+      "id": "mod_2",
+      "type": "input",
+      "label": "input_handler",
+      "description": "Module \"input_handler\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → input_handler (results); input_handler → data_store (state_and_events).",
+      "language": "typescript",
+      "position": {
+        "x": 700,
+        "y": 120
+      }
+    },
+    {
+      "id": "mod_3",
+      "type": "database",
+      "label": "data_store",
+      "description": "Module \"data_store\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: input_handler → data_store (state_and_events); data_store → game_engine (data).",
+      "language": "typescript",
+      "position": {
+        "x": 60,
+        "y": 340
+      }
+    },
+    {
+      "id": "mod_4",
+      "type": "logic",
+      "label": "game_engine",
+      "description": "Module \"game_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: data_store → game_engine (data).",
+      "language": "typescript",
+      "position": {
+        "x": 380,
+        "y": 340
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "mod_1",
+      "target": "mod_0"
+    },
+    {
+      "source": "mod_1",
+      "target": "mod_2"
+    },
+    {
+      "source": "mod_2",
+      "target": "mod_3"
+    },
+    {
+      "source": "mod_3",
+      "target": "mod_4"
+    }
+  ],
+  "createdAt": "2026-08-13T22:47:27.199Z"
+}

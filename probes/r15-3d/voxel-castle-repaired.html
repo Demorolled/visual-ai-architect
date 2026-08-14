@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voxel Castle</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    #scene { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; }
+    #hud { position: fixed; bottom: 10px; left: 10px; z-index: 100; font-family: system-ui, sans-serif; font-size: 14px; color: #fff; }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div id="hud"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('scene') });
+    renderer.setSize(innerWidth, innerHeight);
+    const hud = document.getElementById('hud');
+    const clock = new THREE.Clock();
+    let castle = null;
+
+    function generateCastle() {
+      scene.children.forEach((o) => scene.remove(o));
+      castle = null;
+      const size = 20 + Math.floor(Math.random() * 15);
+      const towers = [[0, 0, 0]];
+      for (let i = 0; i < size; i++) {
+        const x = Math.floor(Math.random() * 10) - 5;
+        const z = Math.floor(Math.random() * 10) - 5;
+        if (Math.abs(x) + Math.abs(z) < 6) continue;
+        towers.push([x, 0, z]);
+      }
+      const blocks = new Set();
+      for (const [x, y, z] of towers) {
+        for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) blocks.add([x + dx, y, z + dz]);
+        for (let h = 0; h < 5 + Math.floor(Math.random() * 4); h++) {
+          for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) blocks.add([x + dx, h, z + dz]);
+        }
+        if (Math.random() < 0.5) {
+          const h = 5 + Math.floor(Math.random() * 4);
+          blocks.add([x, h, z]);
+          blocks.add([x + 1, h, z]);
+          blocks.add([x - 1, h, z]);
+          blocks.add([x, h + 1, z]);
+          blocks.add([x, h - 1, z]);
+        }
+      }
+      const keep = [[0, 0, 0]];
+      for (let h = 0; h < 6 + Math.floor(Math.random() * 3); h++) {
+        for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) blocks.add([0 + dx, h, 0 + dz]);
+      }
+      for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) blocks.add([0 + dx, 0, 0 + dz]);
+      for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) blocks.add([0 + dx, 1, 0 + dz]);
+      for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) blocks.add([0 + dx, 2, 0 + dz]);
+      blocks.add([0, 3, 0]);
+      blocks.add([0, 4, 0]);
+      blocks.add([0, 5, 0]);
+      blocks.add([0, 6, 0]);
+      blocks.add([0, 7, 0]);
+      blocks.add([0, 8, 0]);
+      blocks.add([0, 9, 0]);
+      blocks.add([0, 10, 0]);
+      blocks.add([0, 11, 0]);
+      blocks.add([0, 12, 0]);
+      blocks.add([0, 13, 0]);
+      blocks.add([0, 14, 0]);
+      blocks.add([0, 15, 0]);
+      blocks.add([0, 16, 0]);
+      blocks.add([0, 17, 0]);
+      blocks.add([0, 18, 0]);
+      blocks.add([0, 19, 0]);
+      blocks.add([0, 20, 0]);
+      blocks.add([0, 21, 0]);
+      blocks.add([0, 22, 0]);
+      blocks.add([0, 23, 0]);
+      blocks.add([0, 24, 0]);
+      blocks.add([0, 25, 0]);
+      blocks.add([0, 26, 0]);
+      blocks.add([0, 27, 0]);
+      blocks.add([0, 28, 0]);
+      blocks.add([0, 29, 0]);
+      blocks.add([0, 30, 0]);
+      blocks.add([0, 31, 0]);
+      blocks.add([0, 32, 0]);
+      blocks.add([0, 33, 0]);
+      blocks.add([0, 34, 0]);
+      blocks.add([0, 35, 0]);
+      blocks.add([0, 36, 0]);
+      blocks.add([0, 37, 0]);
+      blocks.add([0, 38, 0]);
+      blocks.add([0, 39, 0]);
+      blocks.add([0, 40, 0]);
+      blocks.add([0, 41, 0]);
+      blocks.add([0, 42, 0]);
+      blocks.add([0, 43, 0]);
+      blocks.add([0, 44, 0]);
+      blocks.add([0, 45, 0]);
+      blocks.add([0, 46, 0]);
+      blocks.add([0, 47, 0]);
+      blocks.add([0, 48, 0]);
+      blocks.add([0, 49, 0]);
+      blocks.add([0, 50, 0]);
+      blocks.add([0, 51, 0]);
+      blocks.add([0, 52, 0]);
+      blocks.add([0, 53, 0]);
+      blocks.add([0, 54, 0]);
+      blocks.add([0, 55, 0]);
+      blocks.add([0, 56, 0]);
+      blocks.add([0, 57, 0]);
+      blocks.add([0, 58, 0]);
+      blocks.add([0, 59, 0]);
+      blocks.add([0, 60, 0]);
+      blocks.add([0, 61, 0]);
+      blocks.add([0, 62, 0]);
+      blocks.add([0, 63, 0]);
+      blocks.add([0, 64, 0]);
+      blocks.add([0, 65, 0]);
+      blocks.add([0, 66, 0]);
+      blocks.add([0, 67, 0]);
+      blocks.add([0, 68, 0]);
+      blocks.add([0, 69, 0]);
+      blocks.add([0, 70, 0]);
+      blocks.add([0, 71, 0]);
+      blocks.add([0, 72, 0]);
+      blocks.add([0, 73, 0]);
+      blocks.add([0, 74, 0]);
+      blocks.add([0, 75, 0]);
+      blocks.add([0, 76, 0]);
+      blocks.add([0, 77, 0]);
+      blocks.add([0, 78, 0]);
+      blocks.add([0, 79, 0]);
+      blocks.add([0, 80, 0]);
+      blocks.add([0, 81, 0]);
+      blocks.add([0, 82, 0]);
+      blocks.add([0, 83, 0]);
+      blocks.add([0, 84, 0]);
+      blocks.add([0, 85, 0]);
+      blocks.add([0, 86, 0]);
+      blocks.add([0, 87, 0]);
+      blocks.add([0, 88, 0]);
+      blocks.add([0, 89, 0]);
+      blocks.add([0, 90, 0]);
+      blocks.add([0, 91, 0]);
+      blocks.add([0, 92, 0]);
+      blocks.add([0, 93, 0]);
+      blocks.add([0, 94, 0]);
+      blocks.add([0, 95, 0]);
+      blocks.add([0, 96, 0]);
+      blocks.add([0, 97, 0]);
+      blocks.add([0, 98, 0]);
+      blocks.add([0, 99, 0]);
+      blocks.add([0, 100, 0]);
+      blocks.add([0, 101, 0]);
+      blocks.add([0, 102, 0]);
+      blocks.add([0, 103, 0]);
+      blocks.add([0, 104, 0]);
+      blocks.add([0, 105, 0]);
+      blocks.add([0, 106, 0]);
+      blocks.add([0, 107, 0]);
+      blocks.add([0, 108, 0]);
+      blocks.add([0, 109, 0]);
+      blocks.add([0, 110, 0]);
+      blocks.add([0, 111, 0]);
+      blocks.add([0, 112, 0]);
+      blocks.add([0, 113, 0]);
+      blocks.add([0, 114, 0]);
+      blocks.add([0, 115, 0]);
+      blocks.add([0, 116, 0]);
+      blocks.add([0, 117, 0]);
+      blocks.add([0, 118, 0]);
+      blocks.add([0, 119, 0]);
+      blocks.add([0, 120, 0]);
+      blocks.add([0, 121, 0]);
+      blocks.add([0, 122, 0]);
+      blocks.add([0, 123, 0]);
+      blocks.add([0, 124, 0]);
+      blocks.add([0, 125, 0]);
+      blocks.add([0, 126, 0]);
+      blocks.add([0, 127, 0]);
+      blocks.add([0, 128, 0]);
+      blocks.add([0, 129, 0]);
+      blocks.add([0, 130, 0]);
+      blocks.add([0, 131, 0]);
+      blocks.add([0, 132, 0]);
+      blocks.add([0, 133, 0]);
+      blocks.add([0, 134, 0]);
+      blocks.add([0, 135, 0]);
+      blocks.add([0, 136, 0]);
+      blocks.add([0, 137, 0]);
+      blocks.add([0, 138, 0]);
+      blocks.add([0, 139, 0]);
+      blocks.add([0, 140, 0]);
+      blocks.add([0, 141, 0]);
+      blocks.add([0, 142, 0]);
+      blocks.add([0, 143, 0]);
+      blocks.add([0, 144, 0]);
+      blocks.add([0, 145, 0]);
+      blocks.add([0, 146, 0]);
+      blocks.add([0, 147, 0]);
+      blocks.add([0, 148, 0]);
+      blocks.add([0, 149, 0]);
+      blocks.add([0, 150, 0]);
+      blocks.add([0, 151, 0]);
+      blocks.add([0, 152, 0]);
+      blocks.add([0, 153, 0]);
+      blocks.add([0, 154, 0]);
+      blocks.add([0, 155, 0]);
+      blocks.add([0, 156, 0]);
+      blocks.add([0, 157, 0]);
+      blocks.add([0, 158, 0]);
+      blocks.add([0, 159, 0]);
+      blocks.add([0, 160, 0]);
+      blocks.add([0, 161, 0]);
+      blocks.add([0, 162, 0]);
+      blocks.add([0, 163, 0]);
+      blocks.add([0, 164, 0]);
+      blocks.add([0, 165, 0]);
+      blocks.add([0, 166, 0]);
+      blocks.add([0, 167, 0]);
+      blocks.add([0, 168, 0]);
+      blocks.add([0, 169, 0]);
+      blocks.add([0, 170, 0]);
+      blocks.add([0, 171, 0]);
+      blocks.add([0, 172, 0]);
+      blocks.add([0, 173, 0]);
+      blocks.add([0, 174, 0]);
+      blocks.add([0, 175, 0]);
+      blocks.add([0, 176, 0]);
+      blocks.add([0, 177, 0]);
+      blocks.add([0, 178, 0]);
+      blocks.add([0, 179, 0]);
+      blocks.add([0, 180, 0]);
+      blocks.add([0, 181, 0]);
+      blocks.add([0, 182, 0]);
+      blocks.add([0, 183, 0]);
+      blocks.add([0, 184, 0]);
+      blocks.add([0, 185, 0]);
+      blocks.add([0, 186, 0]);
+      blocks.add([0, 187, 0]);
+      blocks.add([0, 188, 0]);
+      blocks.add([0, 189, 0]);
+      blocks.add([0, 190, 0]);
+      blocks.add([0, 191, 0]);
+      blocks.add([0, 192, 0]);
+      blocks.add([0, 193, 0]);
+      blocks.add([0, 194, 0]);
+      blocks.add([0, 195, 0]);
+      blocks.add([0, 196, 0]);
+      blocks.add([0, 197, 0]);
+      blocks.add([0, 198, 0]);
+      blocks.add([0, 199, 0]);
+      blocks.add([0, 200, 0]);
+      blocks.add([0, 201, 0]);
+      blocks.add([0, 202, 0]);
+      blocks.add([0, 203, 0]);
+      blocks.add([0, 204, 0]);
+      blocks.add([0, 205, 0]);
+      blocks.add([0, 206, 0]);
+      blocks.add([0, 207, 0]);
+      blocks.add([0, 208, 0]);
+      blocks.add([0, 209, 0]);
+      blocks.add([0, 210, 0]);
+      blocks.add([0, 211, 0]);
+      blocks.add([0, 212, 0]);
+      blocks.add([0, 213, 0]);
+      blocks.add([0, 214, 0]);
+      blocks.add([0, 215, 0]);
+      blocks.add([0, 216, 0]);
+      blocks.add([0, 217, 0]);
+      blocks.add([0, 218, 0]);
+      blocks.add([0, 219, 0]);
+      blocks.add([0, 220, 0]);
+      blocks.add([0, 221, 0]);
+      blocks.add([0, 222, 0]);
+      blocks.add([0, 223, 0]);
+      blocks.add([0, 224, 0]);
+      blocks.add([0, 225, 0]);
+      blocks.add([0, 226, 0]);
+      blocks.add([0, 227, 0]);
+      blocks.add([0, 228, 0]);
+      blocks.add([0, 229, 0]);
+      blocks.add([0, 230, 0]);
+      blocks.add([0, 231, 

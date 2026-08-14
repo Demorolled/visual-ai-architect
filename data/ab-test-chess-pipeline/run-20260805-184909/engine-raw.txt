@@ -1,0 +1,501 @@
+ Do not include import statements.
+```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = MinimaxAI.alphaBetaPruning(depth - 1, board, opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        const eval = MinimaxAI.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity);
+
+        return eval.move;
+    }
+}
+
+function opponentColor(color: Color): Color {
+    return color === 'white' ? 'black' : 'white';
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+```
+```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.evaluation);
+
+                if (newEvaluation > bestMove.evaluation) {
+                    bestMove = { evaluation: newEvaluation, move };
+                }
+
+                alpha = Math.max(alpha, bestMove.evaluation);
+                if (beta <= alpha) break;
+            } else {
+                board.unmake(move); // Unmake the illegal move
+            }
+        }
+
+        return bestMove;
+    }
+
+    private static opponentColor(color: Color): Color {
+        return color === 'white' ? 'black' : 'white';
+    }
+}
+``` ```typescript
+interface MoveEvaluation {
+    evaluation: number;
+    move: Move | null;
+}
+
+class MinimaxAI {
+
+    public static getBestMove(board: ChessBoard, color: Color, difficulty?: number): Move | null {
+        const depth = Math.min(difficulty ?? 2, 4);
+        if (depth === undefined) throw new Error('Difficulty level must be set');
+
+        return this.alphaBetaPruning(depth, board.clone(), color, -Infinity, Infinity).move;
+    }
+
+    private static alphaBetaPruning(depth: number, board: ChessBoard, color: Color, alpha: number, beta: number): MoveEvaluation {
+        if (depth === 0 || isKingInCheck(board, color)) return { evaluation: -Infinity, move: null };
+
+        let bestMove = { evaluation: -Infinity, move: null };
+        const pseudoLegalMoves = getPseudoLegalMoves(board, color);
+
+        for (const move of pseudoLegalMoves) {
+            board.make(move);
+            if (!isKingInCheck(board, color)) {
+                const eval = this.alphaBetaPruning(depth - 1, board.clone(), opponentColor(color), alpha, beta);
+                board.unmake(eval.move!); // Unmake the move before considering it
+
+                const newEvaluation = Math.max(bestMove.evaluation, eval.e

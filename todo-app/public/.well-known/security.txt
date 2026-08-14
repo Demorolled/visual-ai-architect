@@ -1,0 +1,3 @@
+```text
+# This is a placeholder for a security.txt file
+```

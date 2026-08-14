@@ -1,0 +1,44 @@
+{
+  "app_type": "shortlink-go",
+  "description": "link shortening at scale: collision-safe keys, per-click analytics, per-user link management, campaign attribution.",
+  "keywords": [
+    "shortlink-go",
+    "go",
+    "url",
+    "shortener",
+    "users",
+    "links",
+    "clicks",
+    "campaigns"
+  ],
+  "target_stack": {
+    "frontend": "React (static)",
+    "backend": "Go",
+    "database": "PostgreSQL"
+  },
+  "architecture_checklist": [
+    "users",
+    "links",
+    "clicks",
+    "campaigns"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "users",
+      "destination_module": "links",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "links",
+      "destination_module": "clicks",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "clicks",
+      "destination_module": "campaigns",
+      "data_passed": "state_and_events"
+    }
+  ],
+  "source": "large-program-blueprints.md:go",
+  "file_count": 28
+}

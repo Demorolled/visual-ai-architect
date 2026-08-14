@@ -1,0 +1,54 @@
+{
+  "app_type": "splay_tree_explorer_2",
+  "description": "Self-adjusting BST with splay operation and amortized analysis — Interactive splay tree explorer with real-time visualization and analysis",
+  "keywords": [
+    "data-structures",
+    "splay-tree",
+    "bst",
+    "amortized",
+    "fundamentals",
+    "splay",
+    "tree",
+    "explorer",
+    "data input",
+    "core algorithm",
+    "results store",
+    "analysis engine",
+    "visualization"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Data Input",
+    "Core Algorithm",
+    "Results Store",
+    "Analysis Engine",
+    "Visualization"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Data Input",
+      "destination_module": "Core Algorithm",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Core Algorithm",
+      "destination_module": "Results Store",
+      "data_passed": "results"
+    },
+    {
+      "source_module": "Results Store",
+      "destination_module": "Analysis Engine",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Analysis Engine",
+      "destination_module": "Visualization",
+      "data_passed": "data"
+    }
+  ],
+  "source": "designs.json"
+}

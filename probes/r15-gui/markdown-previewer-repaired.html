@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Previewer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; }
+        .split-pane { width: 50%; height: 100%; display: flex; flex-direction: column; }
+        .left-pane { flex: 1; padding: 16px; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+        .left-pane textarea { flex: 1; padding: 8px; width: 100%; }
+        .right-pane { flex: 1; padding: 16px; display: flex; flex-direction: column; }
+        .markdown-preview { flex: 1; margin: 8px 0; white-space: pre-wrap; }
+        .markdown-preview p { margin: 8px 0; }
+        .markdown-preview h1 { font-size: 1.5rem; margin: 12px 0 4px; }
+        .markdown-preview h2 { font-size: 1.25rem; margin: 10px 0 4px; }
+        .markdown-preview h3 { font-size: 1rem; margin: 8px 0 4px; }
+        .markdown-preview strong { font-weight: bold; }
+        .markdown-preview a { color: #007bff; text-decoration: none; }
+        .markdown-preview a:hover { text-decoration: underline; }
+        .markdown-preview ul { margin-left: 16px; }
+        .markdown-preview ul li { margin: 4px 0; }
+        .markdown-preview ol { margin-left: 16px; }
+        .markdown-preview ol li { margin: 4px 0; }
+        .markdown-preview code { padding: 2px 4px; background-color: #f8f8f8; border-radius: 4px; }
+        .controls { display: flex; justify-content: center; align-items: center; margin-top: auto; }
+        .controls button { padding: 8px 16px; margin: 0 4px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        .controls button:hover { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="split-pane">
+        <div class="left-pane">
+            <textarea id="markdown-input" placeholder="Write your markdown here..."></textarea>
+            <button id="preview-button">Preview</button>
+        </div>
+        <div class="right-pane">
+            <div id="markdown-preview"></div>
+            <button id="copy-markdown">Copy Markdown</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('preview-button')?.addEventListener('click', () => {
+            const input = document.getElementById('markdown-input');
+            const preview = document.getElementById('markdown-preview');
+            const markdown = input.value;
+            preview.innerHTML = marked.parse(markdown);
+        });
+        document.getElementById('copy-markdown')?.addEventListener('click', () => {
+            const input = document.getElementById('markdown-input');
+            const markdown = input.value;
+            const temp = document.createElement('textarea');
+            temp.value = markdown;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</body>
+</html>
