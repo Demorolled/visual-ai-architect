@@ -3,6 +3,8 @@
   "description": "Asteroids-style space shooter with ship physics, projectile combat, and waves — Top-down space shooter with ship thrust/rotation physics, asteroid splitting, projectile collision, wave progression, score tracking, and particle explosions",
   "keywords": [
     "space-shooter",
+    "void raider",
+    "void-raider",
     "game",
     "asteroids",
     "physics",

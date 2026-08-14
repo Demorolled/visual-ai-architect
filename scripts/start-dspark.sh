@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# DSpark Speculative-Decoding Server — launcher
+# DSpark GGUF Server (OpenAI-compatible) — launcher
 #
-# Starts the DSpark-style server: qwen2.5-7b-instruct-uncensored (target)
-# + qwen2.5-coder:0.5b (draft) with speculative decoding, OpenAI-compatible,
-# on port 8000. Uses models already installed in Ollama — no downloads.
+# Starts the OpenAI-compatible server for qwen2.5-7b-instruct-uncensored
+# (target) on port 8000, with an OPTIONAL draft model (qwen2.5-coder:0.5b).
+# This is NOT a speculative-decoding accelerator: on llama-cpp-python 0.3.x the
+# draft path measures ~parity-to-slower than no draft (~56 vs ~61 tok/s), so
+# draft mode is experimental. Uses models already installed in Ollama — no
+# downloads.
 #
-# Draft mode (DSPARK_DRAFT_MODE env, default: none — fastest, near-Ollama parity):
-#   none   — speculative decoding off (~57 tok/s, near-Ollama parity). DEFAULT.
+# Draft mode (DSPARK_DRAFT_MODE env, default: none — fastest, ~57-61 tok/s):
+#   none   — no drafter (default; fastest).
 #   lookup — built-in n-gram drafter, no extra model (~37 tok/s).
-#   model  — real drafter (qwen2.5-coder:0.5b). True DSpark-style, but measured
-#            SLOWER (~22 tok/s) on this hardware because llama-cpp-python 0.3.x
-#            re-evals the full context per draft step. Opt-in via
+#   model  — real drafter (qwen2.5-coder:0.5b). Measured ~56 tok/s vs ~61 with
+#            none on the tuned R16 — parity-to-slightly-slower, NO real
+#            speedup on this hardware/binding (llama-cpp-python 0.3.x re-evals
+#            the full context per draft step). Experimental opt-in via
 #            `DSPARK_DRAFT_MODE=model ./scripts/start-dspark.sh --background`.
 #
 # Usage:
@@ -57,16 +61,36 @@ case "${1:-}" in
       echo "DSpark server already running (pid $(cat "$PID_FILE"), port ${PORT})."
       exit 0
     fi
-    nohup python3 scripts/dspark_server.py \
-      --target "$TARGET" \
-      --draft qwen2.5-coder:0.5b \
-      --port "$PORT" \
-      --n-ctx 16384 \
-      --n-gpu-layers -1 \
-      --draft-mode "$DRAFT_MODE" \
-      > "$LOG_FILE" 2>&1 &
-    echo $! > "$PID_FILE"
-    echo "✅ DSpark server starting in background (pid $!, mode=${DRAFT_MODE}). Log: $LOG_FILE"
+    if command -v setsid >/dev/null 2>&1; then
+      # Detach into a NEW session (setsid -f) so the server survives the
+      # process-group cleanup of a short-lived launching shell. `nohup` alone
+      # leaves the child in the launching shell's process group, so it dies
+      # with that shell. The pid is written by the detached child (before it
+      # execs python) so the pid file always holds the real python pid, never
+      # a transient setsid wrapper.
+      setsid -f bash -c '
+        echo $$ > "$1"
+        exec python3 scripts/dspark_server.py \
+          --target "$2" \
+          --draft qwen2.5-coder:0.5b \
+          --port "$3" \
+          --n-ctx 16384 \
+          --n-gpu-layers -1 \
+          --draft-mode "$4" \
+          > "$5" 2>&1
+      ' _ "$PID_FILE" "$TARGET" "$PORT" "$DRAFT_MODE" "$LOG_FILE"
+    else
+      nohup python3 scripts/dspark_server.py \
+        --target "$TARGET" \
+        --draft qwen2.5-coder:0.5b \
+        --port "$PORT" \
+        --n-ctx 16384 \
+        --n-gpu-layers -1 \
+        --draft-mode "$DRAFT_MODE" \
+        > "$LOG_FILE" 2>&1 &
+      echo $! > "$PID_FILE"
+    fi
+    echo "✅ DSpark server starting in background (mode=${DRAFT_MODE}). Log: $LOG_FILE"
     # Wait until the server is actually healthy so the pid file isn't misleading.
     for _ in $(seq 1 60); do
       if curl -s --max-time 2 "http://127.0.0.1:${PORT}/v1/health" >/dev/null 2>&1; then

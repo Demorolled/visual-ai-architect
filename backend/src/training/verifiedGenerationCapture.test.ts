@@ -89,6 +89,28 @@ describe('verifiedGenerationCapture', () => {
     expect(rows).toHaveLength(0);
   });
 
+  it('skips shell placeholders (untyped any[] + JSON round-trip, no imports)', () => {
+    const shell = makeFile({
+      nodeId: 'node-2',
+      nodeLabel: 'Game State',
+      fileName: 'game-state.ts',
+      code: 'export class GameState {\n  state_and_events: any[];\n  gameData: string;\n  constructor(gameAndEvents: any[], gameData: string) { this.state_and_events = gameAndEvents; this.gameData = gameData; }\n  update(result: any): void { this.state_and_events.push(result); this.gameData = JSON.stringify(this.state_and_events); }\n  getData(): any[] { return JSON.parse(this.gameData); }\n}\n',
+    });
+    const rows = mod.buildVerifiedRows(makeProject(), [shell], { tsCompileClean: true });
+    expect(rows).toHaveLength(0);
+  });
+
+  it('skips files that echo other modules\' filename headers as comments', () => {
+    const echoed = makeFile({
+      nodeId: 'node-2',
+      nodeLabel: 'Game State',
+      fileName: 'game-state.ts',
+      code: '// Game State.ts\n// Game Engine.ts\n// AI Opponent.ts\nexport class GameState {\n  cards: string[] = [];\n  shuffle(): void { this.cards.reverse(); }\n}\n',
+    });
+    const rows = mod.buildVerifiedRows(makeProject(), [echoed], { tsCompileClean: true });
+    expect(rows).toHaveLength(0);
+  });
+
   it('appends to the capture file and is idempotent (no duplicates on re-run)', () => {
     const project = makeProject();
     const files = [makeFile()];
@@ -236,6 +258,16 @@ describe('captureVerifiedSidecar (chat path → shared loop)', () => {
     expect(res.reasons['tiny']).toBe(1);
     expect(res.reasons['jsx-in-ts']).toBe(1);
     expect(res.reasons['prose']).toBe(1);
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('skips shell placeholders (untyped any[] + JSON round-trip)', async () => {
+    const dir = makeSidecarExport([
+      { path: 'src/state.ts', code: 'export class GameState {\n  state: any[];\n  blob: string;\n  constructor(x: any[], blob: string) { this.state = x; this.blob = blob; }\n  update(r: any): void { this.state.push(r); this.blob = JSON.stringify(this.state); }\n  get(): any[] { return JSON.parse(this.blob); }\n}\n' },
+    ]);
+    const res = await mod.captureVerifiedSidecar(dir, { tsCompileClean: true });
+    expect(res.captured).toBe(0);
+    expect(res.reasons['shell']).toBe(1);
     rmSync(dir, { recursive: true, force: true });
   });
 

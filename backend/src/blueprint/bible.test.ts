@@ -121,6 +121,26 @@ describe('matchBlueprint (lexical-boosted, real bible data)', () => {
     const cands = matchBlueprint('organize and search my cooking recipes with ingredients and ratings', 5, 0.9);
     expect(cands).toHaveLength(0);
   });
+
+  it('routes a space-shooter arcade title to the shooter family, not a memory card game', () => {
+    const cands = matchBlueprint('classic arcade game void raider', 5, 0.30);
+    expect(cands.length).toBeGreaterThan(0);
+    expect(cands[0].blueprint.app_type).toMatch(/space_shooter|asteroids|space_invaders/);
+    expect(cands.some(c => c.blueprint.app_type === 'memory_card_game_2')).toBe(false);
+  });
+
+  it('routes the bare title "void raider" DIRECTLY to the space_shooter blueprint', () => {
+    const cands = matchBlueprint('void raider', 5, 0.30);
+    expect(cands.length).toBeGreaterThan(0);
+    expect(cands[0].blueprint.app_type).toBe('space_shooter');
+  });
+
+  it('does not route a plain "classic game" to a memory card game via the generic descriptor', () => {
+    // "classic" is a generic descriptor, not a domain — a memory card game
+    // must not win solely because its keywords contain the word "classic".
+    const cands = matchBlueprint('classic game', 5, 0.30);
+    expect(cands[0].blueprint.app_type).not.toBe('memory_card_game_2');
+  });
 });
 
 describe('blueprintToProject', () => {

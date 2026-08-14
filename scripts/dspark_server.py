@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-DSpark Server — speculative-decoding (DSpark-style) OpenAI-compatible server.
+DSpark Server — OpenAI-compatible GGUF server (llama.cpp), with an OPTIONAL
+draft-model acceleration mode.
 
-DSpark accelerates generation by pairing a small DRAFT model (predicts tokens
-in parallel) with the TARGET model (verifies them in a single pass). This is
-the same mechanism DeepSeek's DSpark framework uses, implemented locally with
-llama.cpp's draft_model support — no cloud API, no huge downloads.
+This is a plain OpenAI-compatible server that loads a local GGUF. It is NOT a
+speculative-decoding product: on this llama-cpp-python 0.3.x build the draft
+path re-evaluates the full context per draft step and measures ~parity-to-
+slower vs no draft (~56 vs ~61 tok/s on the tuned R16), so draft mode is an
+experimental option, not an accelerator. Default draft mode is 'none' (the
+fastest configuration).
 
 Uses the models you ALREADY have in Ollama (resolved from manifests):
   - target: qwen2.5-7b-instruct-uncensored (4.7 GB)
@@ -27,6 +30,7 @@ import sys
 import json
 import time
 import signal
+import asyncio
 import threading
 from collections import deque
 from typing import Optional, List, Any, Dict
@@ -106,12 +110,14 @@ class CompletionRequest(BaseModel):
 # ── App factory ─────────────────────────────────────────────────────────────
 
 class LlamaModelDraft:
-    """A real-model drafter for llama-cpp-python 0.3.x speculative decoding.
+    """A real-model drafter for llama-cpp-python 0.3.x.
 
     The library calls draft(input_ids) and expects a numpy array of draft token
     ids back. We run the small draft Llama greedily on the same token ids and
-    return its raw predicted tokens. Speculative decoding is lossless — the
-    target model verifies every draft token, so any mismatch is re-computed.
+    return its raw predicted tokens. The target model verifies every proposed
+    token, so output quality is unchanged (lossless) — but on this 0.3.x build
+    the drafter re-evaluates the full context each step and does NOT speed up
+    generation, so this mode is experimental only.
     """
 
     def __init__(self, draft_llm, num_pred_tokens: int = 16):
@@ -166,7 +172,7 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
         print(f"[DSpark] Using built-in prompt-lookup drafter", flush=True)
     elif draft_mode == 'none':
         draft_wrapper = None
-        print(f"[DSpark] Speculative decoding DISABLED (--draft-mode none)", flush=True)
+        print(f"[DSpark] Draft mode 'none' — no drafter attached", flush=True)
     else:
         draft_llm = Llama(
             model_path=draft_path,
@@ -212,7 +218,23 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
             raise
 
     target_id = model_id or os.path.basename(target_path)
-    app = FastAPI(title='DSpark Speculative Decoding Server')
+    app = FastAPI(title='DSpark GGUF Server (OpenAI-compatible)')
+
+    # ── Offload blocking generation ─────────────────────────────────────────
+    # llama.cpp generation is synchronous AND long (minutes at 16k ctx). Calling
+    # llm.* inside `async def` blocks uvicorn's event loop, so /v1/health and
+    # /v1/models time out while the model is actually fine (the backend then
+    # reports `llm: up:false` mid-build). Run generation in a worker thread so
+    # the event loop stays free to serve health/models. The lock serializes
+    # generation because llama.cpp's Llama is not safe for concurrent calls.
+    _gen_lock = threading.Lock()
+
+    async def _run_blocking(func, *args, **kwargs):
+        def _worker():
+            with _gen_lock:
+                return func(*args, **kwargs)
+
+        return await asyncio.to_thread(_worker)
 
     app.add_middleware(
         CORSMiddleware,
@@ -289,7 +311,8 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
     @app.post('/v1/chat/completions')
     async def chat_completions(req: ChatCompletionRequest):
         start_time = time.time()
-        output = llm.create_chat_completion(
+        output = await _run_blocking(
+            llm.create_chat_completion,
             messages=[m.model_dump() for m in req.messages],
             max_tokens=req.max_tokens,
             temperature=req.temperature,
@@ -303,8 +326,8 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
         completion_tokens = output.get('usage', {}).get('completion_tokens', 0)
         tps = completion_tokens / elapsed if elapsed > 0 else 0
         _record_stats(completion_tokens, elapsed)
-        accel = ", draft-accelerated" if draft_mode != 'none' else ""
-        print(f"[DSpark] chat: {completion_tokens} tokens in {elapsed:.2f}s ({tps:.1f} tok/s{accel})",
+        draft_note = ", drafter attached" if draft_mode != 'none' else ""
+        print(f"[DSpark] chat: {completion_tokens} tokens in {elapsed:.2f}s ({tps:.1f} tok/s{draft_note})",
               flush=True)
 
         return {
@@ -329,7 +352,8 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
     @app.post('/v1/completions')
     async def completions(req: CompletionRequest):
         start_time = time.time()
-        output = llm(
+        output = await _run_blocking(
+            llm,
             req.prompt,
             max_tokens=req.max_tokens,
             temperature=req.temperature,
@@ -371,7 +395,7 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
 
 
 def main():
-    parser = argparse.ArgumentParser(description='DSpark speculative decoding server (OpenAI-compatible)')
+    parser = argparse.ArgumentParser(description='DSpark GGUF server (OpenAI-compatible)')
     parser.add_argument('--target', default='qwen2.5-7b-instruct-uncensored:latest',
                         help='Target model name (Ollama) or GGUF path')
     parser.add_argument('--draft', default='qwen2.5-coder:0.5b',
@@ -383,7 +407,7 @@ def main():
     parser.add_argument('--draft-gpu-layers', type=int, default=-1,
                         help='GPU layers for draft model (-1 = all, 0 = CPU; default: -1)')
     parser.add_argument('--draft-num-pred-tokens', type=int, default=16,
-                        help='Tokens drafted per speculative step (default: 16)')
+                        help='Tokens drafted per proposal pass (default: 16)')
     parser.add_argument('--draft-mode', type=str, default='none',
                         choices=['model', 'lookup', 'none'],
                         help='Drafter: model (qwen2.5-coder:0.5b), lookup (built-in n-gram), none (off, default)')

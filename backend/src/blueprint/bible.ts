@@ -143,11 +143,23 @@ const LEXICAL_HIT_BONUS = 0.35;
 const MAX_LEXICAL_HITS = 2;
 
 /**
+ * Non-discriminating vocabulary excluded from lexical-hit counting.
+ *
+ * Genre adjectives like "classic" and the bare "game"/"games" token appear in
+ * the keywords of MANY game blueprints, so counting them as a lexical hit
+ * inflates every game blueprint equally and lets a generic "classic game"
+ * outrank the correct domain match (the live "void raider" → memory_card_game_2
+ * misroute). These words are descriptors, not a domain signal.
+ */
+const GENERIC_VOCAB = new Set(['classic', 'game', 'games']);
+
+/**
  * Count how many of the goal's tokens hit a blueprint's EXACT vocabulary
  * (app_type + keywords), prefix-matched so "recipes" hits "recipe" and
  * "searching" hits "search". A hit means the goal is explicitly about this
  * blueprint's domain — worth preferring over weak embedding noise. Short
- * tokens (< 4 chars, e.g. "app") are ignored so common words never pollute.
+ * tokens (< 4 chars, e.g. "app") are ignored so common words never pollute,
+ * and non-discriminating genre words (classic/game/games) are skipped.
  */
 export function lexicalHitCount(goal: string, bp: Blueprint): number {
   const goalTokens = (goal || '').toLowerCase().match(/[a-z][a-z0-9]{3,}/g) || [];
@@ -159,7 +171,9 @@ export function lexicalHitCount(goal: string, bp: Blueprint): number {
   );
   let hits = 0;
   for (const t of goalTokens) {
+    if (GENERIC_VOCAB.has(t)) continue;
     for (const v of vocab) {
+      if (GENERIC_VOCAB.has(v)) continue;
       if (v.length >= 4 && (v.startsWith(t) || t.startsWith(v))) {
         hits++;
         break;
@@ -167,6 +181,43 @@ export function lexicalHitCount(goal: string, bp: Blueprint): number {
     }
   }
   return hits;
+}
+
+// ─── Genre routing ─────────────────────────────────────────────────────────
+// The hashing-trick embeddings can't distinguish "space shooter arcade game"
+// from "memory matching card game" when both are generic "…game" goals (the
+// live "void raider" misroute). Genre families name the DOMAIN, so a goal that
+// names arcade/shooter vocabulary routes to the shooter family instead of a
+// generic memory/card game that merely shares the "classic game" words.
+
+/** Bonus applied to a blueprint that belongs to a goal-matched genre family. */
+const GENRE_BONUS = 0.6;
+
+interface GenreFamily {
+  /** Vocabulary that identifies the family in a goal (lowercased). */
+  test: RegExp;
+  /** app_type values in this family. */
+  types: string[];
+}
+
+const GENRE_FAMILIES: GenreFamily[] = [
+  {
+    test: /\b(space\s*shooter|shooter|asteroids?|space\s*invaders?|raider|galaga|galaxian|shmup|arcade|top.?down\s*shooter|space\s*ship)\b/i,
+    types: ['space_shooter', 'asteroids', 'asteroids_2', 'space_invaders', 'space_invaders_2'],
+  },
+];
+
+/**
+ * Genre bonus for a blueprint against a goal: when the goal names a family's
+ * vocabulary, every blueprint in that family gets a flat bonus so it outranks
+ * a generic-domain blueprint that merely shares descriptor words.
+ */
+function genreBonus(goal: string, appType: string): number {
+  let bonus = 0;
+  for (const fam of GENRE_FAMILIES) {
+    if (fam.test.test(goal) && fam.types.includes(appType)) bonus += GENRE_BONUS;
+  }
+  return bonus;
 }
 
 /**
@@ -199,7 +250,10 @@ export function matchBlueprint(goal: string, k: number = 3, minScore: number = 0
   const ranked = blueprints
     .map(bp => {
       const cosine = cosineSimilarity(qv, embed(blueprintText(bp), EMBED_DIM));
-      const raw = cosine + Math.min(lexicalHitCount(goal || '', bp), MAX_LEXICAL_HITS) * LEXICAL_HIT_BONUS;
+      const raw =
+        cosine +
+        Math.min(lexicalHitCount(goal || '', bp), MAX_LEXICAL_HITS) * LEXICAL_HIT_BONUS +
+        genreBonus(goal || '', bp.app_type);
       return { blueprint: bp, cosine, raw };
     })
     .filter(m => m.raw >= minScore)

@@ -52,6 +52,43 @@ function isStub(code: string): boolean {
   return STUB_PATTERNS.some((re) => re.test(code));
 }
 
+/**
+ * Detect a "shell" placeholder — the class of stub the stub-pattern gate misses.
+ *
+ * Live failure: the "Game State" module of a memory-card build was captured as
+ * `export class GameState { state_and_events: any[]; gameData: string; ...
+ * update(result: any) { this.gameData = JSON.stringify(...) }
+ * getData(): any[] { return JSON.parse(this.gameData) } }` — an untyped
+ * blob-holder that only round-trips state through JSON, with zero imports and
+ * zero typed domain model. It has no TODO/"not implemented" marker, so it
+ * passed the stub gate. Two tell-tale signals identify it:
+ *
+ *  1. untyped (`any`) fields + a JSON stringify/parse round-trip + no imports
+ *     (a real module in a multi-file app imports its siblings or at least
+ *     declares a typed model; a pure any+JSON clone is a shell).
+ *  2. echoed sibling-module filename headers — the model listed the OTHER
+ *     planned files as `// X.ts` comments before emitting a stub.
+ */
+function isShell(code: string): boolean {
+  const commentStripped = code
+    .replace(/^\s*\/\/.*$/gm, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+
+  const hasAny = /\bany\b/.test(commentStripped);
+  const hasJsonRoundTrip = /JSON\.stringify\s*\(/.test(commentStripped) && /JSON\.parse\s*\(/.test(commentStripped);
+  const hasImport = /^\s*import\b/m.test(commentStripped) || /\brequire\s*\(/.test(commentStripped);
+  if (hasAny && hasJsonRoundTrip && !hasImport) return true;
+
+  // Echoed sibling filename headers: 2+ distinct `// X.ts` comments naming
+  // different files (the model listed the plan instead of implementing one).
+  const headerFiles = new Set<string>();
+  for (const line of code.split('\n')) {
+    const m = line.match(/^\s*\/\/\s*([\w][\w\s\-]*\.(?:ts|tsx|js))\s*$/i);
+    if (m) headerFiles.add(m[1].toLowerCase());
+  }
+  return headerFiles.size >= 2;
+}
+
 export interface CaptureOptions {
   /** True when the live compile-check loop finished with ZERO failures —
    *  every TS/JS file is then authoritative-clean regardless of stale sandbox
@@ -86,6 +123,7 @@ function skipReason(f: GeneratedFile, opts: CaptureOptions): string | null {
   if (!verified) return 'not-verified';
   if (f.code.length < MIN_CODE_CHARS) return 'too-small';
   if (isStub(f.code)) return 'stub';
+  if (isShell(f.code)) return 'shell';
   return null;
 }
 
@@ -429,6 +467,7 @@ export async function captureVerifiedSidecar(
     }
     if (code.trim().length < MIN_CODE_CHARS) { reasons['tiny'] = (reasons['tiny'] || 0) + 1; continue; }
     if (isStub(code)) { reasons['stub'] = (reasons['stub'] || 0) + 1; continue; }
+    if (isShell(code)) { reasons['shell'] = (reasons['shell'] || 0) + 1; continue; }
     if (hasJsxInTs(code)) { reasons['jsx-in-ts'] = (reasons['jsx-in-ts'] || 0) + 1; continue; }
     if (hasMarkdownLeak(code)) { reasons['markdown-leak'] = (reasons['markdown-leak'] || 0) + 1; continue; }
     if (hasProse(code)) { reasons['prose'] = (reasons['prose'] || 0) + 1; continue; }

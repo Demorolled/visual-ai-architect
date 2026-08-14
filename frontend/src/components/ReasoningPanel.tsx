@@ -16,6 +16,7 @@ import { isNodeQuery, buildNodeContext } from '../utils/nodeContext';
 import { detectSessionHistoryIntent } from '../utils/sessionHistory';
 import { detectWikiIntent } from '../utils/wikiIntent';
 import { detectTodoIntent } from '../utils/todoIntent';
+import { detectBuildIntent as detectBuildIntentFromText } from '../utils/buildIntent';
 import VeronicaPrism from './VeronicaPrism';
 import MessageReactions from './MessageReactions';
 import './TerminalSection.css';
@@ -139,75 +140,10 @@ function formatSmokeVerdicts(writeData: any): string {
 /**
  * Detect if the user is asking to build/create/make an app.
  * Returns the extracted goal, purpose, and target OS, or null if no build intent.
+ * (Extracted to utils/buildIntent.ts so the goal-capture logic is unit-tested.)
  */
 function detectBuildIntent(text: string): { goal: string; purpose: string; os: string } | null {
-  const lower = text.toLowerCase().trim();
-
-  // Build patterns — these trigger proactive node creation
-  // Extended suffix list covers all common app/product descriptors
-  const appSuffixes = 'app|application|program|tool|system|software|website|site|webapp|dashboard|platform|game|service|api|cli|gui|widget|view|page|module|plugin|extension|component|editor|player|viewer|reader|handler|manager|engine|client|server|builder|maker|studio|browser|explorer|designer|creator|generator|analyzer|converter|parser|renderer|processor|tracker|monitor|logger|tester|runner|loader|installer|launcher|watcher|scanner|cleaner|controller|adapter|bridge|wrapper|proxy|gateway|interface|connector|mapper|filter|decorator|interceptor';
-  const buildPatterns = [
-    new RegExp(`(?:build|create|make|design|generate|develop|code)\\s+(?:me\\s+)?(?:a|an|the|my|another|new)\\s+(\\w[\\w\\s]*(?:${appSuffixes}))`, 'i'),
-    new RegExp(`(?:i\\s+(?:want\\s+(?:to\\s+)?)?(?:build|create|make|design|generate|develop|code)\\s+)(?:a|an|the|my|another|new)?\\s*(\\w[\\w\\s]*(?:${appSuffixes}))`, 'i'),
-    new RegExp(`(?:let'?s?\\s+)(?:build|create|make|design|generate|develop|code)\\s+(?:a|an|the|my|another|new)?\\s*(\\w[\\w\\s]*(?:${appSuffixes}))`, 'i'),
-    new RegExp(`^(?:build|create|make|design|generate|develop|code)\\s+(?:a|an|the)?\\s*(\\w[\\w\\s]*(?:${appSuffixes}))`, 'i'),
-  ];
-
-  // Check basic negative patterns — don't trigger for questions or casual talk
-  const negativePatterns = [
-    /how\s+(?:to|do|can|would|should|does)/i,
-    /what\s+(?:is|are|does|would|should)/i,
-    /can\s+(?:you|i|we)\s+(?:tell|explain|describe|show|list)/i,
-    /tell\s+me\s+(?:about|how|what)/i,
-    /explain\s+/i,
-    /describe\s+/i,
-    /(?:have\s+you|did\s+you|do\s+you)\s+(?:ever|built|created|made)/i,
-  ];
-
-  // Skip if it's a question about building rather than a command to build
-  for (const neg of negativePatterns) {
-    if (neg.test(lower)) return null;
-  }
-
-  // Also skip very short messages or messages about existing projects
-  if (lower.length < 15) return null;
-  if (/already|existing|current|previous|my\s+(?:last|old|other)/i.test(lower)) return null;
-
-  // Try to extract goal and purpose
-  for (const pattern of buildPatterns) {
-    const match = lower.match(pattern);
-    if (match) {
-      // Extract the app description as goal
-      let goal = match[1]?.trim() || '';
-      // Clean up trailing punctuation/words
-      goal = goal.replace(/[\.\,\!\?]+$/, '').trim();
-      // Don't append 'app' if the goal already ends with a known suffix (e.g., "News Widget", "Text Editor")
-      const knownSuffixes = appSuffixes.split('|');
-      const goalLower = goal.toLowerCase();
-      const hasKnownSuffix = knownSuffixes.some(s => goalLower.endsWith(s));
-      if (!hasKnownSuffix && !goalLower.includes('app')) {
-        goal = goal + ' app';
-      }
-
-      // Try to extract purpose from the text (after "that/that/for/to")
-      let purpose = '';
-      const purposeMatch = lower.match(/(?:that|which|for|to)\s+(\w[\w\s]+)/i);
-      if (purposeMatch) {
-        purpose = purposeMatch[1].replace(/[\.\,\!\?]+$/, '').trim().substring(0, 200);
-      }
-
-      // Try to detect target OS
-      let os = 'linux';
-      if (/windows|win|microsoft/i.test(lower)) os = 'windows';
-      else if (/mac\s*(?:os)?|macos|apple|iphone|ios|ipad|macintosh/i.test(lower)) os = 'mac';
-      else if (/iphone|ios|ipad|ipod/i.test(lower)) os = 'ios';
-      else if (/android|google\s+pixel|samsung/i.test(lower)) os = 'android';
-
-      return { goal, purpose, os };
-    }
-  }
-
-  return null;
+  return detectBuildIntentFromText(text);
 }
 
 /**
