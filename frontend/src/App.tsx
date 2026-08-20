@@ -11,7 +11,7 @@ import { useToolManifest } from './utils/useToolManifest';
 import { nodeDatabase } from './utils/nodeDatabase';
 import NodePalette from './components/NodePalette';
 import Toolbar from './components/Toolbar';
-import Canvas from './components/Canvas';
+const Canvas = lazy(() => import('./components/Canvas'));
 import RoadmapDocked from './components/RoadmapDocked';
 import NodeLogicEditor from './components/NodeLogicEditor';
 import ReasoningPanel from './components/ReasoningPanel';
@@ -928,7 +928,7 @@ Connections: ${edges.length}`;
       {wizardStep !== 'sandbox' && wizardStep !== 'review' && wizardStep !== 'complete' && wizardStep !== 'saving' && (
         isMobile ? (
           <div className="app-main-container mobile-layout">
-            <div className="canvas-area mobile-canvas"><Canvas /></div>
+            <div className="canvas-area mobile-canvas"><Suspense fallback={<div style={{width:'100%',height:'100%',background:'#1b1b30',display:'flex',alignItems:'center',justifyContent:'center',color:'#64748b',fontSize:13}}>⏳ Loading 3D viewer...</div>}><Canvas /></Suspense></div>
             <div className="mobile-bottom-bar">
               <button className="mobile-bar-btn" onClick={() => setMobilePanel(mobilePanel === 'palette' ? 'none' : 'palette')}><span className="mobile-bar-icon">📦</span><span className="mobile-bar-label">Nodes</span></button>
               <button className="mobile-bar-btn" onClick={() => setMobilePanel(mobilePanel === 'roadmap' ? 'none' : 'roadmap')}><span className="mobile-bar-icon">🗺</span><span className="mobile-bar-label">Roadmap</span></button>
@@ -943,7 +943,7 @@ Connections: ${edges.length}`;
           <>
             <div className="app-main-container">
               <div className="canvas-area">
-                <Canvas />
+                <Suspense fallback={<div style={{width:'100%',height:'100%',background:'#1b1b30',display:'flex',alignItems:'center',justifyContent:'center',color:'#64748b',fontSize:13}}>⏳ Loading 3D viewer...</div>}><Canvas /></Suspense>
               </div>
 
               {sidebarCollapsed.right ? (
