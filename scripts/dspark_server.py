@@ -188,8 +188,15 @@ def gpu_vram_mb() -> tuple:
 
 
 def gpu_count() -> int:
-    total, _ = gpu_vram_mb()
-    return 1 if total > 0 else 0
+    """Number of CUDA GPUs visible to nvidia-smi (0 when none)."""
+    try:
+        out = subprocess.run(
+            ['nvidia-smi', '--query-gpu=index', '--format=csv,noheader,nounits'],
+            capture_output=True, text=True, timeout=10,
+        ).stdout
+        return len([l for l in out.strip().splitlines() if l.strip()])
+    except Exception:
+        return 0
 
 
 def resolve_n_gpu_layers(value: str, model_path: str, reserve_mb: int = 1024) -> int:
