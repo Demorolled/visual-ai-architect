@@ -2,7 +2,18 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { PerFileScaffolder } from './perFileScaffolder.js';
+import {
+  PerFileScaffolder,
+  goNoArgFuncs,
+  rustNoArgFuncs,
+  rustPublicFns,
+  cNoArgFuncs,
+  javaStaticNoArgFuncs,
+  csharpStaticNoArgFuncs,
+  swiftNoArgFuncs,
+  kotlinTopLevelFuncs,
+  planModuleWiring,
+} from './perFileScaffolder.js';
 import type { GeneratedFile } from '../layers/fileGenerator.js';
 
 const scaffolder = new PerFileScaffolder();
@@ -144,18 +155,18 @@ describe('PerFileScaffolder TS project config', () => {
     }
   });
 
-  it('does NOT auto-bootstrap UI projects (the preview wrapper drives those)', async () => {
+  it('does NOT auto-bootstrap UI entry names (render/init/mount) on UI projects — the preview wrapper drives those', async () => {
     const t1 = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-scaffold-ui-'));
     try {
       const uiFiles: GeneratedFile[] = [
         {
           fileName: 'ui.ts',
           language: 'typescript',
-          code: `export function start(): void {\n  console.log('ui start');\n}\n`,
+          code: `export function render(): void {\n  console.log('ui render');\n}\n`,
           nodeId: 'n1',
           nodeLabel: 'ui.ts',
           dependencies: [],
-          exports: ['start'],
+          exports: ['render'],
           errors: [],
           validated: true,
         },
@@ -164,9 +175,473 @@ describe('PerFileScaffolder TS project config', () => {
         projectName: 'ui-app', targetOS: 'linux', files: uiFiles, nodes: [{ id: 'n1', type: 'ui', position: { x: 0, y: 0 }, data: { label: 'ui.ts' } } as any], edges: [], outputDir: t1,
       });
       const entry = fs.readFileSync(path.join(res.outputPath, 'index.ts'), 'utf-8');
-      expect(entry).not.toContain("start();");
+      expect(entry).not.toContain("render();");
     } finally {
       fs.rmSync(t1, { recursive: true, force: true });
     }
+  });
+
+  it('bootstraps a UI-named entry (render) when the project has NO ui node (the F2 dead-app fix)', async () => {
+    const t1 = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-scaffold-render-'));
+    try {
+      const renderFiles: GeneratedFile[] = [
+        {
+          fileName: 'ui.ts',
+          language: 'typescript',
+          code: `export function render(): void {\n  console.log('rendered');\n}\n`,
+          nodeId: 'n1',
+          nodeLabel: 'ui.ts',
+          dependencies: [],
+          exports: ['render'],
+          errors: [],
+          validated: true,
+        },
+      ];
+      const res = await scaffolder.scaffold({
+        projectName: 'render-app', targetOS: 'linux', files: renderFiles, nodes: [], edges: [], outputDir: t1,
+      });
+      const entry = fs.readFileSync(path.join(res.outputPath, 'index.ts'), 'utf-8');
+      expect(entry).toContain("if (typeof render === 'function') { render(); }");
+    } finally {
+      fs.rmSync(t1, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a Go entry point whose imports are all USED (no "imported and not used" go build failure)', async () => {
+    const t1 = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-scaffold-go-'));
+    try {
+      const goFiles: GeneratedFile[] = [
+        {
+          fileName: 'types.go',
+          language: 'go',
+          code: `package types\n\ntype Task struct {\n\tID uint\n}\n\nfunc NewTask(id uint) Task {\n\treturn Task{ID: id}\n}\n`,
+          nodeId: 'n1',
+          nodeLabel: 'types.go',
+          dependencies: [],
+          exports: ['Task', 'NewTask'],
+          errors: [],
+          validated: true,
+        },
+        {
+          fileName: 'store.go',
+          language: 'go',
+          code: `package store\n\ntype Store struct{}\n\nfunc NewStore() *Store {\n\treturn &Store{}\n}\n`,
+          nodeId: 'n2',
+          nodeLabel: 'store.go',
+          dependencies: [],
+          exports: ['Store', 'NewStore'],
+          errors: [],
+          validated: true,
+        },
+      ];
+      const res = await scaffolder.scaffold({
+        projectName: 'go-app', targetOS: 'linux', files: goFiles, nodes: [], edges: [], outputDir: t1,
+      });
+      const entry = fs.readFileSync(path.join(res.outputPath, 'main.go'), 'utf-8');
+      // Value exports are referenced (types.NewTask, store.NewStore)...
+      expect(entry).toContain('_ = pkg0.NewTask');
+      expect(entry).toContain('_ = pkg1.NewStore');
+      // ...and the TYPE-only export (Task) is never referenced as a value.
+      expect(entry).not.toContain('.Task');
+      // Blank import is only used when a package has NO value exports.
+      expect(entry).not.toContain('import _');
+    } finally {
+      fs.rmSync(t1, { recursive: true, force: true });
+    }
+  });
+});
+
+// ─── Tree Mode: separate apps + a shared bridge ────────────────────
+
+const trees = [
+  { id: 'tree_1', name: 'Expense Tracker', goal: 'track spending', targetOS: 'linux' as const, rootNodeId: 'master-1' },
+  { id: 'tree_2', name: 'Report Mailer', goal: 'email the report', targetOS: 'linux' as const, rootNodeId: 'master-2' },
+];
+
+/** The files a two-app build produces: one module per app + one bridge. */
+const twoAppFiles = (): GeneratedFile[] => [
+  {
+    fileName: 'auth-store.ts',
+    language: 'typescript',
+    code: `export function provideSession(): string {\n  return 'token';\n}\n`,
+    nodeId: 'A1',
+    nodeLabel: 'auth-store',
+    treeId: 'tree_1',
+    appDir: 'apps/expense-tracker',
+    dependencies: [],
+    exports: ['provideSession'],
+    errors: [],
+    validated: true,
+  },
+  {
+    fileName: 'report-sender.ts',
+    language: 'typescript',
+    code: `export function sendReport(): void {}\n`,
+    nodeId: 'B1',
+    nodeLabel: 'report-sender',
+    treeId: 'tree_2',
+    appDir: 'apps/report-mailer',
+    dependencies: [],
+    exports: ['sendReport'],
+    errors: [],
+    validated: true,
+  },
+  {
+    fileName: 'bridge-auth-session.ts',
+    language: 'typescript',
+    code: `export interface Session {\n  token: string;\n}\nexport function readSession(): Session {\n  return { token: '' };\n}\n`,
+    nodeId: 'bridge:tree_1->tree_2:auth-session',
+    nodeLabel: 'bridge-auth-session',
+    isBridge: true,
+    treeIds: ['tree_1', 'tree_2'],
+    dependencies: [],
+    exports: ['Session', 'readSession'],
+    errors: [],
+    validated: true,
+  },
+];
+
+const treeEdges = [
+  {
+    id: 'e2',
+    source: 'A1',
+    target: 'B1',
+    data: {
+      kind: 'cross-tree' as const,
+      semantic: true,
+      label: 'Login session',
+      relation: 'pass the login info to the report app',
+      payloadType: 'auth-session',
+      payloadLabel: 'Login session',
+      sourceTreeId: 'tree_1',
+      targetTreeId: 'tree_2',
+      description: 'pass the login info through',
+    },
+  },
+];
+
+const treeNodes = [
+  { id: 'master-1', type: 'master', position: { x: 0, y: 0 }, data: { label: 'Expense Tracker', description: '', status: 'pending' as const } },
+  { id: 'A1', type: 'logic', position: { x: 0, y: 0 }, data: { label: 'auth-store', description: '', status: 'pending' as const, treeId: 'tree_1' } },
+  { id: 'B1', type: 'logic', position: { x: 0, y: 0 }, data: { label: 'report-sender', description: '', status: 'pending' as const, treeId: 'tree_2' } },
+] as any[];
+
+describe('PerFileScaffolder Tree Mode', () => {
+  let dir: string;
+  let result: Awaited<ReturnType<typeof scaffolder.scaffold>>;
+
+  beforeAll(async () => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-scaffold-trees-'));
+    result = await scaffolder.scaffold({
+      projectName: 'two-app-project',
+      targetOS: 'linux',
+      files: twoAppFiles(),
+      nodes: treeNodes,
+      edges: treeEdges as any,
+      trees: trees as any,
+      outputDir: dir,
+    });
+  });
+
+  afterAll(() => {
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  const out = () => result.outputPath;
+
+  it('builds each app tree as its own app directory', () => {
+    expect(fs.existsSync(path.join(out(), 'apps', 'expense-tracker', 'src', 'auth-store', 'auth-store.ts'))).toBe(true);
+    expect(fs.existsSync(path.join(out(), 'apps', 'report-mailer', 'src', 'report-sender', 'report-sender.ts'))).toBe(true);
+    // App 2's source must NOT be merged into app 1's tree.
+    expect(fs.existsSync(path.join(out(), 'apps', 'expense-tracker', 'src', 'report-sender'))).toBe(false);
+    expect(result.perNodeFiles.map((f) => f.filePath).sort()).toEqual([
+      'apps/expense-tracker/src/auth-store/auth-store.ts',
+      'apps/report-mailer/src/report-sender/report-sender.ts',
+      'bridge/bridge-auth-session.ts',
+    ]);
+  });
+
+  it('gives every app its own entry point and project config', () => {
+    for (const app of ['expense-tracker', 'report-mailer']) {
+      expect(fs.existsSync(path.join(out(), 'apps', app, 'index.ts'))).toBe(true);
+      expect(fs.existsSync(path.join(out(), 'apps', app, 'package.json'))).toBe(true);
+      expect(fs.existsSync(path.join(out(), 'apps', app, 'tsconfig.json'))).toBe(true);
+    }
+    // One app directory, one program — there is no project-root entry point.
+    expect(fs.existsSync(path.join(out(), 'index.ts'))).toBe(false);
+    expect(fs.existsSync(path.join(out(), 'package.json'))).toBe(false);
+    // An app's entry imports only its OWN modules.
+    const entry = fs.readFileSync(path.join(out(), 'apps', 'expense-tracker', 'index.ts'), 'utf-8');
+    expect(entry).toContain("import { provideSession as provideSession } from './src/auth-store/auth-store.ts'");
+    expect(entry).not.toContain('report-sender');
+  });
+
+  it('puts the bridge in the shared bridge/ dir and re-exports it from both apps', () => {
+    expect(fs.existsSync(path.join(out(), 'bridge', 'bridge-auth-session.ts'))).toBe(true);
+    for (const app of ['expense-tracker', 'report-mailer']) {
+      const entry = fs.readFileSync(path.join(out(), 'apps', app, 'index.ts'), 'utf-8');
+      expect(entry).toContain("export * as bridgeAuthSession from '../../bridge/bridge-auth-session.ts';");
+    }
+  });
+
+  it('records the apps, the per-file app dirs and the cross-app handoff in dependency-graph.json', () => {
+    const graph = JSON.parse(fs.readFileSync(path.join(out(), 'dependency-graph.json'), 'utf-8'));
+    expect(graph.apps).toEqual([
+      { id: 'tree_1', name: 'Expense Tracker', goal: 'track spending', dir: 'apps/expense-tracker' },
+      { id: 'tree_2', name: 'Report Mailer', goal: 'email the report', dir: 'apps/report-mailer' },
+    ]);
+    const authStore = graph.nodes.find((n: any) => n.nodeLabel === 'auth-store');
+    expect(authStore.appDir).toBe('apps/expense-tracker');
+    expect(authStore.treeId).toBe('tree_1');
+    expect(graph.bridges).toEqual([
+      {
+        fileName: 'bridge-auth-session.ts',
+        path: 'bridge/bridge-auth-session.ts',
+        treeIds: ['tree_1', 'tree_2'],
+        exports: ['Session', 'readSession'],
+        validated: true,
+      },
+    ]);
+    const cross = graph.edges.find((e: any) => e.kind === 'cross-tree');
+    expect(cross).toMatchObject({
+      source: 'A1',
+      target: 'B1',
+      sourceTreeId: 'tree_1',
+      targetTreeId: 'tree_2',
+      payloadType: 'auth-session',
+      payloadLabel: 'Login session',
+    });
+  });
+
+  it('documents the apps and their connection in the README', () => {
+    const readme = fs.readFileSync(path.join(out(), 'README.md'), 'utf-8');
+    expect(readme).toContain('**Tree Mode:** this project holds **2 separate apps**');
+    expect(readme).toContain('├── expense-tracker/');
+    expect(readme).toContain('└── report-mailer/');
+    expect(readme).toContain('├── bridge/');
+    expect(readme).toContain('└── bridge-auth-session.ts');
+    expect(readme).toContain('## 🔗 Cross-App Connections (Tree Mode)');
+    expect(readme).toContain('**bridge-auth-session** — `Login session`: **Expense Tracker** → **Report Mailer**');
+    expect(readme).toContain('cd apps/report-mailer && npm install && npm run dev');
+  });
+
+  it('separates two trees into their own apps even with no cross-app connection', async () => {
+    const t1 = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-scaffold-notrees-'));
+    try {
+      const res = await scaffolder.scaffold({
+        projectName: 'no-bridge-project',
+        targetOS: 'linux',
+        files: twoAppFiles().filter((f) => !f.isBridge),
+        nodes: treeNodes,
+        edges: [],
+        trees: trees as any,
+        outputDir: t1,
+      });
+      expect(fs.existsSync(path.join(res.outputPath, 'apps', 'expense-tracker', 'index.ts'))).toBe(true);
+      expect(fs.existsSync(path.join(res.outputPath, 'apps', 'report-mailer', 'index.ts'))).toBe(true);
+      expect(fs.existsSync(path.join(res.outputPath, 'bridge'))).toBe(false);
+      const readme = fs.readFileSync(path.join(res.outputPath, 'README.md'), 'utf-8');
+      expect(readme).not.toContain('## 🔗 Cross-App Connections');
+    } finally {
+      fs.rmSync(t1, { recursive: true, force: true });
+    }
+  });
+
+  it('routes a file that only knows its treeId into that app (pre-layout build)', async () => {
+    const t1 = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-scaffold-stamp-'));
+    try {
+      const legacy = twoAppFiles().map((f) => ({ ...f, appDir: undefined }));
+      const res = await scaffolder.scaffold({
+        projectName: 'legacy-layout-project',
+        targetOS: 'linux',
+        files: legacy,
+        nodes: treeNodes,
+        edges: treeEdges as any,
+        trees: trees as any,
+        outputDir: t1,
+      });
+      expect(fs.existsSync(path.join(res.outputPath, 'apps', 'expense-tracker', 'src', 'auth-store', 'auth-store.ts'))).toBe(true);
+      expect(fs.existsSync(path.join(res.outputPath, 'apps', 'report-mailer', 'src', 'report-sender', 'report-sender.ts'))).toBe(true);
+    } finally {
+      fs.rmSync(t1, { recursive: true, force: true });
+    }
+  });
+});
+
+// Language coverage: every core desktop/server language gets a real entry point
+// and a project config instead of silently falling back to the TS scaffold.
+describe('PerFileScaffolder entry point + config per language', () => {
+  const cases: Array<{ lang: string; ext: string; entry: string; config: string; marker: RegExp }> = [
+    { lang: 'java', ext: 'java', entry: 'Main.java', config: 'Makefile', marker: /public class Main/ },
+    { lang: 'c', ext: 'c', entry: 'main.c', config: 'Makefile', marker: /int main\(int argc, char \*\*argv\)/ },
+    { lang: 'cpp', ext: 'cpp', entry: 'main.cpp', config: 'Makefile', marker: /std::cout/ },
+    { lang: 'csharp', ext: 'cs', entry: 'Program.cs', config: 'app.csproj', marker: /static void Main/ },
+    { lang: 'php', ext: 'php', entry: 'index.php', config: 'composer.json', marker: /^<\?php/m },
+    { lang: 'ruby', ext: 'rb', entry: 'main.rb', config: 'Gemfile', marker: /require_relative/ },
+    { lang: 'swift', ext: 'swift', entry: 'main.swift', config: 'Makefile', marker: /print\("/ },
+    { lang: 'kotlin', ext: 'kt', entry: 'Main.kt', config: 'Makefile', marker: /fun main\(\)/ },
+  ];
+
+  for (const c of cases) {
+    it(`scaffolds ${c.lang}: ${c.entry} + ${c.config}`, async () => {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), `vaca-scaffold-${c.lang}-`));
+      try {
+        const gen: GeneratedFile[] = [{
+          fileName: `core.${c.ext}`,
+          language: c.lang,
+          code: '// node module',
+          nodeId: 'n1',
+          nodeLabel: `core.${c.ext}`,
+          dependencies: [],
+          exports: [],
+          errors: [],
+          validated: true,
+        }];
+        const res = await scaffolder.scaffold({
+          projectName: `${c.lang}-app`,
+          targetOS: 'linux',
+          files: gen,
+          nodes: [],
+          edges: [],
+          outputDir: dir,
+        });
+        const out = res.outputPath;
+        expect(fs.existsSync(path.join(out, c.entry))).toBe(true);
+        expect(fs.existsSync(path.join(out, c.config))).toBe(true);
+        expect(fs.readFileSync(path.join(out, c.entry), 'utf-8')).toMatch(c.marker);
+        // The node file is written under src/<node>/ and no TS index.ts leaks in.
+        expect(fs.existsSync(path.join(out, 'index.ts'))).toBe(false);
+      } finally {
+        fs.rmSync(dir, { recursive: true, force: true });
+      }
+    });
+  }
+});
+
+// Compiled languages: the entry point must wire the generated node modules in,
+// not just print a banner. Only a no-argument function read out of the node
+// file is ever called — nothing is guessed.
+describe('compiled-language entry points call their node modules', () => {
+  function nodeFile(lang: string, ext: string, name: string, code: string): GeneratedFile {
+    return {
+      fileName: `${name}.${ext}`,
+      language: lang,
+      code,
+      nodeId: `n-${name}`,
+      nodeLabel: `${name}.${ext}`,
+      dependencies: [],
+      exports: [],
+      errors: [],
+      validated: true,
+    };
+  }
+
+  async function entryFor(lang: string, ext: string, name: string, code: string, entry: string) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), `vaca-wire-${lang}-`));
+    try {
+      const res = await scaffolder.scaffold({
+        projectName: `${lang}-wire-app`,
+        targetOS: 'linux',
+        files: [nodeFile(lang, ext, name, code)],
+        nodes: [],
+        edges: [],
+        outputDir: dir,
+      });
+      return fs.readFileSync(path.join(res.outputPath, entry), 'utf-8');
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+
+  const cases: Array<{ lang: string; ext: string; entry: string; code: string; want: RegExp[] }> = [
+    {
+      lang: 'c', ext: 'c', entry: 'main.c',
+      // `run` is preferred over the earlier non-conventional helper.
+      code: 'int helper(void) { return 1; }\nint run(void) { return 0; }\n',
+      want: [/extern int run\(void\);/, /\(void\)run\(\);/],
+    },
+    {
+      lang: 'cpp', ext: 'cpp', entry: 'main.cpp',
+      code: 'int helper() { return 1; }\nint run() { return 0; }\n',
+      want: [/extern int run\(void\);/, /\(void\)run\(\);/],
+    },
+    {
+      lang: 'go', ext: 'go', entry: 'main.go',
+      code: 'package game\n\nfunc NewBoard(w int) *Board { return nil }\nfunc Run() { }\n',
+      // A call with no result is a bare statement; one with a result is discarded.
+      want: [/^\s*pkg0\.Run\(\)$/m, /import pkg0 /],
+    },
+    {
+      lang: 'rust', ext: 'rs', entry: 'main.rs',
+      code: 'pub struct Board { pub w: usize }\npub fn build(w: usize) -> Board { Board { w } }\npub fn run() { }\n',
+      want: [/let _ = core::run\(\);/],
+    },
+    {
+      lang: 'java', ext: 'java', entry: 'Main.java',
+      code: 'public class Player {\n  private int x;\n  public Player(int x) { this.x = x; }\n  public static void run() { }\n  public void move(int d) { x += d; }\n}\n',
+      want: [/Class<\?> _module0 = Player\.class;/, /Player\.run\(\);/],
+    },
+    {
+      lang: 'csharp', ext: 'cs', entry: 'Program.cs',
+      code: 'public class Engine\n{\n    public static void Run() { }\n    public void Tick() { }\n}\n',
+      want: [/var _module0 = typeof\(Engine\);/, /Engine\.Run\(\);/],
+    },
+    {
+      lang: 'swift', ext: 'swift', entry: 'main.swift',
+      code: 'struct Board {\n    static func run() { }\n    func place() { }\n}\n',
+      want: [/^_ = Board\.self$/m, /^Board\.run\(\)$/m],
+    },
+    {
+      lang: 'kotlin', ext: 'kt', entry: 'Main.kt',
+      code: 'class Board {\n    fun place() { }\n}\nfun run() { }\n',
+      want: [/val _module0 = Board::class/, /^\s+run\(\)$/m],
+    },
+  ];
+
+  for (const c of cases) {
+    it(`wires the node module into ${c.lang}`, async () => {
+      const entry = await entryFor(c.lang, c.ext, 'core', c.code, c.entry);
+      for (const w of c.want) expect(entry).toMatch(w);
+    });
+  }
+
+  it('never guesses: a module with no callable entry is left unwired', async () => {
+    const cEntry = await entryFor('c', 'c', 'core', 'int add(int a, int b) { return a + b; }\n', 'main.c');
+    expect(cEntry).not.toMatch(/add/);
+    expect(cEntry).toMatch(/none exposes a no-argument entry function/);
+
+    // A Java class with only instance methods is referenced, never called.
+    const javaEntry = await entryFor(
+      'java', 'java', 'core',
+      'public class Player {\n  public void move(int d) { }\n}\n',
+      'Main.java',
+    );
+    expect(javaEntry).toMatch(/Class<\?> _module0 = Player\.class;/);
+    expect(javaEntry).not.toMatch(/Player\.move/);
+  });
+
+  it('references (but does not call) a Rust module whose only fn takes arguments', async () => {
+    const entry = await entryFor('rust', 'rs', 'core', 'pub fn build(w: usize) -> usize { w }\n', 'main.rs');
+    expect(entry).toMatch(/let _ = core::build;/);
+    expect(entry).not.toMatch(/core::build\(\)/);
+  });
+
+  it('extracts only zero-argument declarations, and never C library names', () => {
+    expect(goNoArgFuncs('package p\nfunc Run() {}\nfunc Add(a int) int { return a }\n').map((f) => f.name)).toEqual(['Run']);
+    expect(rustNoArgFuncs('pub fn run() {}\npub fn build(x: u8) {}\n').map((f) => f.name)).toEqual(['run']);
+    expect(rustPublicFns('pub fn build(x: u8) {}\n')).toEqual(['build']);
+    expect(cNoArgFuncs('int printf(void) { return 0; }\nint run(void) { return 0; }\n', 'c').map((f) => f.name)).toEqual(['run']);
+    expect(javaStaticNoArgFuncs('public static void main(String[] args) {}\npublic static void run() {}\n').map((f) => f.name)).toEqual(['run']);
+    expect(csharpStaticNoArgFuncs('static void Main(string[] args) {}\npublic static void Run() {}\n').map((f) => f.name)).toEqual(['Run']);
+    expect(swiftNoArgFuncs('struct B {\n    static func go() {}\n}\nfunc help(x: Int) {}\nfunc run() {}\n').map((f) => f.name)).toEqual(['run', 'go']);
+    expect(kotlinTopLevelFuncs('fun main() {}\nfun run() {}\nfun helper(x: Int) {}\n').map((f) => f.name).sort()).toEqual(['main', 'run']);
+  });
+
+  it('plans nothing for a language it has no wiring for', () => {
+    expect(planModuleWiring('python', 'def run():\n    pass\n', 'core', 0)).toEqual({
+      declarations: [],
+      references: [],
+      calls: [],
+    });
   });
 });
