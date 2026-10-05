@@ -11,23 +11,63 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
-import { Project } from '../types.js';
+import { NodeData, Project } from '../types.js';
 import { AITranslator, classifyCodeComplexity, ModelTier } from '../ai/translator.js';
 // Reuse the chat/CLI path's GUI intent detection + concrete widget templates so
 // the canvas node-based build enforces the same GUI-entry quality floor.
 // Imported from the neutral shared module (NOT from the routes module) to avoid
 // triggering Router()/AITranslator side effects at module load.
 import { isGuiRequest, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScriptKeepExports } from '../ai/guiShared.js';
+import { VACA_BRAIN_DOCTRINE } from '../ai/prompts.js';
+// Deterministic (zero-LLM) tsc repair fixers shared with codePlanner's tsc
+// gate — TS2307 sibling-path resolution, TS2459 missing-export patching,
+// TS2345 partial-object call-sites, TS2304 content-driven imports, etc. The
+// canvas repair loop runs these BEFORE spending a slow regeneration, and only
+// files no fixer can touch fall through to the LLM. Imported from the neutral
+// shared module (NOT codePlanner, a routes module) to avoid Router/translator
+// side effects at load.
+import {
+  applyContentDrivenImportFix,
+  applyDeterministicExportNameFix,
+  applyDeterministicLocalCollisionFix,
+  applyDeterministicMissingExportFix,
+  applyDeterministicMissingReturnFix,
+  applyDeterministicPartialObjectFix,
+  applyDeterministicPrivateAccessFix,
+  applyDeterministicSiblingPathFix,
+  applyDeterministicVoidReturnFix,
+  normalizeImportExtensions,
+  stripCircularSelfImports,
+  stripPhantomPackageImports,
+} from '../ai/deterministicFixers.js';
 import { buildSync as esbuildBuildSync } from 'esbuild';
 import { buildSemanticSection } from '../utils/semanticConnect.js';
+import {
+  resolveTreeScopes,
+  planBridges,
+  buildCrossTreeBoundarySection,
+  buildBridgePrompt,
+  parseBridgeResponse,
+  bridgeFileName,
+  planExportLayout,
+  exportDirFor,
+  BRIDGE_SYSTEM_PROMPT,
+  type ResolvedTrees,
+  type BridgeModule,
+} from '../utils/treeScope.js';
 import { SandboxRunner } from '../sandbox/runner.js';
+import { sanitizeGoModuleName } from '../sandbox/nonTsCompileGate.js';
+import { runNonTsGatesWithRepair, pathFromGateFailure } from '../sandbox/nonTsRepair.js';
+import { runTscGate, deriveBuildVerdict, type TscEntry, type TscStatus, type SmokeVerdict } from '../sandbox/buildVerification.js';
+// The shared behavioral smoke gate — the same probes + bounded repair loop the
+// chat path (routes/codePlanner.ts) runs. Extracted to sandbox/ so BOTH
+// pipelines verify behavior, not just compilation.
+import { runStagedBehavioralSmoke } from '../sandbox/behavioralSmoke.js';
 import { learningEngine } from '../knowledge/learningEngine.js';
+import { isStubBody } from '../knowledge/qualityGate.js';
 import { getRegistry } from '../tools/ToolRegistry.js';
 import { captureVerifiedGeneration } from '../training/verifiedGenerationCapture.js';
 
-const execFileAsync = promisify(execFile);
 
 // Project root (backend/src/layers → up 3 = repo root). Used to locate the
 // TypeScript compiler for the live compile-check pass.
@@ -73,6 +113,31 @@ export interface GeneratedFile {
   code: string;
   nodeId: string;
   nodeLabel: string;
+  /**
+   * Tree Mode: the app tree this file belongs to. Undefined for the
+   * deterministic preview wrapper (and for bridge modules, which belong to no
+   * single tree — see `isBridge`). Lets the exporter lay the app trees out as
+   * separate apps instead of one flat `src/`.
+   */
+  treeId?: string;
+  /**
+   * Tree Mode: the app directory this file belongs to (`apps/app-2`), stamped
+   * only when the project is laid out as SEPARATE APPS. Undefined for a
+   * single-app project, which keeps the flat `src/` layout it always had.
+   */
+  appDir?: string;
+  /**
+   * Tree Mode: for a bridge module, the two app trees it connects
+   * (`[sourceTreeId, targetTreeId]`) — how the exporter knows which app
+   * entry points to wire it into. Empty/undefined for a node's own file.
+   */
+  treeIds?: string[];
+  /**
+   * True for a generated cross-app bridge module — the integration layer that
+   * carries a payload between two app trees. It is not any node's own file, so
+   * it has no node to repair against and belongs in `bridge/` on export.
+   */
+  isBridge?: boolean;
   /** Node IDs this file depends on (imports from) */
   dependencies: string[];
   /** What this file exports to other files (named symbols) */
@@ -190,13 +255,22 @@ export interface FileGenerationResult {
   failedCount: number;
   /** Map of nodeId → { entryFile, dependencies } for import graph */
   importGraph: Record<string, { entryFile: string; dependencies: string[]; exports: string[] }>;
-  /** True when the live tsc compile-check loop ran and every TS/JS file passes —
-   *  the authoritative verification verdict the training capture relies on. */
+  /** True when the live compile-check loop ran and EVERY applicable
+   *  per-language gate passed — tsc for TS/JS, go build for Go, py_compile for
+   *  Python, plus zero stub bodies. This is the honest whole-project verdict
+   *  (a project with no TS files is NOT vacuously clean anymore). */
   tsCompileClean: boolean;
   /** Contract violations detected in the initial post-write scan across all
    *  files (imports of non-dependencies, or of members the target never
    *  exports). Repair-loop re-detections are not double-counted. */
   contractViolations: number;
+  /** Per-language whole-project compile gate verdicts (non-TS languages). */
+  languageGates: Array<{ language: string; clean: boolean; errors: string[] }>;
+  /** Behavioral render-smoke verdict from the canvas path (null when the gate
+   *  was skipped — fast preview builds — or before the file set was staged). */
+  renderSmoke?: SmokeVerdict | null;
+  /** Behavioral CLI-smoke verdict from the canvas path (null when skipped). */
+  cliSmoke?: SmokeVerdict | null;
 }
 
 /**
@@ -220,8 +294,13 @@ export type GenerationProgressCallback = (progress: {
 /**
  * Build a dependency graph from project edges.
  * Returns a map of node label → [labels it depends on]
+ *
+ * Callers pass the edges of ONE app tree (`resolveTreeScopes(project).intraEdges`
+ * — see generateFiles): an edge between two app trees is a data handoff, not an
+ * import, and feeding it here made app 2's file try to import app 1's source.
+ * Exported so that boundary rule is unit-tested.
  */
-function buildDependencyGraph(
+export function buildDependencyGraph(
   nodes: { id: string; data: { label: string } }[],
   edges: { source: string; target: string }[]
 ): Map<string, string[]> {
@@ -255,6 +334,7 @@ export function getFileExtension(language: string): string {
     case 'go': return 'go';
     case 'rust': return 'rs';
     case 'cpp': case 'c++': return 'cpp';
+    case 'c': return 'c';
     case 'csharp': case 'c#': return 'cs';
     case 'swift': return 'swift';
     case 'kotlin': return 'kt';
@@ -352,12 +432,50 @@ export function projectGraphSignature(project: Project): string {
       description: n.data?.description ?? '',
       type: n.data?.type ?? n.type ?? '',
       language: n.data?.language ?? '',
+      // Tree membership is part of the graph: moving a node between app trees
+      // changes which app it is generated into, so it must invalidate the cache.
+      treeId: n.data?.treeId ?? '',
     }))
     .sort((a: any, b: any) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  // Edges carry the cross-app payload too: re-wiring "login session" to
+  // "database records" between the same two nodes produces a DIFFERENT bridge
+  // module, so a bare source->target key would serve the stale one from cache.
   const edges = (project.edges || [])
-    .map((e: any) => `${e.source ?? ''}->${e.target ?? ''}`)
+    .map((e: any) => {
+      const d: any = e.data || {};
+      const xt = d.kind === 'cross-tree'
+        ? `|cross-tree|${d.payloadType ?? ''}|${d.payloadLabel ?? ''}|${d.payloadDetail ?? ''}|${d.description ?? ''}`
+        : `${d.semantic ? '|semantic' : ''}|${d.label ?? ''}`;
+      return `${e.source ?? ''}->${e.target ?? ''}${xt}`;
+    })
     .sort();
-  return JSON.stringify({ nodes, edges, targetOS: project.targetOS ?? '' });
+  // The app trees themselves (name, goal, root) — renaming a tree or changing
+  // its goal changes the bridge prompts, so it belongs in the key as well.
+  const trees = ((project as any).trees || [])
+    .map((t: any) => ({
+      id: t?.id ?? '',
+      name: t?.name ?? '',
+      goal: t?.goal ?? '',
+      rootNodeId: t?.rootNodeId ?? '',
+    }))
+    .sort((a: any, b: any) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  // The master node's goal/purpose/scale MUST be part of the signature: the
+  // cache is keyed per project id, and a project whose goal changed ("chess"
+  // → "countdown timer") but whose node labels stayed the same used to reuse
+  // the stale cached generation verbatim — the countdown build shipped chess
+  // config code. Same for the project name.
+  const master = (project.nodes || []).find((n: any) => n.type === 'master');
+  const md: Record<string, any> = (master?.data as Record<string, any>) ?? {};
+  return JSON.stringify({
+    nodes,
+    edges,
+    trees,
+    targetOS: project.targetOS ?? '',
+    name: project.name ?? '',
+    goal: md.appGoal ?? '',
+    purpose: md.appPurpose ?? '',
+    scale: md.scale ?? '',
+  });
 }
 
 /**
@@ -375,9 +493,9 @@ export function projectGraphSignature(project: Project): string {
  * title (spaces, commas) produced `malformed import path ... invalid char ' '`
  * on every exported Go project.
  */
-export function sanitizeGoModuleName(name: string): string {
-  return (name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled';
-}
+// Re-exported from the neutral shared module (the chat write path uses the
+// same sanitizer so the export's import paths match its go.mod).
+export { sanitizeGoModuleName };
 
 export function buildImportStatement(
   sourceFileName: string,
@@ -657,7 +775,651 @@ export function findLocalDeclaredNames(code: string): Set<string> {
   return names;
 }
 
-export function postProcessTsJsCode(code: string): string {
+/**
+ * Scope-leak detector — the deterministic lint for the single-file-mode
+ * failure class (the 14B's most common bug in the teacher batch: seq 8
+ * checkers render-view referenced boardState/currentPlayer as undeclared
+ * globals, seq 9 password gen used a render-local generatedPassword at module
+ * scope, seq 12 stopwatch used timerInterval/elapsedTime declared inside a
+ * sibling handler, seq 13 tip calc called module-local appendNumber() from
+ * inline onclick="..." attributes that only see the global scope).
+ *
+ * Returns actionable TS2304/TS2451-style messages the repair loop can act on
+ * (tsc says only "Cannot find name 'X'" — it never tells the model WHY, so
+ * blind repair re-emits the same leaked-global style). Best-effort: never
+ * hard-fails, only feeds repair.
+ */
+export interface ScopeLeakContext {
+  /** This file's module label (its own exports are excluded from sibling search). */
+  selfLabel?: string;
+  /** Labels of modules this file is ALLOWED to import from (its wiring deps). */
+  deps?: string[];
+  /** Every module's exported names by label, so a leaked name can be traced to
+   *  the sibling that owns it — and the model told whether it may import it. */
+  allExports?: Map<string, string[]>;
+}
+
+export function findScopeLeaks(code: string, ctx?: ScopeLeakContext): string[] {
+  const errors: string[] = [];
+  const stripped = stripStringsAndComments(code);
+
+  // 1) Inline event-handler scope (classic seq 13): onclick="fn(...)" strings
+  //    inside template literals reference module-local functions that the
+  //    browser evaluates in GLOBAL scope — they throw ReferenceError at
+  //    runtime and tsc can't see it. Scan the RAW code (handlers live inside
+  //    template literals) for handler attribute names.
+  const handlerRe = /\bon(?:click|change|input|submit|keyup|keydown|keypress|load|focus|blur|dblclick|contextmenu|mouseover|mouseout|mousedown|mouseup|select|scroll|toggle)\s*=\s*["']([A-Za-z_$][\w$]*)\s*\(/gi;
+  const topDecls = collectTopLevelDecls(stripped);
+  let hm: RegExpExecArray | null;
+  while ((hm = handlerRe.exec(code)) !== null) {
+    const fn = hm[1];
+    if (GLOBAL_NAMES.has(fn) || topDecls.has(fn)) continue;
+    errors.push(
+      `TS2304: Cannot find name '${fn}' — inline ${hm[0].split('=')[0].trim()} handler references a function that is NOT visible from the HTML attribute (inline handlers run in GLOBAL scope; '${fn}' is module-local inside this file). Attach the listener programmatically inside render() with addEventListener (e.g. btn.addEventListener('click', () => ${fn}(...))) instead of an inline onclick attribute.`
+    );
+  }
+
+  // 2) Scope containment (block-tree): an identifier referenced at a position
+  //    is a leak when no declaration of that name is visible from that
+  //    position. Visibility = declarations in the same block, any ANCESTOR
+  //    block, or module scope; sibling blocks CANNOT see each other's locals
+  //    (seq 12 stopwatch: timerInterval/elapsedTime declared in the Start
+  //    handler, referenced from Stop/Reset/Lap). Never-declared names are the
+  //    seq 8 class (boardState/currentPlayer as implicit globals); a module-
+  //    scope reference to a function-local is the seq 9 class.
+  const blocks = buildBlockTree(stripped);
+  const moduleDecls = blocks.length ? blocks[0].decls : collectTopLevelDecls(stripped);
+  const refs = collectRefsWithPos(stripped);
+
+  for (const ref of refs) {
+    if (GLOBAL_NAMES.has(ref.name) || TS_KEYWORDS.has(ref.name)) continue;
+    if (moduleDecls.has(ref.name)) continue;
+    // Walk the reference's ancestor chain (innermost block → … → module root).
+    // The name is visible iff ANY ancestor-or-self block declares it — a local
+    // in the same function, a sibling scope, or a module-level declaration.
+    // Sibling FUNCTION bodies never share an ancestor below the module, so a
+    // name declared only in one handler and used in another is NOT visible.
+    const refBlock = innermostBlockAt(blocks, ref.pos);
+    const declaringBlocks: number[] = [];
+    for (const b of blocks) if (b.decls.has(ref.name)) declaringBlocks.push(b.id);
+    const visible = refBlock
+      ? declaringBlocks.some((id) => isAncestor(blocks, id, refBlock.id))
+      : false;
+    if (visible) continue;
+    if (declaringBlocks.length > 0) {
+      errors.push(
+        `TS2451: '${ref.name}' is referenced here but declared in a different scope (${describeScope(blocks, declaringBlocks[0], ref.pos, stripped)}) — it is out of scope where it is used. Hoist the declaration to module scope, or receive it via a function parameter/return value instead of relying on a leaked local.`
+      );
+    } else {
+      // Trace the name to a sibling module's exports so the guidance is exact:
+      // "import it" if a DEPENDENCY exports it, "you cannot import it" if only
+      // a non-dependency sibling does (seq 14: data-store.ts calls `convert`
+      // from core-engine.ts, which is NOT one of its wiring deps — telling the
+      // model to "declare it locally" just made it re-emit the same call).
+      const self = ctx?.selfLabel;
+      const depSet = new Set(ctx?.deps || []);
+      const exportedBy = (ctx?.allExports
+        ? [...ctx.allExports.entries()].filter(([label, names]) => label !== self && (names || []).includes(ref.name))
+        : []) as Array<[string, string[]]>;
+      const depHit = exportedBy.find(([label]) => depSet.has(label));
+      if (depHit) {
+        errors.push(
+          `TS2304: Cannot find name '${ref.name}' — it IS exported by your dependency ${labelToFileName(depHit[0])}.ts but you never imported it. WRITE the import for it (imports to dependency modules are allowed and the build dedupes them) or add it to your existing import from that module (see IMPORT TARGETS for its exact signature).`
+        );
+      } else if (exportedBy.length > 0) {
+        const owners = [...new Set(exportedBy.map(([label]) => labelToFileName(label) + '.ts'))].join(', ');
+        const depNames = (ctx?.deps || []).map(labelToFileName).join(', ');
+        errors.push(
+          `TS2304: Cannot find name '${ref.name}' — it is exported by ${owners}, but that module is NOT one of this file's dependencies (dependencies: ${depNames || 'none'}), so you CANNOT import it. If your logic duplicates what that module does, REMOVE this code and use a function from your actual dependencies (see IMPORT TARGETS) or implement '${ref.name}' locally.`
+        );
+      } else {
+        errors.push(
+          `TS2304: Cannot find name '${ref.name}' — it is referenced but never declared, imported, or received anywhere in this file. This is a multi-file app: you cannot rely on implicit globals. Declare it locally or pass it in as a function parameter.`
+        );
+      }
+    }
+  }
+  return errors;
+}
+
+interface ScopeBlock {
+  id: number;
+  start: number;
+  end: number;
+  parent: number | null;
+  decls: Set<string>;
+}
+
+/**
+ * Build the brace-block tree of the string-stripped code. Every `{...}` block
+ * (function bodies, arrow bodies, control-flow bodies, object literals) is a
+ * scope node; the module itself is the root (id 0, the whole code). Declarations
+ * directly inside each block (const/let/var/function/class + params of the
+ * enclosing function) are attached to it.
+ */
+function buildBlockTree(code: string): ScopeBlock[] {
+  // Import statements are module-level declarations, NOT scopes — their
+  // `{ AIController }` braces must not create blocks (that would blank the
+  // import and hide the name from the root decls). Blank the whole import line
+  // for the brace scan; the names are collected separately for the root.
+  let scanCode = code;
+  const importNames: string[] = [];
+  const importRe = /^\s*import[^\n;]*;?/gm;
+  let im: RegExpExecArray | null;
+  while ((im = importRe.exec(code)) !== null) {
+    const seg = im[0];
+    for (const nm of seg.matchAll(/[A-Za-z_$][\w$]*/g)) {
+      if (!['import', 'from', 'type', 'as'].includes(nm[0])) importNames.push(nm[0]);
+    }
+    scanCode = scanCode.slice(0, im.index) + ' '.repeat(seg.length) + scanCode.slice(im.index + seg.length);
+  }
+
+  const blocks: ScopeBlock[] = [
+    { id: 0, start: 0, end: code.length, parent: null, decls: new Set(importNames) },
+  ];
+  let nextId = 1;
+  const stack: number[] = [0];
+  // Destructuring patterns (`const { a, b } = ...`) must NOT become scope
+  // blocks: a `{` that opens a binding pattern has no declarations of its own,
+  // and treating it as a block blanks the destructured names from the parent
+  // block's direct text — so `state`/`events` in
+  // `const { state, events } = stateAndEvents;` were declared NOWHERE and
+  // every use was a false TS2304/TS2451 (observed on the tsc-verified
+  // todo_list data-store.ts). collectAllDecls' destrRe then declares the names
+  // in the ENCLOSING block, which is their true scope. Only the const/let/var
+  // statement form is skipped (object literals after `=`/`return`/`(` still
+  // create blocks; function-param destructuring is rarer in generated code).
+  let skipDepth = 0;
+  for (let i = 0; i < scanCode.length; i++) {
+    const c = scanCode[i];
+    if (skipDepth > 0) {
+      if (c === '{') skipDepth++;
+      else if (c === '}') skipDepth--;
+      continue;
+    }
+    if (c === '{') {
+      // `const {` / `let {` / `var {` as the last tokens before this brace =
+      // a destructuring binding pattern, not a scope.
+      const prelude = scanCode.slice(Math.max(0, i - 60), i);
+      if (/(?:^|[;{}])\s*(?:const|let|var)\s*$/.test(prelude)) {
+        skipDepth = 1;
+        continue;
+      }
+      const parent = stack[stack.length - 1] ?? 0;
+      const id = nextId++;
+      blocks.push({ id, start: i, end: i, parent, decls: new Set() });
+      stack.push(id);
+    } else if (c === '}') {
+      const id = stack.pop() ?? 0;
+      if (id !== 0) blocks[id].end = i;
+    }
+  }
+  // Attach DIRECT declarations to each block: the block's body with every
+  // DESCENDANT block blanked out, so a `let` in a nested function is never
+  // counted as a declaration of the outer block (that would make sibling leaks
+  // invisible — the outer block must not claim its children's locals). The
+  // block's OWN span stays intact (only strictly-inner blocks are blanked).
+  const blanked = code.split('');
+  for (const b of blocks) {
+    if (b.id === 0) continue;
+    for (let i = b.start + 1; i <= b.end; i++) blanked[i] = ' ';
+  }
+  // Per-block DIRECT text: the block's body with every STRICT descendant
+  // blanked out (a nested arrow's locals must never count as the outer block's
+  // declarations — that would make sibling leaks invisible). Built by copying
+  // the block's own chars and blanking any position inside a child block.
+  const directText = (b: ScopeBlock): string => {
+    const chars = code.slice(b.start + 1, b.end).split('');
+    for (const child of blocks) {
+      if (child.id === b.id || child.id === 0) continue;
+      if (child.start > b.start && child.end < b.end) {
+        for (let i = child.start - (b.start + 1); i < child.end - (b.start + 1); i++) {
+          if (i >= 0 && i < chars.length) chars[i] = ' ';
+        }
+      }
+    }
+    return chars.join('');
+  };
+
+  for (const b of blocks) {
+    const text = b.id === 0
+      ? code.split('').map((_, i) => (blocks.some((c) => c.id !== 0 && c.start <= i && i <= c.end) ? ' ' : code[i])).join('')
+      : directText(b);
+    for (const d of collectAllDecls(text, b.id === 0)) b.decls.add(d);
+  }
+  // Class-member methods: run the method scanner on the RAW class body (the
+  // blanked direct text destroys line structure — `  public handleMove(...)`
+  // becomes one long line when nested bodies are blanked, breaking the
+  // line-start anchor). A block whose prelude is `class Name` is a class body;
+  // collect its member names + params from the original code.
+  for (const b of blocks) {
+    if (b.id === 0) continue;
+    const prelude = code.slice(Math.max(0, b.start - 80), b.start);
+    if (!/\bclass\s+[A-Za-z_$][\w$]*\s*$/.test(prelude)) continue;
+    const rawBody = code.slice(b.start + 1, b.end);
+    const methodRe = /^\s*(?:(?:public|private|protected|static|readonly|async|declare|abstract)\s+)*(?:get\s+|set\s+|async\s+)?([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*(?::[^;{=]*)?/gm;
+    let mm: RegExpExecArray | null;
+    while ((mm = methodRe.exec(rawBody)) !== null) {
+      const params = mm[2];
+      const hasTypedParam = /[A-Za-z_$][\w$]*\s*:\s*[A-Za-z_$][\w$]*/.test(params);
+      const hasReturnType = /:\s*[A-Za-z_$][\w$<>\[\]|]*\s*$/.test(mm[0]);
+      if (hasTypedParam || hasReturnType || params.trim() === '') {
+        b.decls.add(mm[1]);
+        // NOTE: method PARAMS are deliberately NOT added to the class block —
+        // the param-attachment loop below declares them in the method BODY
+        // block (the correct scope). Adding them here too made a param name
+        // (e.g. `task` in `addTask(task: Task)`) a CLASS-scope declaration,
+        // so an unrelated same-named property in another interface (e.g.
+        // `task?: Task` in TaskRequest) was flagged TS2451 "declared in a
+        // different scope" — a false positive on tsc-clean code (observed on
+        // the verified todo_list build, all 5 files).
+      }
+    }
+  }
+  // Params: for each function-ish block `name(...) {` / `(...) => {` / arrow
+  // `x => {`, the names inside the parens are visible throughout that block.
+  // The paren must be a FUNCTION SIGNATURE (followed by `{` or `=>` directly),
+  // never a call like `foo(x);` (whose block it does not start).
+  for (const b of blocks) {
+    if (b.id === 0) continue;
+    const before = code.slice(Math.max(0, b.start - 140), b.start);
+    // Find the LAST `(` ... `)` directly before the `{`, optionally followed by
+    // `=>` (arrow: `(a, b) => {`), OR a bare arrow param `x => {`. Allow an
+    // optional RETURN TYPE between `)` and `{` (`f(x: string): number {`) —
+    // without it, function params on exported functions with return types are
+    // never collected and every use is a false "never declared" leak.
+    const m = before.match(/\(([^()]*)\)(?:\s*:\s*[^{()]*)?\s*(=>)?\s*$/);
+    if (m) {
+      const afterParen = code.slice(b.start, b.start + 1); // the `{`
+      const prelude = before.slice(0, Math.max(0, before.length - m[0].length));
+      // The `=>` may be captured INSIDE the match (m[2]) for `(...) => {`, or
+      // in the prelude for `=> {` after a paren-less head.
+      const isArrow = !!m[2] || /=>\s*$/.test(prelude);
+      const isFnSig = afterParen === '{' && (
+        isArrow ||
+        /\bfunction\s+[A-Za-z_$][\w$]*\s*$/.test(prelude) ||
+        // method or named arrow: `name(...) {` where name is preceded by a
+        // statement boundary (never `.` = a call like obj.foo(...) { }
+        /(?:^|[;{}])\s*(?:(?:public|private|protected|static|readonly|async|declare)\s+)*(?:get\s+|set\s+|async\s+)?[A-Za-z_$][\w$]*\s*$/.test(prelude)
+      );
+      if (isFnSig) {
+        for (const p of m[1].matchAll(/[A-Za-z_$][\w$]*/g)) {
+          if (!TS_KEYWORDS.has(p[0])) b.decls.add(p[0]);
+        }
+        continue;
+      }
+    }
+    // Bare arrow param: `forEach(btn => {` — a single identifier followed by
+    // `=> {` directly before this block.
+    const bare = before.match(/([A-Za-z_$][\w$]*)\s*=>\s*$/);
+    if (bare && !TS_KEYWORDS.has(bare[1])) b.decls.add(bare[1]);
+  }
+  // Expression-bodied arrows (`x => expr` / `(a, b) => expr`): they create NO
+  // `{` block, so their params would be declared NOWHERE and every use inside
+  // the expression — e.g. `t` in `list.findIndex(t => t.id === id)` — is a
+  // false TS2304 "Cannot find name 't'". Register the params in the innermost
+  // enclosing block: the arrow sits inside it, so that block is the practical
+  // visibility scope (a heuristic — a same-named real leak in that block is
+  // still caught by the tsc gate, the lint is a repair hint, not the verdict).
+  const exprArrowRe = /(?:\(([^()]*)\)|([A-Za-z_$][\w$]*))\s*=>\s*(?![\s{])/g;
+  let ea: RegExpExecArray | null;
+  while ((ea = exprArrowRe.exec(code)) !== null) {
+    const params = ea[1] !== undefined ? ea[1] : ea[2];
+    const block = innermostBlockAt(blocks, ea.index);
+    if (block) {
+      for (const p of params.matchAll(/[A-Za-z_$][\w$]*/g)) {
+        if (!TS_KEYWORDS.has(p[0])) block.decls.add(p[0]);
+      }
+    }
+  }
+  // catch (e) bindings — the exception variable is a local, never a leak.
+  const catchRe = /\bcatch\s*\(([^()]*)\)/g;
+  let cm: RegExpExecArray | null;
+  while ((cm = catchRe.exec(code)) !== null) {
+    for (const c of cm[1].matchAll(/[A-Za-z_$][\w$]*/g)) {
+      if (!TS_KEYWORDS.has(c[0])) blocks[0].decls.add(c[0]);
+    }
+  }
+  return blocks;
+}
+
+/** Innermost block containing `pos` (smallest span wins). */
+function innermostBlockAt(blocks: ScopeBlock[], pos: number): ScopeBlock | undefined {
+  let best: ScopeBlock | undefined;
+  for (const b of blocks) {
+    if (b.start <= pos && pos <= b.end && (!best || b.end - b.start < best.end - best.start)) best = b;
+  }
+  return best;
+}
+
+/** Is block `ancestorId` an ancestor-or-self of block `id` in the tree? */
+function isAncestor(blocks: ScopeBlock[], ancestorId: number, id: number): boolean {
+  let cur: number | null = id;
+  while (cur !== null) {
+    if (cur === ancestorId) return true;
+    cur = blocks.find((b) => b.id === cur)?.parent ?? null;
+  }
+  return false;
+}
+
+function describeScope(blocks: ScopeBlock[], declId: number, refPos: number, code: string): string {
+  const decl = blocks.find((b) => b.id === declId);
+  const ref = innermostBlockAt(blocks, refPos);
+  const where = (b: ScopeBlock | undefined): string => {
+    if (!b || b.id === 0) return 'module scope';
+    const line = code.slice(0, b.start).split('\n').length;
+    const sample = code.slice(b.start, b.start + 60).split('\n')[0].trim().slice(0, 50);
+    return `block starting at line ${line} (${sample || 'a function body'})`;
+  };
+  return `declared in ${where(decl)} but used at ${where(ref)}`;
+}
+
+/**
+ * All identifier references in the file with their positions, excluding
+ * property accesses (obj.name), type annotations (name: T), and keywords.
+ */
+function collectRefsWithPos(code: string): Array<{ name: string; pos: number }> {
+  const refs: Array<{ name: string; pos: number }> = [];
+  const re = /[A-Za-z_$][A-Za-z0-9_$]*/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code)) !== null) {
+    const prev = m.index > 0 ? code[m.index - 1] : '';
+    const after = code.slice(m.index + m[0].length, m.index + m[0].length + 5);
+    if (prev === '.' || prev === ':') continue;       // property / type position
+    if (/^\??\s*:/.test(after)) continue;             // annotation `x: Foo` / optional `x?: Foo` (the `?` previously defeated the skip)
+    if (/^\s*=>/.test(after)) continue;               // arrow param `x => {` / `x=>{`
+    if (prev === '(' && /^\s*\)\s*=>/.test(after)) continue; // `(x) => {`
+    if (TS_KEYWORDS.has(m[0]) || GLOBAL_NAMES.has(m[0])) continue;
+    refs.push({ name: m[0], pos: m.index });
+  }
+  return refs;
+}
+
+/** Known browser/node globals + DOM + built-in APIs — never flagged as leaks. */
+const GLOBAL_NAMES = new Set([
+  // JS built-ins
+  'Object', 'Array', 'String', 'Number', 'Boolean', 'Math', 'JSON', 'Date', 'RegExp',
+  'Promise', 'Symbol', 'Map', 'Set', 'WeakMap', 'WeakSet', 'Error', 'TypeError',
+  'RangeError', 'ReferenceError', 'SyntaxError', 'parseInt', 'parseFloat', 'isNaN',
+  'isFinite', 'NaN', 'Infinity', 'undefined', 'null', 'BigInt', 'Intl', 'Reflect',
+  'Proxy', 'Function', 'globalThis', 'arguments', 'eval', 'decodeURI', 'encodeURI',
+  'decodeURIComponent', 'encodeURIComponent', 'ArrayBuffer', 'DataView', 'Uint8Array',
+  'Uint16Array', 'Uint32Array', 'Int8Array', 'Int16Array', 'Int32Array', 'Float32Array',
+  'Float64Array', 'Uint8ClampedArray', 'structuredClone', 'queueMicrotask',
+  // browser / DOM
+  'document', 'window', 'navigator', 'location', 'history', 'screen', 'localStorage',
+  'sessionStorage', 'console', 'alert', 'confirm', 'prompt', 'fetch', 'XMLHttpRequest',
+  'WebSocket', 'requestAnimationFrame', 'cancelAnimationFrame', 'setTimeout',
+  'setInterval', 'clearTimeout', 'clearInterval', 'addEventListener', 'Event',
+  'MouseEvent', 'KeyboardEvent', 'TouchEvent', 'CustomEvent', 'HTMLElement',
+  'HTMLInputElement', 'HTMLButtonElement', 'HTMLDivElement', 'HTMLSpanElement',
+  'HTMLTableElement', 'HTMLCanvasElement', 'Element', 'Node', 'Document', 'Text',
+  'Comment', 'URL', 'URLSearchParams', 'Blob', 'File', 'FileReader', 'FormData',
+  'Image', 'Audio', 'crypto', 'performance', 'matchMedia', 'ResizeObserver',
+  'IntersectionObserver', 'MutationObserver', 'CanvasRenderingContext2D',
+  'AudioContext', 'requestIdleCallback', 'cancelIdleCallback', 'atob', 'btoa',
+  'origin', 'scrollTo', 'localStorage', 'event', 'getComputedStyle',
+  // node
+  'require', 'module', 'exports', 'process', 'Buffer', 'global', '__dirname',
+  '__filename', 'setImmediate', 'clearImmediate', 'console',
+]);
+
+/** TS keywords / primitive type names that are never identifier references. */
+const TS_KEYWORDS = new Set([
+  'return', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break',
+  'continue', 'function', 'class', 'const', 'let', 'var', 'new', 'typeof',
+  'instanceof', 'in', 'of', 'void', 'delete', 'try', 'catch', 'finally', 'throw',
+  'this', 'super', 'yield', 'await', 'async', 'export', 'import', 'default',
+  'static', 'get', 'set', 'extends', 'implements', 'interface', 'type', 'enum',
+  'namespace', 'public', 'private', 'protected', 'readonly', 'abstract', 'as',
+  'is', 'keyof', 'infer', 'satisfies', 'unknown', 'never', 'any', 'string',
+  'number', 'boolean', 'object', 'symbol', 'bigint', 'true', 'false', 'null',
+  'undefined', 'from', 'to', 'of', 'constructor', 'DOMContentLoaded', 'void',
+]);
+
+/**
+ * Replace string/template/comment contents with spaces (preserving newlines
+ * so line-relative regexes still align) so identifier scans never match words
+ * inside string literals, template interpolations, or comments.
+ */
+function stripStringsAndComments(code: string): string {
+  let out = '';
+  let i = 0;
+  const n = code.length;
+  while (i < n) {
+    const c = code[i];
+    const nx = code[i + 1];
+    if (c === '/' && nx === '/') {
+      while (i < n && code[i] !== '\n') { out += ' '; i++; }
+      continue;
+    }
+    if (c === '/' && nx === '*') {
+      out += '  '; i += 2;
+      while (i < n && !(code[i] === '*' && code[i + 1] === '/')) {
+        out += code[i] === '\n' ? '\n' : ' ';
+        i++;
+      }
+      out += '  '; i += 2;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') {
+      const q = c;
+      out += ' '; i++;
+      while (i < n && code[i] !== q) {
+        if (code[i] === '\\') { i++; out += ' '; }
+        if (i < n) { out += code[i] === '\n' ? '\n' : ' '; i++; }
+      }
+      if (i < n) { out += ' '; i++; }
+      continue;
+    }
+    // Regex literal: `/.../ ` where the `/` follows `(`, `,`, `=`, `:`, `[`, `!`,
+    // or `return` — not a division. Blank it so words inside a regex (e.g.
+    // /^Generated Password:\s*/) are never treated as identifier references.
+    if (c === '/' && i > 0 && /[=(:,![?&|+\-*<>]|\breturn\s*$/.test(out.slice(-8))) {
+      out += ' '; i++;
+      let escaped = false;
+      while (i < n) {
+        if (!escaped && code[i] === '/') { i++; break; }
+        if (!escaped && code[i] === '\n') break; // unterminated — stop
+        escaped = !escaped && code[i] === '\\';
+        out += code[i] === '\n' ? '\n' : ' ';
+        i++;
+      }
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return out;
+}
+
+/**
+ * Names declared at module scope (brace depth 0): export/function/class/const/
+ * let/var/type/interface/enum declarations whose keyword sits at depth 0, plus
+ * import binding names. Used to know which names inline handlers CAN see
+ * (top-level functions are global-ish via the bundler's module wrapper — the
+ * lint is conservative and only complains when the name is clearly local).
+ */
+function collectTopLevelDecls(code: string): Set<string> {
+  const names = new Set<string>();
+  const re = /^(?:export\s+)?(?:declare\s+)?(?:abstract\s+)?(?:async\s+)?(?:function|class|interface|enum|type|const|let|var)\s+([A-Za-z_$][\w$]*)/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code)) !== null) names.add(m[1]);
+  const importRe = /import\s*(?:type\s*)?(?:\{[^}]*\}|[A-Za-z_$][\w$]*|\*\s*as\s+[A-Za-z_$][\w$]*)\s*from/g;
+  let im: RegExpExecArray | null;
+  while ((im = importRe.exec(code)) !== null) {
+    const seg = im[0];
+    for (const nm of seg.matchAll(/[A-Za-z_$][\w$]*/g)) {
+      if (nm[0] !== 'import' && nm[0] !== 'from' && nm[0] !== 'type' && nm[0] !== 'as') names.add(nm[0]);
+    }
+  }
+  return names;
+}
+
+/** Every declared name in the file regardless of scope (locals, params, destructure).
+ *  When `moduleScope` is true, function params of top-level declarations are NOT
+ *  counted (a render(container) param is body-scoped, never module-visible). */
+function collectAllDecls(code: string, moduleScope: boolean = false): Set<string> {
+  const names = new Set<string>();
+  // const/let/var + function/class/type/interface/enum.
+  const declRe = /(?:const|let|var|function|class|interface|enum|type)\s+([A-Za-z_$][\w$]*)/g;
+  let m: RegExpExecArray | null;
+  while ((m = declRe.exec(code)) !== null) names.add(m[1]);
+  if (!moduleScope) {
+    // Function/arrow params ONLY — never call arguments. A param list is a `(`
+    // immediately preceded by `function NAME`, an arrow `=>`, or a name that is
+    // a declaration (method/function). A call like clearInterval(timerInterval)
+    // must never declare timerInterval.
+    const fnParamRe = /(?:\bfunction\s+[A-Za-z_$][\w$]*\s*|\([^()]*\)\s*=>|(?:^|[^\w$])(?:[A-Za-z_$][\w$]*)\s*)\(([^()]*)\)/g;
+    let p: RegExpExecArray | null;
+    while ((p = fnParamRe.exec(code)) !== null) {
+      // Only treat as params when this paren is a function signature: followed
+      // by `=>`, `{`, or a return type `:`. A plain call `name(args);` or
+      // `obj.name(args)` is not.
+      const after = code.slice(p.index + p[0].length, p.index + p[0].length + 30);
+      const isFnSig = /^\s*(?:=>|\{|:\s*[A-Za-z_$][\w$<>\[\]|]*\s*\{)/.test(after) ||
+        /\bfunction\b/.test(code.slice(Math.max(0, p.index - 60), p.index));
+      if (isFnSig) {
+        for (const pn of p[1].matchAll(/[A-Za-z_$][\w$]*/g)) {
+          if (!TS_KEYWORDS.has(pn[0])) names.add(pn[0]);
+        }
+      }
+    }
+  }
+  const destrRe = /\{\s*([A-Za-z_$][\w$]*\s*(?::\s*[A-Za-z_$][\w$]*)?\s*(?:,\s*[A-Za-z_$][\w$]*\s*(?::\s*[A-Za-z_$][\w$]*)?)*)\s*}/g;
+  let dm: RegExpExecArray | null;
+  while ((dm = destrRe.exec(code)) !== null) {
+    for (const nm of dm[1].matchAll(/[A-Za-z_$][\w$]*/g)) names.add(nm[0]);
+  }
+  // Class member methods: `save(k: string, v: number) { ... }` — the method
+  // NAME is a declaration, not a reference (a `ds.save(...)` call must never
+  // be flagged as an undeclared identifier). Methods almost always carry typed
+  // params or a return type, so we require the parameter list to contain a type
+  // annotation — a plain untyped call `foo(x)` is not treated as a method.
+  // Class member methods — match at LINE START (direct text keeps newlines even
+  // after blanking, so `[;{}]` boundaries are unreliable). `name(...)` whose
+  // line begins with optional modifiers/access modifiers. Requires typed params,
+  // a return type, or an empty param list (a bare call like `foo(x)` mid-line
+  // is not a declaration). A line-start CALL like `handleSomething();` must not
+  // match: after the parens the next non-space char must NOT be `;` or `=`
+  // (a call/assignment — the method body `{` is blanked to a space in direct
+  // text, so it shows up as nothing, which is what we want to allow).
+  const methodRe = /^\s*(?:(?:public|private|protected|static|readonly|async|declare|abstract)\s+)*(?:get\s+|set\s+|async\s+)?([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*(?::[^;{=]*)?(?!\s*[;=])/gm;
+  let mm: RegExpExecArray | null;
+  while ((mm = methodRe.exec(code)) !== null) {
+    const params = mm[2];
+    const hasTypedParam = /[A-Za-z_$][\w$]*\s*:\s*[A-Za-z_$][\w$]*/.test(params);
+    const hasReturnType = /:\s*[A-Za-z_$][\w$<>\[\]|]*\s*$/.test(mm[0]);
+    const isMethodLike = hasTypedParam || hasReturnType || params.trim() === '';
+    if (isMethodLike) names.add(mm[1]);
+  }
+  const importRe = /import\s*(?:type\s*)?(?:\{[^}]*\}|[A-Za-z_$][\w$]*|\*\s*as\s+[A-Za-z_$][\w$]*)\s*from/g;
+  let im: RegExpExecArray | null;
+  while ((im = importRe.exec(code)) !== null) {
+    for (const nm of im[0].matchAll(/[A-Za-z_$][\w$]*/g)) {
+      if (!['import', 'from', 'type', 'as'].includes(nm[0])) names.add(nm[0]);
+    }
+  }
+  return names;
+}
+
+
+
+/**
+ * Position-insensitive normalization of a generated-file compile error —
+ * strips the trailing `(line N)` so a repair that merely MOVES an error to a
+ * new line still counts as the same underlying issue. Mirrors codePlanner's
+ * normalizeTscError for the fileGenerator error format (`TSxxxx: msg (line N)`).
+ */
+export function normalizeGenError(e: string): string {
+  return e.replace(/\(line \d+\)/g, '').trim();
+}
+
+/**
+ * Error-CLASS normalization: strips quoted identifiers in addition to line
+ * numbers, so `TS2339: Property 'push' does not exist on type 'Task'` and
+ * `TS2339: Property 'find' does not exist on type 'Task'` collapse to the
+ * SAME signature. Observed live (R9 audit): the 14B's repair rounds didn't
+ * fix the failure CLASS — they just re-invented a DIFFERENT member each
+ * round (push → some → find on the same Task type), so an exact-text
+ * signature never matched and the loop ran all 3 slow rounds. Same error
+ * class on the same file = no progress, even if the member name moved.
+ */
+export function normalizeGenErrorClass(e: string): string {
+  return normalizeGenError(e).replace(/['"][^'"]*['"]/g, "''").replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Deterministic signature of ONE file's error set — position-insensitive AND
+ * order-insensitive (errors sorted), and CLASS-aware (member/type names
+ * stripped via normalizeGenErrorClass), so a repair that merely re-invents a
+ * DIFFERENT broken member on the same type counts as stalled. Used by
+ * compileCheckAndFix's per-file stall detection: a file whose error CLASS
+ * set is unchanged is given up on instead of re-spending slow 14B rounds.
+ */
+export function genErrorSignature(errs: string[]): string {
+  return errs.map(normalizeGenErrorClass).sort().join('|');
+}
+
+/**
+ * Deterministic signature of the WHOLE round's error map (file → errors),
+ * sorted by file label. Used by compileCheckAndFix's GLOBAL no-progress
+ * detection: when this is identical to the previous round's, no file moved
+ * and the repair loop stops instead of re-spending slow 14B regenerations.
+ */
+export function genRoundSignature(errorsByLabel: Map<string, string[]>): string {
+  return [...errorsByLabel.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([k, v]) => `${k}|${genErrorSignature(v)}`).join('\n');
+}
+
+/**
+ * Truncation detector: a file cut off mid-generation (output token cap)
+ * almost always ends with more opening `{` than closing `}`. Counts braces
+ * outside strings/comments/template literals so inline `{` in code text never
+ * trips it. Returns null when balanced, else the {open, close} counts.
+ */
+export function findTruncation(code: string): { open: number; close: number } | null {
+  let open = 0;
+  let close = 0;
+  let inString: string | null = null;
+  let inTemplate = false;
+  let inLineComment = false;
+  let inBlockComment = false;
+  for (let i = 0; i < code.length; i++) {
+    const ch = code[i];
+    const next = code[i + 1];
+    if (inLineComment) {
+      if (ch === '\n') inLineComment = false;
+      continue;
+    }
+    if (inBlockComment) {
+      if (ch === '*' && next === '/') { inBlockComment = false; i++; }
+      continue;
+    }
+    if (inString) {
+      if (ch === '\\') { i++; continue; }
+      if (ch === inString) inString = null;
+      continue;
+    }
+    if (inTemplate) {
+      if (ch === '\\') { i++; continue; }
+      if (ch === '`') inTemplate = false;
+      continue;
+    }
+    if (ch === '/' && next === '/') { inLineComment = true; i++; continue; }
+    if (ch === '/' && next === '*') { inBlockComment = true; i++; continue; }
+    if (ch === '"' || ch === "'") { inString = ch; continue; }
+    if (ch === '`') { inTemplate = true; continue; }
+    if (ch === '{') open++;
+    else if (ch === '}') close++;
+  }
+  if (open === close) return null;
+  return { open, close };
+}
+
+export function postProcessTsJsCode(code: string, opts?: { keepSiblingImports?: boolean }): string {
+  const keepSiblingImports = !!opts?.keepSiblingImports;
   const lines = code.split('\n');
   const out: string[] = [];
   let inLeadingBlock = true;
@@ -688,14 +1450,24 @@ export function postProcessTsJsCode(code: string): string {
       const isImport = terminated && (
         /\bfrom\b/.test(stmt) || /^import\s*['"]/.test(stmt.trim())
       );
-      if (isImport) {
-        continue; // strip the whole statement
+      if (!isImport) {
+        // Not an import statement after all (or the bound tripped) — restore
+        // every consumed line so no legitimate content is ever dropped.
+        out.push(...stmt.split('\n'));
+        inLeadingBlock = false;
+        continue;
       }
-      // Not an import statement after all (or the bound tripped) — restore
-      // every consumed line so no legitimate content is ever dropped.
-      out.push(...stmt.split('\n'));
-      inLeadingBlock = false;
-      continue;
+      // Multi-file mode (keepSiblingImports): KEEP imports of sibling modules
+      // (relative specifiers — `./` or `../`), because cross-module types must
+      // be visible IN the file for the model to code against real shapes and
+      // to satisfy the scope-leak lint's "add the import" instruction (the
+      // auto-import section dedupes against them). Bare/package imports
+      // (third-party, never installed) are still stripped.
+      if (keepSiblingImports && /from\s*['"]\.{1,2}\//.test(stmt)) {
+        out.push(stmt.trimEnd());
+        continue;
+      }
+      continue; // strip the whole statement
     }
     if (inLeadingBlock && (t === '' || t.startsWith('//') || t.startsWith('/*') || t.startsWith('*'))) {
       out.push(line); // keep comments/blank lines in the leading block
@@ -707,6 +1479,37 @@ export function postProcessTsJsCode(code: string): string {
     i++;
   }
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/**
+ * Collect the member names imported by a file's relative (sibling-module)
+ * import statements — `import { A, B } from '../x/x.ts'`, default/namespace
+ * forms, and multi-line blocks. The auto-import section uses this to skip
+ * names the model already imported itself, so a kept model import never
+ * produces a duplicate (TS2300/TS2440). Never matches `import 'pkg'` side
+ * effects or bare packages (they are stripped before assembly anyway).
+ */
+export function findImportedNames(code: string): Set<string> {
+  const names = new Set<string>();
+  const importRe = /^\s*import\s+(?:type\s+)?(?!\.)([^;]*?)\s+from\s*['"]\.{1,2}\//gm;
+  let m: RegExpExecArray | null;
+  while ((m = importRe.exec(code)) !== null) {
+    const clause = m[1];
+    // Default + named: `import Foo, { A, B } from`
+    // Named block: `import { A, B } from`
+    // Namespace: `import * as NS from`
+    const blockMatch = clause.match(/\{([^}]*)\}/);
+    if (blockMatch) {
+      for (const nm of blockMatch[1].matchAll(/[A-Za-z_$][\w$]*/g)) {
+        if (!['as', 'type'].includes(nm[0])) names.add(nm[0]);
+      }
+    }
+    const defaultMatch = clause.match(/^(\w+)\b/);
+    if (defaultMatch && !clause.includes('* as')) names.add(defaultMatch[1]);
+    const nsMatch = clause.match(/\*\s+as\s+([A-Za-z_$][\w$]*)/);
+    if (nsMatch) names.add(nsMatch[1]);
+  }
+  return names;
 }
 
 /**
@@ -1013,15 +1816,44 @@ export class FileGenerator {
         validatedCount: 0,
         failedCount: 0,
         importGraph: {},
-        tsCompileClean: true, // no TS/JS files → vacuously clean
+        tsCompileClean: true, // no files at all → vacuously clean
         contractViolations: 0,
+        languageGates: [],
       };
     }
 
-    // Build dependency graph from edges
+    // ── Tree Mode: where one app ends and the next begins ──
+    // An intra-tree edge is a FILE IMPORT. A cross-tree edge is a data handoff
+    // between two SEPARATE programs and must never become an import — feeding
+    // both kinds to the dependency graph made app B's source import app A's
+    // file. The scope resolves membership (deriving a single tree for
+    // pre-Tree-Mode projects, so the ordinary single-app build is unchanged),
+    // splits the edge kinds, and plans the bridge modules that realize the
+    // handoffs.
+    const treeScope = resolveTreeScopes(project);
+    const bridges = planBridges(treeScope);
+    // Several app trees in one project are several APPS: each one is exported
+    // into its own directory (with its own entry point and project config)
+    // instead of being merged into one flat `src/`. A single-tree project keeps
+    // the flat layout, so ordinary exports are byte-identical to before.
+    const layout = planExportLayout(treeScope.trees);
+    if (bridges.length > 0) {
+      console.log(
+        `[fileGenerator] Tree Mode: ${treeScope.trees.length} app tree(s), ` +
+        `${treeScope.links.length} cross-app connection(s) → ${bridges.length} bridge module(s)`,
+      );
+    }
+    if (layout.separateApps) {
+      console.log(
+        `[fileGenerator] Tree Mode: exporting ${treeScope.trees.length} separate apps — ` +
+        treeScope.trees.map((t) => `"${t.name}" → apps/${layout.appDirByTree[t.id] ?? 'app'}`).join(', '),
+      );
+    }
+
+    // Build dependency graph from edges (cross-tree edges excluded — see above)
     const depGraph = buildDependencyGraph(
       nonMasterNodes.map(n => ({ id: n.id, data: { label: n.data.label } })),
-      project.edges
+      treeScope.intraEdges
     );
 
     // Determine topological order for generation (dependencies first)
@@ -1045,20 +1877,44 @@ export class FileGenerator {
 
     // Batch nodes by topological depth: nodes in the same batch have NO
     // dependencies on each other and can be generated simultaneously.
-    const batches = this.topologicalBatches(sortedNodes, depGraph);
-    const totalBatches = batches.length;
-    console.log(`[fileGenerator] Generating ${sortedNodes.length} files in ${totalBatches} parallel batch(es): ${
-      batches.map((b, i) => `batch ${i + 1}: ${b.length} nodes`).join(', ')
-    }`);
+    // ── Generation scheduler (dependency-aware worker pool) ──
+    // The OLD scheduler used strict topological LEVELS and awaited every level
+    // before starting the next. On a chain-shaped blueprint (each module layers
+    // on the one below) a level contains exactly ONE node, so N modules cost N
+    // strictly sequential LLM calls. Measured on a real tic-tac-toe build:
+    //   "Generating 5 files in 5 parallel batch(es): batch 1: 1 nodes … batch 5:
+    //    1 nodes"  →  10.8s + 29.6s + 35.1s + 17.1s + 36.1s ≈ 129s of pure
+    //   serialisation before a single repair round even started.
+    //
+    // NOW: a bounded worker pool over the same topological order. A node starts
+    // as soon as the pool has room, so nodes at DIFFERENT depths overlap. When
+    // one of a node's dependencies is still in flight, the prompt carries that
+    // dependency's PLANNED CONTRACT (node.data.contractContext, derived
+    // deterministically from the wiring graph) instead of a misleading
+    // "(none)", and the auto-import line for it is omitted so the model writes
+    // its own import against the promised exports. The live compile-check loop
+    // then reconciles any drift against the REALIZED exports.
+    //
+    // Concurrency genuinely pays here: DSpark serves concurrent completions in
+    // parallel, not queued (measured 8.4s for one 220-token completion vs 9.4s
+    // for two at the same time — ~1.1x for 2x the work).
+    const MAX_PARALLEL_GENERATIONS = MAX_PARALLEL_MODEL_CALLS;
+    const plannedContractByLabel = new Map<string, string>();
+    for (const n of sortedNodes) {
+      const cc = (n.data as any)?.contractContext;
+      if (typeof cc === 'string' && cc.trim()) {
+        plannedContractByLabel.set(n.data.label || n.id, cc.trim());
+      }
+    }
+    console.log(
+      `[fileGenerator] Generating ${sortedNodes.length} file(s) — dependency-aware pool, up to ${MAX_PARALLEL_GENERATIONS} concurrent (planned contracts available for ${plannedContractByLabel.size})`
+    );
 
-    for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
-      const batch = batches[batchIdx];
-      const startTime = Date.now();
-
-      // Generate ALL nodes in this batch in parallel
-      // Use allSettled so one failing node doesn't lose the rest of the batch
-      const settledResults = await Promise.allSettled(
-        batch.map(async (node) => {
+    // Per-node generation body, hoisted out of the old level loop so any node
+    // can run as soon as the pool has room. Unchanged apart from the
+    // dependency-context fallback above and the progress reporting below.
+    const generateOne = async (node: any) => {
+      {
           const nodeLabel = node.data.label || node.id;
           const fileName = labelToFileName(nodeLabel);
           const language = node.data.language || 'typescript';
@@ -1083,7 +1939,20 @@ export class FileGenerator {
 
           // Generate AI code for this node as a standalone file
           const isUINode = node.type === 'ui' || node.type === 'gui-layout';
-          const code = await this.generateNodeFile(node, project, resolvedDeps, fileExports, isUINode ? guiWidgetOutput : null);
+          // Pass ALL declared deps (not just the already-resolved ones) so a
+          // dependency still in flight is still described via its planned
+          // contract. `resolvedDeps` stays the import-accurate list used by the
+          // contract verifier below.
+          const code = await this.generateNodeFile(
+            node,
+            project,
+            deps,
+            fileExports,
+            isUINode ? guiWidgetOutput : null,
+            undefined,
+            { plannedContracts: plannedContractByLabel },
+            { scope: treeScope, bridges }
+          );
 
           // Determine what this file exports (named symbols + optional default)
           const exportInfo = this.extractExports(code, language);
@@ -1113,21 +1982,25 @@ export class FileGenerator {
               ? importSection + '\n' + processedCode
               : processedCode;
           } else {
-            // TS/JS: strip AI-generated imports (build system adds them).
-            const tsCode = postProcessTsJsCode(code);
+            // TS/JS: keep the model's sibling-module imports (multi-file mode —
+            // cross-module types must be visible in-file), strip everything
+            // else; the auto-import section below fills in anything missing.
+            const tsCode = postProcessTsJsCode(code, { keepSiblingImports: true });
             if (deps.length > 0) {
               // Deterministic import-collision fix (mirror of assembleTsJs): if
-              // this file declares a name locally, drop it from the auto-import
-              // so it never collides (TS2440/TS2395/TS2300). Also dedupes names
-              // exported by two different dependencies (TS2300 duplicate).
+              // this file declares a name locally OR already imported it itself,
+              // drop it from the auto-import so it never collides
+              // (TS2440/TS2395/TS2300). Also dedupes names exported by two
+              // different dependencies (TS2300 duplicate).
               const localNames = findLocalDeclaredNames(tsCode);
+              const importedNames = findImportedNames(tsCode);
               const seenNames = new Set<string>();
               let filteredSection = '';
               const filteredDeps: string[] = [];
               for (const depLabel of deps) {
                 const depExports = fileExports.get(depLabel);
                 if (!depExports) continue;
-                const names = (depExports.names || []).filter(n => !localNames.has(n) && !seenNames.has(n));
+                const names = (depExports.names || []).filter(n => !localNames.has(n) && !importedNames.has(n) && !seenNames.has(n));
                 for (const n of names) seenNames.add(n);
                 if (names.length === 0 && !depExports.defaultName) continue;
                 const filtered: FileExportInfo = { ...depExports, names };
@@ -1201,6 +2074,10 @@ export class FileGenerator {
               code: fullCode,
               nodeId: node.id,
               nodeLabel,
+              treeId: treeScope.treeIdByNode.get(node.id),
+              ...(layout.separateApps
+                ? { appDir: `apps/${layout.appDirByTree[treeScope.treeIdByNode.get(node.id) || ''] ?? 'app'}` }
+                : {}),
               dependencies: resolvedDeps,
               exports: exportInfo.names,
               errors,
@@ -1209,42 +2086,81 @@ export class FileGenerator {
             label: nodeLabel,
             exportSymbols: exportInfo,
           };
-        })
-      );
+      }
+    };
 
-      // Collect results from this batch — skip any that failed
-      // This populates fileExports for subsequent batches
-      let batchFailures = 0;
-      for (const result of settledResults) {
-        if (result.status === 'fulfilled') {
-          const val = result.value;
-          generatedFiles.push(val.generatedFile);
-          fileExports.set(val.label, val.exportSymbols);
-        } else {
-          batchFailures++;
-          console.warn('[fileGenerator] Node generation failed in batch:', result.reason);
+    // ── Run the pool ──
+    // Workers pull from the shared topological queue; completion order is
+    // whatever finishes first, which is the point. `allSettled` semantics are
+    // preserved — one failing node never loses the rest of the build.
+    const poolResults: Array<{ ok: boolean; value?: any; reason?: any }> = [];
+    let queueCursor = 0;
+    const totalNodes = sortedNodes.length;
+    const poolWorker = async () => {
+      while (true) {
+        const idx = queueCursor++;
+        if (idx >= totalNodes) return;
+        try {
+          const value = await generateOne(sortedNodes[idx]);
+          poolResults.push({ ok: true, value });
+        } catch (reason) {
+          poolResults.push({ ok: false, reason });
         }
       }
-      if (batchFailures > 0) {
-        console.warn(`[fileGenerator] ${batchFailures}/${batch.length} node(s) failed in batch ${batchIdx + 1}`);
+    };
+    const poolStart = Date.now();
+    await Promise.all(
+      Array.from({ length: Math.max(1, Math.min(MAX_PARALLEL_GENERATIONS, totalNodes)) }, () => poolWorker())
+    );
+
+    // Collect results — this populates fileExports for everything downstream.
+    let batchFailures = 0;
+    for (const r of poolResults) {
+      if (r.ok && r.value) {
+        generatedFiles.push(r.value.generatedFile);
+        fileExports.set(r.value.label, r.value.exportSymbols);
+      } else {
+        batchFailures++;
+        console.warn('[fileGenerator] Node generation failed in pool:', r.reason);
       }
+    }
+    if (batchFailures > 0) {
+      console.warn(`[fileGenerator] ${batchFailures}/${totalNodes} node(s) failed during generation`);
+    }
+    console.log(
+      `[fileGenerator] Pool finished ${totalNodes} node(s) in ${Date.now() - poolStart}ms (max ${MAX_PARALLEL_GENERATIONS} concurrent)`
+    );
 
-      const elapsed = Date.now() - startTime;
-      console.log(`[fileGenerator] Batch ${batchIdx + 1}/${totalBatches} (${batch.length} nodes) completed in ${elapsed}ms`);
+    // Progress: report the node list once the pool drains. The old per-level
+    // reporting is meaningless now that levels overlap.
+    if (onProgress) {
+      onProgress({
+        batch: Math.max(0, totalNodes - 1),
+        totalBatches: totalNodes,
+        batchSize: totalNodes,
+        generatingNodes: poolResults
+          .filter(r => r.ok && r.value)
+          .map(r => r.value.generatedFile.nodeLabel),
+        percent: 100,
+        phase: 'done',
+      });
+    }
 
-      // Report progress via callback (for Socket.IO broadcast to frontend)
-      if (onProgress) {
-        const completedNodes = settledResults
-          .filter(r => r.status === 'fulfilled')
-          .map(r => (r as PromiseFulfilledResult<any>).value.generatedFile.nodeLabel);
-        onProgress({
-          batch: batchIdx,
-          totalBatches,
-          batchSize: batch.length,
-          generatingNodes: completedNodes,
-          percent: Math.round(((batchIdx + 1) / totalBatches) * 100),
-          phase: batchIdx < totalBatches - 1 ? 'generating' : 'done',
-        });
+    // ── Tree Mode: generate the bridge module(s) ──
+    // One module per (giving app → receiving app, payload) contract. It is the
+    // ONLY integration point between those two apps: they are separate
+    // programs and cannot import each other, so without this the handoff the
+    // user described would exist as a prompt instruction and nothing else.
+    // Generated BEFORE the compile gate on purpose — the compile loop never
+    // regenerates a file with no node behind it, so a bridge that does not
+    // compile surfaces as a compile failure (honest ⚠️) instead of shipping
+    // silently under a green build.
+    for (const bridge of bridges) {
+      try {
+        const bridgeFile = await this.generateBridgeModule(project, bridge);
+        if (bridgeFile) generatedFiles.push(bridgeFile);
+      } catch (err: any) {
+        console.warn(`[fileGenerator] bridge module "${bridge.name}" failed (non-fatal):`, err?.message || err);
       }
     }
 
@@ -1291,19 +2207,172 @@ export class FileGenerator {
       generatedFiles[i].code = m.content;
     });
 
-    // ── Close the learning loop: auto-capture VERIFIED generations into the
-    //    training dataset. Only for real (non-preview) builds that passed the
-    //    whole pipeline — compile-check with zero failures for TS/JS, plus
-    //    sandbox-validated files for other languages. Broken output never
-    //    enters the dataset. Non-fatal. ──
-    //
-    // compileCheckAndFix returns 0 BOTH when tsc passed AND when it was
-    // skipped (missing TSC_BIN, or a thrown error). So the tsCompileClean
-    // stamp is only trustworthy when there are TS/JS files AND the check
-    // actually ran to completion. Pure non-TS builds have nothing to compile,
-    // so non-TS files rely on their own sandbox-validated gate regardless.
+    // ── Non-TS compile gate + stub gate + CONTRACT-AWARE gate, WITH a bounded
+    //    repair loop (shared with the chat path, sandbox/nonTsRepair.ts). The
+    //    canvas path used to only RUN the gates and mark failures — it could
+    //    never repair a non-TS compile failure or an unimplemented/stub body.
+    //    The deterministic sanitizer (bare Java imports, truncation) is inside. ──
+    let languageGates: Array<{ language: string; clean: boolean; errors: string[] }> = [];
+    let stubFailures: string[] = [];
+    if (!skipValidation) {
+      // Stage through scaffoldRelPath — the SAME layout tsc and the export use.
+      // Passing the bare fileName put every node in ONE directory, so a Go/Java/
+      // C# build with more than one package failed the gate with "found packages
+      // X and Y in <dir>" no matter how correct the code was.
+      const gateSources = generatedFiles
+        .filter((f) => f.nodeLabel !== 'App Preview (Auto-generated)' && !f.nodeLabel.includes('Auto-generated'))
+        .map((f) => ({ path: this.scaffoldRelPath(f), content: f.code }));
+      const gateContracts = gateSources.map((s) => {
+        const g = generatedFiles.find((f) => this.scaffoldRelPath(f) === s.path)!;
+        return { path: s.path, summary: (g as any).description || '', language: g.language, exports: g.exports };
+      });
+      const gateTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-nonts-'));
+      try {
+        const res = await runNonTsGatesWithRepair({
+          request: masterNode?.data?.appGoal || project.name || 'the requested app',
+          files: gateSources,
+          contractFiles: gateContracts,
+          exportDir: gateTmp,
+          timeoutMs: 120_000,
+          canRepair: () => true,
+          consumeRepair: () => {},
+          repairCall: async (prompt: string): Promise<string> => {
+            const raw = await this.ai.reason(prompt, undefined, { maxTokens: 8192, temperature: 0.2, role: 'codeGeneration' });
+            return raw.replace(/^```(?:\w+)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+          },
+        });
+        languageGates = res.languageGates;
+        stubFailures = res.stubFailures;
+        // Write repairs back onto the generated files so the export, the
+        // training capture, and the user all see the repaired code.
+        for (const s of gateSources) {
+          const g = generatedFiles.find((f) => this.scaffoldRelPath(f) === s.path);
+          if (g && g.code !== s.content) {
+            g.code = s.content;
+            console.log(`[fileGenerator] non-TS gate repaired "${g.nodeLabel}" (${s.path})`);
+          }
+        }
+      } catch (err) {
+        console.warn('[fileGenerator] non-TS gate/repair failed (non-fatal):', err);
+      } finally {
+        try { fs.rmSync(gateTmp, { recursive: true, force: true }); } catch { /* noop */ }
+      }
+    }
+    // Mark stub/unimplemented files unvalidated (a failure string may be a bare
+    // path or `path: detail`).
+    const stubPaths = new Set(stubFailures.map((s) => pathFromGateFailure(s) || s));
+    for (const f of generatedFiles) {
+      // The gate reports scaffold-relative paths; accept the bare fileName too
+      // so a gate that only echoes a basename still maps back to its file.
+      if (!stubPaths.has(this.scaffoldRelPath(f)) && !stubPaths.has(f.fileName)) continue;
+      if (f.validated) f.validated = false;
+      if (!f.errors.some((e) => e.includes('Stub/placeholder'))) {
+        f.errors.push(`Stub/placeholder or unimplemented body detected — code does not implement the node's contract`);
+      }
+      console.warn(`[fileGenerator] ⚠️ stub/unimplemented body in "${f.nodeLabel}" — marked unvalidated`);
+    }
+    if (stubFailures.length > 0) {
+      console.warn(`[fileGenerator] ${stubFailures.length} stub/unimplemented file(s) rejected`);
+    }
+
+    // ── Behavioral smoke gate (the last chat/canvas unification gap) ──
+    // tsc sees types, the language gates see compiles — neither sees "loads but
+    // crashes on click" / "static board" / "CLI prints nothing". The chat path
+    // has always run the behavioral smoke gate WITH a bounded repair loop; the
+    // canvas path only ran the one-shot TS browser engine (non-fatal, no
+    // repair), so a canvas GUI/game build could ship broken. Stage the files in
+    // a temp dir and run the SAME shared gate, letting it rewrite the failing
+    // entry via the generator's own AI. Skipped for fast preview builds.
+    let renderSmoke: SmokeVerdict | null = null;
+    let cliSmoke: SmokeVerdict | null = null;
+    if (!skipValidation) {
+      try {
+        const smokeFiles = generatedFiles.map((f) => ({ path: f.fileName, content: f.code }));
+        const goal = masterNode?.data?.appGoal || project.name || 'the requested app';
+        const contractFiles = generatedFiles.map((f) => ({
+          path: f.fileName,
+          summary: (f as any).description || '',
+          language: f.language,
+        }));
+        const staged = await runStagedBehavioralSmoke({
+          files: smokeFiles,
+          request: goal,
+          contractFiles,
+          timeoutMs: 35_000,
+          tag: 'canvas',
+          repairCall: async (prompt: string): Promise<string> => {
+            const raw = await this.ai.reason(prompt, undefined, { maxTokens: 8192, temperature: 0.2, role: 'codeGeneration' });
+            return raw.replace(/^```(?:\w+)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+          },
+        });
+        renderSmoke = staged.renderSmoke;
+        cliSmoke = staged.cliSmoke;
+        // Write repairs back onto the generated files so the export, the
+        // training capture, and the user all see the verified code.
+        for (const sf of smokeFiles) {
+          const g = generatedFiles.find((f) => f.fileName === sf.path);
+          if (g && g.code !== sf.content) {
+            g.code = sf.content;
+            console.log(`[fileGenerator] behavioral smoke repaired "${g.nodeLabel}" (${sf.path})`);
+          }
+        }
+      } catch (err) {
+        console.warn('[fileGenerator] Behavioral smoke gate failed (non-fatal):', err);
+      }
+    }
+    // Re-verify the non-TS gate on the FINAL code: the behavioral smoke's repair
+    // loop rewrites files AFTER the compile gate ran and can re-introduce a
+    // compile error (observed live in the chat path: a CLI smoke repair added a
+    // second `class Board` → `javac: duplicate class`). Without this, the
+    // canvas build reports a clean language gate for code that does not compile.
+    // Repair is DISABLED — verdict refresh only. Skipped for fast preview builds.
+    if (!skipValidation && languageGates.length > 0) {
+      const reSources = generatedFiles
+        .filter((f) => f.nodeLabel !== 'App Preview (Auto-generated)' && !f.nodeLabel.includes('Auto-generated'))
+        .map((f) => ({ path: this.scaffoldRelPath(f), content: f.code }));
+      const reContracts = reSources.map((s) => {
+        const g = generatedFiles.find((f) => this.scaffoldRelPath(f) === s.path)!;
+        return { path: s.path, summary: (g as any).description || '', language: g.language, exports: g.exports };
+      });
+      const reTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-nonts-post-'));
+      try {
+        const res = await runNonTsGatesWithRepair({
+          request: masterNode?.data?.appGoal || project.name || 'the requested app',
+          files: reSources,
+          contractFiles: reContracts,
+          exportDir: reTmp,
+          timeoutMs: 120_000,
+          canRepair: () => false,
+          consumeRepair: () => {},
+          repairCall: async () => '',
+        });
+        languageGates = res.languageGates;
+        stubFailures = res.stubFailures;
+      } catch (err) {
+        console.warn('[fileGenerator] post-smoke non-TS re-verify failed (non-fatal):', err);
+      } finally {
+        try { fs.rmSync(reTmp, { recursive: true, force: true }); } catch { /* noop */ }
+      }
+    }
+
     const hasTsJs = generatedFiles.some((f) => f.language === 'typescript' || f.language === 'javascript');
-    const tsCompileClean = !hasTsJs || (compileCheckRan && compileFailures === 0 && fs.existsSync(TSC_BIN));
+    // Map the canvas compile state onto the SHARED verdict vocabulary, then read
+    // the SAME verdict the chat path reads. A build only counts as clean when a
+    // gate actually PASSED (tsc clean, a clean non-TS gate, or — once the smoke
+    // gate is wired here — a passed behavioral smoke). "Nothing failed" alone is
+    // no longer sufficient: unverified output must not be captured or learned.
+    const tscStatus: TscStatus = hasTsJs
+      ? (!compileCheckRan || !fs.existsSync(TSC_BIN) ? 'unavailable' : (compileFailures === 0 ? 'clean' : 'errors'))
+      : 'skipped';
+    const verdict = deriveBuildVerdict({
+      tscStatus,
+      tscErrors: compileFailures,
+      languageGates,
+      stubFailures,
+      renderSmoke,
+      cliSmoke,
+    });
+    const tsCompileClean = verdict.clean;
     // Blueprint-driven builds (POST /api/blueprint/build) capture their OWN
     // blueprint-enriched rows in the route, so the generic capture is skipped
     // for them (master data flag set by blueprintToProject) — one capture per
@@ -1328,27 +2397,12 @@ export class FileGenerator {
     //    loop always found empty code and silently no-oped — nothing was
     //    ever captured from the canvas path. Learn ONCE here, from the final
     //    assembled files, populating each node exactly like the frontend does
-    //    after generation (updateNodeStatus). ──
+    //    after generation (updateNodeStatus). Shared helper (learnFromGeneratedFiles)
+    //    so the blueprint build route — which skips this generic capture while
+    //    skipVerifiedCapture is set — closes the same loop itself. ──
     if (!skipValidation && !captureDisabled && tsCompileClean) {
       try {
-        // Shallow-copy the project so learning never mutates the store's
-        // live project object — only the copy carries generatedCode.
-        const learnProject: Project = {
-          ...project,
-          nodes: project.nodes.map((n) => ({ ...n, data: { ...n.data } })),
-        };
-        for (const file of generatedFiles) {
-          const node = learnProject.nodes.find((n) => n.id === file.nodeId);
-          if (node && file.code && file.validated && file.nodeId !== 'preview_gui_wrapper') {
-            node.data.generatedCode = file.code;
-            node.data.status = 'valid';
-          }
-        }
-        const fullAppCode = generatedFiles
-          .filter((f) => f.nodeId && f.nodeId !== 'preview_gui_wrapper')
-          .map((f) => f.code)
-          .join('\n\n');
-        const entries = learningEngine.learnFromProject(learnProject, fullAppCode, true);
+        const entries = learningEngine.learnFromGeneratedFiles(project, generatedFiles);
         if (entries.length > 0) {
           console.log(`[fileGenerator] Learned ${entries.length} pattern(s) from project "${project.name}"`);
         }
@@ -1381,6 +2435,11 @@ export class FileGenerator {
       importGraph,
       tsCompileClean,
       contractViolations: contractViolationCount,
+      languageGates,
+      // The behavioral smoke verdicts (canvas path), so callers can see WHY a
+      // build was or wasn't trusted instead of only the fused tsCompileClean.
+      renderSmoke,
+      cliSmoke,
     };
   }
 
@@ -1469,7 +2528,10 @@ export class FileGenerator {
     language: string,
     moduleName: string
   ): { fullCode: string; resolvedDeps: string[] } {
-    const tsCode = postProcessTsJsCode(code);
+    // keepSiblingImports: repair regenerations may now write their own imports
+    // to sibling modules (the scope-leak lint tells them to) — keep those, and
+    // dedupe the auto-import below against them.
+    const tsCode = postProcessTsJsCode(code, { keepSiblingImports: true });
     // Deterministic import-collision fix: this file's body may itself declare
     // a name (export class/interface/enum/function/const X) that a sibling
     // ALSO exports. Auto-importing that name then collides with the local
@@ -1477,8 +2539,10 @@ export class FileGenerator {
     // local declaration"). The local declaration wins (it is the file's own
     // contract, and other files import from THIS file's export list) — so drop
     // the colliding name from the auto-import. This is the types.ts failure
-    // class from the triage builds, fixed without the LLM.
+    // class from the triage builds, fixed without the LLM. Names the model
+    // imported itself are skipped the same way (no duplicate imports).
     const localNames = findLocalDeclaredNames(tsCode);
+    const importedNames = findImportedNames(tsCode);
     let importSection = '';
     const resolvedDeps: string[] = [];
     // Cross-dep dedupe: when two dependencies both export the same name (e.g.
@@ -1490,7 +2554,7 @@ export class FileGenerator {
     for (const depLabel of deps) {
       const depExports = fileExports.get(depLabel);
       if (!depExports) continue;
-      const names = (depExports.names || []).filter(n => !localNames.has(n) && !seenNames.has(n));
+      const names = (depExports.names || []).filter(n => !localNames.has(n) && !importedNames.has(n) && !seenNames.has(n));
       for (const n of names) seenNames.add(n);
       // Skip a dependency entirely when every export it offers is shadowed by a
       // local declaration (importing nothing from it is the only correct move).
@@ -1634,6 +2698,154 @@ export class FileGenerator {
     return errors;
   }
 
+  /**
+   * Deterministic zero-LLM repair chain, ported from codePlanner's tsc gate so
+   * canvas/blueprint builds resolve the same mechanical error classes the chat
+   * path fixes without burning a slow 14B regeneration: TS2307 phantom npm
+   * imports + wrong sibling paths, TS2459 missing exports (patches the CAUSING
+   * file — a different one than the failing importer), TS5097 import
+   * extensions, TS2345 partial-object call sites, TS2355/TS7030 missing
+   * returns, TS2322 void returns, TS2304/2503/2552 content-driven import
+   * insertion, TS2451 local collisions. Each fixer is idempotent and re-
+   * verified by the round's tsc re-check; anything they can't safely touch
+   * falls through to the LLM regeneration below. Returns true when a fix was
+   * applied (the caller must NOT spend an LLM call on this file this round).
+   */
+  private applyDeterministicRepair(
+    file: GeneratedFile,
+    errs: string[],
+    scaffoldSelfPath: string,
+    scaffoldFiles: Array<{ path: string; content?: string }>,
+    tsFiles: GeneratedFile[],
+    fileExports: Map<string, FileExportInfo>,
+    regenerated: Set<string>,
+    contractsChanged: Set<string>
+  ): boolean {
+    // DEBUG: ground truth on why the deterministic chain declines
+    console.log(`[fileGenerator]   🔧 deterministic repair for "${file.nodeLabel}" — ${errs.length} err(s): TS2307=${errs.some(e => /\bTS2307/.test(e))} TS2459=${errs.some(e => /\bTS2459/.test(e))} TS2304=${errs.some(e => /\bTS2304/.test(e))} | first: ${(errs[0] || '').slice(0, 130)}`);
+    const applyToSelf = (newContent: string): boolean => {
+      if (newContent === file.code) return false;
+      file.code = newContent;
+      const info = this.extractExports(newContent, file.language);
+      if (!sameExports(fileExports.get(file.nodeLabel), info)) contractsChanged.add(file.nodeLabel);
+      file.exports = info.names;
+      fileExports.set(file.nodeLabel, info);
+      this.depSourceCache.set(file.nodeLabel, newContent);
+      regenerated.add(file.nodeLabel);
+      return true;
+    };
+    // The missing-export fixer patches the CAUSING file (a sibling that
+    // declares the imported name without exporting it), which is a DIFFERENT
+    // file than the one being repaired — locate it by scaffold path and apply
+    // there so its dependents re-import the now-exported member.
+    const applyToTarget = (target: { path: string; content: string }): boolean => {
+      const t = tsFiles.find(f => this.scaffoldRelPath(f) === target.path);
+      if (!t) return false;
+      if (t.code === target.content) return false;
+      t.code = target.content;
+      const info = this.extractExports(target.content, t.language);
+      if (!sameExports(fileExports.get(t.nodeLabel), info)) contractsChanged.add(t.nodeLabel);
+      t.exports = info.names;
+      fileExports.set(t.nodeLabel, info);
+      this.depSourceCache.set(t.nodeLabel, target.content);
+      regenerated.add(t.nodeLabel);
+      return true;
+    };
+    // (Mirrors codePlanner's gate ordering: TS2307 phantom strip first, then
+    // sibling-path, then the cross-file/call-site/return classes.)
+    // Circular SELF-import (TS2303/TS2459 when the model "imports" a
+    // hallucinated name from its OWN file) is a whole-file poison — strip it
+    // first so the body's usage degrades to a clean TS2304 the other fixers
+    // can see.
+    if (errs.some(e => /\bTS2303/.test(e))) {
+      const selfStripped = stripCircularSelfImports(file.code, scaffoldSelfPath);
+      if (selfStripped && applyToSelf(selfStripped)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} circular self-import stripped deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS2307/.test(e))) {
+      const stripped = stripPhantomPackageImports(file.code);
+      if (stripped && applyToSelf(stripped)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS2307 phantom npm imports stripped deterministically (no LLM call)`);
+        return true;
+      }
+      const pathFixed = applyDeterministicSiblingPathFix(file.code, scaffoldSelfPath, scaffoldFiles, errs);
+      if (pathFixed === null) console.log(`[fileGenerator]     ↪ sibling-path fixer DECLINED for "${file.nodeLabel}" (self=${scaffoldSelfPath}, files=${scaffoldFiles.length})`);
+      else console.log(`[fileGenerator]     ↪ sibling-path fixer PROPOSED a change for "${file.nodeLabel}"`);
+      if (pathFixed && applyToSelf(pathFixed)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS2307 sibling import paths fixed deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    // Export NAME mismatch (TS2724/TS2614/TS2305 with tsc's "Did you mean"):
+    // the importer used a different casing/name than the module exports
+    // (`GameState` vs the file's `gameState`). tsc tells us the exact member to
+    // use, so patch the import instead of paying a full regeneration.
+    if (errs.some(e => /\bTS(2724|2614|2305)\b/.test(e))) {
+      const nameFixed = applyDeterministicExportNameFix(file.code, errs);
+      if (nameFixed && applyToSelf(nameFixed)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS2724/TS2614 export-name mismatch fixed deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS2459/.test(e))) {
+      const exportFix = applyDeterministicMissingExportFix(scaffoldSelfPath, scaffoldFiles, errs);
+      if (exportFix && applyToTarget(exportFix)) {
+        console.log(`[fileGenerator]   ⚙️ ${exportFix.path} TS2459 missing-export fixed deterministically (export added) (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS2341/.test(e))) {
+      const privateFix = applyDeterministicPrivateAccessFix(scaffoldSelfPath, scaffoldFiles, errs);
+      if (privateFix && applyToTarget(privateFix)) {
+        console.log(`[fileGenerator]   ⚙️ ${privateFix.path} TS2341 private member made public deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS5097/.test(e))) {
+      const extFixed = normalizeImportExtensions(file.code, scaffoldSelfPath, scaffoldFiles);
+      if (extFixed && applyToSelf(extFixed)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS5097 import extensions stripped deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS2345/.test(e))) {
+      const partialFixed = applyDeterministicPartialObjectFix(file.code, scaffoldSelfPath, scaffoldFiles, errs);
+      if (partialFixed && applyToSelf(partialFixed)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS2345 partial-object call sites fixed deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS(2355|7030)/.test(e))) {
+      const missingRet = applyDeterministicMissingReturnFix(file.code, errs);
+      if (missingRet && applyToSelf(missingRet)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS2355/TS7030 missing-return fixed deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS2322:.*not assignable to type '(Promise<)?void'/.test(e))) {
+      const voidRet = applyDeterministicVoidReturnFix(file.code, errs);
+      if (voidRet && applyToSelf(voidRet)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS2322-void return fixed deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    if (errs.some(e => /\bTS(2304|2503|2552|2307)/.test(e))) {
+      const contentPatched = applyContentDrivenImportFix(file.code, scaffoldSelfPath, scaffoldFiles, errs);
+      if (contentPatched && applyToSelf(contentPatched)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} missing-import errors fixed by CONTENT-DRIVEN import insert (no LLM call)`);
+        return true;
+      }
+      const collisionFixed = applyDeterministicLocalCollisionFix(file.code, errs);
+      if (collisionFixed && applyToSelf(collisionFixed)) {
+        console.log(`[fileGenerator]   ⚙️ ${file.nodeLabel} TS2451 local-collision fixed deterministically (no LLM call)`);
+        return true;
+      }
+    }
+    return false;
+  }
+
   private async compileCheckAndFix(
     project: Project,
     generatedFiles: GeneratedFile[],
@@ -1654,6 +2866,39 @@ export class FileGenerator {
     // stale (it validated the PRE-fix code), so reset errors/validated from the
     // authoritative tsc result at the end.
     const regenerated = new Set<string>();
+
+    // ── Stall detection (mirrors codePlanner's tsc gate) ────────────────────
+    // This loop used to regenerate EVERY failing file EVERY round with no
+    // progress check — on the 14B (~18 tok/s) a file the model can't fix (it
+    // re-emits the same broken style) burned a full regeneration (~1-3 min)
+    // in every one of the 3 rounds, so an unfixable 5-file blueprint build
+    // crawled 20+ minutes and still failed (observed in the R9 claims audit:
+    // round 1/2/3 identical 5-file failures; /api/blueprint/build timed out
+    // at 180s and at 900s). Two bounded stops, mirroring codePlanner's
+    // stalledRounds/sameErrors:
+    //   (a) GLOBAL — if the whole error map is identical to the previous
+    //       round's, NO file moved: stop the loop immediately (round N+1
+    //       would just re-run tsc on the same broken code).
+    //   (b) PER-FILE — a file whose error signature is unchanged for 2
+    //       consecutive rounds is given up on (its 2 fair repair attempts
+    //       are spent) while the other files keep being chased.
+    // Errors are compared position-insensitively (`(line N)` stripped) so a
+    // repair that merely MOVES an error to a new line still counts as the
+    // same underlying issue (same semantic as normalizeTscError).
+    // Consecutive rounds a file's error signature may stay UNCHANGED before
+    // the repair loop stops re-generating it (and lets the other files keep
+    // being chased). Set to 1 = one fair repair pass per file: the repair
+    // prompt already carries the exact tsc errors, the file's own previous
+    // content, and the real sibling contracts, so a second regeneration that
+    // reproduces the identical error signature is far more likely to reproduce
+    // it again than to fix it — and on the 14B each wasted pass costs 30-100s.
+    // Measured on a real 5-node build: rounds 1 and 2 each re-generated all 5
+    // failing files (10 full generations) before the global stall check fired
+    // at round 3, which is where most of the 5-7 minute wall time went.
+    const REPAIR_STALL_ROUNDS = 1;
+    const prevSignatures = new Map<string, string>();
+    const stalledCount = new Map<string, number>();
+    let lastRoundSig: string | null = null;
 
     for (let round = 1; round <= maxRounds; round++) {
       const errorsByLabel = await this.runTscCheck(tsFiles);
@@ -1677,6 +2922,21 @@ export class FileGenerator {
           errorsByLabel.set(f.nodeLabel, [...existing, ...collisions]);
           console.log(`[fileGenerator]   ⚠️ same-name collision lint: ${collisions.length} on "${f.nodeLabel}" (e.g. ${collisions[0].slice(0, 90)}…)`);
         }
+        // Truncation lint: a generation that hit the token cap ends mid-function
+        // with unbalanced braces (more { than }, and typically the file simply
+        // stops without closing its outermost blocks). The 14B hit exactly this
+        // on the calculator build (seq 11: 418-line UI file, 33 { vs 31 }, cut
+        // inside a forEach callback — tsc reported only TS1005 '}' expected).
+        // tsc's TS1005 does NOT tell the model it was truncated, so blind
+        // repair re-emits the same truncated file; this lint names the cause.
+        const trunc = findTruncation(f.code);
+        if (trunc) {
+          const existing = errorsByLabel.get(f.nodeLabel) || [];
+          errorsByLabel.set(f.nodeLabel, [...existing,
+            `TRUNCATION: this file is INCOMPLETE — it was cut off mid-generation (${trunc.open} opening braces vs ${trunc.close} closing braces; it ends without closing its outermost blocks). The generation hit the output token limit. RE-GENERATE the COMPLETE file: every function, statement, and closing brace must be present. Do NOT leave the code mid-expression — finish the file to its natural end.`
+          ]);
+          console.log(`[fileGenerator]   ⚠️ truncation lint: unbalanced braces ${trunc.open}/${trunc.close} on "${f.nodeLabel}" (file ends mid-block)`);
+        }
         // Hallucinated-runtime lint: the 7B model sometimes emits Deno./Bun.
         // globals (Deno.writeTextFile, Bun.serve) in plain TS intended for
         // node/browser — tsc errors TS2304 'Cannot find name Deno'. Flag it
@@ -1691,6 +2951,28 @@ export class FileGenerator {
           ));
           console.log(`[fileGenerator]   ⚠️ runtime-hallucination lint: ${runtimeHits.length} on "${f.nodeLabel}" (${runtimeHits[0]})`);
         }
+        // Scope-leak lint: the single-file-mode failure class — identifiers
+        // referenced from a scope where they are never declared (undeclared
+        // globals, render-local state used at module scope, module-local
+        // functions called from inline onclick="..." attributes). tsc's TS2304
+        // says only "Cannot find name 'X'" — this lint says WHERE and WHY so
+        // the repair loop fixes the structure instead of re-emitting the same
+        // leaked-global style.
+        // Pass sibling-export context so a leaked name can be traced to the
+        // module that owns it: "import it" when a dependency exports it,
+        // "you cannot import it" when only a non-dependency sibling does.
+        const allExports = new Map<string, string[]>();
+        for (const [label, info] of fileExports) allExports.set(label, info?.names || []);
+        const scopeLeaks = findScopeLeaks(f.code, {
+          selfLabel: f.nodeLabel,
+          deps: depGraph.get(f.nodeLabel) || [],
+          allExports,
+        });
+        if (scopeLeaks.length > 0) {
+          const existing = errorsByLabel.get(f.nodeLabel) || [];
+          errorsByLabel.set(f.nodeLabel, [...existing, ...scopeLeaks]);
+          console.log(`[fileGenerator]   ⚠️ scope-leak lint: ${scopeLeaks.length} on "${f.nodeLabel}" (e.g. ${scopeLeaks[0].slice(0, 90)}…)`);
+        }
         // Post-write contract verifier (import-level drift): imports of
         // non-dependencies, or of members the target never exports. Merged
         // into the same map so the repair loop regenerates the file with both
@@ -1702,30 +2984,132 @@ export class FileGenerator {
           errorsByLabel.set(f.nodeLabel, [...existing, ...contractDrift]);
           console.log(`[fileGenerator]   ⚠️ contract verifier: ${contractDrift.length} violation(s) on "${f.nodeLabel}" (e.g. ${contractDrift[0].slice(0, 90)}…)`);
         }
+        // Anti-stub lint (the Brain Doctrine's unforgivable sin): a body that
+        // never implements its node's contract — TODO/"Implement" fallbacks,
+        // comment-only files, echoed prompt scaffolding. The final stub gate
+        // below only FLAGS these; feeding them into THIS repair loop makes the
+        // model REWRITE them with a real implementation (fixSection names the
+        // failure and the VACA_BRAIN_DOCTRINE in the prompt forbids stubs), so
+        // a stub ships only if all repair rounds genuinely fail to replace it.
+        if (isStubBody(f.code)) {
+          const existing = errorsByLabel.get(f.nodeLabel) || [];
+          errorsByLabel.set(f.nodeLabel, [...existing,
+            `STUB/PLACEHOLDER BODY: this file does not implement its node's contract — it is a stub (TODOs, empty/skeleton methods, placeholder scaffolding). REWRITE the COMPLETE file with the REAL implementation: every declared export must do its actual work with real logic, real method bodies, and proper error handling. The smallest working implementation always beats an empty promise.`
+          ]);
+          console.log(`[fileGenerator]   ⚠️ anti-stub lint: "${f.nodeLabel}" is a stub — routing to rewrite`);
+        }
       }
-      if (errorsByLabel.size === 0) return 0;
+      if (errorsByLabel.size === 0) {
+        // Whole-project tsc passed clean on this round. Still sync the per-file
+        // `validated`/`errors` from the authoritative tsc result — the batch
+        // loop's per-file sandbox errors (validated in isolation, so a correct
+        // sibling import raises a FALSE TS2307) are stale and must be cleared.
+        // Previously this early-return skipped the final sync loop below, so a
+        // clean build kept its stale sandbox errors → FAIL with
+        // tsCompileClean:true (teacher-build seq 10: calculator, tscClean=True
+        // but validated 2/3, the one error being the false index.ts TS2307).
+        this.syncValidatedFromTsc(tsFiles, new Map());
+        return 0;
+      }
 
+      // (a) Global stall: the error map is identical to the previous round's
+      // (CLASS-aware: same error classes on the same files, positions and
+      // member names stripped) — the last round's regenerations changed
+      // NOTHING, so further rounds would only re-spend slow 14B calls on the
+      // same broken code. Stop now; the final tsc check below reports the
+      // real remaining errors.
+      const roundSig = genRoundSignature(errorsByLabel);
+      if (round > 1 && roundSig === lastRoundSig) {
+        console.warn(`[fileGenerator] Compile-check round ${round}: error set unchanged from round ${round - 1} — stopping repair loop (no progress)`);
+        break;
+      }
+      lastRoundSig = roundSig;
       console.log(`[fileGenerator] Compile-check round ${round}: ${errorsByLabel.size} file(s) failing — regenerating with compiler feedback`);
+
       // Files whose export CONTRACT changed this round — their dependents' auto
       // imports are built from that contract, so those dependents must be
       // regenerated too (otherwise they keep importing dead members).
       const contractsChanged = new Set<string>();
+      let regeneratedThisRound = 0;
+      // PASS 1 (synchronous, cheap): stall gate + deterministic zero-LLM repair
+      // chain. Files a fixer can handle are repaired here for free; the rest are
+      // COLLECTED and regenerated together in pass 2. The old code did all of
+      // this inside one `for … await` loop, so N failing files cost N sequential
+      // model round-trips (a 5-file round at 20-30s each ≈ 2 minutes of serial
+      // 14B time per round).
+      const needsLlmRegen: Array<{ label: string; errs: string[]; file: any; node: any }> = [];
       for (const [label, errs] of errorsByLabel) {
         const file = generatedFiles.find(f => f.nodeLabel === label);
         const node = sortedNodes.find(n => (n.data?.label || n.id) === label);
         if (!file || !node) continue;
 
-        const deps = depGraph.get(label) || [];
-        const code = await this.generateNodeFile(node, project, deps, fileExports, guiWidgetOutput, errs, {
-          // Feed the file's own previous content + the real export contracts of
-          // its import targets so the model repairs WITH context instead of
-          // regenerating blind (mirrors codePlanner's buildRepairPrompt).
-          previousContent: file.code,
-          importTargets: this.buildImportTargets(deps, fileExports, file.language),
-        });
+        // (b) Per-file stall: same error signature as the previous round means
+        // the last regeneration didn't move it. After 2 consecutive unchanged
+        // rounds, give up on THIS file (skip regenerating it) so it can't
+        // consume the remaining rounds, while the others keep being chased.
+        const sig = genErrorSignature(errs);
+        const sameAsBefore = prevSignatures.get(label) === sig;
+        stalledCount.set(label, sameAsBefore ? (stalledCount.get(label) || 0) + 1 : 0);
+        prevSignatures.set(label, sig);
+        if (sameAsBefore && (stalledCount.get(label) || 0) >= REPAIR_STALL_ROUNDS) {
+          console.warn(`[fileGenerator]   ⏭️ "${label}" errors unchanged for ${stalledCount.get(label)} round(s) — skipping (stalled repair)`);
+          continue;
+        }
 
-        const { fullCode, resolvedDeps } = this.assembleTsJs(code, deps, fileExports, file.language, project.name);
-        const newInfo = this.extractExports(fullCode, file.language);
+        // ── Deterministic zero-LLM repair chain (ported from codePlanner's
+        // tsc gate) ── Before spending a slow 14B regeneration on a failing
+        // file, try the mechanical fixers the chat path has: TS2307 phantom
+        // npm imports + wrong sibling paths, TS2459 missing exports (patches
+        // the CAUSING file), TS5097 import extensions, TS2345 partial-object
+        // call sites, TS2355/TS7030 missing returns, TS2322 void returns,
+        // TS2304 content-driven imports, TS2451 local collisions. Each fix is
+        // idempotent and re-verified by the round's tsc re-check; only files
+        // no fixer can safely touch fall through to the regeneration below.
+        // Scaffold paths mirror runTscCheck's layout (`src/<safe>/<file>`) so
+        // the fixers resolve relative specifiers against the same tree tsc
+        // sees.
+        const scaffoldSelfPath = this.scaffoldRelPath(file);
+        const scaffoldFiles = tsFiles.map(f => ({
+          path: this.scaffoldRelPath(f),
+          content: f.code,
+        }));
+        if (this.applyDeterministicRepair(file, errs, scaffoldSelfPath, scaffoldFiles, tsFiles, fileExports, regenerated, contractsChanged)) {
+          regeneratedThisRound += 1;
+          continue; // re-check after the loop — no LLM call spent on this file
+        }
+        regeneratedThisRound += 1;
+        needsLlmRegen.push({ label, errs, file, node });
+      }
+
+      // PASS 2: regenerate every file the deterministic fixers could not touch —
+      // CONCURRENTLY. These files are independent: each carries its own error
+      // list, previous content, and dependency contracts.
+      const regenOutcomes = await mapWithConcurrency(
+        needsLlmRegen,
+        MAX_PARALLEL_MODEL_CALLS,
+        async ({ label, errs, file, node }) => {
+          const deps = depGraph.get(label) || [];
+          const code = await this.generateNodeFile(node, project, deps, fileExports, guiWidgetOutput, errs, {
+            // Feed the file's own previous content + the real export contracts of
+            // its import targets so the model repairs WITH context instead of
+            // regenerating blind (mirrors codePlanner's buildRepairPrompt).
+            previousContent: file.code,
+            importTargets: this.buildImportTargets(deps, fileExports, file.language),
+          });
+          const { fullCode, resolvedDeps } = this.assembleTsJs(code, deps, fileExports, file.language, project.name);
+          const newInfo = this.extractExports(fullCode, file.language);
+          return { label, file, fullCode, resolvedDeps, newInfo };
+        }
+      );
+
+      // PASS 3: apply outcomes in a deterministic order so fileExports /
+      // depSourceCache stay coherent for the dependents pass below.
+      for (const outcome of regenOutcomes) {
+        if (!outcome.ok) {
+          console.warn('[fileGenerator] repair regeneration failed:', outcome.reason);
+          continue;
+        }
+        const { label, file, fullCode, resolvedDeps, newInfo } = outcome.value;
         if (!sameExports(fileExports.get(label), newInfo)) contractsChanged.add(label);
         file.code = fullCode;
         file.dependencies = resolvedDeps;
@@ -1760,142 +3144,174 @@ export class FileGenerator {
           regenerated.add(file.nodeLabel);
         }
       }
+      // Global no-progress hard stop: if EVERY failing file was skipped as
+      // stalled (nothing was regenerated at all), another round is pointless.
+      if (regeneratedThisRound === 0) {
+        console.warn('[fileGenerator] Compile-check: no file was regenerated this round — stopping repair loop');
+        break;
+      }
     }
 
     // Final check: mark which files still fail so the summary reflects reality.
     // Regenerated files that now pass get their stale pre-fix sandbox errors
     // cleared; still-failing files get the authoritative tsc errors.
     const finalErrors = await this.runTscCheck(tsFiles);
+    this.syncValidatedFromTsc(tsFiles, finalErrors);
+    return finalErrors.size;
+  }
+
+  /**
+   * Sync each TS file's `validated`/`errors` from the WHOLE-PROJECT tsc result
+   * — the authoritative gate (it compiles every file together, so sibling
+   * imports resolve). The batch loop's per-file sandbox validation runs each
+   * file in isolation (`tsc index.ts` standalone), so a correct sibling import
+   * (`../core-engine/core-engine.ts`) can never resolve there and produces a
+   * FALSE TS2307. When the whole-project tsc passes a file, clear those stale
+   * sandbox errors and validate it; still-failing files get the authoritative
+   * errors.
+   */
+  private syncValidatedFromTsc(tsFiles: GeneratedFile[], finalErrors: Map<string, string[]>): void {
     for (const f of tsFiles) {
       const errs = finalErrors.get(f.nodeLabel);
       if (errs && errs.length > 0) {
         f.errors = errs;
         f.validated = false;
-      } else if (regenerated.has(f.nodeLabel)) {
+      } else {
         f.errors = [];
         f.validated = true;
       }
     }
-    return finalErrors.size;
+  }
+
+  /**
+   * Directory name a generated file's module folder gets: the label slugged the
+   * same way the emitted import paths are, with underscores for Python (a
+   * hyphenated directory cannot be imported by a Python module name).
+   */
+  private safeDirName(file: GeneratedFile): string {
+    const safe = labelToFileName(file.nodeLabel);
+    return (file.language || '').toLowerCase() === 'python' ? safe.replace(/-/g, '_') : safe;
+  }
+
+  /**
+   * Project-relative POSIX path a generated file is scaffolded at — the ONE
+   * place the export layout is encoded. The compile gates, the deterministic
+   * repair fixers (they resolve relative specifiers against this tree) and
+   * PerFileScaffolder all go through here, so what a fixer reasons about is
+   * exactly what tsc compiles and exactly what the user receives. Tree Mode
+   * moves a multi-app build into `apps/<app>/src/…` + `bridge/`; a single-app
+   * build is the flat `src/<safeName>/<file>` it always was.
+   */
+  private scaffoldRelPath(file: GeneratedFile): string {
+    return path.posix.join(exportDirFor(file, this.safeDirName(file)), file.fileName);
   }
 
   /**
    * Scaffold the given TS/JS files into a temp dir (layout mirrors
-   * PerFileScaffolder: `src/<safeName>/<file>`) and run
+   * PerFileScaffolder via scaffoldRelPath) and run
    * `tsc --noEmit --allowImportingTsExtensions -p <dir>`.
    * Returns Map<nodeLabel, string[]> of `TSxxxx: message (line N)` per failing
    * file (empty map = all compile clean).
    */
   private async runTscCheck(tsFiles: GeneratedFile[]): Promise<Map<string, string[]>> {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-tscheck-'));
-    const srcDir = path.join(tmpDir, 'src');
-    const relByLabel = new Map<string, string>();
-    try {
-      for (const f of tsFiles) {
-        const safeName = labelToFileName(f.nodeLabel);
-        const nodeDir = path.join(srcDir, safeName);
-        fs.mkdirSync(nodeDir, { recursive: true });
-        fs.writeFileSync(path.join(nodeDir, f.fileName), f.code, 'utf-8');
-        relByLabel.set(f.nodeLabel, path.posix.join('src', safeName, f.fileName));
-      }
-      // Validation strictness matches the codePlanner runner (no `strict`):
-      // this gate exists to catch STRUCTURAL failures — missing imports,
-      // duplicate identifiers, unresolved cross-file members — not strict-null
-      // nitpicks (TS2345 number|null vs number|undefined) that a 7b model
-      // produces on otherwise-fine AI output.
-      const tsconfig = {
-        compilerOptions: {
-          target: 'ES2022',
-          module: 'ESNext',
-          moduleResolution: 'bundler',
-          strict: false,
-          esModuleInterop: true,
-          skipLibCheck: true,
-          noEmit: true,
-          allowImportingTsExtensions: true,
-          rootDir: '.',
-        },
-        include: ['src/**/*.ts', 'src/**/*.js'],
-      };
-      fs.writeFileSync(path.join(tmpDir, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
-      // The temp scaffold lives in /tmp, far from the backend's node_modules —
-      // without @types/node the gate false-positives on TS2580 ('Cannot find
-      // name process') in perfectly valid CLI code. Write a minimal ambient
-      // declaration for the node globals the 7B model legitimately emits in
-      // CLI/entry files (process, console is builtin). Keeps the gate honest:
-      // it only reports STRUCTURAL errors, not missing-type-install noise.
-      fs.writeFileSync(path.join(tmpDir, 'globals.d.ts'), [
-        'declare const process: {',
-        '  env: Record<string, string | undefined>;',
-        '  argv: string[];',
-        '  cwd(): string;',
-        '  exit(code?: number): never;',
-        '  stdout: { write(s: string): void };',
-        '  stderr: { write(s: string): void };',
-        '  on(event: string, cb: (...args: any[]) => void): void;',
-        '};',
-        '// Vite-style import.meta.env the 7B model legitimately emits in web/CLI code.',
-        'interface ImportMeta {',
-        '  env: { [key: string]: string | undefined; MODE: string; DEV: boolean; PROD: boolean } & Record<string, string | undefined>;',
-        '  dirname: string;',
-        '  filename: string;',
-        '  url: string;',
-        '}',
-        'declare const require: any;',
-        'declare const module: { exports: any };',
-        'declare const __dirname: string;',
-        'declare const __filename: string;',
-        'declare function setTimeout(cb: () => void, ms: number): any;',
-        'declare function setInterval(cb: () => void, ms: number): any;',
-        'declare function clearTimeout(t: any): void;',
-        'declare function clearInterval(t: any): void;',
-        'declare const console: any;',
-        'declare namespace NodeJS { export interface ProcessEnv { [key: string]: string | undefined } }',
-        '',
-      ].join('\n'), 'utf-8');
-
-      let stdout = '';
-      let stderr = '';
-      try {
-        const r = await execFileAsync('node', [TSC_BIN, '--noEmit', '--allowImportingTsExtensions', '-p', tmpDir], {
-          cwd: tmpDir,
-          timeout: 180000,
-          maxBuffer: 8 * 1024 * 1024,
-        });
-        stdout = r.stdout;
-        stderr = r.stderr;
-      } catch (e: any) {
-        stdout = e?.stdout || '';
-        stderr = e?.stderr || '';
-      }
-
-      const byLabel = new Map<string, string[]>();
-      const combined = `${stderr}\n${stdout}`;
-      for (const line of combined.split('\n')) {
-        const m = line.match(/^(.+?)\((\d+),(\d+)\):\s+error\s+(TS\d+):\s+(.+)$/);
-        if (!m) continue;
-        const filePath = m[1].replace(/\\/g, '/');
-        let label: string | undefined;
-        for (const [lbl, rel] of relByLabel) {
-          if (filePath.endsWith(rel)) { label = lbl; break; }
-        }
-        if (!label) continue;
-        const errs = byLabel.get(label) || [];
-        // m[4] already includes the "TS" prefix (e.g. "TS2614") — do not
-        // double it, the repair prompt reads these verbatim.
-        errs.push(`${m[4]}: ${m[5]} (line ${m[2]})`);
-        byLabel.set(label, errs);
-      }
-      return byLabel;
-    } finally {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
-    }
+    // SHARED compiler gate (sandbox/buildVerification.ts). This is the SAME
+    // implementation the chat pipeline (codePlanner.runTscCheck) now calls, so
+    // the two generation pipelines can no longer compile against different
+    // strictness/layout rules and drift apart.
+    const entries: TscEntry[] = tsFiles.map((f) => ({
+      label: f.nodeLabel,
+      relPath: this.scaffoldRelPath(f),
+      code: f.code,
+    }));
+    const res = await runTscGate(entries, { timeoutMs: 180_000 });
+    return res.errorsByLabel;
   }
 
   /**
    * Generate a single file for one node (public, for hot-swap regeneration).
    * Builds dependency context and calls the private generator.
    */
+  /**
+   * Generate ONE cross-app bridge module (Tree Mode).
+   *
+   * The bridge carries a single payload between two SEPARATE apps built from
+   * this one project: it exports the agreed data shape plus a small API for
+   * the giving and the receiving side. Returns null when the model produced
+   * nothing usable, so the caller skips it rather than shipping an empty file.
+   */
+  private async generateBridgeModule(project: Project, bridge: BridgeModule): Promise<GeneratedFile | null> {
+    const byId = new Map((project.nodes || []).map((n) => [n.id, n]));
+    const describeNode = (id: string) => {
+      const n: any = byId.get(id);
+      if (!n) return null;
+      return {
+        label: n.data?.label || n.id,
+        type: n.data?.type || n.type,
+        description: n.data?.description,
+        language: n.data?.language,
+      };
+    };
+    type NodeDesc = { label: string; type?: string; description?: string; language?: string };
+    const sourceNodes = bridge.links
+      .map((l) => describeNode(l.sourceNodeId))
+      .filter(Boolean) as NodeDesc[];
+    const targetNodes = bridge.links
+      .map((l) => describeNode(l.targetNodeId))
+      .filter(Boolean) as NodeDesc[];
+
+    // The bridge joins two trees, so there is no single language to inherit.
+    // Use the giving side's (it implements the export half) and fall back to
+    // TypeScript — the language most VACA apps are built in.
+    const language = sourceNodes.find((n) => n.language)?.language || 'typescript';
+
+    const prompt = buildBridgePrompt({
+      bridge,
+      projectName: project.name,
+      targetOS: project.targetOS,
+      sourceNodes,
+      targetNodes,
+    });
+    const raw = await this.ai.reason(prompt, BRIDGE_SYSTEM_PROMPT, { maxTokens: 2048, timeoutMs: 180_000 });
+    const code = parseBridgeResponse(raw);
+    if (!code || code.trim().length < 20) {
+      console.warn(`[fileGenerator] bridge "${bridge.name}" produced no usable module — skipped`);
+      return null;
+    }
+
+    const exportInfo = this.extractExports(code, language);
+
+    // Same sandbox validation every other file gets — a bridge is held to the
+    // same standard as the app code it connects.
+    let errors: string[] = [];
+    let validated = false;
+    try {
+      const validation = await this.sandbox.run(code, language);
+      errors = validation.errors || [];
+      validated = validation.success;
+    } catch {
+      errors = ['Sandbox validation unavailable'];
+    }
+
+    console.log(
+      `[fileGenerator] 🌉 bridge "${bridge.name}" — ${bridge.payloadLabel}: ` +
+      `${bridge.sourceTreeName} → ${bridge.targetTreeName} (${code.length} chars, ${exportInfo.names.length} export(s))`,
+    );
+
+    return {
+      fileName: bridgeFileName(bridge, language),
+      language,
+      code,
+      nodeId: `bridge:${bridge.key}`,
+      nodeLabel: bridge.name,
+      isBridge: true,
+      treeIds: [bridge.sourceTreeId, bridge.targetTreeId],
+      dependencies: [],
+      exports: exportInfo.names,
+      errors,
+      validated,
+    };
+  }
+
   async generateSingleFile(
     node: any,
     project: Project,
@@ -1912,6 +3328,20 @@ export class FileGenerator {
    * while complex logic (business logic, APIs, databases) stays on the primary model.
    */
   private pickModelTier(node: any, dependencyLabels: string[]): ModelTier {
+    // Blueprint-driven modules (contractContext present) ALWAYS go to the
+    // primary (strongest) model — the fast 0.5B/1.5B coder cannot handle
+    // cross-file contracts. Measured failure (teacher-build seq 2): the
+    // classifier's `logic && isShortDesc && noDeps` rule routed ALL chess
+    // modules to the fast tier (blueprint descriptions are <300 chars, deps
+    // ≤1), and the 0.5B produced skeleton stubs: 'Placeholder' comments,
+    // `fs.writeFileSync` in a browser app (TS2304 fs), undeclared globals
+    // (initialGameState, player, gameState, Result, Request), and a void-typed
+    // function with no return (TS2355) — 9 tsc errors, 2/6 validated. Only
+    // truly standalone files with NO contract and NO cross-file wiring are
+    // eligible for the fast tier.
+    if ((node.data as NodeData)?.contractContext) {
+      return 'primary';
+    }
     return classifyCodeComplexity(
       node.data?.label || node.id || '',
       node.data?.description || '',
@@ -1936,7 +3366,22 @@ export class FileGenerator {
     fileExports: Map<string, FileExportInfo>,
     guiWidgetOutput: Record<string, any> | null,
     fixErrors?: string[],
-    fixContext?: { previousContent?: string; importTargets?: string }
+    fixContext?: {
+      previousContent?: string;
+      importTargets?: string;
+      /**
+       * PLANNED contracts (node.data.contractContext) keyed by dependency label.
+       * Used only when a dependency has not been generated yet — see the
+       * dependency-context block below.
+       */
+      plannedContracts?: Map<string, string>;
+    },
+    /**
+     * Tree Mode: which app tree this node is in, and the bridges that carry
+     * payloads out of it. Omitted by callers that have no tree context (the
+     * single-file path), which keeps those builds byte-identical.
+     */
+    treeContext?: { scope: ResolvedTrees; bridges: BridgeModule[] }
   ): Promise<string> {
     const nodeLabel = node.data.label || node.id;
     const language = node.data.language || 'typescript';
@@ -1958,7 +3403,18 @@ export class FileGenerator {
       ? `\n\nThis file can import from these sibling files (ONLY the declared exports — never invent members):\n${
           dependencyLabels.map(l => {
             const src = this.depSourceCache.get(l);
-            const header = `  - ${labelToFileName(l)}.${ext} (exports: ${describeExports(fileExports.get(l))})`;
+            const realized = fileExports.get(l);
+            const planned = fixContext?.plannedContracts?.get(l);
+            // Dependency still IN FLIGHT (concurrent pool): its realized exports
+            // do not exist yet. A blank "(none)" would read as "this module
+            // exports nothing", so hand over its PLANNED contract from the
+            // wiring graph instead — that is what the compile-check loop then
+            // reconciles against the real exports.
+            if (!realized && !src && planned) {
+              const indented = planned.split('\n').map(s => `    ${s}`).join('\n');
+              return `  - ${labelToFileName(l)}.${ext} — NOT GENERATED YET. Its PLANNED CONTRACT below is authoritative: import ONLY the exports it promises, using exactly those names.\n${indented}`;
+            }
+            const header = `  - ${labelToFileName(l)}.${ext} (exports: ${describeExports(realized)})`;
             if (src && src.trim().length > 10) {
               const capped = src.trim().length > MAX_DEP_SOURCE_CHARS
                 ? src.trim().substring(0, MAX_DEP_SOURCE_CHARS) + '\n// ... (dependency truncated)'
@@ -1986,7 +3442,21 @@ export class FileGenerator {
     // the interpreted label/relation/codeHint. They create the import
     // dependency above AND tell the model HOW to implement the wiring, so the
     // two merged modules genuinely interoperate instead of merely importing.
-    const semanticSection = buildSemanticSection(node, project);
+    // Cross-tree edges are NOT sibling wiring: their endpoints live in
+    // different apps, and rendering them here would invite the model to import
+    // the other app's file. Only intra-tree edges describe wiring inside this
+    // app, so the cross-tree ones are filtered out of this section and handled
+    // by the boundary section below instead.
+    const semanticSection = buildSemanticSection(
+      node,
+      treeContext ? { ...project, edges: treeContext.scope.intraEdges } : project,
+    );
+    // The APP BOUNDARY this node sits on, if any — how to hand its data to the
+    // app tree beside it (through the named bridge module, never an import).
+    // Empty for a node on no boundary, so ordinary builds are unaffected.
+    const crossTreeSection = treeContext
+      ? buildCrossTreeBoundarySection(node.id, treeContext.scope, treeContext.bridges)
+      : '';
 
     // ── Inject GUI widget context for UI nodes ──
     let guiContext = '';
@@ -2074,7 +3544,7 @@ Generate ONLY ${language} syntax — do NOT use ${extOverride} syntax.`
     } else if ((language?.toLowerCase() === 'typescript' || language?.toLowerCase() === 'javascript') && isUINode) {
       // UI files are saved as plain .ts/.js (never .tsx/.jsx). Generated previews
       // inline the raw source, so JSX would fail both tsc and the browser.
-      languageHint = `\n\nIMPORTANT — plain TS/JS rules for UI files:\n  - This file is a .${ext} file, NOT .tsx/.jsx.\n  - DO NOT use JSX syntax (no <div>, <button>, <li key=...>, etc.).\n  - Build DOM with document.createElement(), textContent, className, and appendChild().\n  - You may set innerHTML with static markup strings, but never from user input.\n  - DO NOT include any \`import\`/\`export\` statements — the build system adds imports automatically.\n  - Export ONE function named \`render\` (or \`init\`) that accepts a container HTMLElement and renders the UI into it. The preview wrapper calls it with the '#app-container' element.`;
+      languageHint = `\n\nIMPORTANT — plain TS/JS rules for UI files:\n  - This file is a .${ext} file, NOT .tsx/.jsx.\n  - DO NOT use JSX syntax (no <div>, <button>, <li key=...>, etc.).\n  - Build DOM with document.createElement(), textContent, className, and appendChild().\n  - You may set innerHTML with static markup strings, but never from user input.\n  - You MAY include \`import\` statements for the sibling modules listed in this file's import context (the build keeps them and adds any missing ones) — never import anything else.\n  - Export ONE function named \`render\` (or \`init\`) that accepts a container HTMLElement and renders the UI into it. The preview wrapper calls it with the '#app-container' element.`;
     }
 
     // ── Compiler-feedback section (compile-check-retry loop) ──
@@ -2094,7 +3564,8 @@ Generate ONLY ${language} syntax — do NOT use ${extOverride} syntax.`
           fixContext?.importTargets
             ? `\n━━━ IMPORT TARGETS (may ONLY reference these declared exports) ━━━\n${fixContext.importTargets}\n`
             : ''
-        }\n━━━ TSC ERRORS (fix ALL of them) ━━━\n${fixErrors.slice(0, 12).map(e => `  - ${e}`).join('\n')}\n\nRules for the corrected file:\n  - Keep the SAME exported symbol names (other files import them).\n  - This is a .${ext} file, NOT .tsx/.jsx — do NOT use JSX syntax (<div>, <button>).\n  - Build the DOM with document.createElement(), textContent, className, appendChild().\n  - Do NOT add import/export-from statements — the build system adds them.\n  - Do NOT include markdown, prose, or fences — code only.\n  - TypeScript: every variable/parameter/return must have a valid type; remove 'any' casts that break the code.\n  - Do NOT use TypeScript features the target doesn't support (e.g. JSX in .ts).\n  - If an error says a member does not exist on an imported type (TS2339), do NOT cast to 'any' and do NOT invent the member — call ONLY the members listed in braces in IMPORT TARGETS, or implement the behavior locally as your own helper using those whitelisted members.`
+        }\n━━━ TSC ERRORS (fix ALL of them) ━━━\n${fixErrors.slice(0, 12).map(e => `  - ${e}`).join('\n')}\n\nRules for the corrected file:\n  - Keep the SAME exported symbol names (other files import them).\n  - This is a .${ext} file, NOT .tsx/.jsx — do NOT use JSX syntax (<div>, <button>).\n  - Build the DOM with document.createElement(), textContent, className, appendChild().\n  - You MAY add import statements for the modules listed in IMPORT TARGETS above (the build dedupes them) — importing a member the lint says a dependency exports is the RIGHT fix; never import anything else.\n  - Do NOT include markdown, prose, or fences — code only.\n  - TypeScript: every variable/parameter/return must have a valid type; remove 'any' casts that break the code.\n  - Do NOT use TypeScript features the target doesn't support (e.g. JSX in .ts).\n  - If an error says a member does not exist on an imported type (TS2339), do NOT cast to 'any' and do NOT invent the member — call ONLY the members listed in braces in IMPORT TARGETS (import them if the dependency exports them), or implement the behavior locally as your own helper using those whitelisted members.
+  - If an error says a NAME is not found (TS2304 Cannot find name 'X' / TS2451 redeclared / TS2339 on a symbol), the name is defined NOWHERE in this file. If IMPORT TARGETS exports it, WRITE the import for it (imports to IMPORT TARGETS modules are allowed). Otherwise define it LOCALLY in this file (exported interface/type/const) or receive it via a function parameter — never reference an undefined symbol, never rely on implicit globals, and never duplicate a class that a dependency module already exports (use the dependency's export instead).`
       : '';
 
     // Program scale from the master node (the size the user picked) — tailors
@@ -2111,8 +3582,62 @@ Generate ONLY ${language} syntax — do NOT use ${extOverride} syntax.`
       ? `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nBLUEPRINT CONSTRAINTS (MANDATORY)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${masterBlueprint}\nTHIS FILE'S MODULE: "${nodeLabel}"\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
       : '';
 
+    // Per-module contract stub (blueprint builds): derived deterministically
+    // from the wiring graph — WHO imports this module (its required exports),
+    // WHO it imports from (its only legal call targets), and the
+    // anti-single-file-mode rules (state via parameters, never globals, no DOM
+    // in non-UI modules). This is the direct fix for the ladder's #1 measured
+    // failure mode. Injected into BOTH generation and repair prompts (repair
+    // prompts reuse this same builder via generateNodeFile).
+    const contractStub = (node.data as NodeData).contractContext;
+    const contractSection = contractStub
+      ? `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMODULE CONTRACT (MANDATORY — REQUIRED EXPORTS)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${contractStub}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
+      : '';
+
+    // ── Full-picture context (the whole scaffold, not just this node's deps) ──
+    // Per-node prompts only showed the node's DIRECT dependencies, so the model
+    // wrote each file without knowing the app it belongs to (the 14B's
+    // "forest for the trees" drift: wrong module names, invented siblings,
+    // CLI-flavored plans for browser apps). Inject the COMPLETE node graph —
+    // every sibling file + every edge — capped so large plans stay in context,
+    // so each chunk is built in context of the whole design. Edge direction
+    // mirrors the graph convention: an edge "X → Y" means Y imports from X.
+    const MAX_PICTURE_NODES = 30;
+    const pictureLabelById = new Map<string, string>();
+    for (const n of project.nodes || []) pictureLabelById.set(n.id, n.data?.label || n.id);
+    const pictureSiblings = (project.nodes || []).filter((n: any) => (n.data?.label || n.id) !== nodeLabel);
+    const pictureLines: string[] = [];
+    pictureLines.push('━━━ PROJECT ARCHITECTURE (FULL PICTURE — the whole app this file belongs to) ━━━');
+    if (pictureSiblings.length === 0) {
+      pictureLines.push('  (single-file app — this is the only file)');
+    } else {
+      for (const n of pictureSiblings.slice(0, MAX_PICTURE_NODES)) {
+        const lbl = n.data?.label || n.id;
+        const desc = String(n.data?.description || '').replace(/\s+/g, ' ').trim();
+        pictureLines.push(`  - ${lbl} (${n.type || 'logic'}) — ${desc.slice(0, 90)}${desc.length > 90 ? '…' : ''}`);
+      }
+      if (pictureSiblings.length > MAX_PICTURE_NODES) {
+        pictureLines.push(`  ... and ${pictureSiblings.length - MAX_PICTURE_NODES} more files`);
+      }
+      const pictureEdges = (project.edges || []).filter((e: any) => e.source && e.target && e.source !== e.target);
+      if (pictureEdges.length > 0) {
+        pictureLines.push('  CONNECTIONS (an edge "X → Y" means Y imports from X):');
+        for (const e of pictureEdges.slice(0, 40)) {
+          const src = pictureLabelById.get(e.source) || e.source;
+          const tgt = pictureLabelById.get(e.target) || e.target;
+          if (src === nodeLabel || tgt === nodeLabel) continue;
+          pictureLines.push(`    ${src} → ${tgt}`);
+        }
+      }
+    }
+    const pictureSection = `\n\n${pictureLines.join('\n')}`;
+
     // Build the prompt for a standalone file
     const prompt = `You are an expert ${language} developer${isUINode ? ' and UI/UX designer' : ''}. Generate a SINGLE standalone source file for the node "${nodeLabel}".
+
+${VACA_BRAIN_DOCTRINE}
+
+THIS FILE'S PLACE IN THE APP: ${nodeLabel} is one node of the VACA node graph below — build it to fit THIS app, not a generic module of that name.
 
 NODE DESCRIPTION:
 ${node.data.description || 'No description provided'}
@@ -2120,8 +3645,8 @@ ${node.data.description || 'No description provided'}
 NODE TYPE: ${node.type || 'logic'}
 PROJECT: ${project.name}
 TARGET OS: ${project.targetOS}
-${scaleSection}${blueprintSection}
-${depContext}${semanticSection}
+${scaleSection}${blueprintSection}${contractSection}${pictureSection}
+${depContext}${semanticSection}${crossTreeSection}
 ${guiContext}${extClarification}${languageHint}${clientOnlySection}${fixSection}
 
 REQUIREMENTS:
@@ -2131,11 +3656,12 @@ REQUIREMENTS:
 4. Include type definitions/interfaces where appropriate
 5. Include error handling and edge cases
 6. Add clear comments for complex logic
-7. DO NOT include import statements — those will be added automatically
+7. IMPORT STATEMENTS: you MAY write import statements for sibling modules listed in this file's import context (e.g. \`import { Task } from '../core-engine/core-engine.ts'\`) — the build system keeps them and adds any missing ones, never duplicating yours. NEVER import anything other than those listed sibling modules, and NEVER import third-party packages. (Single-file apps: no imports needed.)
 8. The generated code will be the FILE BODY — define exports, classes, and functions only
 9. Use NAMED exports only (export function/class/const Name). NEVER use \`export default\` — sibling files import your symbols by name, and a default export breaks their imports
 10. Write the ACTUAL implementation — real logic, real method bodies. NO placeholder comments ('// TODO', '// define your properties here', '// add more methods as needed'), no empty stubs, no skeleton methods
 11. Use ONLY built-in language/platform APIs and the standard library. NO third-party packages or frameworks (express, prisma, lodash, axios, react, better-sqlite3, node:assert, etc.) — nothing is installed and nothing can be imported. Implement persistence with plain in-memory structures, JSON, or built-in file APIs. If you need a library feature, implement a small local equivalent instead.
+12. If this is a TEST file (*.test.ts / *.spec.ts / __tests__/): the test runner globals (describe, it, test, expect, beforeEach, afterEach, beforeAll, afterAll, vi) are ALREADY DECLARED by the platform — use them DIRECTLY as bare globals, never import or require a test framework or test-utility package (jest, vitest, mocha, node:test, @testing-library/*, sinon, chai, supertest, enzyme, react-test-renderer, @types/*) — nothing else is available, so write assertions with the declared globals and plain DOM/Node APIs only.
 
 Return ONLY the code — no markdown, no explanations, no code fences.`;
 
@@ -2150,7 +3676,7 @@ Return ONLY the code — no markdown, no explanations, no code fences.`;
       let code: string;
       if (tier === 'fast-cpu' || tier === 'fast-gpu') {
         // Route to fast coder model (auto-picks best available: GPU1→GPU0→CPU)
-        code = await this.ai.reasonFast(prompt, { maxTokens: 2048 });
+        code = await this.ai.reasonFast(prompt, { maxTokens: 2048, role: 'codeGeneration' });
         console.log(`[fileGenerator] Generated "${nodeLabel}" using fast coder (${tier === 'fast-cpu' ? 'CPU fallback' : 'GPU dedicated'})`);
       } else {
         // Route to primary 7B model (delegator — reserved for complex tasks).
@@ -2161,7 +3687,7 @@ Return ONLY the code — no markdown, no explanations, no code fences.`;
         // 0.2: deterministic repair. Measured across 5 builds: 0.2 fix rounds
         // produced the best build (4 real errors) and beat 0.3 (which caused
         // fix-round drift: a 1-file-failing round-1 regressed to 6 files).
-        code = await this.ai.reason(prompt, undefined, { maxTokens: 4096, temperature: isFixRound ? 0.2 : undefined });
+        code = await this.ai.reason(prompt, undefined, { maxTokens: 4096, temperature: isFixRound ? 0.2 : undefined, role: 'codeGeneration' });
         console.log(`[fileGenerator] Generated "${nodeLabel}" using 7B delegator (complex logic${isFixRound ? ', fix round @temp 0.2' : ''})`);
       }
 
@@ -2468,18 +3994,39 @@ Return ONLY the code — no markdown, no explanations, no code fences.`;
     // a ReferenceError (e.g. ui_screens importing ChessEngine from core-engine
     // on the chess build). Falls back to the legacy IIFE assembly when bundling
     // fails (bare package imports, unparseable code) so previews still render.
-    const bundledJs = bundlePreviewJs(jsFiles);
+    let previewBundleError = '';
+    const bundledJs = bundlePreviewJs(jsFiles, { onError: (msg) => { previewBundleError = msg; } });
     let jsScriptBlocks: string[] = [];
     let legacyNamespaces = '';
     let legacyInitCalls = '';
+    // Module inventory for the "nothing rendered" panel. Built from the files
+    // regardless of which path runs: the legacy branch supplies its own list,
+    // but the BUNDLED path is the common case and used to leave this empty,
+    // which made the HTML-level fallback panel a no-op exactly when it was
+    // needed.
+    let previewModules: Array<{ label: string; file: string; exports: string[] }> =
+      jsFiles.map(f => ({ label: f.nodeLabel, file: f.fileName, exports: f.exports || [] }));
     if (bundledJs) {
       jsScriptBlocks.push(`<script>\n${bundledJs}\n</script>`);
     } else if (jsFiles.length > 0) {
       const legacy = assembleLegacyPreviewJs(jsFiles);
       legacyNamespaces = legacy.namespaceDeclarations;
       legacyInitCalls = legacy.initSetupCalls.join('\n');
-      jsScriptBlocks.push(`<script>\n${legacy.jsSectionLines.join('\n\n')}\n</script>`);
+      previewModules = legacy.modules;
+      // ONE <script> per generated file. jsSectionLines used to be joined into a
+      // single block, and a syntax error in one generated file made that whole
+      // block unparseable — so every other file's IIFE silently never ran and
+      // the preview went blank. As separate blocks a broken file only costs
+      // itself.
+      jsScriptBlocks.push(...legacy.perFileScripts.map(s => `<script>\n${s}\n</script>`));
     }
+
+    // Diagnostic payload for the "nothing rendered" panel below: what was built,
+    // and the esbuild error when the generated code could not be parsed.
+    const previewDiag = JSON.stringify({
+      modules: previewModules,
+      bundleFailed: previewBundleError ? previewBundleError.split('\n')[0].slice(0, 300) : '',
+    }).replace(/<\//g, '<\\/');
 
     // ── Build the full HTML ──
     const safeGoal = (appGoal || projectName).replace(/[<>&"]/g, c => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'})[c] || c);
@@ -2564,6 +4111,31 @@ ${legacyInitCalls}
       // jsFiles is interpolated at build time (${jsFiles.length}) — a bare
       // reference would leak an undeclared identifier into the page and throw
       // a ReferenceError that blanks every GUI preview.
+      // ── Never leave a SILENT blank preview ──
+      // Modules were generated but nothing rendered (the bundler could not parse
+      // the code, or no module exports a callable entry point). A blank box next
+      // to a "build succeeded" message is the worst outcome, so say what was
+      // built and why nothing ran.
+      if (containerEl && ${jsFiles.length} > 0 && !containerEl.children.length && !containerEl.textContent.trim()) {
+        var __diag = ${previewDiag};
+        var __esc = function(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+        if (__diag.modules && __diag.modules.length) {
+          var __rows = '';
+          for (var __i = 0; __i < __diag.modules.length; __i++) {
+            var __m = __diag.modules[__i];
+            __rows += '<tr><td style="padding:4px 10px;color:#8fd6ff;font:12px ui-monospace,monospace;vertical-align:top">' + __esc(__m.label)
+              + '</td><td style="padding:4px 10px;color:#cfd8dc;font:12px ui-monospace,monospace">' + __esc((__m.exports || []).join(', ') || '(no exports)') + '</td></tr>';
+          }
+          var __why = __diag.bundleFailed
+            ? 'The generated code could not be bundled, so the preview could not execute it: ' + __esc(__diag.bundleFailed)
+            : 'No module exports an entry point the preview can call (render / init / main / mount).';
+          containerEl.innerHTML = '<div style="padding:18px;font:13px system-ui;color:#eceff1;background:#11151c;border:1px solid #263238;border-radius:8px;max-width:860px">'
+            + '<div style="font-weight:700;margin-bottom:6px">📦 Built ' + __diag.modules.length + ' module(s) — nothing to auto-run</div>'
+            + '<div style="color:#90a4ae;margin-bottom:10px;line-height:1.5">' + __why
+            + ' The code is on the canvas and exportable — open a node to read it.</div>'
+            + '<table style="border-collapse:collapse"><tbody>' + __rows + '</tbody></table></div>';
+        }
+      }
       if (containerEl && ${jsFiles.length} === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {
         containerEl.innerHTML = '<div style="padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif"><h2 style="color:#e2e8f0;margin:0 0 8px">${safeGoal}</h2><p style="margin:0 0 16px">This app\\'s interface is ready — generated code is below.</p><div style="font-size:12px;opacity:.7">Preview shell · VACA</div></div>';
       }
@@ -2602,6 +4174,82 @@ ${legacyInitCalls}
 
 const PREFERRED_ENTRY_POINTS = ['init', 'main', 'run', 'render', 'start', 'createApp', 'setup', 'createUI'];
 
+/**
+ * Max simultaneous model calls for INDEPENDENT work (module generation and
+ * per-file repair). DSpark serves concurrent completions in parallel rather
+ * than queuing them (measured: 8.4s for one 220-token completion vs 9.4s for
+ * two at once), so overlapping independent calls is close to free wall-clock.
+ * Bounded so a wide graph can't open dozens of requests at once.
+ */
+const MAX_PARALLEL_MODEL_CALLS = Math.max(
+  1,
+  Number(process.env.VACA_MAX_PARALLEL_GENERATIONS || 4)
+);
+
+/**
+ * Run `fn` over `items` with at most `limit` calls in flight, preserving input
+ * order in the result array. Used to parallelise work that was serial only by
+ * accident — repairing every failing file one after another — without opening
+ * an unbounded number of simultaneous model requests.
+ */
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>
+): Promise<Array<{ ok: true; value: R } | { ok: false; reason: unknown }>> {
+  const results: Array<{ ok: true; value: R } | { ok: false; reason: unknown }> =
+    new Array(items.length);
+  let cursor = 0;
+  const worker = async () => {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      try {
+        results[i] = { ok: true, value: await fn(items[i]) };
+      } catch (reason) {
+        results[i] = { ok: false, reason };
+      }
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, () => worker())
+  );
+  return results;
+}
+
+/**
+ * Relaxed entry-point match: real generated modules are named `renderView`,
+ * `initGame`, `startGame`, `setupBoard`, `mainLoop` — not the bare
+ * `render`/`init`/`main` the exact list looks for. Requiring an EXACT name is
+ * why a whole generated app could preview as a BLANK iframe while the build
+ * reported success (every module was skipped: "no entry export (gameState)").
+ *
+ * A camelCase name that STARTS WITH a preferred root counts as an entry point.
+ * Deliberately prefix-only, never "contains", so a data helper like
+ * `searchAndFilter` can never be mistaken for an entry point and invoked with
+ * the container (the crash the exact-match rule was originally added for).
+ */
+function looksLikeEntryName(name: string): boolean {
+  const lower = name.toLowerCase();
+  return PREFERRED_ENTRY_POINTS.some(root => lower.startsWith(root.toLowerCase()));
+}
+
+/**
+ * Candidate entry points for a module, in the order the preview should try
+ * them: exact names, then relaxed camelCase matches, then PascalCase classes
+ * (instantiated and called via render/mount/init). Names that no plausible
+ * entry could use are omitted so the runtime driver never calls a data helper.
+ */
+function previewCandidateOrder(exportsList: string[] | undefined): string[] {
+  const list = Array.isArray(exportsList) ? exportsList : [];
+  const exact = PREFERRED_ENTRY_POINTS.filter(n => list.includes(n));
+  const relaxed = list.filter(n => !exact.includes(n) && looksLikeEntryName(n));
+  const classes = list.filter(n =>
+    !exact.includes(n) && !relaxed.includes(n) && /^[A-Z][A-Za-z0-9_$]*$/.test(n)
+  );
+  return [...exact, ...relaxed, ...classes];
+}
+
 function previewNamespace(label: string): string {
   return label.replace(/[^a-zA-Z0-9_]/g, '_').replace(/^([0-9])/, '_$1');
 }
@@ -2619,7 +4267,10 @@ function previewNamespace(label: string): string {
  * Returns the bundled code, or null when bundling fails (caller falls back to
  * the legacy IIFE assembly). Exported for tests.
  */
-export function bundlePreviewJs(jsFiles: GeneratedFile[]): string | null {
+export function bundlePreviewJs(
+  jsFiles: GeneratedFile[],
+  opts?: { onError?: (message: string) => void }
+): string | null {
   if (jsFiles.length === 0) return null;
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-preview-'));
   try {
@@ -2635,21 +4286,72 @@ export function bundlePreviewJs(jsFiles: GeneratedFile[]): string | null {
     for (const f of jsFiles) {
       lines.push(`import * as ${previewNamespace(f.nodeLabel)} from './${labelToFileName(f.nodeLabel)}/${f.fileName}';`);
     }
+
+    // Module manifest: every generated module with its exports and the ordered
+    // entry-point candidates the runtime driver below should try.
+    lines.push('const __vacaModules = [');
     for (const f of jsFiles) {
-      if (f.exports.length === 0) continue;
-      const ns = previewNamespace(f.nodeLabel);
-      const foundEntry = PREFERRED_ENTRY_POINTS.find(name => f.exports.includes(name));
-      const callName = foundEntry || f.exports[0];
-      // Skip class constructors in the first-export fallback — a class is
-      // typeof 'function' but must not be invoked without `new` (the chess
-      // build's core_engine.ChessEngine tripped exactly this).
-      const guard = foundEntry
-        ? `typeof ${ns}.${callName} === 'function'`
-        : `typeof ${ns}.${callName} === 'function' && !/^class\\s/.test(String(${ns}.${callName}))`;
       lines.push(
-        `try { if (${guard}) { ${ns}.${callName}(document.getElementById('app-container')); } else { console.log('${f.fileName}: awaiting user interaction'); } } catch (e) { console.error('Error calling ${ns}.${callName}:', e); if (typeof addError === 'function') addError(e.message); }`
+        `  { label: ${JSON.stringify(f.nodeLabel)}, file: ${JSON.stringify(f.fileName)}, ns: ${previewNamespace(f.nodeLabel)}, exports: ${JSON.stringify(f.exports || [])}, candidates: ${JSON.stringify(previewCandidateOrder(f.exports))} },`
       );
     }
+    lines.push('];');
+
+    // ── Runtime driver ──
+    // Tries each module's candidates in order. A class is instantiated and its
+    // render/mount/init called; a plain function is called with the container.
+    // Every attempt is individually guarded, so one bad module can never blank
+    // the whole preview. Purely runtime JS (no codegen interpolation).
+    lines.push(`
+const __vacaEl = document.getElementById('app-container');
+const __vacaRan = [];
+const __vacaIsClass = (fn) => { try { return /^class\\s/.test(Function.prototype.toString.call(fn)); } catch (e) { return false; } };
+const __vacaMethods = ['render', 'mount', 'init', 'start', 'draw', 'setup'];
+for (const mod of __vacaModules) {
+  let done = false;
+  for (const name of mod.candidates) {
+    const fn = mod.ns ? mod.ns[name] : undefined;
+    if (typeof fn !== 'function') continue;
+    try {
+      if (__vacaIsClass(fn)) {
+        const inst = new fn();
+        const m = __vacaMethods.find((k) => typeof inst[k] === 'function');
+        if (!m) continue;
+        inst[m](__vacaEl);
+      } else {
+        fn(__vacaEl);
+      }
+      __vacaRan.push(mod.label + '.' + name + '()');
+      done = true;
+      break;
+    } catch (e) {
+      console.error('[preview] ' + mod.label + '.' + name + '() failed:', e);
+    }
+  }
+  if (!done) console.log('[preview] ' + mod.file + ': nothing auto-invoked');
+}
+console.log('[preview] entry calls: ' + (__vacaRan.length ? __vacaRan.join(', ') : '(none)'));
+
+// ── Guaranteed fallback ──
+// A blank iframe next to a "build succeeded" message is the worst outcome, so
+// if nothing rendered, show WHAT was built (module -> exports) instead of a
+// silent white box, and say plainly that no UI entry point was generated.
+if (!__vacaEl) {
+  console.error('[preview] #app-container missing');
+} else if (__vacaEl.childNodes.length === 0 && !__vacaEl.textContent.trim()) {
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let rows = '';
+  for (const mod of __vacaModules) {
+    rows += '<tr><td style="padding:4px 10px;color:#8fd6ff;font:12px ui-monospace,monospace;vertical-align:top">' + esc(mod.label) + '</td>'
+         + '<td style="padding:4px 10px;color:#cfd8dc;font:12px ui-monospace,monospace">' + esc((mod.exports || []).join(', ') || '(no exports)') + '</td></tr>';
+  }
+  __vacaEl.innerHTML = '<div style="padding:18px;font:13px system-ui;color:#eceff1;background:#11151c;border:1px solid #263238;border-radius:8px">'
+    + '<div style="font-weight:700;margin-bottom:6px">📦 Built ' + __vacaModules.length + ' module(s) — no UI entry point generated</div>'
+    + '<div style="color:#90a4ae;margin-bottom:10px;line-height:1.5">These modules expose data and logic APIs, but none exports something the preview can auto-run (render / init / main / mount). The code itself is complete and exportable — open a node on the canvas to read it.</div>'
+    + '<table style="border-collapse:collapse"><tbody>' + rows + '</tbody></table></div>';
+}
+`);
+
     fs.writeFileSync(entryPath, lines.join('\n'));
 
     const result = esbuildBuildSync({
@@ -2663,7 +4365,11 @@ export function bundlePreviewJs(jsFiles: GeneratedFile[]): string | null {
     });
     return result.outputFiles[0].text;
   } catch (err) {
-    console.warn('[preview] esbuild bundling failed, falling back to legacy IIFE assembly:', err instanceof Error ? err.message : err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn('[preview] esbuild bundling failed, falling back to legacy IIFE assembly:', msg);
+    // Hand the reason to the caller so the preview can SAY why it is empty
+    // instead of rendering a silent blank box next to a "build succeeded".
+    opts?.onError?.(msg);
     return null;
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
@@ -2679,11 +4385,16 @@ export function bundlePreviewJs(jsFiles: GeneratedFile[]): string | null {
 export function assembleLegacyPreviewJs(jsFiles: GeneratedFile[]): {
   namespaceDeclarations: string;
   jsSectionLines: string[];
+  /** One IIFE per file, so each can be emitted in its OWN <script> block. */
+  perFileScripts: string[];
   initSetupCalls: string[];
+  modules: Array<{ label: string; file: string; exports: string[] }>;
 } {
   const jsSectionLines: string[] = [];
+  const perFileScripts: string[] = [];
   const initSetupCalls: string[] = [];
   const namespaceDeclarations: string[] = [];
+  const modules: Array<{ label: string; file: string; exports: string[] }> = [];
 
   for (const file of jsFiles) {
     const ns = previewNamespace(file.nodeLabel);
@@ -2698,27 +4409,36 @@ export function assembleLegacyPreviewJs(jsFiles: GeneratedFile[]): {
       ? stripTypeScriptKeepExports(file.code)
       : file.code;
     const safeCode = rawCode.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+    const iife = `(function(exports) {\n${safeCode}\n})(typeof ${ns} !== 'undefined' ? ${ns} : {});`;
     jsSectionLines.push(`// ── ${file.fileName} ──`);
-    jsSectionLines.push(`(function(exports) {\n${safeCode}\n})(typeof ${ns} !== 'undefined' ? ${ns} : {});`);
+    jsSectionLines.push(iife);
+    // One entry per FILE (not one giant blob): jsSectionLines is joined into a
+    // single <script>, and a syntax error in ONE generated file makes the whole
+    // block unparseable, so every other file's IIFE silently never runs. As
+    // separate <script> blocks a broken file only costs itself.
+    perFileScripts.push(`// ── ${file.fileName} ──\n${iife}`);
 
-    // Detect entry point exports and call them
-    if (file.exports.length > 0) {
-      const foundEntry = PREFERRED_ENTRY_POINTS.find(name => file.exports.includes(name));
-      if (foundEntry) {
-        initSetupCalls.push(`  try { ${ns}.${foundEntry}(document.getElementById('app-container')); } catch(e) { console.error('Error calling ${ns}.${foundEntry}:', e); addError(e.message); }`);
-      } else {
-        // Call the first export as initialization — pass the resolved container
-        // so UI functions that accept a container HTMLElement work in all paths.
-        // Skip class constructors (typeof 'function' but must not be called
-        // without `new`).
-        initSetupCalls.push(`  try { if(typeof ${ns}.${file.exports[0]} === 'function' && !/^class\\s/.test(String(${ns}.${file.exports[0]}))) ${ns}.${file.exports[0]}(document.getElementById('app-container')); else console.log('${file.fileName}: awaiting user interaction'); } catch(e) { console.warn('${file.nodeLabel} init:', e); }`);
-      }
+    modules.push({ label: file.nodeLabel, file: file.fileName, exports: file.exports || [] });
+
+    // Detect entry point exports and call them. Uses the SAME relaxed matching
+    // as the bundled path (renderView ~ render) so a real UI module is actually
+    // driven; only candidates can ever be called, so a data helper like
+    // searchAndFilter is still never invoked with the container (seq-12).
+    const foundEntry = previewCandidateOrder(file.exports)[0];
+    if (foundEntry) {
+      initSetupCalls.push(`  try { ${ns}.${foundEntry}(document.getElementById('app-container')); } catch(e) { console.error('Error calling ${ns}.${foundEntry}:', e); }`);
+    } else {
+      // No plausible entry export — skip the call instead of invoking a data
+      // function like searchAndFilter(container).
+      console.log(`[preview-legacy] ${file.fileName}: no entry export (${(file.exports || []).slice(0, 4).join(', ')}) — skipped`);
     }
   }
 
   return {
     namespaceDeclarations: namespaceDeclarations.join(' '),
     jsSectionLines,
+    perFileScripts,
     initSetupCalls,
+    modules,
   };
 }

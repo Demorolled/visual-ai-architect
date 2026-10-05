@@ -4,14 +4,31 @@
  *
  * Each architecture node becomes its own standalone source file with
  * proper imports/exports, organized into a clean directory structure.
+ *
+ * TREE MODE: a project with several app trees is exported as several SEPARATE
+ * APPS — one `apps/<app>/` directory per tree (own src/, entry point and
+ * project config) plus one shared `bridge/` directory for the cross-app
+ * integration modules. A single-tree project keeps the flat `src/` layout, so
+ * pre-Tree-Mode exports are unchanged. The layout itself lives in
+ * `utils/treeScope.ts` (planExportLayout / exportDirFor) and is shared with the
+ * generator's compile gate, so what compiled during generation is exactly what
+ * lands on disk here.
  */
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
-import { OSType, LinuxDistro, Node, Edge } from '../types.js';
+import { AppTree, OSType, LinuxDistro, Node, Edge } from '../types.js';
 import { labelToFileName } from '../layers/fileGenerator.js';
 import type { GeneratedFile } from '../layers/fileGenerator.js';
+import {
+  planExportLayout,
+  exportDirFor,
+  resolveTreeScopes,
+  planBridges,
+  type ExportLayoutPlan,
+  type ResolvedTrees,
+} from '../utils/treeScope.js';
 
 export interface PerFileScaffoldConfig {
   projectName: string;
@@ -21,6 +38,19 @@ export interface PerFileScaffoldConfig {
   files: GeneratedFile[];
   nodes: Node[];
   edges: Edge[];
+  /**
+   * Tree Mode: the project's app trees. More than one tree switches the export
+   * to separate-app directories (`apps/<app>/`) plus a shared `bridge/` for the
+   * cross-app handoffs. Absent ⇒ single app, flat layout.
+   */
+  trees?: AppTree[];
+  /**
+   * Tree Mode: bridge modules to surface from THIS app's entry point (set on
+   * the per-app config the scaffold builds internally). Only the TypeScript
+   * entry point consumes them — a bridge in another language is documented in
+   * the README instead.
+   */
+  entryBridges?: Array<{ importPath: string; alias: string }>;
   appGoal?: string;
   appPurpose?: string;
   /** Custom output directory — if provided, scaffold here instead of default exports/ */
@@ -48,6 +78,291 @@ const EXPORTS_DIR = path.resolve(process.cwd(), 'exports');
 /** Escape a string for use inside a RegExp. */
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Escape a value for a C/C++ double-quoted string literal. */
+function escapeForCString(s: string): string {
+  return (s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+}
+
+/** Escape a value for a PHP double-quoted string literal. */
+function escapeForPhpString(s: string): string {
+  return (s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\$/g, '\\$').replace(/\n/g, '\\n');
+}
+
+/** Escape a value for a single-quoted string (Ruby). */
+function escapeForSingleQuoted(s: string): string {
+  return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+}
+
+// ── Entry-point wiring for compiled languages ────────────────────────────────
+// A generated node module is arbitrary LLM-authored code: its API (names,
+// arities, return types) is unknown to the scaffolder. So an entry point may
+// only CALL a function whose signature was read out of that very file — and
+// only a no-argument one, which is the sole call the scaffolder can make
+// without inventing arguments. Where nothing callable can be proven it merely
+// REFERENCES the module (its type, or a function item) so the module is still
+// compiled and linked into the build. Nothing is ever guessed: when a file
+// yields neither, the entry point keeps its banner-only behaviour.
+
+/** Names that make a no-argument function a plausible program entry. */
+const MODULE_ENTRY_FN_NAMES = new Set([
+  'main', 'run', 'start', 'startup', 'boot', 'launch', 'execute', 'exec',
+  'process', 'init', 'initialize', 'setup', 'demo', 'app', 'cli', 'selftest',
+]);
+
+/** C/C++ names that already belong to the C library — never re-declare them. */
+const C_RESERVED_NAMES = new Set([
+  'main', 'printf', 'fprintf', 'sprintf', 'snprintf', 'puts', 'putchar',
+  'getchar', 'scanf', 'malloc', 'calloc', 'realloc', 'free', 'exit', 'abort',
+  'strlen', 'strcmp', 'strcpy', 'strncpy', 'strcat', 'memset', 'memcpy',
+  'fopen', 'fclose', 'fgets', 'fputs', 'atoi', 'atof', 'rand', 'srand',
+]);
+
+/** A no-argument function a scaffolded entry point can invoke. */
+export interface EntryCallable {
+  name: string;
+  /** Return type as written in the source, for re-declaring a C/C++ prototype. */
+  returnType: string;
+  /** True for a member (static/companion) function — the call needs a type prefix. */
+  member?: boolean;
+}
+
+/**
+ * What an entry point should emit for one node module: `declarations` first
+ * (C/C++ prototypes), then `references` (force the module into the build) and
+ * `calls` (actually run the module's entry function).
+ */
+export interface ModuleWiring {
+  declarations: string[];
+  references: string[];
+  calls: string[];
+}
+
+/** Prefer a conventionally named entry (`run`, `start`, `main`…) over any other. */
+function pickEntryCallable(candidates: EntryCallable[]): EntryCallable | null {
+  if (candidates.length === 0) return null;
+  return candidates.find((c) => MODULE_ENTRY_FN_NAMES.has(c.name.toLowerCase())) || candidates[0];
+}
+
+/**
+ * Drop comments and string/char literals so declaration regexes cannot match
+ * text inside them (`// void helper() {` or a log string mentioning a call).
+ */
+function stripCommentsAndStrings(code: string): string {
+  return (code || '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/[^\n]*/g, '')
+    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
+    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''");
+}
+
+/** Zero-parameter exported Go funcs — `func Name() {}` / `func Name() T {}`. */
+export function goNoArgFuncs(code: string): EntryCallable[] {
+  const out: EntryCallable[] = [];
+  const re = /^func\s+([A-Z][A-Za-z0-9_]*)\s*\(\s*\)\s*([^{]*?)\{/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripCommentsAndStrings(code))) !== null) {
+    // A non-empty result list means the call returns a value (`_ = pkg.F()`).
+    out.push({ name: m[1], returnType: m[2].trim() });
+  }
+  return out;
+}
+
+/** Zero-parameter `pub fn` items in a Rust module. */
+export function rustNoArgFuncs(code: string): EntryCallable[] {
+  const out: EntryCallable[] = [];
+  const re = /^pub\s+fn\s+([a-z_][A-Za-z0-9_]*)\s*\(\s*\)\s*(->[^{]*?)?\{/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripCommentsAndStrings(code))) !== null) {
+    out.push({ name: m[1], returnType: (m[2] || '').trim() });
+  }
+  return out;
+}
+
+/** Any `pub fn` name — referencing a function ITEM compiles for any signature. */
+export function rustPublicFns(code: string): string[] {
+  const out: string[] = [];
+  const re = /^pub\s+fn\s+([a-z_][A-Za-z0-9_]*)/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripCommentsAndStrings(code))) !== null) out.push(m[1]);
+  return out;
+}
+
+/**
+ * Top-level, non-static, no-argument function definitions in C/C++.
+ *
+ * Deliberately conservative: the return type is limited to plain scalars,
+ * `struct X` and pointers/references, so a `std::vector<int> f()` or a
+ * multi-line signature is simply skipped rather than mis-declared.
+ */
+export function cNoArgFuncs(code: string, lang: 'c' | 'cpp'): EntryCallable[] {
+  const typePart =
+    '(?:const\\s+|unsigned\\s+|signed\\s+|long\\s+|short\\s+|struct\\s+)*[A-Za-z_]\\w*' +
+    (lang === 'cpp' ? '(?:::[A-Za-z_]\\w*)*(?:\\s*[*&]+)?' : '(?:\\s*\\*+)?');
+  const re = new RegExp(`^(${typePart})\\s+([A-Za-z_]\\w*)\\s*\\(\\s*(?:void)?\\s*\\)\\s*\\{`, 'gm');
+  const out: EntryCallable[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripCommentsAndStrings(code))) !== null) {
+    if (C_RESERVED_NAMES.has(m[2]) || m[2].startsWith('_')) continue;
+    out.push({ name: m[2], returnType: m[1].trim() });
+  }
+  return out;
+}
+
+/** The class a Java file declares (javac: the public class matches the file name). */
+export function javaModuleType(code: string): string | null {
+  const m = /^(?:public\s+|final\s+|abstract\s+|sealed\s+|non-sealed\s+)*class\s+([A-Za-z_]\w*)/m.exec(
+    stripCommentsAndStrings(code),
+  );
+  return m ? m[1] : null;
+}
+
+/** No-argument `static` Java methods — the only members an entry can call blindly. */
+export function javaStaticNoArgFuncs(code: string): EntryCallable[] {
+  const out: EntryCallable[] = [];
+  const re = /^\s*(?:public\s+|protected\s+|private\s+)?static\s+(?:final\s+)?(?:synchronized\s+)?([A-Za-z_][\w<>\[\],.? ]*?)\s+([A-Za-z_]\w*)\s*\(\s*\)\s*(?:throws\s+[\w., ]+)?\{/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripCommentsAndStrings(code))) !== null) {
+    out.push({ name: m[2], returnType: m[1].trim(), member: true });
+  }
+  return out;
+}
+
+/** The class/struct/record a C# file declares. */
+export function csharpModuleType(code: string): string | null {
+  const m = /^\s*(?:public\s+|internal\s+|static\s+|sealed\s+|abstract\s+|partial\s+)*class\s+([A-Za-z_]\w*)/m.exec(
+    stripCommentsAndStrings(code),
+  );
+  return m ? m[1] : null;
+}
+
+/** No-argument `static` C# methods — the only members an entry can call blindly. */
+export function csharpStaticNoArgFuncs(code: string): EntryCallable[] {
+  const out: EntryCallable[] = [];
+  const re = /^\s*(?:public\s+|internal\s+|private\s+|protected\s+)?static\s+([A-Za-z_][\w<>\[\],?. ]*?)\s+([A-Za-z_]\w*)\s*\(\s*\)\s*\{/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripCommentsAndStrings(code))) !== null) {
+    out.push({ name: m[2], returnType: m[1].trim(), member: true });
+  }
+  return out;
+}
+
+/** The type a Swift file declares (`class`/`struct`/`enum`/`actor`). */
+export function swiftModuleType(code: string): string | null {
+  const m = /^\s*(?:public\s+|internal\s+|private\s+|fileprivate\s+|final\s+|open\s+)*(?:class|struct|enum|actor)\s+([A-Za-z_]\w*)/m.exec(
+    stripCommentsAndStrings(code),
+  );
+  return m ? m[1] : null;
+}
+
+/** No-argument Swift functions: column-0 (module-wide) and indented `static` ones. */
+export function swiftNoArgFuncs(code: string): EntryCallable[] {
+  const text = stripCommentsAndStrings(code);
+  const out: EntryCallable[] = [];
+  const top = /^func\s+([A-Za-z_]\w*)\s*\(\s*\)\s*(?:->\s*[^{]*?)?\{/gm;
+  let m: RegExpExecArray | null;
+  while ((m = top.exec(text)) !== null) out.push({ name: m[1], returnType: '' });
+  const statics = /^\s+(?:public\s+|internal\s+|private\s+)?(?:static|class)\s+func\s+([A-Za-z_]\w*)\s*\(\s*\)\s*(?:->\s*[^{]*?)?\{/gm;
+  while ((m = statics.exec(text)) !== null) out.push({ name: m[1], returnType: '', member: true });
+  return out;
+}
+
+/** The type a Kotlin file declares (`class`/`object`). */
+export function kotlinModuleType(code: string): string | null {
+  const m = /^\s*(?:(?:public|internal|private|open|data|sealed|abstract|value|annotation|enum)\s+)*(?:class|object)\s+([A-Za-z_]\w*)/m.exec(
+    stripCommentsAndStrings(code),
+  );
+  return m ? m[1] : null;
+}
+
+/** Column-0 Kotlin functions — same module as the entry, so callable directly. */
+export function kotlinTopLevelFuncs(code: string): EntryCallable[] {
+  const out: EntryCallable[] = [];
+  const re = /^fun\s+([A-Za-z_]\w*)\s*\(\s*\)\s*\{/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripCommentsAndStrings(code))) !== null) {
+    out.push({ name: m[1], returnType: '' });
+  }
+  return out;
+}
+
+/**
+ * Plan the wiring lines an entry point emits for one node module.
+ *
+ * `moduleName` is the reference the language needs (a Rust `mod` identifier, a
+ * Java/C#/Swift/Kotlin type name, or '' for C/C++ where the symbol is global).
+ * `index` only makes generated local names unique.
+ */
+export function planModuleWiring(
+  language: string,
+  code: string,
+  moduleName: string,
+  index: number,
+): ModuleWiring {
+  const declarations: string[] = [];
+  const references: string[] = [];
+  const calls: string[] = [];
+  const lang = (language || '').toLowerCase();
+
+  switch (lang) {
+    case 'c':
+    case 'cpp': {
+      const fn = pickEntryCallable(cNoArgFuncs(code, lang as 'c' | 'cpp'));
+      if (fn) {
+        // Re-declared with the signature copied from the node file, so the
+        // prototype can never disagree with the linked definition.
+        declarations.push(`extern ${fn.returnType} ${fn.name}(void);`);
+        calls.push(`(void)${fn.name}();`);
+      }
+      break;
+    }
+    case 'rust': {
+      const fn = pickEntryCallable(rustNoArgFuncs(code));
+      if (fn) calls.push(`let _ = ${moduleName}::${fn.name}();`);
+      else {
+        const pub = rustPublicFns(code)[0];
+        if (pub) references.push(`let _ = ${moduleName}::${pub};`);
+      }
+      break;
+    }
+    case 'java': {
+      const cls = moduleName || javaModuleType(code);
+      if (cls) {
+        references.push(`Class<?> _module${index} = ${cls}.class;`);
+        const fn = pickEntryCallable(javaStaticNoArgFuncs(code));
+        if (fn) calls.push(`${cls}.${fn.name}();`);
+      }
+      break;
+    }
+    case 'csharp': {
+      const cls = moduleName || csharpModuleType(code);
+      if (cls) {
+        references.push(`var _module${index} = typeof(${cls});`);
+        const fn = pickEntryCallable(csharpStaticNoArgFuncs(code));
+        if (fn) calls.push(`${cls}.${fn.name}();`);
+      }
+      break;
+    }
+    case 'swift': {
+      const cls = moduleName || swiftModuleType(code);
+      if (cls) references.push(`_ = ${cls}.self`);
+      const fn = pickEntryCallable(swiftNoArgFuncs(code));
+      if (fn) calls.push(fn.member && cls ? `${cls}.${fn.name}()` : `${fn.name}()`);
+      break;
+    }
+    case 'kotlin': {
+      const cls = moduleName || kotlinModuleType(code);
+      if (cls) references.push(`val _module${index} = ${cls}::class`);
+      const fn = pickEntryCallable(kotlinTopLevelFuncs(code));
+      if (fn) calls.push(`${fn.name}()`);
+      break;
+    }
+    default:
+      break;
+  }
+
+  return { declarations, references, calls };
 }
 
 export class PerFileScaffolder {
@@ -89,14 +404,29 @@ export class PerFileScaffolder {
     const created: string[] = [];
     const perNodeFiles: ScaffoldResult['perNodeFiles'] = [];
 
-    // ── Write per-node source files into src/ directory ──
-    const srcDir = path.join(outputDir, 'src');
-    await fs.mkdir(srcDir, { recursive: true });
+    // ── Tree Mode: several app trees ⇒ several APPS ──
+    // A second app tree is a second program, not another module: each tree is
+    // exported into its own `apps/<app>/` directory (own src/, entry point and
+    // project config), and every cross-app handoff lives in one shared
+    // `bridge/` directory. We also stamp the app directory onto each file here,
+    // so a build that predates the layout (no `appDir` from the generator) still
+    // lands in the right app instead of collapsing into one flat src/.
+    const trees: AppTree[] = Array.isArray(config.trees) ? config.trees : [];
+    const layout = planExportLayout(trees);
+    const scoped: ResolvedTrees = resolveTreeScopes({
+      nodes: (config.nodes || []) as any,
+      edges: (config.edges || []) as any,
+      trees,
+      name: config.projectName,
+    });
+    const files = config.files.map((f) => this.withLayout(f, layout));
+    const bridgeFiles = files.filter((f) => f.isBridge);
 
-    for (const file of config.files) {
+    // ── Write per-node source files ──
+    for (const file of files) {
       const nodeLabel = file.nodeLabel || 'unknown';
       const isPython = (file.language || '').toLowerCase() === 'python';
-      
+
       // Directory name MUST match the import paths the generator emitted
       // (../<labelToFileName(dep)>/<file>.ts) — sanitizeName kept the label's
       // extension ('timer-input.ts' → 'timer-input-ts'), which broke every
@@ -106,8 +436,12 @@ export class PerFileScaffolder {
       const safeName = isPython
         ? labelToFileName(nodeLabel).replace(/-/g, '_')
         : labelToFileName(nodeLabel);
-      
-      const nodeDir = path.join(srcDir, safeName);
+
+      // `src/<safeName>/` for one app; `apps/<app>/src/<safeName>/` for many;
+      // `bridge/` for an integration module. Shared with the generator's tsc
+      // gate (see utils/treeScope → exportDirFor).
+      const relDir = exportDirFor(file, safeName);
+      const nodeDir = path.join(outputDir, ...relDir.split('/'));
       await fs.mkdir(nodeDir, { recursive: true });
 
       const filePath = path.join(nodeDir, file.fileName);
@@ -119,11 +453,10 @@ export class PerFileScaffolder {
 `;
         const initPath = path.join(nodeDir, '__init__.py');
         await fs.writeFile(initPath, initContent, 'utf-8');
-        const initRelPath = `src/${safeName}/__init__.py`;
-        created.push(initRelPath);
+        created.push(`${relDir}/__init__.py`);
       }
 
-      const relPath = `src/${safeName}/${file.fileName}`;
+      const relPath = `${relDir}/${file.fileName}`;
       created.push(relPath);
       perNodeFiles.push({
         nodeId: file.nodeId,
@@ -135,10 +468,26 @@ export class PerFileScaffolder {
     }
 
     // ── Write dependency graph metadata ──
+    const appDirByTreeId = (treeId: string): string | undefined => {
+      const dirName = layout.appDirByTree[treeId];
+      return dirName ? `apps/${dirName}` : undefined;
+    };
     const graphData = {
       projectName: config.projectName,
       targetOS: config.targetOS,
-      nodes: config.files.map(f => ({
+      // Tree Mode: the app trees and where each one was laid out. Absent for a
+      // single-app project, whose export is unchanged.
+      ...(layout.separateApps && trees.length > 0
+        ? {
+            apps: trees.map((t) => ({
+              id: t.id,
+              name: t.name,
+              goal: t.goal,
+              dir: appDirByTreeId(t.id),
+            })),
+          }
+        : {}),
+      nodes: files.map(f => ({
         nodeId: f.nodeId,
         nodeLabel: f.nodeLabel,
         fileName: f.fileName,
@@ -146,23 +495,57 @@ export class PerFileScaffolder {
         dependencies: f.dependencies,
         exports: f.exports,
         validated: f.validated,
+        ...(f.treeId ? { treeId: f.treeId } : {}),
+        ...(f.appDir ? { appDir: f.appDir } : {}),
+        ...(f.isBridge ? { isBridge: true, treeIds: f.treeIds || [] } : {}),
       })),
-      edges: config.edges.map(e => ({
-        source: e.source,
-        target: e.target,
-        // Keep user-described semantic wiring (from the Connect & Describe
-        // dialog) in the scaffold so the connection intent survives export.
-        ...(e.data?.semantic
-          ? {
-              label: e.data.label,
-              relation: e.data.relation,
-              codeHint: e.data.codeHint,
-              sourceHint: e.data.sourceHint,
-              targetHint: e.data.targetHint,
-              semantic: true,
-            }
-          : {}),
-      })),
+      edges: config.edges.map(e => {
+        const d: any = e.data || {};
+        // Tree Mode: an edge whose endpoints sit in different app trees is a
+        // data handoff between two separate programs, not a file import. Keep
+        // it and the payload the user described — the bridges realize it.
+        const isCrossTree = d.kind === 'cross-tree'
+          || (typeof d.sourceTreeId === 'string' && typeof d.targetTreeId === 'string' && d.sourceTreeId !== d.targetTreeId);
+        return {
+          source: e.source,
+          target: e.target,
+          // Keep user-described semantic wiring (from the Connect & Describe
+          // dialog) in the scaffold so the connection intent survives export.
+          ...(d.semantic
+            ? {
+                label: d.label,
+                relation: d.relation,
+                codeHint: d.codeHint,
+                sourceHint: d.sourceHint,
+                targetHint: d.targetHint,
+                semantic: true,
+              }
+            : {}),
+          ...(isCrossTree
+            ? {
+                kind: 'cross-tree',
+                sourceTreeId: d.sourceTreeId,
+                targetTreeId: d.targetTreeId,
+                payloadType: d.payloadType,
+                payloadLabel: d.payloadLabel,
+                ...(d.payloadDetail ? { payloadDetail: d.payloadDetail } : {}),
+                ...(d.description ? { description: d.description } : {}),
+              }
+            : {}),
+        };
+      }),
+      // Tree Mode: the integration modules that carry the handoffs above.
+      ...(bridgeFiles.length > 0
+        ? {
+            bridges: bridgeFiles.map((f) => ({
+              fileName: f.fileName,
+              path: `bridge/${f.fileName}`,
+              treeIds: f.treeIds || [],
+              exports: f.exports,
+              validated: f.validated,
+            })),
+          }
+        : {}),
     };
 
     await fs.writeFile(
@@ -173,22 +556,58 @@ export class PerFileScaffolder {
     created.push('dependency-graph.json');
 
     // ── Detect primary language across all generated files ──
-    const primaryLang = this.detectPrimaryLanguage(config.files);
-
-    // ── Write entry point matching the primary language ──
-    const entryCode = this.buildEntryPoint(config, primaryLang);
+    const primaryLang = this.detectPrimaryLanguage(files);
     const entryFileName = this.getEntryFileName(primaryLang);
-    await fs.writeFile(path.join(outputDir, entryFileName), entryCode, 'utf-8');
-    created.push(entryFileName);
 
-    // ── Write project config files matching the primary language ──
-    const projectConfigFiles = this.buildProjectConfig(config, primaryLang);
-    for (const [fileName, content] of Object.entries(projectConfigFiles)) {
-      await fs.writeFile(path.join(outputDir, fileName), content, 'utf-8');
-      created.push(fileName);
-      // Make startup scripts executable
-      if (fileName === 'start.sh') {
-        await fs.chmod(path.join(outputDir, fileName), 0o755);
+    if (layout.separateApps) {
+      // ── Tree Mode: one self-contained program PER APP ──
+      // Each app gets its own entry point and project config inside its own
+      // directory, so `cd apps/<app> && npm start` runs THAT app. The entry
+      // point imports only that app's modules (the entry builders emit
+      // `./src/<module>/<file>`, which resolves identically from the app dir).
+      const appDirs = [...new Set(files.filter((f) => !f.isBridge && f.appDir).map((f) => f.appDir as string))];
+      for (const appDir of appDirs) {
+        const appFiles = files.filter((f) => !f.isBridge && f.appDir === appDir);
+        const tree = trees.find((t) => appDirByTreeId(t.id) === appDir);
+        const appLang = this.detectPrimaryLanguage(appFiles);
+        const appEntryFileName = this.getEntryFileName(appLang);
+        const appConfig: PerFileScaffoldConfig = {
+          ...config,
+          files: appFiles,
+          // A UI node in one app must not suppress the bootstrap of a CLI app
+          // beside it — the UI check is per app, not per project.
+          nodes: (config.nodes || []).filter((n) => scoped.treeIdByNode.get(n.id) === tree?.id),
+          entryBridges: this.bridgesForApp(appDir, tree?.id, bridgeFiles),
+        };
+        const appEntryCode = this.buildEntryPoint(appConfig, appLang);
+        const appPath = path.join(outputDir, ...appDir.split('/'));
+        await fs.writeFile(path.join(appPath, appEntryFileName), appEntryCode, 'utf-8');
+        created.push(`${appDir}/${appEntryFileName}`);
+
+        for (const [fileName, content] of Object.entries(this.buildProjectConfig(appConfig, appLang))) {
+          await fs.writeFile(path.join(appPath, fileName), content, 'utf-8');
+          created.push(`${appDir}/${fileName}`);
+          // Make startup scripts executable
+          if (fileName === 'start.sh') {
+            await fs.chmod(path.join(appPath, fileName), 0o755);
+          }
+        }
+      }
+    } else {
+      // ── Write entry point matching the primary language ──
+      const entryCode = this.buildEntryPoint(config, primaryLang);
+      await fs.writeFile(path.join(outputDir, entryFileName), entryCode, 'utf-8');
+      created.push(entryFileName);
+
+      // ── Write project config files matching the primary language ──
+      const projectConfigFiles = this.buildProjectConfig(config, primaryLang);
+      for (const [fileName, content] of Object.entries(projectConfigFiles)) {
+        await fs.writeFile(path.join(outputDir, fileName), content, 'utf-8');
+        created.push(fileName);
+        // Make startup scripts executable
+        if (fileName === 'start.sh') {
+          await fs.chmod(path.join(outputDir, fileName), 0o755);
+        }
       }
     }
 
@@ -210,6 +629,49 @@ export class PerFileScaffolder {
       ...(warning ? { warning } : {}),
       perNodeFiles,
     };
+  }
+
+  /**
+   * Stamp the app directory onto a generated file when the generator did not
+   * (a cached build from before the Tree Mode layout, or a caller handing the
+   * scaffolder raw files). The app comes from the file's own `appDir`, or from
+   * its `treeId` via the layout. Bridges and single-app builds are untouched.
+   */
+  private withLayout(file: GeneratedFile, layout: ExportLayoutPlan): GeneratedFile {
+    if (file.isBridge || file.appDir || !layout.separateApps) return file;
+    const dirName = (file.treeId && layout.appDirByTree[file.treeId]) || Object.values(layout.appDirByTree)[0];
+    return dirName ? { ...file, appDir: `apps/${dirName}` } : file;
+  }
+
+  /**
+   * The bridge modules an app's entry point should expose: every bridge that
+   * connects this app tree to another one. The specifier is the real relative
+   * path from the app directory to the shared bridge directory
+   * (`../../bridge/<file>`), so the wiring resolves as written.
+   */
+  private bridgesForApp(
+    appDir: string,
+    treeId: string | undefined,
+    bridges: GeneratedFile[],
+  ): Array<{ importPath: string; alias: string }> {
+    if (!treeId) return [];
+    return bridges
+      .filter((b) => (b.treeIds || []).includes(treeId))
+      .map((b) => ({
+        importPath: path.posix.relative(appDir, `bridge/${b.fileName}`),
+        alias: this.toIdentifier(b.nodeLabel || b.fileName),
+      }));
+  }
+
+  /** `bridge-auth-session` → `bridgeAuthSession` (a legal TS binding name). */
+  private toIdentifier(name: string): string {
+    const camel = (name || '')
+      .split(/[^a-zA-Z0-9]+/)
+      .filter(Boolean)
+      .map((part, i) => (i === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
+      .join('');
+    if (!camel) return 'bridge';
+    return /^[0-9]/.test(camel) ? `_${camel}` : camel;
   }
 
   /**
@@ -242,6 +704,14 @@ export class PerFileScaffolder {
       case 'go': return 'main.go';
       case 'rust': return 'main.rs';
       case 'python': return 'main.py';
+      case 'java': return 'Main.java';   // javac requires class name == file name
+      case 'c': return 'main.c';
+      case 'cpp': return 'main.cpp';
+      case 'csharp': return 'Program.cs';
+      case 'php': return 'index.php';
+      case 'ruby': return 'main.rb';
+      case 'swift': return 'main.swift';
+      case 'kotlin': return 'Main.kt';
       default: return 'index.ts';
     }
   }
@@ -255,6 +725,14 @@ export class PerFileScaffolder {
       case 'go': return this.buildGoEntryPoint(config);
       case 'rust': return this.buildRustEntryPoint(config);
       case 'python': return this.buildPythonEntryPoint(config);
+      case 'java': return this.buildJavaEntryPoint(config);
+      case 'c': return this.buildCEntryPoint(config);
+      case 'cpp': return this.buildCppEntryPoint(config);
+      case 'csharp': return this.buildCsharpEntryPoint(config);
+      case 'php': return this.buildPhpEntryPoint(config);
+      case 'ruby': return this.buildRubyEntryPoint(config);
+      case 'swift': return this.buildSwiftEntryPoint(config);
+      case 'kotlin': return this.buildKotlinEntryPoint(config);
       default: return this.buildTsEntryPoint(config);
     }
   }
@@ -293,8 +771,14 @@ export class PerFileScaffolder {
       return typeDecl.test(codeText) && !valueDecl.test(codeText);
     };
     const importedNames = new Set<string>();
-    // Entry-point function names a non-UI project can be bootstrapped with.
-    const ENTRY_FN_NAMES = new Set(['start', 'main', 'runApp']);
+    // Entry-point function names a project can be bootstrapped with. The
+    // generation prompt mandates main/start/runApp for CLI/logic entries and
+    // render/init/mount/createApp for UI entries — an exported app that only
+    // imports and re-exports is dead code (F2 in the build triage).
+    const ENTRY_FN_NAMES = new Set([
+      'start', 'main', 'runApp', 'bootstrap', 'run',
+      'render', 'init', 'mount', 'createApp', 'setup',
+    ]);
     let entryAlias: string | null = null;
     for (const file of config.files) {
       const lang = (file.language || '').toLowerCase();
@@ -329,6 +813,20 @@ export class PerFileScaffolder {
       lines.push(`// Note: ${file.fileName} is a ${lang} file — integrates separately`);
     }
 
+    // ── Cross-app bridges (Tree Mode) ──
+    // The app built next to this one is a SEPARATE program: its modules are not
+    // importable from here, so the bridge modules are the only shared contract
+    // between the two. Re-exported so both sides are visibly wired to it.
+    const entryBridges = config.entryBridges || [];
+    if (entryBridges.length > 0) {
+      lines.push('');
+      lines.push('// ── Cross-app bridges (Tree Mode) ──');
+      lines.push('// Shared with the app(s) beside this one — see bridge/ in the project root.');
+      for (const bridge of entryBridges) {
+        lines.push(`export * as ${bridge.alias} from '${bridge.importPath}';`);
+      }
+    }
+
     lines.push('');
     lines.push('// ── App Bootstrap ──');
     lines.push(`console.log('🚀 ${config.projectName} starting...');`);
@@ -359,13 +857,17 @@ export class PerFileScaffolder {
     }
 
     // ── Auto-bootstrap ──
-    // For non-UI projects, invoke the app's entry function so `npm start`
-    // actually RUNS the app instead of only importing and printing a banner.
-    // Skipped for UI projects (the preview wrapper drives those) and guarded
-    // with typeof so a missing entry can never crash module load.
+    // Invoke the app's entry function so `npm start` actually RUNS the app
+    // instead of only importing and printing a banner (F2 in the build
+    // triage: the entry was a banner, not a bootstrap). UI entry functions
+    // (render/mount/createApp/init) are skipped for UI projects — the preview
+    // wrapper (index.html) drives those — but CLI/logic entries are always
+    // bootstrapped. Guarded with typeof so a missing entry can never crash
+    // module load.
     const hasUiNode = (config.nodes || []).some((n: any) => n.type === 'ui');
     const hasHtmlFile = config.files.some((f) => /\.html$/i.test(f.fileName));
-    if (entryAlias && !hasUiNode && !hasHtmlFile) {
+    const UI_ENTRY_FN_NAMES = new Set(['render', 'init', 'mount', 'createApp', 'setup']);
+    if (entryAlias && !(UI_ENTRY_FN_NAMES.has(entryAlias) && (hasUiNode || hasHtmlFile))) {
       lines.push('');
       lines.push('// ── App Bootstrap ──');
       lines.push(`if (typeof ${entryAlias} === 'function') { ${entryAlias}(); }`);
@@ -389,13 +891,39 @@ export class PerFileScaffolder {
     // executables and cannot be imported ("is a program, not an importable
     // package"). The root main.go below is the program; everything else is a
     // library package the program can import.
+    //
+    // Every import MUST be used or `go build` fails with "imported and not
+    // used". Each package is aliased (pkg0, pkg1, ...) and its first VALUE
+    // export (func/var/const — never a type) is referenced via `var _ =`, so
+    // the build compiles the whole module and catches real compile errors in
+    // every node file instead of failing on the entry point itself.
+    const moduleName = this.sanitizeName(config.projectName);
+    const used: string[] = [];
+    const calls: string[] = [];
+    let pkgIndex = 0;
     for (const file of config.files) {
       const lang = (file.language || '').toLowerCase();
       if (lang !== 'go') continue;
       if (/^package\s+main\b/m.test(file.code || '')) continue;
       const safeName = labelToFileName(file.nodeLabel);
       const pkgPath = `src/${safeName}`;
-      lines.push(`import "${this.sanitizeName(config.projectName)}/${pkgPath}"`);
+      const alias = `pkg${pkgIndex++}`;
+      // A no-argument exported func is safe to CALL — and calling it is what
+      // makes the entry point RUN the module, not merely compile it.
+      const callable = pickEntryCallable(goNoArgFuncs(file.code || ''));
+      if (callable) {
+        lines.push(`import ${alias} "${moduleName}/${pkgPath}"`);
+        // Go rejects a value-returning call used as a bare statement.
+        calls.push(callable.returnType ? `  _ = ${alias}.${callable.name}()` : `  ${alias}.${callable.name}()`);
+        continue;
+      }
+      const valueExport = this.firstGoValueExport(file.code || '', file.exports || []);
+      if (valueExport) {
+        lines.push(`import ${alias} "${moduleName}/${pkgPath}"`);
+        used.push(`_ = ${alias}.${valueExport}`);
+      } else {
+        lines.push(`import _ "${moduleName}/${pkgPath}"`);
+      }
     }
 
     lines.push('');
@@ -404,9 +932,36 @@ export class PerFileScaffolder {
     if (config.appGoal) {
       lines.push(`  println("Goal: ${config.appGoal}")`);
     }
+    if (used.length > 0 || calls.length > 0) {
+      lines.push('');
+      lines.push('  // Run the imported packages, then reference the rest so the whole module is wired in:');
+      for (const c of calls) lines.push(c);
+      for (const u of used) {
+        lines.push(`  ${u}`);
+      }
+    }
     lines.push('}');
 
     return lines.join('\n');
+  }
+
+  /**
+   * First VALUE export of a Go file — func/var/const, never a type. The
+   * scaffolder's export extractor mixes `func` and `type` declarations, and
+   * `var _ = pkg.SomeType` is a compile error ("SomeType is not an
+   * expression"), so type-only names must be filtered out.
+   */
+  private firstGoValueExport(code: string, exports: string[]): string | null {
+    const valueRegex = /^(?:func|var|const)\s+([A-Z][a-zA-Z0-9_]*)/gm;
+    const valueNames = new Set<string>();
+    let match: RegExpExecArray | null;
+    while ((match = valueRegex.exec(code)) !== null) {
+      valueNames.add(match[1]);
+    }
+    for (const name of exports || []) {
+      if (typeof name === 'string' && valueNames.has(name)) return name;
+    }
+    return null;
   }
 
   /**
@@ -423,6 +978,8 @@ export class PerFileScaffolder {
     lines.push('');
 
     // Declare modules for each Rust file using #[path] for correct resolution
+    const wiring: string[] = [];
+    let modIndex = 0;
     for (const file of config.files) {
       const lang = (file.language || '').toLowerCase();
       if (lang !== 'rust') continue;
@@ -430,6 +987,8 @@ export class PerFileScaffolder {
       const modName = safeName.replace(/-/g, '_');
       lines.push(`#[path = "src/${safeName}/${file.fileName}"]`);
       lines.push(`mod ${modName};`);
+      const plan = planModuleWiring('rust', file.code || '', modName, modIndex++);
+      wiring.push(...plan.calls, ...plan.references);
     }
 
     lines.push('');
@@ -437,6 +996,11 @@ export class PerFileScaffolder {
     lines.push(`  println!("🚀 ${config.projectName} starting...");`);
     if (config.appGoal) {
       lines.push(`  println!("Goal: {}", "${config.appGoal}");`);
+    }
+    if (wiring.length > 0) {
+      lines.push('');
+      lines.push('  // Call the modules that expose an entry fn, reference the rest so the whole crate is built:');
+      for (const w of wiring) lines.push(`  ${w}`);
     }
     lines.push('}');
 
@@ -499,6 +1063,223 @@ export class PerFileScaffolder {
   }
 
   /**
+   * Build a Java entry point (Main.java). javac requires the public class name
+   * to match the file name, so the entry is a standalone `Main` with a launcher;
+   * sibling node classes live in the same (default) package and can be
+   * instantiated from here.
+   */
+  private buildJavaEntryPoint(config: PerFileScaffoldConfig): string {
+    const lines: string[] = [];
+    lines.push('/** ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA). */');
+    lines.push('public class Main {');
+    lines.push('  public static void main(String[] args) {');
+    lines.push('    System.out.println("\uD83D\uDE80 ' + config.projectName + ' starting...");');
+    if (config.appGoal) lines.push('    System.out.println("Goal: " + ' + JSON.stringify(config.appGoal) + ');');
+    lines.push('');
+    lines.push('    // Node classes live in this same package (src/<node>/<File>.java).');
+    lines.push('    // Each is referenced so javac compiles and links it, and a class that');
+    lines.push('    // declares a no-argument static method has that method called.');
+    let index = 0;
+    let wired = 0;
+    for (const file of config.files) {
+      if ((file.language || '').toLowerCase() !== 'java') continue;
+      const plan = planModuleWiring('java', file.code || '', '', index++);
+      if (plan.references.length === 0 && plan.calls.length === 0) continue;
+      lines.push(`    // ${file.fileName}`);
+      for (const r of plan.references) lines.push(`    ${r}`);
+      for (const c of plan.calls) lines.push(`    ${c}`);
+      wired++;
+    }
+    if (wired === 0) lines.push('    // (no node classes found to wire up)');
+    lines.push('  }');
+    lines.push('}');
+    return lines.join('\n');
+  }
+
+  /** Shared C/C++ entry banner + sibling-header includes. */
+  private buildCCppEntryPoint(config: PerFileScaffoldConfig, lang: 'c' | 'cpp'): string {
+    const lines: string[] = [];
+    lines.push('/* ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA). */');
+    lines.push(lang === 'c' ? '#include <stdio.h>' : '#include <iostream>');
+    // Only headers can be included without redefining `main`; node source files
+    // are compiled as their own translation units.
+    for (const file of config.files) {
+      const fl = (file.language || '').toLowerCase();
+      const isHdr = /\.h(h|pp)?$/i.test(file.fileName);
+      if (fl !== lang || !isHdr) continue;
+      lines.push(`#include "${labelToFileName(file.nodeLabel)}/${file.fileName}"`);
+    }
+
+    // Prototypes copied from the node files' own definitions, plus the calls
+    // that exercise them. Without these the entry point only printed a banner.
+    const declarations: string[] = [];
+    const calls: string[] = [];
+    let index = 0;
+    for (const file of config.files) {
+      const fl = (file.language || '').toLowerCase();
+      if (fl !== lang || /\.h(h|pp)?$/i.test(file.fileName)) continue;
+      const plan = planModuleWiring(lang, file.code || '', '', index++);
+      declarations.push(...plan.declarations);
+      calls.push(...plan.calls);
+    }
+    if (declarations.length > 0) {
+      lines.push('');
+      lines.push('/* Node-module entry points (signatures copied from src/<node>/): */');
+      for (const d of declarations) lines.push(d);
+    }
+
+    lines.push('');
+    lines.push('int main(int argc, char **argv) {');
+    lines.push('  (void)argc; (void)argv;');
+    if (lang === 'c') {
+      lines.push('  printf("\uD83D\uDE80 ' + config.projectName + ' starting...\\n");');
+      if (config.appGoal) lines.push('  printf("Goal: ' + escapeForCString(config.appGoal) + '\\n");');
+    } else {
+      lines.push('  std::cout << "\uD83D\uDE80 ' + config.projectName + ' starting..." << std::endl;');
+      if (config.appGoal) lines.push('  std::cout << "Goal: ' + escapeForCString(config.appGoal) + '" << std::endl;');
+    }
+    if (calls.length > 0) {
+      lines.push('');
+      lines.push('  /* Run the project modules: */');
+      for (const c of calls) lines.push(`  ${c}`);
+    } else {
+      lines.push('  // Node modules under src/<node>/ are separate translation units — none exposes a no-argument entry function.');
+    }
+    lines.push('  return 0;');
+    lines.push('}');
+    return lines.join('\n');
+  }
+
+  private buildCEntryPoint(config: PerFileScaffoldConfig): string {
+    return this.buildCCppEntryPoint(config, 'c');
+  }
+
+  private buildCppEntryPoint(config: PerFileScaffoldConfig): string {
+    return this.buildCCppEntryPoint(config, 'cpp');
+  }
+
+  /** Build a C# entry point (Program.cs) — a runnable top-level Main. */
+  private buildCsharpEntryPoint(config: PerFileScaffoldConfig): string {
+    const lines: string[] = [];
+    lines.push('// ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA).');
+    lines.push('using System;');
+    lines.push('');
+    lines.push('class Program');
+    lines.push('{');
+    lines.push('    static void Main(string[] args)');
+    lines.push('    {');
+    lines.push('        Console.WriteLine("\uD83D\uDE80 ' + config.projectName + ' starting...");');
+    if (config.appGoal) lines.push('        Console.WriteLine("Goal: " + ' + JSON.stringify(config.appGoal) + ');');
+    lines.push('');
+    lines.push('        // Node classes live under src/<node>/. Each is referenced so the');
+    lines.push('        // compiler builds it, and a no-argument static method is called.');
+    let index = 0;
+    let wired = 0;
+    for (const file of config.files) {
+      if ((file.language || '').toLowerCase() !== 'csharp') continue;
+      const plan = planModuleWiring('csharp', file.code || '', '', index++);
+      if (plan.references.length === 0 && plan.calls.length === 0) continue;
+      lines.push(`        // ${file.fileName}`);
+      for (const r of plan.references) lines.push(`        ${r}`);
+      for (const c of plan.calls) lines.push(`        ${c}`);
+      wired++;
+    }
+    if (wired === 0) lines.push('        // (no node classes found to wire up)');
+    lines.push('    }');
+    lines.push('}');
+    return lines.join('\n');
+  }
+
+  /** Build a PHP entry point (index.php) that requires each node file. */
+  private buildPhpEntryPoint(config: PerFileScaffoldConfig): string {
+    const lines: string[] = [];
+    lines.push('<?php');
+    lines.push('// ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA).');
+    for (const file of config.files) {
+      if ((file.language || '').toLowerCase() !== 'php') continue;
+      lines.push(`require_once __DIR__ . '/src/${labelToFileName(file.nodeLabel)}/${file.fileName}';`);
+    }
+    lines.push('');
+    lines.push('echo "\uD83D\uDE80 ' + config.projectName + ' starting...\\n";');
+    if (config.appGoal) lines.push('echo "Goal: ' + escapeForPhpString(config.appGoal) + '\\n";');
+    lines.push('// Call into the required node modules here.');
+    return lines.join('\n');
+  }
+
+  /** Build a Ruby entry point (main.rb) that requires each node file. */
+  private buildRubyEntryPoint(config: PerFileScaffoldConfig): string {
+    const lines: string[] = [];
+    lines.push('# ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA).');
+    for (const file of config.files) {
+      if ((file.language || '').toLowerCase() !== 'ruby') continue;
+      lines.push(`require_relative 'src/${labelToFileName(file.nodeLabel)}/${file.fileName}'`);
+    }
+    lines.push('');
+    lines.push('puts "\uD83D\uDE80 ' + config.projectName + ' starting..."');
+    if (config.appGoal) lines.push("puts 'Goal: " + escapeForSingleQuoted(config.appGoal) + "'");
+    lines.push('# Call into the required node modules here.');
+    return lines.join('\n');
+  }
+
+  /**
+   * Build a Swift entry point (main.swift).
+   *
+   * Swift only permits top-level statements in `main.swift` — any other file
+   * with them is a compile error — so the entry file must be named exactly
+   * `main.swift`. Node files under src/<node>/ compile into the same module,
+   * so they are callable from here with no import statement.
+   */
+  private buildSwiftEntryPoint(config: PerFileScaffoldConfig): string {
+    const lines: string[] = [];
+    lines.push('// ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA).');
+    lines.push('import Foundation');
+    lines.push('');
+    lines.push('print("\uD83D\uDE80 ' + config.projectName + ' starting...")');
+    if (config.appGoal) lines.push('print("Goal: ' + escapeForCString(config.appGoal) + '")');
+    lines.push('');
+    lines.push('// Node files under src/<node>/ compile into this same module. Each type is');
+    lines.push('// referenced so swiftc builds it, and a no-argument function is called.');
+    let index = 0;
+    for (const file of config.files) {
+      if ((file.language || '').toLowerCase() !== 'swift') continue;
+      const plan = planModuleWiring('swift', file.code || '', '', index++);
+      if (plan.references.length === 0 && plan.calls.length === 0) continue;
+      lines.push(`// ${file.fileName}`);
+      lines.push(...plan.references, ...plan.calls);
+    }
+    return lines.join('\n');
+  }
+
+  /**
+   * Build a Kotlin entry point (Main.kt).
+   *
+   * kotlinc compiles every file of the module together, so node files under
+   * src/<node>/ are visible here without imports; `fun main()` is the JVM
+   * entry point.
+   */
+  private buildKotlinEntryPoint(config: PerFileScaffoldConfig): string {
+    const lines: string[] = [];
+    lines.push('// ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA).');
+    lines.push('');
+    lines.push('fun main() {');
+    lines.push('    println("\uD83D\uDE80 ' + config.projectName + ' starting...")');
+    if (config.appGoal) lines.push('    println("Goal: ' + escapeForCString(config.appGoal) + '")');
+    lines.push('');
+    lines.push('    // Node files under src/<node>/ compile into this same module. Each type is');
+    lines.push('    // referenced so kotlinc builds it, and a top-level fun is called.');
+    let index = 0;
+    for (const file of config.files) {
+      if ((file.language || '').toLowerCase() !== 'kotlin') continue;
+      const plan = planModuleWiring('kotlin', file.code || '', '', index++);
+      if (plan.references.length === 0 && plan.calls.length === 0) continue;
+      lines.push(`    // ${file.fileName}`);
+      for (const line of [...plan.references, ...plan.calls]) lines.push(`    ${line}`);
+    }
+    lines.push('}');
+    return lines.join('\n');
+  }
+
+  /**
    * Build project configuration files matching the primary language.
    * Returns a map of filename → file content.
    */
@@ -507,6 +1288,14 @@ export class PerFileScaffolder {
       case 'go': return this.buildGoProjectConfig(config);
       case 'rust': return this.buildRustProjectConfig(config);
       case 'python': return this.buildPythonProjectConfig(config);
+      case 'java': return this.buildJavaProjectConfig(config);
+      case 'c': return this.buildCProjectConfig(config);
+      case 'cpp': return this.buildCppProjectConfig(config);
+      case 'csharp': return this.buildCsharpProjectConfig(config);
+      case 'php': return this.buildPhpProjectConfig(config);
+      case 'ruby': return this.buildRubyProjectConfig(config);
+      case 'swift': return this.buildSwiftProjectConfig(config);
+      case 'kotlin': return this.buildKotlinProjectConfig(config);
       default: return this.buildTsProjectConfig(config);
     }
   }
@@ -664,6 +1453,168 @@ minversion = "7.0"
     return { 'pyproject.toml': pyproject };
   }
 
+  /** Java project config: a dependency-free Makefile (javac / java). */
+  private buildJavaProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    const t = '\t';
+    const makefile = [
+      `# ${config.projectName} — Makefile`,
+      'JAVAC ?= javac',
+      'JAVA  ?= java',
+      'SRCS  := Main.java $(wildcard src/*/*.java)',
+      'OUT   := out',
+      '',
+      '.PHONY: all build run clean',
+      'all: build',
+      '',
+      'build:',
+      `${t}@mkdir -p $(OUT)`,
+      `${t}$(JAVAC) -d $(OUT) $(SRCS)`,
+      '',
+      'run: build',
+      `${t}$(JAVA) -cp $(OUT) Main`,
+      '',
+      'clean:',
+      `${t}rm -rf $(OUT)`,
+      '',
+    ].join('\n');
+    return { Makefile: makefile };
+  }
+
+  /** C project config: a Makefile (gcc / c11). */
+  private buildCProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    const t = '\t';
+    const makefile = [
+      `# ${config.projectName} — Makefile`,
+      'CC ?= gcc',
+      'CFLAGS ?= -std=c11 -O2 -Wall',
+      'SRCS := main.c $(wildcard src/*/*.c)',
+      'OUT := app',
+      '',
+      '.PHONY: all build run clean',
+      'all: build',
+      '',
+      'build:',
+      `${t}$(CC) $(CFLAGS) -o $(OUT) $(SRCS)`,
+      '',
+      'run: build',
+      `${t}./$(OUT)`,
+      '',
+      'clean:',
+      `${t}rm -f $(OUT)`,
+      '',
+    ].join('\n');
+    return { Makefile: makefile };
+  }
+
+  /** C++ project config: a Makefile (g++ / c++17). */
+  private buildCppProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    const t = '\t';
+    const makefile = [
+      `# ${config.projectName} — Makefile`,
+      'CXX ?= g++',
+      'CXXFLAGS ?= -std=c++17 -O2 -Wall',
+      'SRCS := main.cpp $(wildcard src/*/*.cpp)',
+      'OUT := app',
+      '',
+      '.PHONY: all build run clean',
+      'all: build',
+      '',
+      'build:',
+      `${t}$(CXX) $(CXXFLAGS) -o $(OUT) $(SRCS)`,
+      '',
+      'run: build',
+      `${t}./$(OUT)`,
+      '',
+      'clean:',
+      `${t}rm -f $(OUT)`,
+      '',
+    ].join('\n');
+    return { Makefile: makefile };
+  }
+
+  /** C# project config: a minimal SDK-style .csproj. */
+  private buildCsharpProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    const csproj = '<Project Sdk="Microsoft.NET.Sdk">\n' +
+      '  <PropertyGroup>\n' +
+      '    <OutputType>Exe</OutputType>\n' +
+      '    <TargetFramework>net8.0</TargetFramework>\n' +
+      '    <ImplicitUsings>disable</ImplicitUsings>\n' +
+      '    <Nullable>disable</Nullable>\n' +
+      `    <AssemblyName>${this.sanitizeName(config.projectName)}</AssemblyName>\n` +
+      '  </PropertyGroup>\n' +
+      '</Project>\n';
+    return { 'app.csproj': csproj };
+  }
+
+  /** PHP project config: a minimal composer.json (no third-party deps). */
+  private buildPhpProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    const composer = JSON.stringify({
+      name: `vaca/${this.sanitizeName(config.projectName)}`,
+      description: config.appGoal || `${config.projectName} — generated app`,
+      type: 'project',
+      require: {},
+    }, null, 2);
+    return { 'composer.json': composer };
+  }
+
+  /** Ruby project config: a minimal Gemfile (standard library only). */
+  private buildRubyProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    void config;
+    const gemfile = "source 'https://rubygems.org'\n\n# No external gems required — standard library only.\n";
+    return { Gemfile: gemfile };
+  }
+
+  /** Swift project config: a Makefile (swiftc) — no Package.swift/SwiftPM needed. */
+  private buildSwiftProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    const t = '\t';
+    const makefile = [
+      `# ${config.projectName} — Makefile`,
+      'SWIFTC ?= swiftc',
+      'SRCS := main.swift $(wildcard src/*/*.swift)',
+      'OUT := app',
+      '',
+      '.PHONY: all build run clean',
+      'all: build',
+      '',
+      'build:',
+      `${t}$(SWIFTC) $(SRCS) -o $(OUT)`,
+      '',
+      'run: build',
+      `${t}./$(OUT)`,
+      '',
+      'clean:',
+      `${t}rm -f $(OUT)`,
+      '',
+    ].join('\n');
+    return { Makefile: makefile };
+  }
+
+  /** Kotlin project config: a Makefile (kotlinc -include-runtime) producing a runnable jar. */
+  private buildKotlinProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    const t = '\t';
+    const makefile = [
+      `# ${config.projectName} — Makefile`,
+      'KOTLINC ?= kotlinc',
+      'JAVA ?= java',
+      'SRCS := Main.kt $(wildcard src/*/*.kt)',
+      'OUT := app.jar',
+      '',
+      '.PHONY: all build run clean',
+      'all: build',
+      '',
+      'build:',
+      `${t}$(KOTLINC) $(SRCS) -include-runtime -d $(OUT)`,
+      '',
+      'run: build',
+      `${t}$(JAVA) -jar $(OUT)`,
+      '',
+      'clean:',
+      `${t}rm -f $(OUT)`,
+      '',
+    ].join('\n');
+    return { Makefile: makefile };
+  }
+
   /**
    * Build a language-appropriate .gitignore.
    */
@@ -675,6 +1626,21 @@ minversion = "7.0"
         return '# Generated files\n/target/\n**/*.rs.bk\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
       case 'python':
         return '# Bytecode\n__pycache__/\n*.py[cod]\n*$py.class\n\n# Virtualenv\n.venv/\nvenv/\nENV/\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
+      case 'java':
+        return '# Compiled classes\nout/\n*.class\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
+      case 'c':
+      case 'cpp':
+        return '# Build output\napp\n*.o\n*.obj\n*.exe\n*.out\n\n# CMake\nbuild/\nCMakeFiles/\nCMakeCache.txt\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
+      case 'csharp':
+        return '# Build output\nbin/\nobj/\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
+      case 'php':
+        return '# Composer\nvendor/\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
+      case 'ruby':
+        return '# Bundler\n/.bundle/\nvendor/bundle\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
+      case 'swift':
+        return '# Build output\napp\n*.o\n.build/\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
+      case 'kotlin':
+        return '# Build output\napp.jar\n*.jar\nout/\n*.class\n\n# IDE\n.idea/\n.vscode/\n*.swp\n*.swo\n\n# Env\n.env\n';
       default:
         return 'node_modules/\ndist/\n.env\n';
     }
@@ -684,6 +1650,29 @@ minversion = "7.0"
    * Build a README describing the per-file project structure.
    */
   private buildReadme(config: PerFileScaffoldConfig, primaryLang: string, entryFileName: string): string {
+    const trees = Array.isArray(config.trees) ? config.trees : [];
+    const layout = planExportLayout(trees);
+    const scoped = resolveTreeScopes({
+      nodes: (config.nodes || []) as any,
+      edges: (config.edges || []) as any,
+      trees,
+      name: config.projectName,
+    });
+    const files = config.files.map((f) => this.withLayout(f, layout));
+    const bridgeFiles = files.filter((f) => f.isBridge);
+    const moduleFiles = files.filter((f) => !f.isBridge);
+    const plannedBridges = planBridges(scoped);
+    const appDirFor = (treeId: string | null | undefined): string | undefined => {
+      const dirName = treeId ? layout.appDirByTree[treeId] : undefined;
+      return dirName ? `apps/${dirName}` : undefined;
+    };
+    // One entry per app that actually has modules on disk: its layout directory
+    // and those modules. A tree with no generated file has no directory, so
+    // documenting it would describe a project that is not there.
+    const appEntries = trees
+      .map((t) => ({ tree: t, dir: appDirFor(t.id), files: moduleFiles.filter((f) => f.appDir === appDirFor(t.id)) }))
+      .filter((e) => Boolean(e.dir) && e.files.length > 0);
+
     const lines: string[] = [];
     lines.push(`# ${config.projectName}`);
     lines.push('');
@@ -701,79 +1690,191 @@ minversion = "7.0"
     lines.push('');
     lines.push('This project was generated using the **per-file architecture**:');
     lines.push('Each node on the architecture canvas corresponds to one source file.');
+    if (layout.separateApps) {
+      lines.push('');
+      lines.push(
+        `**Tree Mode:** this project holds **${trees.length} separate apps**, each built into its own directory, ` +
+        `${plannedBridges.length} cross-app connection(s) realized by shared bridge module(s) in \`bridge/\`.`,
+      );
+    }
     lines.push('');
     lines.push('## Project Structure');
     lines.push('');
     lines.push('```');
     lines.push('.');
 
-    // Structure entries differ by language
-    const configFiles = this.buildProjectConfig(config, primaryLang);
-    for (const cfgFile of Object.keys(configFiles)) {
-      lines.push(`├── ${cfgFile.padEnd(22)} # Project configuration`);
-    }
-    lines.push(`├── ${entryFileName.padEnd(22)} # Entry point — imports all nodes`);
-    lines.push('├── dependency-graph.json   # Node dependency metadata');
-    lines.push('├── src/');
-    for (const file of config.files) {
-      const safeName = labelToFileName(file.nodeLabel);
-      const status = file.validated ? '✅' : '⚠️';
-      lines.push(`│   └── ${safeName}/`);
-      lines.push(`│       └── ${file.fileName}  ${status}`);
-    }
-    lines.push('├── README.md');
-    lines.push('└── .gitignore');
-    lines.push('```');
-    lines.push('');
-    lines.push(`**${config.files.length} source files** across ${config.files.length} nodes.`);
-    lines.push('');
-    lines.push('## Quick Start');
-    lines.push('');
-    lines.push('```bash');
-    if (primaryLang === 'go') {
-      lines.push('# Run the app (builds and runs via startup script)');
-      lines.push('chmod +x start.sh && ./start.sh');
+    if (layout.separateApps) {
+      // ── Several apps side by side, plus the shared bridge dir ──
+      lines.push('├── apps/');
+      appEntries.forEach((entry, i) => {
+        const isLastApp = i === appEntries.length - 1;
+        const branch = isLastApp ? '│   └──' : '│   ├──';
+        const sub = isLastApp ? '│       ' : '│   │   ';
+        const appLang = this.detectPrimaryLanguage(entry.files);
+        lines.push(
+          `${branch} ${path.posix.basename(entry.dir as string)}/   # ${entry.tree.name}` +
+          (entry.tree.goal ? ` — ${entry.tree.goal}` : ''),
+        );
+        for (const cfgFile of Object.keys(this.buildProjectConfig(config, appLang))) {
+          lines.push(`${sub}├── ${cfgFile}`);
+        }
+        lines.push(`${sub}├── ${this.getEntryFileName(appLang)}   # Entry point — this app's own modules`);
+        lines.push(`${sub}└── src/`);
+        for (const file of entry.files) {
+          lines.push(`${sub}    ├── ${labelToFileName(file.nodeLabel)}/`);
+          lines.push(`${sub}    │   └── ${file.fileName}  ${file.validated ? '✅' : '⚠️'}`);
+        }
+      });
+      if (bridgeFiles.length > 0) {
+        lines.push('├── bridge/');
+        bridgeFiles.forEach((b, i) => {
+          const last = i === bridgeFiles.length - 1;
+          lines.push(`│   ${last ? '└' : '├'}── ${b.fileName}   # 🔗 cross-app integration module`);
+        });
+      }
+      lines.push('├── dependency-graph.json   # Node + app metadata');
+      lines.push('├── README.md');
+      lines.push('└── .gitignore');
+      lines.push('```');
       lines.push('');
-      lines.push('# Or using raw Go commands:');
-      lines.push('go run .');
-      lines.push('go build -o dist/ .');
-    } else if (primaryLang === 'rust') {
-      lines.push('# Run the app');
-      lines.push('cargo run');
+      lines.push(
+        `**${moduleFiles.length} modules across ${appEntries.length} app(s)**` +
+        (bridgeFiles.length > 0 ? ` + ${bridgeFiles.length} bridge module(s).` : '.'),
+      );
       lines.push('');
-      lines.push('# Build for production');
-      lines.push('cargo build --release');
-    } else if (primaryLang === 'python') {
-      lines.push('# Run the app');
-      lines.push('python main.py');
+      lines.push('## Quick Start');
       lines.push('');
-      lines.push('# Install dependencies (if any)');
-      lines.push('pip install -r requirements.txt');
+      lines.push('Each app is its own program — run it from its own directory:');
+      lines.push('');
+      lines.push('```bash');
+      for (const entry of appEntries) {
+        lines.push(`cd ${entry.dir} && ${this.runCommandFor(this.detectPrimaryLanguage(entry.files))}`);
+      }
+      lines.push('```');
+
+      if (plannedBridges.length > 0) {
+        lines.push('');
+        lines.push('## 🔗 Cross-App Connections (Tree Mode)');
+        lines.push('');
+        lines.push(
+          'The apps above are **separate programs** — they cannot import each other. ' +
+          'The only contract between them is the bridge modules in `bridge/` (also re-exported from each app\'s entry point).',
+        );
+        lines.push('');
+        for (const bridge of plannedBridges) {
+          lines.push(`- **${bridge.name}** — \`${bridge.payloadLabel}\`: **${bridge.sourceTreeName}** → **${bridge.targetTreeName}**`);
+          for (const link of bridge.links) {
+            if (link.description || link.relation) lines.push(`  - ${link.description || link.relation}`);
+          }
+        }
+      }
     } else {
-      lines.push('# Install dependencies');
-      lines.push('npm install');
+      // Structure entries differ by language
+      const configFiles = this.buildProjectConfig(config, primaryLang);
+      for (const cfgFile of Object.keys(configFiles)) {
+        lines.push(`├── ${cfgFile.padEnd(22)} # Project configuration`);
+      }
+      lines.push(`├── ${entryFileName.padEnd(22)} # Entry point — imports all nodes`);
+      lines.push('├── dependency-graph.json   # Node dependency metadata');
+      lines.push('├── src/');
+      for (const file of config.files) {
+        const safeName = labelToFileName(file.nodeLabel);
+        const status = file.validated ? '✅' : '⚠️';
+        lines.push(`│   └── ${safeName}/`);
+        lines.push(`│       └── ${file.fileName}  ${status}`);
+      }
+      lines.push('├── README.md');
+      lines.push('└── .gitignore');
+      lines.push('```');
       lines.push('');
-      lines.push('# Run in development mode');
-      lines.push('npm run dev');
+      lines.push(`**${config.files.length} source files** across ${config.files.length} nodes.`);
       lines.push('');
-      lines.push('# Build for production');
-      lines.push('npm run build');
+      lines.push('## Quick Start');
+      lines.push('');
+      lines.push('```bash');
+      if (primaryLang === 'go') {
+        lines.push('# Run the app (builds and runs via startup script)');
+        lines.push('chmod +x start.sh && ./start.sh');
+        lines.push('');
+        lines.push('# Or using raw Go commands:');
+        lines.push('go run .');
+        lines.push('go build -o dist/ .');
+      } else if (primaryLang === 'rust') {
+        lines.push('# Run the app');
+        lines.push('cargo run');
+        lines.push('');
+        lines.push('# Build for production');
+        lines.push('cargo build --release');
+      } else if (primaryLang === 'python') {
+        lines.push('# Run the app');
+        lines.push('python main.py');
+        lines.push('');
+        lines.push('# Install dependencies (if any)');
+        lines.push('pip install -r requirements.txt');
+      } else if (primaryLang === 'java') {
+        lines.push('# Compile and run (uses the Makefile)');
+        lines.push('make run');
+        lines.push('');
+        lines.push('# Or directly:');
+        lines.push('javac -d out Main.java src/*/*.java && java -cp out Main');
+      } else if (primaryLang === 'c' || primaryLang === 'cpp') {
+        lines.push('# Build and run (uses the Makefile)');
+        lines.push('make run');
+      } else if (primaryLang === 'csharp') {
+        lines.push('# Run the app');
+        lines.push('dotnet run');
+      } else if (primaryLang === 'php') {
+        lines.push('# Run the app');
+        lines.push('php index.php');
+      } else if (primaryLang === 'ruby') {
+        lines.push('# Run the app');
+        lines.push('ruby main.rb');
+      } else {
+        lines.push('# Install dependencies');
+        lines.push('npm install');
+        lines.push('');
+        lines.push('# Run in development mode');
+        lines.push('npm run dev');
+        lines.push('');
+        lines.push('# Build for production');
+        lines.push('npm run build');
+      }
+      lines.push('```');
     }
-    lines.push('```');
+
     lines.push('');
     lines.push('## Node Dependency Graph');
     lines.push('');
-    for (const file of config.files) {
+    for (const file of moduleFiles) {
       const deps = file.dependencies.length > 0
         ? ` → depends on: ${file.dependencies.join(', ')}`
         : ' → no dependencies';
-      lines.push(`- **${file.fileName}**${deps}`);
+      const where = layout.separateApps && file.appDir ? ` *(in ${file.appDir})*` : '';
+      lines.push(`- **${file.fileName}**${deps}${where}`);
     }
     lines.push('');
     lines.push('---');
     lines.push(`*Generated on ${new Date().toISOString().split('T')[0]}*`);
 
     return lines.join('\n');
+  }
+
+  /** How to run one app of a given language from inside its own directory. */
+  private runCommandFor(language: string): string {
+    switch (language) {
+      case 'go': return 'chmod +x start.sh && ./start.sh';
+      case 'rust': return 'cargo run';
+      case 'python': return 'python main.py';
+      case 'java': return 'make run';
+      case 'c':
+      case 'cpp': return 'make run';
+      case 'csharp': return 'dotnet run';
+      case 'php': return 'php index.php';
+      case 'ruby': return 'ruby main.rb';
+      case 'swift': return 'make run';
+      case 'kotlin': return 'make run';
+      default: return 'npm install && npm run dev';
+    }
   }
 
   private sanitizeName(name: string): string {

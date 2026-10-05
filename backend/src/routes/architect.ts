@@ -1,16 +1,22 @@
 import { Router, Request, Response } from 'express';
 import { AITranslator } from '../ai/translator.js';
 import { getArchitectPrompt, ARCHITECT_SYSTEM_PROMPT, normalizeScale } from '../ai/prompts.js';
+import {
+  inferLanguageForGoal,
+  normalizeNodeLanguage,
+  normalizeClientSideLanguages,
+} from '../ai/languageInference.js';
 import { loadPreference } from './uiPreference.js';
 import { knowledgeStore } from '../knowledge/knowledgeStore.js';
 import { getPlaceholderFileNames } from '../export/placeholderFiles.js';
 import { performAutoPlace } from './ui-functions.js';
 import { broadcastArchitectProgress } from '../socket/socketManager.js';
+import { PLAN_NODE_TYPES } from '../types.js';
 
 import { researchDesign, type DesignResearchResult } from '../search/designResearch.js';
 import { getSearchService } from '../search/webSearch.js';
 import { getManifestoContext } from '../ai/manifesto.js';
-import { getLibraryContext } from '../ai/libraryContext.js';
+import { getLibraryContext, getLibraryContextDense } from '../ai/libraryContext.js';
 import type { ContractArchitectNode, PlacedWidget } from '../shared/designContract.js';
 import { deriveNodeId, flattenSuggestedWidgets } from '../shared/designContract.js';
 
@@ -84,11 +90,14 @@ class RequestQueue {
   }
 }
 
-const architectQueue = new RequestQueue(1, 180000);
+const architectQueue = new RequestQueue(1, 600000);
 
 // ─── Testable constants ────────────────────────────────────────────────────
 
-export const NODE_TYPES = ['input', 'output', 'logic', 'api', 'database', 'ui', 'ui-functions', 'gui-layout'];
+// Canonical file-node types — single source of truth in types.ts. Re-exported
+// so existing importers/tests keep working; the plan prompt below interpolates
+// THIS list so the vocabulary can never drift from the validator again.
+export const NODE_TYPES: string[] = [...PLAN_NODE_TYPES];
 
 // ─── Testable types ────────────────────────────────────────────────────────
 
@@ -451,35 +460,128 @@ export function buildFlowEdges(
  * filtered to nodes that actually exist. Idempotent — never duplicates an
  * existing edge.
  */
+// Standard server-side dependency chain (repository → service → handlers →
+// main, plus types/config/middleware fan-in) — the rule-based fallback's graph.
+const SERVER_EDGE_CANDIDATES: Array<{ source: string; target: string }> = [
+  { source: 'repository', target: 'service' },
+  { source: 'service', target: 'handlers' },
+  { source: 'handlers', target: 'main' },
+  { source: 'config', target: 'main' },
+  { source: 'types', target: 'handlers' },
+  { source: 'types', target: 'service' },
+  { source: 'types', target: 'repository' },
+  { source: 'middleware', target: 'main' },
+  { source: 'auth', target: 'handlers' },
+  { source: 'auth', target: 'main' },
+  { source: 'cache', target: 'repository' },
+  { source: 'events', target: 'service' },
+  { source: 'websocket', target: 'handlers' },
+  { source: 'websocket', target: 'main' },
+  { source: 'validators', target: 'handlers' },
+  { source: 'migrations', target: 'repository' },
+];
+
+// CLIENT-SIDE dependency chain for browser/GUI apps (ui + logic only, no
+// api/database layers). The server chain found nothing to wire on a pure-UI
+// graph, so browser apps kept shipping with 0 edges — and 0 edges means the
+// FileGenerator never wires the imports (the measured pomodoro-timer build:
+// TS2304 'CoreEngine' not imported, ui.ts with no connection to main). An
+// edge "X → Y" means Y imports from X: main imports the app logic + the UI;
+// the UI imports the app logic + shared types; logic imports types/utils.
+const CLIENT_SIDE_EDGE_CANDIDATES: Array<{ source: string; target: string }> = [
+  { source: 'types', target: 'main' },
+  { source: 'types', target: 'app' },
+  { source: 'types', target: 'ui' },
+  { source: 'app', target: 'main' },
+  { source: 'ui', target: 'main' },
+  { source: 'app', target: 'ui' },
+  { source: 'utils', target: 'app' },
+  { source: 'utils', target: 'ui' },
+  { source: 'state', target: 'app' },
+  { source: 'state', target: 'ui' },
+  { source: 'renderer', target: 'main' },
+];
+
+const SERVER_TYPE_FOR_ROLE: Record<string, string> = {
+  repository: 'database',
+  handlers: 'api',
+  service: 'logic',
+  main: 'logic',
+  config: 'logic',
+  types: 'logic',
+  middleware: 'logic',
+  auth: 'api',
+  cache: 'database',
+  events: 'logic',
+  websocket: 'api',
+  validators: 'logic',
+  migrations: 'database',
+};
+
+const CLIENT_SIDE_TYPE_FOR_ROLE: Record<string, string> = {
+  types: 'logic',
+  app: 'logic',
+  main: 'logic',
+  utils: 'logic',
+  state: 'logic',
+};
+
+/** Entry-point-ish labels (main/index/entry/app) — the client-side 'main' role's natural home. */
+const ENTRY_LIKE_LABEL = /^(main|index|entry|start|run|app)[.\-_]/;
+
+/**
+ * ENFORCE minimum edge density (the build-eval P1 gap: 0.35 edges/node vs a
+ * 0.7+ target). Edges model file dependencies — an app with >3 nodes but
+ * almost no edges is an island graph whose imports were never modeled, which
+ * is the ROOT CAUSE of the cross-file compile failures (files that import from
+ * siblings the graph never connected).
+ *
+ * When a graph with >3 nodes has fewer than 0.3 edges/node, auto-generate the
+ * standard dependency chain — the SERVER chain (repository → service →
+ * handlers → main, plus types/config/middleware fan-in) for apps with
+ * api/database layers, or the CLIENT-SIDE chain (main ← ui/app ← types/utils)
+ * for browser/GUI graphs (ui/gui-layout nodes and no api/database nodes) —
+ * filtered to nodes that actually exist. Idempotent — never duplicates an
+ * existing edge.
+ */
 export function enforceEdgeDensity(nodes: ArchitectNode[], edges: ArchitectEdge[]): ArchitectEdge[] {
   if (nodes.length <= 3) return edges; // small apps legitimately have few edges
   const density = edges.length / nodes.length;
   if (density >= 0.3) return edges;
 
-  const edgeCandidates: Array<{ source: string; target: string }> = [
-    { source: 'repository', target: 'service' },
-    { source: 'service', target: 'handlers' },
-    { source: 'handlers', target: 'main' },
-    { source: 'config', target: 'main' },
-    { source: 'types', target: 'handlers' },
-    { source: 'types', target: 'service' },
-    { source: 'types', target: 'repository' },
-    { source: 'middleware', target: 'main' },
-    { source: 'auth', target: 'handlers' },
-    { source: 'auth', target: 'main' },
-    { source: 'cache', target: 'repository' },
-    { source: 'events', target: 'service' },
-    { source: 'websocket', target: 'handlers' },
-    { source: 'websocket', target: 'main' },
-    { source: 'validators', target: 'handlers' },
-    { source: 'migrations', target: 'repository' },
-  ];
+  // Client-side detection mirrors isClientSideRequest's structural test: UI
+  // nodes present, no server layers. Browser apps have no repository/handlers
+  // for the server chain to find, so they need their own wiring.
+  const clientSide = nodes.some(n => n.type === 'ui' || n.type === 'gui-layout')
+    && !nodes.some(n => n.type === 'api' || n.type === 'database');
+  const edgeCandidates = clientSide ? CLIENT_SIDE_EDGE_CANDIDATES : SERVER_EDGE_CANDIDATES;
 
   const existing = new Set(edges.map(e => `${e.source}->${e.target}`));
   const added: ArchitectEdge[] = [];
+  // Type fallbacks for candidates whose label doesn't start with the
+  // conventional name (e.g. "data-store.ts" is still the database layer):
+  const TYPE_FOR_ROLE = clientSide ? CLIENT_SIDE_TYPE_FOR_ROLE : SERVER_TYPE_FOR_ROLE;
+  const findNode = (role: string, excludeLabel: string): ArchitectNode | undefined => {
+    const byLabel = nodes.find(n => n.label.startsWith(role) && n.label !== excludeLabel);
+    if (byLabel) return byLabel;
+    if (clientSide && role === 'main') {
+      // Client-side: the entry point IS entry-point-ish (main.ts/index.ts/
+      // app.ts) — the type fallback must PREFER it, unlike other roles.
+      return nodes.find(n => n.label !== excludeLabel && ENTRY_LIKE_LABEL.test(n.label));
+    }
+    if (clientSide && role === 'ui') {
+      return nodes.find(n => (n.type === 'ui' || n.type === 'gui-layout') && n.label !== excludeLabel);
+    }
+    const byType = TYPE_FOR_ROLE[role];
+    if (!byType) return undefined;
+    // Type-based fallback: prefer labels that are NOT entry-point-ish
+    // (main/index/entry/app) so the 'service'/'app' role lands on the
+    // business layer, not the entry point.
+    return nodes.find(n => n.type === byType && n.label !== excludeLabel && !ENTRY_LIKE_LABEL.test(n.label));
+  };
   for (const cand of edgeCandidates) {
-    const sourceNode = nodes.find(n => n.label.startsWith(cand.source));
-    const targetNode = nodes.find(n => n.label.startsWith(cand.target));
+    const sourceNode = findNode(cand.source, '');
+    const targetNode = findNode(cand.target, sourceNode?.label || '');
     if (!sourceNode || !targetNode || sourceNode.label === targetNode.label) continue;
     const key = `${sourceNode.label}->${targetNode.label}`;
     if (existing.has(key)) continue;
@@ -487,7 +589,7 @@ export function enforceEdgeDensity(nodes: ArchitectNode[], edges: ArchitectEdge[
     added.push({ source: sourceNode.label, target: targetNode.label });
   }
   if (added.length > 0) {
-    console.log(`[architect] Edge density ${density.toFixed(2)} below 0.3 — auto-generated ${added.length} standard dependency edge(s)`);
+    console.log(`[architect] Edge density ${density.toFixed(2)} below 0.3 — auto-generated ${added.length} ${clientSide ? 'client-side' : 'standard'} dependency edge(s)`);
     return [...edges, ...added];
   }
   return edges;
@@ -506,14 +608,8 @@ export function validateArchitectRequest(goal: unknown): string | null {
 // ─── Rule-based fallback architecture generator ─────────────────────────
 // Generates sensible default nodes when the LLM fails to return valid JSON.
 // Uses the goal text to infer complexity and creates appropriate file structure.
-
-const OS_LANGUAGE_MAP: Record<string, string> = {
-  linux: 'go',
-  windows: 'csharp',
-  mac: 'swift',
-  ios: 'swift',
-  android: 'kotlin',
-};
+// Language comes from the app's DOMAIN (inferLanguageForGoal), never from the
+// OS alone — a web goal must not become a Go server stack.
 
 const OS_FRAMEWORK_MAP: Record<string, string> = {
   linux: 'Go standard library / gin',
@@ -560,6 +656,7 @@ function getExtensionForLanguage(lang: string): string {
     php: '.php',
     ruby: '.rb',
     cpp: '.cpp',
+    c: '.c',
   };
   return extMap[lang] || '.ts';
 }
@@ -571,15 +668,87 @@ interface FallbackNodeTemplate {
 }
 
 /**
+ * Web fallback architecture — the DOMAIN-correct fallback for browser/GUI
+ * goals (timers, calculators, games, widgets, dashboards). Pure TypeScript +
+ * HTML/CSS with a real dependency chain, so the tsc gate and the preview
+ * wrapper can actually validate and run what was planned.
+ */
+export function generateWebFallbackArchitecture(goal: string): ArchitectResponse {
+  const nodes: ArchitectNode[] = [
+    {
+      label: 'main.ts',
+      description: `Entry point for ${goal}: parses the page's initial state, wires the UI to the logic layer, and starts rendering. Imports: app, ui. Exports: start().`,
+      type: 'logic',
+      language: 'typescript',
+      position: { x: 500, y: 50 },
+    },
+    {
+      label: 'app.ts',
+      description: `Core application logic for ${goal}: state management, input validation, and the business rules the UI calls. No DOM access. Imports: types. Exports: createState(), updateState(), getState().`,
+      type: 'logic',
+      language: 'typescript',
+      position: { x: 300, y: 220 },
+    },
+    {
+      label: 'types.ts',
+      description: 'Shared type definitions: state shapes, input payloads, and result types used by the app and UI layers.',
+      type: 'logic',
+      language: 'typescript',
+      position: { x: 100, y: 220 },
+    },
+    {
+      label: 'ui.ts',
+      description: 'User interface layer: builds the DOM with createElement (NO JSX), renders state to #app-container, attaches event handlers that call the app logic. Imports: app, types. Exports: render(state, container), bindEvents(handlers).',
+      type: 'ui',
+      language: 'typescript',
+      position: { x: 500, y: 400 },
+    },
+    {
+      label: 'index.html',
+      description: 'HTML shell: loads main.ts as a module, contains the #app-container mount point and the page title.',
+      type: 'ui',
+      language: 'html',
+      position: { x: 700, y: 400 },
+    },
+    {
+      label: 'styles.css',
+      description: 'Stylesheet: layout, colors, and responsive sizing for the app interface.',
+      type: 'ui',
+      language: 'css',
+      position: { x: 700, y: 560 },
+    },
+  ];
+
+  const edges: ArchitectEdge[] = [
+    { source: 'main.ts', target: 'app.ts' },
+    { source: 'main.ts', target: 'ui.ts' },
+    { source: 'ui.ts', target: 'app.ts' },
+    { source: 'app.ts', target: 'types.ts' },
+    { source: 'ui.ts', target: 'types.ts' },
+  ];
+
+  console.log(`[architect] Generated web fallback architecture: ${nodes.length} nodes, ${edges.length} edges (typescript)`);
+  return { nodes, edges };
+}
+
+/**
  * Generate a complete fallback architecture when the LLM fails.
  * Uses rule-based templates keyed by OS/language to create sensible defaults.
+ * The language is inferred from the app's DOMAIN — web/CLI goals never
+ * fall back to a Go server stack (the countdown-timer→main.go failure class).
  */
 export function generateFallbackArchitecture(
   goal: string,
   purpose: string,
-  targetOS: string
+  targetOS: string,
+  uiPreference?: 'cli' | 'gui' | 'ask'
 ): ArchitectResponse {
-  const lang = OS_LANGUAGE_MAP[targetOS] || 'typescript';
+  const lang = inferLanguageForGoal(goal, purpose, targetOS, uiPreference);
+  const clientSide = isClientSideRequest(goal, purpose, targetOS, []);
+  if (clientSide) {
+    return generateWebFallbackArchitecture(goal);
+  }
+
   const ext = getExtensionForLanguage(lang);
   const complexity = inferComplexity(goal);
   const framework = OS_FRAMEWORK_MAP[targetOS] || 'standard libraries';
@@ -898,7 +1067,7 @@ router.post('/plan', async (req: Request, res: Response) => {
     let libraryContext: string | undefined;
     try {
       const searchText = purpose ? `${goal} ${purpose}` : goal;
-      libraryContext = getLibraryContext(searchText);
+      libraryContext = await getLibraryContextDense(searchText);
       if (libraryContext) {
         console.log(`[architect] Injected library context for "${searchText.substring(0, 50)}..."`);
       }
@@ -931,14 +1100,19 @@ router.post('/plan', async (req: Request, res: Response) => {
     const MAX_ATTEMPTS = 3;
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-      const maxTokens = attempt === 1 ? 16384 : 8192;
+      // Attempt 1 caps the response budget at 8192 tokens: with the doctrine +
+      // knowledge/library/reference context the input is several thousand tokens,
+      // and llama-server rejects input + max_tokens beyond the 16384 context
+      // window ("Context size has been exceeded"). Plans are 1-3k tokens in
+      // practice; retries stay at 6144.
+      const maxTokens = attempt === 1 ? 8192 : 6144;
       const attemptPrompt = attempt === 1
         ? prompt
         : `${prompt}\n\nIMPORTANT: Your previous response had malformed JSON. Return ONLY valid JSON. No markdown, no extra text, no comments — just the JSON object with "nodes" and "edges" arrays.`;
 
       // Queue the LLM call — only 1 architect request processes at a time
       response = await architectQueue.enqueue(() =>
-        translator.reason(attemptPrompt, undefined, { maxTokens })
+        translator.reason(attemptPrompt, undefined, { maxTokens, timeoutMs: 600000 })
       );
 
       parsed = parseArchitectResponse(response);
@@ -969,12 +1143,16 @@ router.post('/plan', async (req: Request, res: Response) => {
     // Validate and sanitize nodes
     let sanitizedNodes = sanitizeNodes(parsed.nodes);
 
+    // Language comes from the app's DOMAIN (web/CLI → TypeScript; explicit
+    // OS targets keep their native language), never from the OS default
+    // alone — the countdown-timer→main.go failure class.
+    const inferredLang = inferLanguageForGoal(goal.trim(), (purpose || '').trim(), (targetOS || 'linux').trim(), uiPreference);
+
     // Client-side requests (web pages, timers, widgets, …): the LLM still often
     // emits server layers (repository/handlers) because its architecture prompt
     // biases toward full-stack. Drop api/database nodes outright so a browser
     // app never ships with a SQLite repo and REST handlers bolted on, and skip
     // the type-enforcer's database/API injection.
-    const lang = OS_LANGUAGE_MAP[(targetOS || 'linux').trim()] || 'typescript';
     const clientSide = isClientSideRequest(goal, purpose || '', targetOS || '', sanitizedNodes);
     if (clientSide) {
       const before = sanitizedNodes.length;
@@ -983,7 +1161,19 @@ router.post('/plan', async (req: Request, res: Response) => {
         console.log(`[architect] Client-side request — dropped ${before - sanitizedNodes.length} server-layer node(s) (api/database) from the plan`);
       }
     }
-    sanitizedNodes = enforceRequiredTypes(sanitizedNodes, goal, lang, clientSide);
+
+    // Coerce every node to the inferred language: browser apps are ALL
+    // TypeScript (a single Go node in a web plan is a guaranteed build
+    // failure), and unknown/typo'd languages collapse to the plan's language.
+    if (clientSide) {
+      const langs = sanitizedNodes.map(n => n.language);
+      const normalized = normalizeClientSideLanguages(langs);
+      sanitizedNodes.forEach((n, i) => { n.language = normalized[i]; });
+    } else {
+      sanitizedNodes.forEach((n) => { n.language = normalizeNodeLanguage(n.language, inferredLang); });
+    }
+
+    sanitizedNodes = enforceRequiredTypes(sanitizedNodes, goal, inferredLang, clientSide);
 
     // Build flow nodes with ID map
     const { nodes: flowNodes, idMap } = buildFlowNodes(sanitizedNodes);
@@ -1076,7 +1266,7 @@ router.post('/rework', async (req: Request, res: Response) => {
 
     const reworkPrompt = `You are an expert software architect performing a **rework** on an existing architecture. A user has added a new component to their app, and you need to rewire the connections to integrate it.
 
-USER'S APP:\nGoal: ${goal.trim()}\nPurpose: ${(purpose || '').trim()}\nTarget OS: ${(targetOS || 'linux').trim()}\n\n${existingGraph}${manifestoSection}\n\nTASK:\n1. Review the existing nodes and edges\n2. Determine which new nodes need to be added (if the existing nodes list doesn't include all files) — the user may have added 1-3 new nodes manually\n3. **Rewrite ALL edges** to properly connect every file (existing + new) in a directed dependency graph\n4. Update node positions to accommodate the new nodes in a logical layout\n5. **Return ALL nodes** (existing + new) with their updated descriptions and positions\n\nAvailable node types: input, output, logic, api, database, ui\nAvailable languages: javascript, typescript, python, rust, go, java, csharp, cpp, swift, kotlin, php, ruby\n\nReturn ONLY valid JSON with this structure:\n{\n  "nodes": [\n    {\n      "label": "filename (e.g. main.go, auth.ts)",\n      "description": "description of what this file does",\n      "type": "one of the node types",\n      "language": "programming language",\n      "position": { "x": number, "y": number }\n    }\n  ],\n  "edges": [\n    { "source": "filename of source", "target": "filename of target" }\n  ]\n}\n\nIMPORTANT: Include ALL nodes (existing and any new ones the user added). The edges must form a complete dependency graph. No markdown, no explanations — just the JSON.`;
+USER'S APP:\nGoal: ${goal.trim()}\nPurpose: ${(purpose || '').trim()}\nTarget OS: ${(targetOS || 'linux').trim()}\n\n${existingGraph}${manifestoSection}\n\nTASK:\n1. Review the existing nodes and edges\n2. Determine which new nodes need to be added (if the existing nodes list doesn't include all files) — the user may have added 1-3 new nodes manually\n3. **Rewrite ALL edges** to properly connect every file (existing + new) in a directed dependency graph\n4. Update node positions to accommodate the new nodes in a logical layout\n5. **Return ALL nodes** (existing + new) with their updated descriptions and positions\n\nAvailable node types: ${NODE_TYPES.join(', ')}\nAvailable languages: javascript, typescript, python, rust, go, java, csharp, cpp, swift, kotlin, php, ruby\n\nReturn ONLY valid JSON with this structure:\n{\n  "nodes": [\n    {\n      "label": "filename (e.g. main.go, auth.ts)",\n      "description": "description of what this file does",\n      "type": "one of the node types",\n      "language": "programming language",\n      "position": { "x": number, "y": number }\n    }\n  ],\n  "edges": [\n    { "source": "filename of source", "target": "filename of target" }\n  ]\n}\n\nIMPORTANT: Include ALL nodes (existing and any new ones the user added). The edges must form a complete dependency graph. No markdown, no explanations — just the JSON.`;
 
     const translator = new AITranslator();
     const response = await architectQueue.enqueue(() =>
@@ -1107,19 +1297,28 @@ USER'S APP:\nGoal: ${goal.trim()}\nPurpose: ${(purpose || '').trim()}\nTarget OS
       return;
     }
 
-    let sanitizedNodes = sanitizeNodes(parsed.nodes);
+let sanitizedNodes = sanitizeNodes(parsed.nodes);
 
-    // Rework is client-side aware too: strip server layers for presentation apps.
-    const reworkLang = OS_LANGUAGE_MAP[(targetOS || 'linux').trim()] || 'typescript';
+    // Rework is client-side aware too: strip server layers for presentation apps,
+    // and coerce languages to the domain-inferred one (web/CLI → TypeScript).
+    const inferredLang = inferLanguageForGoal(goal.trim(), (purpose || '').trim(), (targetOS || 'linux').trim());
     const reworkClientSide = isClientSideRequest(goal, purpose || '', targetOS || '', sanitizedNodes);
     if (reworkClientSide) {
       const before = sanitizedNodes.length;
       sanitizedNodes = sanitizedNodes.filter(n => n.type !== 'api' && n.type !== 'database');
       if (sanitizedNodes.length !== before) {
-        console.log(`[architect] Rework (client-side) — dropped ${before - sanitizedNodes.length} server-layer node(s) (api/database)`);
+        console.log(`[architect] Rework client-side request — dropped ${before - sanitizedNodes.length} server-layer node(s) (api/database)`);
       }
     }
-    sanitizedNodes = enforceRequiredTypes(sanitizedNodes, goal, reworkLang, reworkClientSide);
+    if (reworkClientSide) {
+      const langs = sanitizedNodes.map(n => n.language);
+      const normalized = normalizeClientSideLanguages(langs);
+      sanitizedNodes.forEach((n, i) => { n.language = normalized[i]; });
+    } else {
+      sanitizedNodes.forEach((n) => { n.language = normalizeNodeLanguage(n.language, inferredLang); });
+    }
+
+    sanitizedNodes = enforceRequiredTypes(sanitizedNodes, goal, inferredLang, reworkClientSide);
 
     const { nodes: flowNodes, idMap } = buildFlowNodes(sanitizedNodes);
     // Enforce minimum edge density for rework too (same P1 gap as the main path).

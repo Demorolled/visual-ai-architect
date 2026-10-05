@@ -52,9 +52,37 @@ export function getOSLabel(os: OSType): string {
 
 export type NodeType = 'input' | 'output' | 'logic' | 'api' | 'database' | 'ui' | 'master' | 'ui-functions' | 'gui-layout';
 
+/**
+ * Node-type registry: label, icon and one-line description for every type the
+ * user can place.
+ *
+ * This list used to live only inside NodePalette.tsx as a local array, which is
+ * why nothing else could offer a type choice — the per-node setup window opened
+ * on drop had no way to list types, so the dragged type was simply final. One
+ * registry, shared by the palette and NodeSetupDialog.
+ *
+ * `master` is deliberately absent: it is the protected blueprint node, not a
+ * type the user places by hand.
+ */
+export const NODE_TYPE_OPTIONS: {
+  type: NodeType;
+  label: string;
+  icon: string;
+  description: string;
+}[] = [
+  { type: 'input', label: 'Input', icon: '⬅', description: 'Data entry point' },
+  { type: 'output', label: 'Output', icon: '➡', description: 'Result display' },
+  { type: 'logic', label: 'Logic', icon: '⚙', description: 'Processing/conditions' },
+  { type: 'api', label: 'API', icon: '🌐', description: 'External service call' },
+  { type: 'database', label: 'Database', icon: '📦', description: 'Data storage' },
+  { type: 'ui', label: 'UI', icon: '🖥', description: 'User interface element' },
+  { type: 'ui-functions', label: 'UI Functions', icon: '🎛', description: 'Generates button/control list for the UI canvas' },
+  { type: 'gui-layout', label: 'GUI Layout', icon: '⛭', description: 'Imported GUI widget layout' },
+];
+
 export type NodeStatus = 'pending' | 'generating' | 'valid' | 'error';
 
-export type CodeLanguage = 'javascript' | 'typescript' | 'python' | 'rust' | 'go' | 'java' | 'csharp' | 'cpp' | 'swift' | 'kotlin' | 'php' | 'ruby';
+export type CodeLanguage = 'javascript' | 'typescript' | 'python' | 'rust' | 'go' | 'java' | 'csharp' | 'cpp' | 'c' | 'swift' | 'kotlin' | 'php' | 'ruby';
 
 export interface SubNodeData {
   id: string;
@@ -98,6 +126,44 @@ export interface NodeData {
   external?: boolean;
   /** 'package' | 'service' | 'app' — kind of external node. */
   externalKind?: string;
+  /**
+   * Big Plan Mode: questions the co-worker asked about THIS node, with the
+   * user's answer once they give one. Kept separate from `description` so the
+   * user's own words are never overwritten by the co-worker's — the answers
+   * are structured data that still reaches the saved plan and the build.
+   */
+  planQa?: PlanQA[];
+  /**
+   * Tree Mode: which app tree this node belongs to (`AppTree.id`).
+   *
+   * A project used to be exactly one app, so membership was implicit — every
+   * non-master node belonged to the one master. Tree Mode lets a project hold
+   * several app trees side by side, so each node has to say which one it is
+   * part of. Absent on legacy nodes; the store's migration stamps it on load.
+   */
+  treeId?: string;
+}
+
+/** One answered question inside Big Plan Mode. */
+export interface PlanQA {
+  q: string;
+  a: string;
+  at: string;
+}
+
+/**
+ * A question the plan co-worker is currently asking.
+ *
+ * `nodeId` is what makes answers attach: the co-worker names the node it is
+ * asking about, and the panel files the user's answer under that node. Null
+ * means the question is about the design as a whole.
+ */
+export interface PlanQuestion {
+  id: string;
+  text: string;
+  nodeId: string | null;
+  nodeLabel: string | null;
+  at: string;
 }
 
 export interface Project {
@@ -106,8 +172,84 @@ export interface Project {
   targetOS: OSType;
   nodes: NodeData[];
   edges: Array<{ source: string; target: string }>;
+  /** Tree Mode: the app trees in this project (see AppTree). */
+  trees?: AppTree[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+// ── Tree Mode ───────────────────────────────────────────────────────────
+
+/**
+ * One app tree inside a project.
+ *
+ * A tree is a complete app: its own root node (`type: 'master'`), its own goal
+ * and target OS, and its own cluster of nodes on the canvas. Several trees can
+ * live in one project, laid out side by side, and be wired to each other with
+ * cross-tree connections (see CrossTreeConnection).
+ *
+ * The root is a normal `master`-typed node with a per-tree id rather than the
+ * single legacy `'master-node'` literal — that keeps every existing
+ * `n.type !== 'master'` filter working unchanged. The first tree keeps the
+ * `'master-node'` id so projects saved before Tree Mode still line up.
+ */
+export interface AppTree {
+  id: string;
+  name: string;
+  /** What this app does — its own statement of intent. */
+  goal: string;
+  purpose?: string;
+  targetOS: OSType;
+  scale?: AppScale;
+  /** Node id of this tree's root node (`type: 'master'`), if it has one yet. */
+  rootNodeId: string | null;
+}
+
+/**
+ * Preset "what type of data do you want to share" choices offered when wiring
+ * two app trees together. `custom` lets the user describe anything else.
+ */
+export const CROSS_TREE_PAYLOAD_OPTIONS: { value: string; label: string; hint: string }[] = [
+  { value: 'auth-session', label: 'Authentication / login session', hint: 'The signed-in user and their token' },
+  { value: 'user-profile', label: 'User profile', hint: 'Name, avatar, preferences' },
+  { value: 'records', label: 'Database records', hint: 'Rows/entities the other app reads' },
+  { value: 'api-token', label: 'API key / credentials', hint: 'Lets the other app call this one' },
+  { value: 'files', label: 'Files / uploads', hint: 'Documents, images, exports' },
+  { value: 'events', label: 'Events / notifications', hint: '"Something happened" signals' },
+  { value: 'settings', label: 'Shared settings', hint: 'Theme, locale, feature flags' },
+  { value: 'money', label: 'Money / transactions', hint: 'Payments, balances, ledgers' },
+  { value: 'custom', label: 'Something else…', hint: 'Describe it in your own words' },
+];
+
+/**
+ * The `data` payload of an edge that leaves its own app tree.
+ *
+ * Cross-tree edges are semantic edges (`semantic: true`), so they already get
+ * the green wiring-cable rendering, the import dependency in codegen, and the
+ * "what to export / what to consume" injection into generation prompts. The
+ * extra fields here record WHICH two apps are joined and WHAT data crosses the
+ * boundary, which is what the eventual per-tree build needs to generate the
+ * bridge module between the two apps.
+ */
+export interface CrossTreeConnection {
+  kind: 'cross-tree';
+  semantic: true;
+  /** Short display name (the payload label by default). */
+  label: string;
+  /** One line describing what crosses the boundary. */
+  relation: string;
+  /** `AppTree.id` the data flows OUT of (the edge's source). */
+  sourceTreeId: string;
+  /** `AppTree.id` the data flows INTO (the edge's target). */
+  targetTreeId: string;
+  /** Payload key — one of CROSS_TREE_PAYLOAD_OPTIONS' `value`s. */
+  payloadType: string;
+  /** Human label for `payloadType` (so a removed preset still renders). */
+  payloadLabel: string;
+  /** Free-text detail the user added about the payload. */
+  payloadDetail?: string;
+  /** The raw description the user gave, kept verbatim. */
+  description: string;
 }
 
 export const LANGUAGE_OPTIONS: { value: CodeLanguage; label: string }[] = [
@@ -119,6 +261,7 @@ export const LANGUAGE_OPTIONS: { value: CodeLanguage; label: string }[] = [
   { value: 'java', label: 'Java' },
   { value: 'csharp', label: 'C#' },
   { value: 'cpp', label: 'C++' },
+  { value: 'c', label: 'C' },
   { value: 'swift', label: 'Swift' },
   { value: 'kotlin', label: 'Kotlin' },
   { value: 'php', label: 'PHP' },
@@ -303,6 +446,7 @@ const LANGUAGE_EXTENSIONS: Record<string, string> = {
   java: 'java',
   csharp: 'cs',
   cpp: 'cpp',
+  c: 'c',
   swift: 'swift',
   kotlin: 'kt',
   php: 'php',
