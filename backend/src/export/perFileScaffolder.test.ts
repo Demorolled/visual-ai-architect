@@ -2,8 +2,11 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { execFileSync } from 'child_process';
 import {
   PerFileScaffolder,
+  pythonModuleName,
+  pythonNoArgFuncs,
   goNoArgFuncs,
   rustNoArgFuncs,
   rustPublicFns,
@@ -596,6 +599,13 @@ describe('compiled-language entry points call their node modules', () => {
       code: 'class Board {\n    fun place() { }\n}\nfun run() { }\n',
       want: [/val _module0 = Board::class/, /^\s+run\(\)$/m],
     },
+    {
+      lang: 'python', ext: 'py', entry: 'main.py',
+      code: 'def helper(x):\n    return x\n\ndef main():\n    print("hi")\n',
+      // Qualified with the module: every CLI node calls its entry `main`, so a
+      // bare `main()` would run one node's work several times over the others.
+      want: [/^import core\b/m, /^\s+core\.main\(\)$/m],
+    },
   ];
 
   for (const c of cases) {
@@ -638,10 +648,136 @@ describe('compiled-language entry points call their node modules', () => {
   });
 
   it('plans nothing for a language it has no wiring for', () => {
-    expect(planModuleWiring('python', 'def run():\n    pass\n', 'core', 0)).toEqual({
+    expect(planModuleWiring('ruby', 'def run\nend\n', 'core', 0)).toEqual({
       declarations: [],
       references: [],
       calls: [],
     });
+  });
+
+  it('calls only ZERO-argument Python defs, never a def that needs arguments', () => {
+    expect(pythonNoArgFuncs('def run():\n    pass\n\ndef convert(v, unit):\n    return v\n').map((f) => f.name))
+      .toEqual(['run']);
+    expect(pythonModuleName('arg-parser')).toBe('arg_parser');
+    expect(pythonModuleName('2d-renderer')).toBe('_2d_renderer');
+  });
+});
+
+// ── Generated apps must be RUNNABLE, not just structurally tidy ──────────────
+describe('Python packages are importable (hyphenated node labels)', () => {
+  let pyOut = '';
+  const pyFile: GeneratedFile = {
+    fileName: 'arg-parser.py',
+    language: 'python',
+    code: 'import sys\n\ndef main():\n    print("converted")\n',
+    nodeId: 'n1',
+    nodeLabel: 'arg-parser',
+    dependencies: [],
+    exports: ['main'],
+    errors: [],
+    validated: true,
+  };
+
+  beforeAll(async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-py-args-'));
+    const res = await scaffolder.scaffold({
+      projectName: 'py temp converter',
+      targetOS: 'linux',
+      files: [pyFile],
+      nodes: [],
+      edges: [],
+      outputDir: dir,
+    });
+    pyOut = res.outputPath;
+  });
+
+  it('writes the module under an underscored name, never `arg-parser.py`', () => {
+    expect(fs.existsSync(path.join(pyOut, 'src/arg_parser/arg_parser.py'))).toBe(true);
+    expect(fs.existsSync(path.join(pyOut, 'src/arg_parser/arg-parser.py'))).toBe(false);
+  });
+
+  it('re-exports from the importable module name', () => {
+    const init = fs.readFileSync(path.join(pyOut, 'src/arg_parser/__init__.py'), 'utf-8');
+    expect(init).toContain('from .arg_parser import *');
+    expect(init).not.toContain('.arg-parser');
+  });
+
+  it('imports the module from main.py and RUNS its entry function', () => {
+    const main = fs.readFileSync(path.join(pyOut, 'main.py'), 'utf-8');
+    expect(main).toContain('import arg_parser');
+    expect(main).toContain('arg_parser.main()');
+  });
+
+  const hasPython = (() => {
+    try { execFileSync('python3', ['--version'], { stdio: 'ignore' }); return true; } catch { return false; }
+  })();
+
+  it.skipIf(!hasPython)('compiles and imports with the real interpreter (SyntaxError regression)', () => {
+    execFileSync('python3', ['-m', 'py_compile', path.join(pyOut, 'main.py')], { stdio: 'pipe' });
+    execFileSync('python3', ['-m', 'py_compile', path.join(pyOut, 'src/arg_parser/__init__.py')], { stdio: 'pipe' });
+    // `import arg_parser` must resolve the package and its __init__ re-export.
+    const out = execFileSync('python3', ['-c', 'import sys; sys.path.insert(0, "src"); import arg_parser; arg_parser.main()'], {
+      cwd: pyOut,
+      encoding: 'utf-8',
+    });
+    expect(out).toContain('converted');
+  });
+});
+
+// A node file that already IS the program must not be duplicated by the
+// scaffold's own entry point (C/C++ link every unit into one binary).
+describe('a C node that defines main() becomes the program entry', () => {
+  async function scaffoldC(files: GeneratedFile[]) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-c-entry-'));
+    const res = await scaffolder.scaffold({
+      projectName: 'c word counter',
+      targetOS: 'linux',
+      files,
+      nodes: [],
+      edges: [],
+      outputDir: dir,
+    });
+    return res.outputPath;
+  }
+
+  const program: GeneratedFile = {
+    fileName: 'word-counter.c',
+    language: 'c',
+    code: '#include <stdio.h>\n\nint count_words(void) { return 3; }\n\nint main(int argc, char **argv) {\n  (void)argc; (void)argv;\n  printf("words: %d\\n", count_words());\n  return 0;\n}\n',
+    nodeId: 'n1',
+    nodeLabel: 'word-counter',
+    dependencies: [],
+    exports: [],
+    errors: [],
+    validated: true,
+  };
+
+  it('emits NO second main file and compiles every source it finds', async () => {
+    const out = await scaffoldC([program]);
+    expect(fs.existsSync(path.join(out, 'main.c'))).toBe(false);
+    const makefile = fs.readFileSync(path.join(out, 'Makefile'), 'utf-8');
+    expect(makefile).toContain('SRCS := $(wildcard *.c) $(wildcard src/*/*.c)');
+    expect(makefile).not.toContain('main.c ');
+    expect(fs.readFileSync(path.join(out, 'README.md'), 'utf-8')).toContain('Program entry point');
+  });
+
+  const hasGcc = (() => {
+    try { execFileSync('gcc', ['--version'], { stdio: 'ignore' }); return true; } catch { return false; }
+  })();
+
+  it.skipIf(!hasGcc)('links and RUNS the promoted node file (duplicate-main regression)', async () => {
+    const out = await scaffoldC([program]);
+    const src = path.join(out, 'src/word-counter/word-counter.c');
+    const bin = path.join(out, 'app');
+    // Exactly the sources the Makefile builds: the promoted node, no main.c.
+    execFileSync('gcc', ['-std=c11', '-o', bin, src], { stdio: 'pipe' });
+    expect(execFileSync(bin, { encoding: 'utf-8' })).toContain('words: 3');
+  });
+
+  it('keeps the scaffold’s own entry point when no node defines main()', async () => {
+    const helper: GeneratedFile = { ...program, code: 'int count_words(void) { return 3; }\n' };
+    const out = await scaffoldC([helper]);
+    expect(fs.existsSync(path.join(out, 'main.c'))).toBe(true);
+    expect(fs.readFileSync(path.join(out, 'Makefile'), 'utf-8')).toContain('SRCS := main.c');
   });
 });

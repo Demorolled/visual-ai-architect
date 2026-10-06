@@ -95,6 +95,35 @@ function escapeForSingleQuoted(s: string): string {
   return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
 }
 
+/**
+ * The Python module name for a node label. Python identifiers cannot contain
+ * '-', so the exported DIRECTORY, the written FILE and the entry point's
+ * import must all agree on this one name.
+ *
+ * They previously did not: the directory was underscored (safeName), but the
+ * file kept the raw name (`arg-parser.py`) and the generated `__init__.py`
+ * re-exported from it — `from .arg-parser import *` is a hard SyntaxError, so
+ * the whole package was unimportable (measured on the generated Python
+ * temperature-converter app: `python3 main.py` died at import time).
+ *
+ * A leading digit is prefixed with '_' for the same reason (`2d-renderer` is
+ * not an importable name either).
+ */
+export function pythonModuleName(label: string): string {
+  const name = labelToFileName(label).replace(/-/g, '_');
+  return /^[0-9]/.test(name) ? `_${name}` : name;
+}
+
+/** Strip Python comments and string literals (incl. docstrings) before scanning. */
+function stripPythonCommentsAndStrings(code: string): string {
+  return (code || '')
+    .replace(/"""[\s\S]*?"""/g, '""')
+    .replace(/'''[\s\S]*?'''/g, "''")
+    .replace(/(^|[^\\])#[^\n]*/g, '$1')
+    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
+    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''");
+}
+
 // ── Entry-point wiring for compiled languages ────────────────────────────────
 // A generated node module is arbitrary LLM-authored code: its API (names,
 // arities, return types) is unknown to the scaffolder. So an entry point may
@@ -287,6 +316,18 @@ export function kotlinTopLevelFuncs(code: string): EntryCallable[] {
   return out;
 }
 
+/** Column-0, zero-parameter `def`s in a Python module — the entry a caller can
+ *  invoke without inventing arguments. */
+export function pythonNoArgFuncs(code: string): EntryCallable[] {
+  const out: EntryCallable[] = [];
+  const re = /^def\s+([A-Za-z_]\w*)\s*\(\s*\)\s*(?:->[^:\n]*)?:/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripPythonCommentsAndStrings(code))) !== null) {
+    out.push({ name: m[1], returnType: '' });
+  }
+  return out;
+}
+
 /**
  * Plan the wiring lines an entry point emits for one node module.
  *
@@ -358,11 +399,34 @@ export function planModuleWiring(
       if (fn) calls.push(`${fn.name}()`);
       break;
     }
+    case 'python': {
+      // The call is QUALIFIED with the module (`arg_parser.main()`), never a
+      // bare name: every CLI node calls its entry `main`, so unqualified calls
+      // would resolve to whichever star-import came last and run one node's
+      // work several times.
+      const fn = pickEntryCallable(pythonNoArgFuncs(code));
+      if (fn) calls.push(`${moduleName}.${fn.name}()`);
+      break;
+    }
     default:
       break;
   }
 
   return { declarations, references, calls };
+}
+
+/**
+ * True when a C/C++ node file declares the PROGRAM's `main`.
+ *
+ * C and C++ link every translation unit into ONE binary, so a node that
+ * defines `main` and the scaffold's own `main.c` collide with
+ * `ld: multiple definition of 'main'` — the generated C word-counter app could
+ * not be built at all. The node that defines `main` IS the app; the scaffold
+ * must not add a second one.
+ */
+export function declaresProgramEntry(code: string, language: string): boolean {
+  if ((language || '').toLowerCase() !== 'c' && (language || '').toLowerCase() !== 'cpp') return false;
+  return /^[ \t]*(?:int|void)\s+main\s*\(/m.test(stripCommentsAndStrings(code));
 }
 
 export class PerFileScaffolder {
@@ -421,6 +485,8 @@ export class PerFileScaffolder {
     });
     const files = config.files.map((f) => this.withLayout(f, layout));
     const bridgeFiles = files.filter((f) => f.isBridge);
+    /** Where each file actually landed on disk (used to document a promoted entry). */
+    const relPathByFile = new Map<GeneratedFile, string>();
 
     // ── Write per-node source files ──
     for (const file of files) {
@@ -433,9 +499,7 @@ export class PerFileScaffolder {
       // cross-file import in exported projects (TS2307). labelToFileName
       // strips the extension first, matching buildImportStatement/runTscCheck.
       // Python can't import hyphenated directory names — use underscores.
-      const safeName = isPython
-        ? labelToFileName(nodeLabel).replace(/-/g, '_')
-        : labelToFileName(nodeLabel);
+      const safeName = isPython ? pythonModuleName(nodeLabel) : labelToFileName(nodeLabel);
 
       // `src/<safeName>/` for one app; `apps/<app>/src/<safeName>/` for many;
       // `bridge/` for an integration module. Shared with the generator's tsc
@@ -444,25 +508,31 @@ export class PerFileScaffolder {
       const nodeDir = path.join(outputDir, ...relDir.split('/'));
       await fs.mkdir(nodeDir, { recursive: true });
 
-      const filePath = path.join(nodeDir, file.fileName);
+      // A Python FILE name is a module name too: `arg-parser.py` can neither be
+      // imported nor re-exported (`from .arg-parser import *` is a SyntaxError).
+      // Write it under the same underscored name the directory/entry point use,
+      // so `import arg_parser` finds the module.
+      const writtenName = isPython ? `${safeName}.py` : file.fileName;
+      const filePath = path.join(nodeDir, writtenName);
       await fs.writeFile(filePath, file.code, 'utf-8');
 
       // For Python, create an __init__.py that re-exports from the main file
       if (isPython) {
-        const initContent = `from .${file.fileName.replace(/\.py$/, '')} import *  # Auto-generated: re-export all from this node
+        const initContent = `from .${safeName} import *  # Auto-generated: re-export all from this node
 `;
         const initPath = path.join(nodeDir, '__init__.py');
         await fs.writeFile(initPath, initContent, 'utf-8');
         created.push(`${relDir}/__init__.py`);
       }
 
-      const relPath = `${relDir}/${file.fileName}`;
+      const relPath = `${relDir}/${writtenName}`;
+      relPathByFile.set(file, relPath);
       created.push(relPath);
       perNodeFiles.push({
         nodeId: file.nodeId,
         nodeLabel: file.nodeLabel,
         filePath: relPath,
-        fileName: file.fileName,
+        fileName: writtenName,
         validated: file.validated,
       });
     }
@@ -558,6 +628,8 @@ export class PerFileScaffolder {
     // ── Detect primary language across all generated files ──
     const primaryLang = this.detectPrimaryLanguage(files);
     const entryFileName = this.getEntryFileName(primaryLang);
+    // Set in the flat branch below when one node file owns the program entry.
+    let entryOwner: GeneratedFile | null = null;
 
     if (layout.separateApps) {
       // ── Tree Mode: one self-contained program PER APP ──
@@ -594,13 +666,27 @@ export class PerFileScaffolder {
         }
       }
     } else {
-      // ── Write entry point matching the primary language ──
-      const entryCode = this.buildEntryPoint(config, primaryLang);
-      await fs.writeFile(path.join(outputDir, entryFileName), entryCode, 'utf-8');
-      created.push(entryFileName);
+      // ── A node that IS the program (C/C++) ──
+      // A node file that declares `main` and the scaffold's own main.c both
+      // define it, and the link fails (`ld: multiple definition of 'main'` —
+      // measured on the generated C word-counter app). When exactly one node
+      // owns the entry point, it IS the app: emit no second entry, and let the
+      // Makefile compile every source it finds (no hard-coded main.c).
+      entryOwner = this.promotedEntryOwner(files, primaryLang);
+
+      if (entryOwner) {
+        const ownerRel = relPathByFile.get(entryOwner) || entryOwner.fileName;
+        created.push(`${ownerRel}   # program entry point (defines main) — no separate ${entryFileName}`);
+        console.log(`[PerFileScaffolder] "${entryOwner.nodeLabel}" defines main() — promoted to the program entry point (no ${entryFileName} emitted)`);
+      } else {
+        // ── Write entry point matching the primary language ──
+        const entryCode = this.buildEntryPoint(config, primaryLang);
+        await fs.writeFile(path.join(outputDir, entryFileName), entryCode, 'utf-8');
+        created.push(entryFileName);
+      }
 
       // ── Write project config files matching the primary language ──
-      const projectConfigFiles = this.buildProjectConfig(config, primaryLang);
+      const projectConfigFiles = this.buildProjectConfig(config, primaryLang, !!entryOwner);
       for (const [fileName, content] of Object.entries(projectConfigFiles)) {
         await fs.writeFile(path.join(outputDir, fileName), content, 'utf-8');
         created.push(fileName);
@@ -612,7 +698,10 @@ export class PerFileScaffolder {
     }
 
     // ── Write README ──
-    const readme = this.buildReadme(config, primaryLang, entryFileName);
+    const readme = this.buildReadme(config, primaryLang, entryFileName, {
+      entryOwner,
+      entryOwnerRel: entryOwner ? relPathByFile.get(entryOwner) || entryOwner.fileName : undefined,
+    });
     await fs.writeFile(path.join(outputDir, 'README.md'), readme, 'utf-8');
     created.push('README.md');
 
@@ -672,6 +761,25 @@ export class PerFileScaffolder {
       .join('');
     if (!camel) return 'bridge';
     return /^[0-9]/.test(camel) ? `_${camel}` : camel;
+  }
+
+  /**
+   * The single node file that owns the program's entry point, or null.
+   *
+   * Only C/C++ qualify. Every other language constrains the entry file's NAME
+   * (`main.swift`, `Main.java`, the Cargo crate root) or its package clause
+   * (`package main` in Go), so a node file cannot be promoted by simply not
+   * writing the scaffold's own entry. Two or more owners (a genuine generation
+   * defect) also leave the scaffold's entry in place: it cannot pick one.
+   */
+  private promotedEntryOwner(files: GeneratedFile[], primaryLang: string): GeneratedFile | null {
+    if (primaryLang !== 'c' && primaryLang !== 'cpp') return null;
+    const owners = files.filter(
+      (f) => !f.isBridge
+        && (f.language || '').toLowerCase() === primaryLang
+        && declaresProgramEntry(f.code, primaryLang),
+    );
+    return owners.length === 1 ? owners[0] : null;
   }
 
   /**
@@ -1028,14 +1136,24 @@ export class PerFileScaffolder {
     lines.push('sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))');
     lines.push('');
 
-    // Import each Python file
+    // Import each Python file as a MODULE — never `from … import *`: every CLI
+    // node names its entry `main`, so a star import lets the last one shadow the
+    // rest and the entry point then runs one node's work several times while
+    // never reaching the others. Qualified calls (`arg_parser.main()`) run
+    // exactly the node each line names.
+    const wiring: string[] = [];
+    let index = 0;
     for (const file of config.files) {
       const lang = (file.language || '').toLowerCase();
       if (lang !== 'python') continue;
-      // Python directories use underscores (not hyphens) for valid module names
-      const modName = labelToFileName(file.nodeLabel).replace(/-/g, '_');
-      // Each node directory has __init__.py that re-exports from the main file
-      lines.push(`from ${modName} import *  # src/${labelToFileName(file.nodeLabel).replace(/-/g, '_')}/${file.fileName}`);
+      // Python module names use underscores (not hyphens) — the same name as
+      // the directory and the written file (see pythonModuleName).
+      const modName = pythonModuleName(file.nodeLabel);
+      // Each node directory has an __init__.py that re-exports the module, so
+      // importing the package is enough.
+      lines.push(`import ${modName}  # src/${modName}/${file.fileName}`);
+      const plan = planModuleWiring('python', file.code || '', modName, index++);
+      wiring.push(...plan.calls);
     }
 
     lines.push('');
@@ -1043,17 +1161,16 @@ export class PerFileScaffolder {
     lines.push('def main():');
     lines.push(`  print("🚀 ${config.projectName} starting...")`);
     if (config.appGoal) {
-      lines.push(`  print(f"Goal: ${config.appGoal}")`);
+      lines.push(`  print("Goal: " + ${JSON.stringify(config.appGoal)})`);
     }
-    lines.push('');
-    lines.push('  # Auto-generated entry point — call node functions here');
-    for (const file of config.files) {
-      const lang = (file.language || '').toLowerCase();
-      if (lang !== 'python') continue;
-      const modName = labelToFileName(file.nodeLabel).replace(/-/g, '_');
-      lines.push(`  # ${file.fileName}: add ${modName}.your_function() calls here`);
+    if (wiring.length > 0) {
+      lines.push('');
+      lines.push('  # Run the project modules (the no-argument entry each one exposes):');
+      for (const w of wiring) lines.push(`  ${w}`);
+    } else {
+      lines.push('');
+      lines.push('  # No node exposed a function the entry point can call without arguments.');
     }
-    lines.push('  pass');
     lines.push('');
     lines.push('');
     lines.push('if __name__ == "__main__":');
@@ -1283,14 +1400,19 @@ export class PerFileScaffolder {
    * Build project configuration files matching the primary language.
    * Returns a map of filename → file content.
    */
-  private buildProjectConfig(config: PerFileScaffoldConfig, primaryLang: string): Record<string, string> {
+  private buildProjectConfig(
+    config: PerFileScaffoldConfig,
+    primaryLang: string,
+    /** True when a node file owns the program entry — no hard-coded main.c/cpp. */
+    entryless = false,
+  ): Record<string, string> {
     switch (primaryLang) {
       case 'go': return this.buildGoProjectConfig(config);
       case 'rust': return this.buildRustProjectConfig(config);
       case 'python': return this.buildPythonProjectConfig(config);
       case 'java': return this.buildJavaProjectConfig(config);
-      case 'c': return this.buildCProjectConfig(config);
-      case 'cpp': return this.buildCppProjectConfig(config);
+      case 'c': return this.buildCProjectConfig(config, entryless);
+      case 'cpp': return this.buildCppProjectConfig(config, entryless);
       case 'csharp': return this.buildCsharpProjectConfig(config);
       case 'php': return this.buildPhpProjectConfig(config);
       case 'ruby': return this.buildRubyProjectConfig(config);
@@ -1480,14 +1602,21 @@ minversion = "7.0"
     return { Makefile: makefile };
   }
 
-  /** C project config: a Makefile (gcc / c11). */
-  private buildCProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+  /**
+   * C project config: a Makefile (gcc / c11).
+   *
+   * `entryless` means a node file IS the entry point (it defines `main`), so the
+   * Makefile must not require a main.c that was never written — it compiles
+   * every source file under the project instead.
+   */
+  private buildCProjectConfig(config: PerFileScaffoldConfig, entryless = false): Record<string, string> {
     const t = '\t';
+    const srcs = entryless ? '$(wildcard *.c) $(wildcard src/*/*.c)' : 'main.c $(wildcard src/*/*.c)';
     const makefile = [
       `# ${config.projectName} — Makefile`,
       'CC ?= gcc',
       'CFLAGS ?= -std=c11 -O2 -Wall',
-      'SRCS := main.c $(wildcard src/*/*.c)',
+      `SRCS := ${srcs}`,
       'OUT := app',
       '',
       '.PHONY: all build run clean',
@@ -1506,14 +1635,15 @@ minversion = "7.0"
     return { Makefile: makefile };
   }
 
-  /** C++ project config: a Makefile (g++ / c++17). */
-  private buildCppProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+  /** C++ project config: a Makefile (g++ / c++17). `entryless` as in the C one. */
+  private buildCppProjectConfig(config: PerFileScaffoldConfig, entryless = false): Record<string, string> {
     const t = '\t';
+    const srcs = entryless ? '$(wildcard *.cpp) $(wildcard src/*/*.cpp)' : 'main.cpp $(wildcard src/*/*.cpp)';
     const makefile = [
       `# ${config.projectName} — Makefile`,
       'CXX ?= g++',
       'CXXFLAGS ?= -std=c++17 -O2 -Wall',
-      'SRCS := main.cpp $(wildcard src/*/*.cpp)',
+      `SRCS := ${srcs}`,
       'OUT := app',
       '',
       '.PHONY: all build run clean',
@@ -1649,7 +1779,13 @@ minversion = "7.0"
   /**
    * Build a README describing the per-file project structure.
    */
-  private buildReadme(config: PerFileScaffoldConfig, primaryLang: string, entryFileName: string): string {
+  private buildReadme(
+    config: PerFileScaffoldConfig,
+    primaryLang: string,
+    entryFileName: string,
+    /** Set when a node file is the program entry (see promotedEntryOwner). */
+    opts: { entryOwner?: GeneratedFile | null; entryOwnerRel?: string } = {},
+  ): string {
     const trees = Array.isArray(config.trees) ? config.trees : [];
     const layout = planExportLayout(trees);
     const scoped = resolveTreeScopes({
@@ -1774,7 +1910,11 @@ minversion = "7.0"
       for (const cfgFile of Object.keys(configFiles)) {
         lines.push(`├── ${cfgFile.padEnd(22)} # Project configuration`);
       }
-      lines.push(`├── ${entryFileName.padEnd(22)} # Entry point — imports all nodes`);
+      lines.push(
+        opts.entryOwner
+          ? `├── (no ${entryFileName} — the program entry is a node file, below)`
+          : `├── ${entryFileName.padEnd(22)} # Entry point — imports all nodes`,
+      );
       lines.push('├── dependency-graph.json   # Node dependency metadata');
       lines.push('├── src/');
       for (const file of config.files) {
@@ -1788,6 +1928,14 @@ minversion = "7.0"
       lines.push('```');
       lines.push('');
       lines.push(`**${config.files.length} source files** across ${config.files.length} nodes.`);
+      if (opts.entryOwner) {
+        lines.push('');
+        lines.push(
+          `> **Program entry point:** \`${opts.entryOwnerRel}\` — the ` +
+          `“${opts.entryOwner.nodeLabel}” node defines \`main()\`, so it IS the app ` +
+          `(no second entry file is generated).`,
+        );
+      }
       lines.push('');
       lines.push('## Quick Start');
       lines.push('');
