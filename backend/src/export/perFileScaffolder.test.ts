@@ -7,6 +7,7 @@ import {
   PerFileScaffolder,
   pythonModuleName,
   pythonNoArgFuncs,
+  rubyNoArgFuncs,
   goNoArgFuncs,
   rustNoArgFuncs,
   rustPublicFns,
@@ -648,7 +649,7 @@ describe('compiled-language entry points call their node modules', () => {
   });
 
   it('plans nothing for a language it has no wiring for', () => {
-    expect(planModuleWiring('ruby', 'def run\nend\n', 'core', 0)).toEqual({
+    expect(planModuleWiring('php', '<?php\nfunction run() {}\n', 'core', 0)).toEqual({
       declarations: [],
       references: [],
       calls: [],
@@ -660,6 +661,74 @@ describe('compiled-language entry points call their node modules', () => {
       .toEqual(['run']);
     expect(pythonModuleName('arg-parser')).toBe('arg_parser');
     expect(pythonModuleName('2d-renderer')).toBe('_2d_renderer');
+  });
+
+  it('calls only ZERO-argument Ruby defs, in either paren style', () => {
+    expect(rubyNoArgFuncs('def run\n  puts 1\nend\n\ndef convert(v, unit)\n  v\nend\n').map((f) => f.name))
+      .toEqual(['run']);
+    expect(rubyNoArgFuncs('def start()\nend\ndef main(input_file, output_file)\nend\n').map((f) => f.name))
+      .toEqual(['start']);
+    // A `def` comment must not be mistaken for a definition.
+    expect(rubyNoArgFuncs('# def fake\ndef real\nend\n').map((f) => f.name)).toEqual(['real']);
+    expect(planModuleWiring('ruby', 'def run\n  puts 1\nend\n', 'core', 0).calls).toEqual(['run()']);
+  });
+
+  it('wires a Ruby node that exposes a zero-argument entry into main.rb', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-ruby-run-'));
+    try {
+      const res = await scaffolder.scaffold({
+        projectName: 'ruby runner',
+        targetOS: 'linux',
+        files: [{
+          fileName: 'runner.rb',
+          language: 'ruby',
+          code: 'def run\n  puts "ran"\nend\n',
+          nodeId: 'n1',
+          nodeLabel: 'runner',
+          dependencies: [],
+          exports: ['run'],
+          errors: [],
+          validated: true,
+        }],
+        nodes: [],
+        edges: [],
+        outputDir: dir,
+      });
+      const entry = fs.readFileSync(path.join(res.outputPath, 'main.rb'), 'utf-8');
+      expect(entry).toContain("require_relative 'src/runner/runner.rb'");
+      expect(entry).toMatch(/^run\(\)$/m);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('calls a repeated Ruby entry name only once (no per-file namespace)', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-ruby-dup-'));
+    try {
+      const node = (name: string): GeneratedFile => ({
+        fileName: `${name}.rb`,
+        language: 'ruby',
+        code: 'def run\n  puts "ran"\nend\n',
+        nodeId: name,
+        nodeLabel: name,
+        dependencies: [],
+        exports: ['run'],
+        errors: [],
+        validated: true,
+      });
+      const res = await scaffolder.scaffold({
+        projectName: 'ruby dup',
+        targetOS: 'linux',
+        files: [node('alpha'), node('beta')],
+        nodes: [],
+        edges: [],
+        outputDir: dir,
+      });
+      const entry = fs.readFileSync(path.join(res.outputPath, 'main.rb'), 'utf-8');
+      expect(entry.match(/^run\(\)$/gm)?.length).toBe(1);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
@@ -779,5 +848,88 @@ describe('a C node that defines main() becomes the program entry', () => {
     const out = await scaffoldC([helper]);
     expect(fs.existsSync(path.join(out, 'main.c'))).toBe(true);
     expect(fs.readFileSync(path.join(out, 'Makefile'), 'utf-8')).toContain('SRCS := main.c');
+  });
+});
+
+// The same collision in the languages whose entry file the toolchain does NOT
+// require to be named in a fixed way (C#, Kotlin) — measured live: the C#
+// expense tracker failed `dotnet build` with CS0101 (two `class Program`) and
+// CS0111 (two `Main`), because its cli node IS the program.
+describe('C#/Kotlin nodes that own the entry point replace the scaffold’s own', () => {
+  async function scaffoldOne(language: string, fileName: string, code: string) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), `vaca-entry-${language}-`));
+    const file: GeneratedFile = {
+      fileName,
+      language,
+      code,
+      nodeId: 'n1',
+      nodeLabel: fileName.replace(/\.[a-z]+$/, ''),
+      dependencies: [],
+      exports: [],
+      errors: [],
+      validated: true,
+    };
+    const res = await scaffolder.scaffold({
+      projectName: `${language} entry app`,
+      targetOS: 'linux',
+      files: [file],
+      nodes: [],
+      edges: [],
+      outputDir: dir,
+    });
+    return res.outputPath;
+  }
+
+  it('C#: a node with `static Main` suppresses Program.cs', async () => {
+    const cs = [
+      'using System;',
+      'public class Program {',
+      '    public static void Main(string[] args) { Console.WriteLine("ok"); }',
+      '}',
+    ].join('\n');
+    const out = await scaffoldOne('csharp', 'cli.cs', cs);
+    expect(fs.existsSync(path.join(out, 'Program.cs'))).toBe(false);
+    expect(fs.existsSync(path.join(out, 'src/cli/cli.cs'))).toBe(true);
+    // The csproj globs its sources, so nothing else has to change.
+    expect(fs.readFileSync(path.join(out, 'app.csproj'), 'utf-8')).toContain('Microsoft.NET.Sdk');
+  });
+
+  it('C#: an ordinary class keeps the scaffold entry point', async () => {
+    const out = await scaffoldOne('csharp', 'store.cs', 'public class Store { public int Total() { return 0; } }\n');
+    expect(fs.existsSync(path.join(out, 'Program.cs'))).toBe(true);
+  });
+
+  it('Kotlin: a node with `fun main()` suppresses Main.kt and the Makefile globs', async () => {
+    const out = await scaffoldOne('kotlin', 'cli.kt', 'fun main() {\n    println("ok")\n}\n');
+    expect(fs.existsSync(path.join(out, 'Main.kt'))).toBe(false);
+    const makefile = fs.readFileSync(path.join(out, 'Makefile'), 'utf-8');
+    expect(makefile).toContain('SRCS := $(wildcard *.kt) $(wildcard src/*/*.kt)');
+    expect(makefile).not.toContain('Main.kt ');
+  });
+
+  it('two Kotlin owners still suppress Main.kt (never add a third competing entry)', async () => {
+    // Measured live: three nodes each with `fun main()` plus the scaffold's
+    // Main.kt failed kotlinc — the ambiguous `main()` CALL in Main.kt was the
+    // scaffold's own contribution to the failure. A multi-node generation
+    // defect is the gate's to report; the scaffold must not add its own error.
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-entry-kotlin2-'));
+    const mk = (name: string, code: string): GeneratedFile => ({
+      fileName: `${name}.kt`, language: 'kotlin', code, nodeId: `n-${name}`, nodeLabel: `${name}.kt`,
+      dependencies: [], exports: [], errors: [], validated: true,
+    });
+    const res = await scaffolder.scaffold({
+      projectName: 'kotlin two owners',
+      targetOS: 'linux',
+      files: [
+        mk('cli', 'fun main() {\n    println("a")\n}\n'),
+        mk('report', 'fun main() {\n    println("b")\n}\n'),
+      ],
+      nodes: [],
+      edges: [],
+      outputDir: dir,
+    });
+    expect(fs.existsSync(path.join(res.outputPath, 'Main.kt'))).toBe(false);
+    expect(fs.readFileSync(path.join(res.outputPath, 'Makefile'), 'utf-8'))
+      .toContain('SRCS := $(wildcard *.kt)');
   });
 });

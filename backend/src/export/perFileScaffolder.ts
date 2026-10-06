@@ -328,6 +328,32 @@ export function pythonNoArgFuncs(code: string): EntryCallable[] {
   return out;
 }
 
+/** Ruby: drop `#` comments and string literals before scanning declarations. */
+function stripRubyCommentsAndStrings(code: string): string {
+  return (code || '')
+    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
+    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
+    .replace(/#[^\n]*/g, '');
+}
+
+/**
+ * Column-0, zero-parameter `def`s in a Ruby file.
+ *
+ * Ruby allows the parens to be omitted (`def run`), so both shapes are accepted;
+ * a parameter list — even `()`-less — disqualifies the entry, because the scaffold
+ * cannot invent arguments for it. Methods nested in a `module`/`class` are not
+ * matched: they are not callable from the entry point without a receiver.
+ */
+export function rubyNoArgFuncs(code: string): EntryCallable[] {
+  const out: EntryCallable[] = [];
+  const re = /^def\s+([A-Za-z_]\w*[!?=]?)\s*(?:\(\s*\))?\s*$/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(stripRubyCommentsAndStrings(code))) !== null) {
+    out.push({ name: m[1], returnType: '' });
+  }
+  return out;
+}
+
 /**
  * Plan the wiring lines an entry point emits for one node module.
  *
@@ -408,6 +434,14 @@ export function planModuleWiring(
       if (fn) calls.push(`${moduleName}.${fn.name}()`);
       break;
     }
+    case 'ruby': {
+      // Ruby has no per-file namespace: a top-level `def` lands on Object, so the
+      // call is bare. A file whose only entry takes arguments (`def main(input,
+      // output)`) contributes nothing — the same limit Python has.
+      const fn = pickEntryCallable(rubyNoArgFuncs(code));
+      if (fn) calls.push(`${fn.name}()`);
+      break;
+    }
     default:
       break;
   }
@@ -416,17 +450,43 @@ export function planModuleWiring(
 }
 
 /**
- * True when a C/C++ node file declares the PROGRAM's `main`.
+ * Languages whose scaffold entry file a node can TAKE OVER: the entry file is
+ * not required to carry a fixed name by the toolchain, and the build globs its
+ * sources, so simply not writing it is a complete fix.
  *
- * C and C++ link every translation unit into ONE binary, so a node that
- * defines `main` and the scaffold's own `main.c` collide with
- * `ld: multiple definition of 'main'` — the generated C word-counter app could
- * not be built at all. The node that defines `main` IS the app; the scaffold
- * must not add a second one.
+ *   c / cpp  — every translation unit links into one binary, so a node `main`
+ *              and the scaffold's main.c collide (`ld: multiple definition of
+ *              'main'`).
+ *   csharp   — the SDK csproj globs every .cs file, so a node's `class Program {
+ *              static Main }` collides with the scaffold's Program.cs
+ *              (`CS0101: already contains a definition for 'Program'` and
+ *              `CS0111: Type 'Program' already defines a member called
+ *              'Main'`) — measured live on the generated expense-tracker app.
+ *   kotlin   — kotlinc compiles the file set as one module, so a node's
+ *              `fun main()` and Main.kt's `fun main()` are a conflicting
+ *              overload.
+ *
+ * Swift is deliberately excluded: only a file named `main.swift` may hold
+ * top-level statements, so a node file cannot become the entry point.
  */
+const PROMOTABLE_ENTRY_LANGS = new Set(['c', 'cpp', 'csharp', 'kotlin']);
+
+/** True when a node file declares the PROGRAM's entry point for its language. */
 export function declaresProgramEntry(code: string, language: string): boolean {
-  if ((language || '').toLowerCase() !== 'c' && (language || '').toLowerCase() !== 'cpp') return false;
-  return /^[ \t]*(?:int|void)\s+main\s*\(/m.test(stripCommentsAndStrings(code));
+  const lang = (language || '').toLowerCase();
+  const text = stripCommentsAndStrings(code);
+  switch (lang) {
+    case 'c':
+    case 'cpp':
+      return /^[ \t]*(?:int|void)\s+main\s*\(/m.test(text);
+    case 'csharp':
+      // The same shape the C# gate accepts as an entry point.
+      return /\bstatic\s+(?:async\s+)?(?:void|int|Task(?:<int>)?)\s+Main\s*\(/.test(text);
+    case 'kotlin':
+      return /^fun\s+main\s*\(/m.test(text);
+    default:
+      return false;
+  }
 }
 
 export class PerFileScaffolder {
@@ -764,22 +824,26 @@ export class PerFileScaffolder {
   }
 
   /**
-   * The single node file that owns the program's entry point, or null.
+   * The node file that owns the program's entry point, or null when none does.
    *
-   * Only C/C++ qualify. Every other language constrains the entry file's NAME
-   * (`main.swift`, `Main.java`, the Cargo crate root) or its package clause
-   * (`package main` in Go), so a node file cannot be promoted by simply not
-   * writing the scaffold's own entry. Two or more owners (a genuine generation
-   * defect) also leave the scaffold's entry in place: it cannot pick one.
+   * A node that declares the entry point already gives the toolchain a program,
+   * so the scaffold's own entry can only CONFLICT with it — it never adds
+   * anything. That is why the scaffold steps aside for ANY number of owners
+   * (the first one, in file order, is reported in the README): with two or more
+   * owners the build is a genuine generation defect the compile gate must
+   * report, and emitting a third competing entry (or a Kotlin `Main.kt` that
+   * calls the ambiguous `main()`) would hide the real cause behind our own
+   * error. Languages whose toolchain requires a FIXED entry file name are not
+   * promotable at all — see PROMOTABLE_ENTRY_LANGS.
    */
   private promotedEntryOwner(files: GeneratedFile[], primaryLang: string): GeneratedFile | null {
-    if (primaryLang !== 'c' && primaryLang !== 'cpp') return null;
+    if (!PROMOTABLE_ENTRY_LANGS.has(primaryLang)) return null;
     const owners = files.filter(
       (f) => !f.isBridge
         && (f.language || '').toLowerCase() === primaryLang
         && declaresProgramEntry(f.code, primaryLang),
     );
-    return owners.length === 1 ? owners[0] : null;
+    return owners.length > 0 ? owners[0] : null;
   }
 
   /**
@@ -1323,18 +1387,37 @@ export class PerFileScaffolder {
     return lines.join('\n');
   }
 
-  /** Build a Ruby entry point (main.rb) that requires each node file. */
+  /**
+   * Build a Ruby entry point (main.rb) that requires each node file and RUNS the
+   * nodes' zero-argument entries.
+   *
+   * Requiring alone only defines methods — and a node that guards its own `main`
+   * with `if __FILE__ == $0` never fires when it is required, so the old entry
+   * point printed a banner and did nothing (measured on the generated
+   * word-statistics app). Each callable name is emitted once: Ruby has no
+   * per-file namespace, so two nodes defining the same bare `def` would run the
+   * later definition twice.
+   */
   private buildRubyEntryPoint(config: PerFileScaffoldConfig): string {
     const lines: string[] = [];
     lines.push('# ' + config.projectName + ' — Auto-generated entry point. Generated by Veronica (VACA).');
+    const calls: string[] = [];
     for (const file of config.files) {
       if ((file.language || '').toLowerCase() !== 'ruby') continue;
       lines.push(`require_relative 'src/${labelToFileName(file.nodeLabel)}/${file.fileName}'`);
+      calls.push(...planModuleWiring('ruby', file.code || '', '', 0).calls);
     }
     lines.push('');
     lines.push('puts "\uD83D\uDE80 ' + config.projectName + ' starting..."');
     if (config.appGoal) lines.push("puts 'Goal: " + escapeForSingleQuoted(config.appGoal) + "'");
-    lines.push('# Call into the required node modules here.');
+    lines.push('');
+    const unique = [...new Set(calls)];
+    if (unique.length > 0) {
+      lines.push('# Run the project modules (the no-argument entry each one exposes):');
+      for (const c of unique) lines.push(c);
+    } else {
+      lines.push('# No node exposed a function the entry point can call without arguments.');
+    }
     return lines.join('\n');
   }
 
@@ -1417,7 +1500,7 @@ export class PerFileScaffolder {
       case 'php': return this.buildPhpProjectConfig(config);
       case 'ruby': return this.buildRubyProjectConfig(config);
       case 'swift': return this.buildSwiftProjectConfig(config);
-      case 'kotlin': return this.buildKotlinProjectConfig(config);
+      case 'kotlin': return this.buildKotlinProjectConfig(config, entryless);
       default: return this.buildTsProjectConfig(config);
     }
   }
@@ -1719,14 +1802,19 @@ minversion = "7.0"
     return { Makefile: makefile };
   }
 
-  /** Kotlin project config: a Makefile (kotlinc -include-runtime) producing a runnable jar. */
-  private buildKotlinProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+  /**
+   * Kotlin project config: a Makefile (kotlinc -include-runtime) producing a
+   * runnable jar. `entryless` (a node owns `fun main()`) drops the hard-coded
+   * Main.kt from the sources, exactly like the C/C++ Makefiles.
+   */
+  private buildKotlinProjectConfig(config: PerFileScaffoldConfig, entryless = false): Record<string, string> {
     const t = '\t';
+    const srcs = entryless ? '$(wildcard *.kt) $(wildcard src/*/*.kt)' : 'Main.kt $(wildcard src/*/*.kt)';
     const makefile = [
       `# ${config.projectName} — Makefile`,
       'KOTLINC ?= kotlinc',
       'JAVA ?= java',
-      'SRCS := Main.kt $(wildcard src/*/*.kt)',
+      `SRCS := ${srcs}`,
       'OUT := app.jar',
       '',
       '.PHONY: all build run clean',
