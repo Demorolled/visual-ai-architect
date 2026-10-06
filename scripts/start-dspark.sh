@@ -37,6 +37,10 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 PORT="${DSPARK_PORT:-8000}"
+# Bind address. 127.0.0.1 (default) is loopback-only; set DSPARK_HOST=0.0.0.0
+# to expose the OpenAI-compatible API on the LAN (e.g. the control computer's
+# VACA talking to this machine's model).
+HOST="${DSPARK_HOST:-127.0.0.1}"
 DRAFT_MODE="${DSPARK_DRAFT_MODE:-none}"
 SPLIT_MODE="${DSPARK_SPLIT_MODE:-layer}"
 # The 3-way split was tuned for the remote 3×RTX 3060 box; dspark_server.py
@@ -65,6 +69,10 @@ if [ -z "$TARGET" ] && [ -f "scripts/dspark-target.env" ]; then
   TARGET="${DSPARK_TARGET:-}"
 fi
 TARGET="${TARGET:-qwen2.5-7b-instruct-uncensored:latest}"
+# Model id reported by the API (health /v1/models). Empty (default) → dspark
+# reports the GGUF basename; set DSPARK_MODEL_ID to override (deploy scripts
+# pass explicit ids when they launch dspark_server.py directly).
+MODEL_ID="${DSPARK_MODEL_ID:-}"
 LOG_FILE="scripts/dspark.log"
 PID_FILE="scripts/dspark.pid"
 
@@ -83,12 +91,14 @@ start_server() {
     --target "$TARGET" \
     --draft qwen2.5-coder:0.5b \
     --port "$PORT" \
+    --host "$HOST" \
     --n-ctx "$N_CTX" \
     --n-batch "$N_BATCH" \
     --n-gpu-layers "$N_GPU_LAYERS" \
     --draft-mode "$DRAFT_MODE" \
     --split-mode "$SPLIT_MODE" \
     --tensor-split "$TENSOR_SPLIT" \
+    --model-id "$MODEL_ID" \
     $([ "$FLASH_ATTN" = 1 ] && echo --flash-attn) \
     "${SPEC_ARGS[@]}"
 }
@@ -112,6 +122,7 @@ case "${1:-}" in
           --target "$2" \
           --draft qwen2.5-coder:0.5b \
           --port "$3" \
+          --host "${16}" \
           --n-ctx "${10}" \
           --n-batch "$9" \
           --n-gpu-layers "${11}" \
@@ -122,18 +133,21 @@ case "${1:-}" in
           ${12:+--spec-draft "${12}"} \
           ${13:+--spec-n-max "${13}"} \
           ${14:+--spec-bin "${14}"} \
+          --model-id "${15}" \
           > "$5" 2>&1
-      ' _ "$PID_FILE" "$TARGET" "$PORT" "$DRAFT_MODE" "$LOG_FILE" "$SPLIT_MODE" "$TENSOR_SPLIT" "$FLASH_ATTN" "$N_BATCH" "$N_CTX" "$N_GPU_LAYERS" "$SPEC_DRAFT" "$SPEC_N_MAX" "$SPEC_BIN"
+      ' _ "$PID_FILE" "$TARGET" "$PORT" "$DRAFT_MODE" "$LOG_FILE" "$SPLIT_MODE" "$TENSOR_SPLIT" "$FLASH_ATTN" "$N_BATCH" "$N_CTX" "$N_GPU_LAYERS" "$SPEC_DRAFT" "$SPEC_N_MAX" "$SPEC_BIN" "$MODEL_ID" "$HOST"
     else
       nohup python3 scripts/dspark_server.py \
         --target "$TARGET" \
         --draft qwen2.5-coder:0.5b \
         --port "$PORT" \
+        --host "$HOST" \
         --n-ctx "$N_CTX" \
         --n-gpu-layers "$N_GPU_LAYERS" \
         --draft-mode "$DRAFT_MODE" \
         --split-mode "$SPLIT_MODE" \
         --tensor-split "$TENSOR_SPLIT" \
+        --model-id "$MODEL_ID" \
         $([ "$FLASH_ATTN" = 1 ] && echo --flash-attn) \
         "${SPEC_ARGS[@]}" \
         > "$LOG_FILE" 2>&1 &
