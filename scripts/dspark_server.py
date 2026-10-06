@@ -209,21 +209,29 @@ def resolve_n_gpu_layers(value: str, model_path: str, reserve_mb: int = 1024) ->
     if total_mb <= 0:
         print('[DSpark] No CUDA GPU detected — running CPU-only (n_gpu_layers=0)', flush=True)
         return 0
+    ngpus = max(gpu_count(), 1)
+    free_per_gpu = free_mb / ngpus
     try:
         size_mb = os.path.getsize(model_path) / 1048576.0
     except OSError:
         size_mb = 0.0
-    if free_mb >= size_mb + reserve_mb:
-        print(f'[DSpark] Model fits in {free_mb:.0f}MB free VRAM — full offload (-1)', flush=True)
+    # Full offload only when BOTH total free and PER-GPU free fit the model
+    # share + a real reserve (KV/compute buffers live per GPU). Summing free
+    # VRAM across GPUs used to falsely claim 'fits' on a shared box and OOM the
+    # first context (observed: 3x3060 with two 14Bs already resident).
+    if free_mb >= size_mb + reserve_mb and free_per_gpu >= size_mb / ngpus + reserve_mb:
+        print(f'[DSpark] Model fits in {free_mb:.0f}MB free VRAM ({free_per_gpu:.0f}MB/GPU) — full offload (-1)', flush=True)
         return -1
     block_count = gguf_block_count(model_path)
     if not block_count:
         print(f'[DSpark] Could not read layer count; {free_mb:.0f}MB free < {size_mb:.0f}MB model — CPU-only', flush=True)
         return 0
     per_layer_mb = size_mb / block_count
-    layers = int((free_mb - reserve_mb) / per_layer_mb)
+    # Budget against the SMALLEST comfortable per-GPU share — conservative, so
+    # a 3rd model on a shared box lands safely (spill to RAM instead of OOM).
+    layers = int((free_per_gpu - reserve_mb) * ngpus / per_layer_mb)
     layers = max(0, min(block_count, layers))
-    print(f'[DSpark] {free_mb:.0f}MB free VRAM < {size_mb:.0f}MB model — offloading {layers}/{block_count} layers',
+    print(f'[DSpark] {free_mb:.0f}MB free VRAM ({free_per_gpu:.0f}MB/GPU) < {size_mb:.0f}MB model — offloading {layers}/{block_count} layers',
           flush=True)
     return layers
 
@@ -300,7 +308,8 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
                draft_gpu_layers: int = -1, draft_num_pred_tokens: int = 16,
                draft_mode: str = 'none', flash_attn: bool = False,
                spec_draft_path: Optional[str] = None, spec_n_max: int = 4,
-               spec_bin: Optional[str] = None, spec_port: int = 0):
+               spec_bin: Optional[str] = None, spec_port: int = 0,
+               llama_server: bool = False):
     from llama_cpp import Llama
     from llama_cpp.llama_speculative import LlamaPromptLookupDecoding
 
@@ -325,6 +334,26 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
         return _create_spec_app(
             target_path=target_path,
             spec_draft_path=spec_draft_path,
+            spec_n_max=spec_n_max,
+            spec_bin=spec_bin,
+            n_gpu_layers=n_gpu_layers,
+            draft_gpu_layers=draft_gpu_layers,
+            n_ctx=n_ctx,
+            n_batch=n_batch,
+            n_threads=n_threads,
+            port=spec_port,
+            model_id=model_id,
+        )
+    if llama_server:
+        # Plain llama-server mode (no draft head): serve the target via a
+        # llama.cpp llama-server binary. Qwen3-family GGUFs default to the
+        # thinking chat template, which llama-cpp-python 0.3.x leaks as plain
+        # content; llama-server handles it and `--reasoning off` returns clean
+        # final answers. Enable with DSPARK_LLAMA_SERVER=1 (or --llama-server).
+        print(f'[DSpark] llama-server mode (no draft head) — reasoning off', flush=True)
+        return _create_spec_app(
+            target_path=target_path,
+            spec_draft_path=None,
             spec_n_max=spec_n_max,
             spec_bin=spec_bin,
             n_gpu_layers=n_gpu_layers,
@@ -390,18 +419,20 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
         except (ValueError, RuntimeError) as e:
             return None, e
 
-    # -1 (full offload) is a single attempt; positive values halve down to 0
-    # (CPU) so a small GPU always boots.
-    if n_gpu_layers < 0:
-        attempts = [n_gpu_layers]
-    else:
-        attempts = []
-        a = n_gpu_layers
-        while a >= 0:
-            attempts.append(a)
-            if a == 0:
-                break
-            a = a // 2
+    # Positive values halve down to 0 (CPU) so a small GPU always boots. Full
+    # offload (-1) is attempted first but ALSO falls back through the halving
+    # chain — a shared-box OOM at full offload must not be fatal.
+    block_count = gguf_block_count(target_path) or 64
+    attempts = []
+    a = n_gpu_layers
+    if a < 0:
+        attempts.append(-1)
+        a = block_count
+    while a >= 0:
+        attempts.append(a)
+        if a == 0:
+            break
+        a = a // 2
 
     llm, err = None, None
     for attempt in attempts:
@@ -595,14 +626,22 @@ def create_app(target_path: str, draft_path: Optional[str], n_gpu_layers: int, n
 
 
 def _find_spec_bin() -> Optional[str]:
-    """Locate a llama-server binary that supports --spec-type draft-dspark.
-    Priority: $DSPARK_SPEC_BIN, the LM Studio CUDA12 backend (bundles its own
-    CUDA runtime), then any llama-server on PATH."""
-    candidates = [
-        os.environ.get('DSPARK_SPEC_BIN'),
-        os.path.expanduser('~/.lmstudio/extensions/backends/llama.cpp-linux-x86_64-nvidia-cuda12-avx2-2.29.1/llama-server'),
-        shutil.which('llama-server'),
-    ]
+    """Locate a llama-server binary (used by both spec mode and plain
+    llama-server mode). Priority: $DSPARK_SPEC_BIN, the newest LM Studio CUDA12
+    backend (bundles its own CUDA runtime), then any llama-server on PATH."""
+    candidates = [os.environ.get('DSPARK_SPEC_BIN')]
+    backends_root = os.path.expanduser('~/.lmstudio/extensions/backends')
+    try:
+        versions = sorted(
+            (d for d in os.listdir(backends_root)
+             if d.startswith('llama.cpp-linux-x86_64-nvidia-cuda12-')),
+            reverse=True,
+        )
+        if versions:
+            candidates.append(os.path.join(backends_root, versions[0], 'llama-server'))
+    except OSError:
+        pass
+    candidates.append(shutil.which('llama-server'))
     for c in candidates:
         if c and os.path.isfile(c) and os.access(c, os.X_OK):
             return c
@@ -620,9 +659,11 @@ def _create_spec_app(target_path: str, spec_draft_path: str, spec_n_max: int,
 
     bin_path = spec_bin or _find_spec_bin()
     if not bin_path:
-        raise RuntimeError('Spec mode needs a llama-server with --spec-type draft-dspark '
+        raise RuntimeError('Spec / llama-server mode needs a llama-server binary '
                            '(set DSPARK_SPEC_BIN or install one).')
-    print(f'[DSpark] Spec mode: {os.path.basename(bin_path)} with draft {os.path.basename(spec_draft_path)}',
+    is_spec = spec_draft_path is not None
+    print(f'[DSpark] {"Spec" if is_spec else "llama-server"} mode: {os.path.basename(bin_path)}' +
+          (f' with draft {os.path.basename(spec_draft_path)}' if is_spec else ' (reasoning off)'),
           flush=True)
 
     # Internal port for the real server (public port stays for the proxy).
@@ -635,17 +676,24 @@ def _create_spec_app(target_path: str, spec_draft_path: str, spec_n_max: int,
     cmd = [
         bin_path,
         '-m', target_path,
-        '--model-draft', spec_draft_path,
-        '--spec-type', 'draft-dspark',
-        '--spec-draft-n-max', str(spec_n_max),
         '-c', str(n_ctx),
         '-b', str(n_batch),
         '-ngl', str(n_gpu_layers),
-        '-ngld', str(draft_gpu_layers),
         '--host', '127.0.0.1',
         '--port', str(internal_port),
         '--no-warmup',
     ]
+    if is_spec:
+        cmd += [
+            '--model-draft', spec_draft_path,
+            '--spec-type', 'draft-dspark',
+            '--spec-draft-n-max', str(spec_n_max),
+            '-ngld', str(draft_gpu_layers),
+        ]
+    else:
+        # Qwen3-family templates default to thinking mode; without this the
+        # reasoning tokens would be emitted as plain content.
+        cmd += ['--reasoning', 'off']
     if n_threads:
         cmd += ['-t', str(n_threads)]
     if model_id:
@@ -718,20 +766,32 @@ def _create_spec_app(target_path: str, spec_draft_path: str, spec_n_max: int,
 
     @app.get('/v1/models')
     async def list_models():
-        return await _relay('GET', '/v1/models')
+        # Normalize to the OpenAI 'data' shape the VACA backend/frontend expect
+        # (llama-server returns {'models': [...]} with the raw path as the id).
+        return {
+            'object': 'list',
+            'data': [{
+                'id': target_id,
+                'object': 'model',
+                'created': int(os.path.getmtime(target_path)),
+                'owned_by': 'dspark-server',
+            }],
+        }
 
     @app.get('/v1/health')
     @app.get('/health')
     async def health():
-        return {
+        body = {
             'status': 'ok',
             'model': target_id,
-            'draft_mode': 'model',
-            'speculative_decoding': True,
-            'draft': os.path.basename(spec_draft_path),
-            'spec_draft_n_max': spec_n_max,
+            'draft_mode': 'model' if is_spec else 'none',
+            'speculative_decoding': is_spec,
             'stats': {},
         }
+        if is_spec:
+            body['draft'] = os.path.basename(spec_draft_path)
+            body['spec_draft_n_max'] = spec_n_max
+        return body
 
     return app
 
@@ -774,6 +834,9 @@ def main():
                         help='Draft tokens per proposal in spec mode (default: 4)')
     parser.add_argument('--spec-bin', type=str, default=None,
                         help='llama-server binary with draft-dspark support (default: DSPARK_SPEC_BIN or LM Studio backend)')
+    parser.add_argument('--llama-server', action='store_true',
+                        help='Serve the target via a llama-server binary instead of llama-cpp-python '
+                             '(handles Qwen3 thinking templates; also via DSPARK_LLAMA_SERVER=1)')
 
     args = parser.parse_args()
 
@@ -805,6 +868,7 @@ def main():
     # Resolve the target's GPU layer count. 'auto' (new default) fits the model
     # to the visible VRAM so the server boots on any machine; '-1'/N pass through.
     n_gpu_layers = resolve_n_gpu_layers(args.n_gpu_layers, target_path)
+    use_llama_server = args.llama_server or os.environ.get('DSPARK_LLAMA_SERVER') == '1'
 
     # A tensor split that references GPUs that don't exist (the old 3-way
     # default on a single-GPU box) makes llama.cpp fail the whole load — drop it.
@@ -848,6 +912,7 @@ def main():
         spec_n_max=args.spec_n_max,
         spec_bin=args.spec_bin,
         spec_port=args.port,
+        llama_server=use_llama_server,
     )
 
     # Graceful shutdown

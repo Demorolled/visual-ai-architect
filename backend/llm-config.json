@@ -1,72 +1,42 @@
 {
-  "primary": {
-    "provider": "dspark",
-    "description": "Qwen 2.5 7B Instruct Uncensored via local DSpark speculative-decoding server (port 8000) — preferred; translator falls back to Ollama if unreachable",
-    "model": "qwen2.5-7b-instruct-uncensored-dspark",
-    "baseUrl": "http://127.0.0.1:8000/v1",
-    "apiKey": "dspark"
-  },
   "dspark": {
     "provider": "dspark",
-    "description": "Trained model — Qwen 2.5 7B Instruct Uncensored (340-step round-1 QLoRA fine-tune, recovered from checkpoint-340) via local DSpark server (port 8000) — preferred; translator falls back to Ollama if unreachable",
-    "model": "qwen2.5-7b-instruct-uncensored-dspark",
+    "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
     "baseUrl": "http://127.0.0.1:8000/v1",
-    "apiKey": "dspark",
+    "apiKey": "not-needed",
     "nCtx": 16384
   },
   "ollama": {
     "provider": "ollama",
-    "description": "Qwen 2.5 7B Instruct Uncensored via local Ollama — primary LLM for reasoning & delegation",
-    "model": "qwen2.5-7b-instruct-uncensored",
-    "baseUrl": "http://127.0.0.1:11434/v1",
+    "model": "vaca-r36:latest",
+    "baseUrl": "http://192.168.1.234:11434/v1",
     "apiKey": "ollama",
     "nCtx": 16384
   },
-  "ggufServer": {
-    "description": "DEPRECATED — GGUF server was killed. Use Ollama instead.",
-    "model": "qwen2.5-7b-instruct-uncensored",
-    "baseUrl": "http://127.0.0.1:11434/v1",
-    "apiKey": "ollama",
-    "port": 11434,
-    "host": "127.0.0.1",
-    "nCtx": 16384
+  "primary": {
+    "provider": "dspark",
+    "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
+    "baseUrl": "http://127.0.0.1:8000/v1",
+    "apiKey": "not-needed"
   },
   "secondary": {
     "provider": "ollama",
-    "description": "Fallback — Gemma 3 12B via Ollama",
-    "model": "hf.co/mlabonne/gemma-3-12b-it-abliterated-GGUF:Q8_0",
-    "baseUrl": "http://127.0.0.1:11434/v1",
-    "apiKey": "ollama"
+    "model": "qwen2.5:3b",
+    "baseUrl": "http://192.168.1.234:11434/v1",
+    "apiKey": "not-needed"
   },
-  "vision": {
-    "provider": "ollama",
-    "description": "VACA Vision R3 — Qwen2.5-VL-3B LoRA UI/3D screenshot critic (defect-trained, loss 0.647)",
-    "model": "vaca-vision-r3",
-    "baseUrl": "http://127.0.0.1:11434/v1",
-    "apiKey": "ollama"
+  "fastChat": {
+    "provider": "dspark",
+    "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
+    "baseUrl": "http://127.0.0.1:8000/v1",
+    "apiKey": "not-needed",
+    "nCtx": 16384
   },
-  "coderGpu1": {
-    "provider": "ollama",
-    "description": "Qwen2.5-Coder-0.5B on GPU 1 (port 11437) — fastest code gen, dedicated GPU",
-    "model": "qwen2.5-coder:0.5b",
-    "baseUrl": "http://127.0.0.1:11437/v1",
-    "apiKey": "ollama",
-    "nCtx": 8192
-  },
-  "coderCpu": {
-    "provider": "ollama",
-    "description": "Qwen2.5-Coder-0.5B on CPU (port 11436) — fallback fast coder for trivial files",
-    "model": "qwen2.5-coder:0.5b",
-    "baseUrl": "http://127.0.0.1:11436/v1",
-    "apiKey": "ollama",
-    "nCtx": 4096
-  },
-  "coderGpu0": {
-    "provider": "ollama",
-    "description": "Qwen2.5-Coder-1.5B on GPU 0 (port 11434) — medium complexity, shares GPU with 7B",
-    "model": "qwen2.5-coder:1.5b",
-    "baseUrl": "http://127.0.0.1:11434/v1",
-    "apiKey": "ollama",
-    "nCtx": 8192
+  "roles": {
+    "reasoning": {
+      "baseUrl": "http://127.0.0.1:8000/v1",
+      "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
+      "apiKey": "not-needed"
+    }
   }
 }
