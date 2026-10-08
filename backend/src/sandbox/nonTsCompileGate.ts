@@ -54,6 +54,7 @@ export interface StagedSourceFile {
 /** Every language this module can gate. */
 export const GATE_LANGUAGES = [
   'go', 'python', 'rust', 'c', 'cpp', 'java', 'csharp', 'swift', 'kotlin', 'php', 'ruby',
+  'javascript',
 ] as const;
 export type GateLanguage = (typeof GATE_LANGUAGES)[number];
 
@@ -65,18 +66,20 @@ const LANG_ALIASES: Record<string, GateLanguage> = {
   'c#': 'csharp', cs: 'csharp', dotnet: 'csharp',
   kt: 'kotlin', kts: 'kotlin',
   rb: 'ruby',
+  js: 'javascript', node: 'javascript', nodejs: 'javascript', ecmascript: 'javascript', mjs: 'javascript', cjs: 'javascript',
 };
 
 /** Extension → canonical gate language (used when `language` is missing/wrong). */
 const EXT_TO_LANG: Record<string, GateLanguage> = {
   go: 'go', py: 'python', rs: 'rust',
   c: 'c',
-  cpp: 'cpp', cc: 'cpp', cxx: 'cpp',
+  cpp: 'cpp', cc: 'cpp', cxx: 'cpp', hpp: 'cpp', hh: 'cpp', hxx: 'cpp', inl: 'cpp', ipp: 'cpp',
   java: 'java',
   cs: 'csharp',
   swift: 'swift',
   kt: 'kotlin', kts: 'kotlin',
   php: 'php', rb: 'ruby',
+  js: 'javascript', mjs: 'javascript', cjs: 'javascript',
 };
 
 /**
@@ -173,6 +176,13 @@ export const TOOLCHAINS: Record<GateLanguage, ToolchainSpec> = {
   ruby: {
     bins: ['ruby'], versionArgs: ['--version'],
     install: { linux: 'sudo apt-get install -y ruby-full', windows: 'winget install RubyInstallerTeam.Ruby', macos: 'brew install ruby' },
+  },
+  javascript: {
+    // `node --check` is the syntax gate (the analogue of `php -l` / `ruby -c`).
+    // Node's own runtime is the right tool and is always present for a Node
+    // app, so a JS build no longer reports the catch-all "no gate applied".
+    bins: ['node', 'nodejs'], versionArgs: ['--version'],
+    install: { linux: 'sudo apt-get install -y nodejs', windows: 'winget install OpenJS.NodeJS.LTS', macos: 'brew install node' },
   },
 };
 
@@ -272,6 +282,36 @@ function stageFile(dir: string, relPath: string, code: string): string {
   return target;
 }
 
+/**
+ * Every distinct directory holding a staged source file. A generated project
+ * splits code across directories (a root `main.c` often includes a header the
+ * planner placed in `src/`), so passing one `-I` per directory lets the syntax
+ * gate judge the code on its own terms rather than failing on include layout.
+ * Measured live: `c char-count` produced `src/counter.h` + `src/counter.c` +
+ * root `main.c` (`#include "counter.h"`) and the gate reported
+ * `counter.h: No such file or directory` because only the root and each file's
+ * own dir were on the include path.
+ */
+function includeDirsFor(root: string, absFiles: string[]): string[] {
+  // The project root is ALWAYS on the path: an entry point under `tests/`
+  // commonly includes the header as `"src/gcd.h"` (root-relative), not
+  // `"gcd.h"`. When every file lives under a subdir, the root is not any file's
+  // own directory, so it must be added explicitly.
+  return [...new Set([root, ...absFiles.map((f) => path.dirname(f))])];
+}
+
+/**
+ * A config dotfile the planner may LABEL with the project's language but that is
+ * not source (`.rspec`, `.env`, `.eslintrc`). A per-file syntax gate must skip
+ * it: `ruby -c .rspec` fails on `--require spec_helper`, turning a valid Ruby
+ * project into a compile-gate FAIL. Measured live on a generated `ruby
+ * word-count` row that shipped `bin/word_count_tool`, `lib/word_counter.rb`,
+ * `Gemfile`, and `.rspec`.
+ */
+function isConfigDotfile(relPath: string): boolean {
+  return path.basename(relPath || '').startsWith('.');
+}
+
 /** Run a tool; normalize "binary missing" into a clear, non-throwing failure. */
 async function runTool(
   bin: string,
@@ -331,7 +371,7 @@ function pushGate(gates: LanguageGate[], language: GateLanguage, errors: string[
 /**
  * Entry-point patterns for the compiled languages: a literal `main` declaration
  * proves the program can actually be launched. Script languages (Python, PHP,
- * Ruby, Swift, and top-level-statement C#) are handled by
+ * Ruby, Swift, top-level-statement C#, and JavaScript) are handled by
  * `hasExecutableTopLevel` instead — they have no `main` keyword.
  */
 const ENTRY_PATTERNS: Partial<Record<GateLanguage, RegExp[]>> = {
@@ -346,7 +386,7 @@ const ENTRY_PATTERNS: Partial<Record<GateLanguage, RegExp[]>> = {
 };
 
 /** Languages whose entry point is executable code at the top level of a file. */
-const SCRIPT_ENTRY_LANGS = new Set<GateLanguage>(['python', 'php', 'ruby', 'swift', 'csharp']);
+const SCRIPT_ENTRY_LANGS = new Set<GateLanguage>(['python', 'php', 'ruby', 'swift', 'csharp', 'javascript']);
 
 /**
  * Whether a file has EXECUTABLE TOP-LEVEL statements — i.e. it is a runnable
@@ -382,6 +422,17 @@ function hasExecutableTopLevel(code: string, language: GateLanguage): boolean {
       if (/^#/.test(t)) continue;
       if (/^(?:def|class|module|end|__END__)\b/.test(t)) continue;
       if (/^(?:require|require_relative|load)\b/.test(t)) return true;
+      // The idiomatic Ruby entry guard — the direct analogue of Python's
+      // `if __name__ == "__main__":`, which this function already special-cases.
+      // Without it a genuinely runnable file (`if __FILE__ == $0` + a call) was
+      // reported as "no runnable entry point": measured live on two generated
+      // Ruby CLI tools that both DO run when invoked with `ruby x.rb`.
+      if (/^if\s+__FILE__\s*==/.test(t)) return true;
+      // Any other column-0 control-flow or output statement is executable code
+      // (the `^\s` guard above already excluded indented lines, i.e. bodies).
+      // `puts "hi"` at top level has no bracket after the method name, so the
+      // call/assignment patterns below both miss it.
+      if (/^(?:if|unless|while|until|begin|case|loop|puts|print|p|warn|raise)\b/.test(t)) return true;
       if (/^[A-Za-z_]\w*\s*[.\[(]/.test(t)) return true; // call / chain
       if (/^[A-Za-z_]\w*\s*=/.test(t)) return true;       // assignment
       continue;
@@ -389,8 +440,16 @@ function hasExecutableTopLevel(code: string, language: GateLanguage): boolean {
     if (language === 'swift') {
       if (/^\/\//.test(t)) continue;
       if (/^(?:let|var)\b/.test(t)) return true;          // top-level binding
-      if (/^(?:import|func|class|struct|enum|protocol|extension|typealias)\b/.test(t)) continue;
+      if (/^(?:import|func|class|struct|enum|protocol|extension|typealias|actor)\b/.test(t)) continue;
       if (/^@main\b/.test(t)) return true;
+      // A column-0 control-flow statement IS top-level executable code — the
+      // `^\s` guard above already excluded anything inside a block body. Without
+      // this, a valid `main.swift` whose entry is `if CommandLine.argc > 1 { ... }`
+      // was reported as "no runnable entry point" (measured live on a generated
+      // Swift c→f converter that compiles and runs correctly); the model then
+      // churned two repair rounds trying to satisfy a gate that was simply wrong.
+      if (/^(?:if|guard|while|for|repeat|switch|do|defer)\b/.test(t)) return true;
+      if (/^(?:print|debugPrint|assert|precondition|fatalError)\b/.test(t)) return true;
       if (/^[A-Za-z_][\w.]*\s*\(/.test(t)) return true;
       continue;
     }
@@ -400,6 +459,17 @@ function hasExecutableTopLevel(code: string, language: GateLanguage): boolean {
       if (/^(?:using|namespace|public|internal|private|protected|sealed|abstract|static|partial|class|interface|struct|enum|record|delegate)\b/.test(t)) continue;
       if (t === '{' || t === '}') continue;
       if (/^\[/.test(t)) continue; // attribute line
+      return true;
+    }
+    if (language === 'javascript') {
+      // Imports/exports and declarations are wiring, not a program. A JS CLI's
+      // entry point is executable top-level code (a call, a control-flow
+      // statement, or a top-level `process.argv` read) — measured live on a
+      // generated `src/main.js` whose entry was `const args = process.argv...`
+      // followed by `if (!filePath) { ... }`.
+      if (/^\/\//.test(t) || /^\/\*/.test(t) || /^\*/.test(t)) continue;
+      if (/^(?:import|export)\b/.test(t)) continue;
+      if (/^(?:const|let|var|function|class|async\s+function)\b/.test(t)) continue;
       return true;
     }
   }
@@ -412,6 +482,23 @@ function fileHasEntryPoint(code: string, language: GateLanguage): boolean {
   if (patterns?.some((re) => re.test(code))) return true;
   if (SCRIPT_ENTRY_LANGS.has(language) && hasExecutableTopLevel(code, language)) return true;
   return false;
+}
+
+/**
+ * Whether a file carries a runnable entry point, exposed for the contract gate.
+ *
+ * A plan that lists `main` as a file's export is describing the ENTRY-POINT
+ * convention, not a real callable contract: a Python CLI that runs under
+ * `if __name__ == "__main__":`, a Ruby script guarded by `if __FILE__ == $0`,
+ * or any other top-level executable statement satisfies it without a function
+ * literally named `main`. Measured live: a correct, runnable Python
+ * file-renamer was rejected with
+ * "src/main.py: planned export 'main' is not implemented".
+ */
+export function fileDeclaresEntryPoint(code: string, language: string | undefined, relPath = ''): boolean {
+  const lang = resolveGateLanguage(language, relPath);
+  if (!lang) return false;
+  return fileHasEntryPoint(code || '', lang);
 }
 
 /** Human hint naming the entry point shape a language expects. */
@@ -427,14 +514,38 @@ const ENTRY_HINTS: Record<GateLanguage, string> = {
   python: 'if __name__ == "__main__" or a top-level call',
   php: 'executable top-level statements',
   ruby: 'executable top-level statements',
+  javascript: 'a top-level call that runs the program',
 };
+
+/**
+ * The file an entry-point failure should be ATTRIBUTED to.
+ *
+ * Every other gate error names the file it came from, and the non-TS repair
+ * loop routes failures to a file (`groupGateErrorsByFile`). An entry-point
+ * error carries no path of its own, so it was unroutable: the loop found no
+ * failing file, broke out at round 0, and the model was never shown the
+ * problem — measured live on two Python CLI builds that shipped as bare
+ * functions with `repairRounds: 0`. Naming the most likely entry file keeps the
+ * error honest AND makes the existing repair loop able to fix it.
+ */
+function pickEntryCandidate(files: StagedSourceFile[], language: GateLanguage): StagedSourceFile {
+  const baseOf = (p: string) =>
+    (p || '').replace(/\\/g, '/').split('/').pop()!.replace(/\.[^.]+$/, '').toLowerCase();
+  const exact = new Set(['main', 'app', 'cli', 'index', 'run', 'program', 'entry', 'start', 'application']);
+  for (const f of files) if (exact.has(baseOf(f.relPath))) return f;
+  const loose = /main|app|cli|index|run|start/;
+  for (const f of files) if (loose.test(baseOf(f.relPath))) return f;
+  void language;
+  return files[0];
+}
 
 /** Entry errors for a language's file set (empty when a runnable entry exists). */
 function entryGateErrors(files: StagedSourceFile[], language: GateLanguage): string[] {
   if (files.some((f) => fileHasEntryPoint(f.code, language))) return [];
+  const owner = pickEntryCandidate(files, language);
   return [
-    `no runnable entry point — this ${language} build compiles but cannot be launched ` +
-    `(found no ${ENTRY_HINTS[language]}). VACA builds apps, not libraries: add the entry point.`,
+    `${owner.relPath}: no runnable entry point — this ${language} build compiles but cannot be ` +
+    `launched (found no ${ENTRY_HINTS[language]}). VACA builds apps, not libraries: add the entry point.`,
   ];
 }
 
@@ -493,6 +604,190 @@ export function jarManifestInfo(jarPath: string): { read: boolean; mainClass: st
 }
 
 /**
+ * Where a generated Go file must be STAGED so its import path resolves.
+ *
+ * Go resolves an import by DIRECTORY: `import "<module>/hasher"` only builds if
+ * a `hasher/` directory exists. The model decides the package name itself, so a
+ * plan node `hasher.go` frequently comes back as `package hasher` while `main.go`
+ * imports `<module>/hasher` — and the file is sitting at the project ROOT, so
+ * `go build ./...` fails with `package <module>/hasher is not in std` (measured
+ * live on 3 consecutive Go builds). Likewise a root `converter.go` written as
+ * `package app` collided with `main.go`: "found packages app (converter.go) and
+ * main (main.go) in <dir>".
+ *
+ * Honour the package the model declared: a non-`main` file planned at the root
+ * is staged under a directory named after its own package, which is exactly the
+ * directory its callers' import path names. `package main` files and files that
+ * already live in a subdirectory are left where the plan put them.
+ */
+export function goStagePath(relPath: string, code: string): string {
+  const norm = (relPath || '').replace(/\\/g, '/').replace(/^\.\//, '').replace(/^\/+/, '');
+  const m = /^\s*package\s+([A-Za-z_]\w*)/m.exec(code || '');
+  const pkg = m ? m[1] : '';
+  const safe = norm || 'main.go';
+  if (!pkg || pkg === 'main') return safe;
+  const parts = safe.split('/');
+  const base = parts[parts.length - 1] || 'file.go';
+  const dir = parts.slice(0, -1);
+  if (dir.length) return safe; // already inside a directory — trust the plan
+  return `${pkg}/${base}`;
+}
+
+/** The package a Go file declares (`''` when it declares none). */
+export function goFilePackage(code: string): string {
+  const m = /^[ \t]*package[ \t]+([A-Za-z_]\w*)/m.exec(code || '');
+  return m ? m[1] : '';
+}
+
+/**
+ * True when the file declares the program entry point — a TOP-LEVEL
+ * `func main()`. Comments are stripped first so a commented-out `func main()`
+ * cannot make a library package look runnable.
+ */
+export function goDeclaresMainFunc(code: string): boolean {
+  return /^func[ \t]+main[ \t]*\(/m.test((code || '').replace(/\/\/[^\n]*/g, ''));
+}
+
+/**
+ * Every LOCAL import path a Go file references — module-prefixed
+ * (`<module>/dir`) or relative (`./dir`, `../dir`). Imports of the standard
+ * library or a third-party module are ignored: they never name a directory this
+ * project stages.
+ *
+ * Comments are stripped first so a commented-out import cannot steer staging.
+ */
+export function goLocalImportPaths(code: string, moduleName: string): string[] {
+  const src = (code || '').replace(/\/\/[^\n]*/g, '');
+  const specs: string[] = [];
+  const collect = (body: string) => {
+    const re = /"((?:[^"\\]|\\.)*)"/g;
+    let q: RegExpExecArray | null;
+    while ((q = re.exec(body))) specs.push(q[1]);
+  };
+  let m: RegExpExecArray | null;
+  const grouped = /import[ \t]*\(([\s\S]*?)\)/g;
+  while ((m = grouped.exec(src))) collect(m[1]);
+  const single = /\bimport[ \t]+(?:(?:[A-Za-z_]\w*|[_.])[ \t]+)?"((?:[^"\\]|\\.)*)"/g;
+  while ((m = single.exec(src))) specs.push(m[1]);
+  const isLocal = (spec: string) =>
+    spec.startsWith('./') || spec.startsWith('../') || spec === moduleName || (!!moduleName && spec.startsWith(`${moduleName}/`));
+  return [...new Set(specs.filter(isLocal))];
+}
+
+/** A staged Go file: where it lands and the code written there. */
+export interface GoStagedFile {
+  relPath: string;
+  code: string;
+}
+
+/**
+ * Plan the whole-project Go staging layout so every LOCAL import resolves.
+ *
+ * Go resolves an import by DIRECTORY, and the model routinely writes files that
+ * violate that: it puts several packages' files in one shared `src/` dir while
+ * importing each as `<module>/src/<pkg>`, and declares them all `package src`.
+ * The import path's last segment then names a directory that does not exist, so
+ * `go build ./...` fails with `package <module>/src/<pkg> is not in std`
+ * (measured live on 3 consecutive Go builds of the SHA-256/file-size/JSON→YAML
+ * tools). `goStagePath` cannot see this class — it leaves a file already in a
+ * subdirectory untouched and never consults the importers.
+ *
+ * This planner AUTO-DECIDES per project: it gathers every local import path's
+ * directory, then stages each non-`main` package into the directory its own
+ * importers name (matching the file's STEM first, then its declared package
+ * name), and aligns the `package` clause to that directory's base name so the
+ * call-site qualifier (`pkg.Fn`) still matches. Files nothing imports keep the
+ * plan's location (root files fall back to `goStagePath`'s own-package dir).
+ *
+ * The gate then tries this layout FIRST and falls back to the naive
+ * `goStagePath` layout if it still does not compile — whichever closes wins.
+ */
+export function planGoStaging(files: StagedSourceFile[], moduleName: string): GoStagedFile[] {
+  const norm = (p: string) => (p || 'main.go').replace(/\\/g, '/').replace(/^\.\//, '').replace(/^\/+/, '');
+  const dirName = (p: string) => norm(p).split('/').slice(0, -1).join('/');
+  const baseName = (p: string) => norm(p).split('/').pop() || 'file.go';
+  const stem = (p: string) => baseName(p).replace(/\.[^.]+$/, '');
+  const lastSeg = (d: string) => d.split('/').filter(Boolean).pop() || '';
+
+  // 1. Every directory the project's own imports name.
+  const wanted = new Set<string>();
+  for (const f of files) {
+    const fromDir = dirName(f.relPath);
+    for (const spec of goLocalImportPaths(f.code, moduleName)) {
+      let dir = '';
+      if (spec.startsWith('./') || spec.startsWith('../')) {
+        dir = path.posix.normalize(path.posix.join(fromDir, spec)).replace(/^\.\//, '');
+      } else if (moduleName && spec.startsWith(`${moduleName}/`)) {
+        dir = spec.slice(moduleName.length + 1);
+      }
+      dir = dir.replace(/\/+$/, '');
+      if (dir && dir !== '.') wanted.add(dir);
+    }
+  }
+
+  // 2. Directories that hold a `package main` file. Go allows exactly ONE
+  // package per directory, so a non-main file staged into one of these is a
+  // hard build error ("found packages src (files.go) and main (main.go) in
+  // src") — measured live on a generated file-size tool whose `src/files.go`
+  // declared `package src` next to `src/main.go`.
+  const mainDirs = new Set<string>();
+  for (const f of files) {
+    if (goFilePackage(f.code) === 'main' || goDeclaresMainFunc(f.code)) mainDirs.add(dirName(f.relPath));
+  }
+
+  // 3. Stage each file where its importers expect it; align the package clause.
+  const out: GoStagedFile[] = [];
+  const seen = new Set<string>();
+  for (const f of files) {
+    const pkg = goFilePackage(f.code);
+    const base = baseName(f.relPath);
+    const isEntry = goDeclaresMainFunc(f.code);
+    if (!pkg || pkg === 'main' || isEntry) {
+      const rel = norm(f.relPath);
+      // A file carrying the entry point must BE `package main`: any other name
+      // compiles as a library, produces no binary and can never run — and the
+      // old "root non-main file → its own package dir" rule buried such a file
+      // in `app/`, where the compile gate still reported it CLEAN (measured live
+      // on the generated SHA-256 CLI). The sanitizer does this too; the planner
+      // does it so the layout is right even for unsanitized input.
+      const code = isEntry && pkg && pkg !== 'main'
+        ? f.code.replace(/^([ \t]*)package[ \t]+\w+/m, '$1package main')
+        : f.code;
+      if (!seen.has(rel)) { seen.add(rel); out.push({ relPath: rel, code }); }
+      continue;
+    }
+    const fileStem = stem(f.relPath);
+    const candidates = [...wanted].filter((d) => lastSeg(d) === fileStem || lastSeg(d) === pkg);
+    let targetDir = '';
+    if (candidates.length) {
+      const exact = candidates.filter((d) => lastSeg(d) === fileStem);
+      // The importer that named the FILE (its stem) is the strongest signal;
+      // otherwise the one that named the PACKAGE. Shortest path wins ties.
+      const pool = (exact.length ? exact : candidates).sort((a, b) => a.length - b.length || a.localeCompare(b));
+      targetDir = pool[0];
+    } else {
+      targetDir = dirName(f.relPath) || pkg; // no importer: keep the plan (root file → own-package dir)
+    }
+    let code = f.code;
+    const want = lastSeg(targetDir);
+    if (want && want !== pkg && /^[ \t]*package[ \t]+\w+/m.test(code)) {
+      code = code.replace(/^([ \t]*)package[ \t]+\w+/m, `$1package ${want}`);
+    }
+    const rel = targetDir ? `${targetDir}/${base}` : base;
+    const relDir = rel.includes('/') ? rel.split('/').slice(0, -1).join('/') : '';
+    // One package per directory: a non-main file sharing a directory with the
+    // entry point must BE `package main` (nothing imports it, or it would have
+    // been staged into its importer's directory instead). Folding it keeps the
+    // file where the plan put it and makes the directory buildable.
+    if (mainDirs.has(relDir) && !wanted.has(relDir)) {
+      code = code.replace(/^([ \t]*)package[ \t]+\w+/m, '$1package main');
+    }
+    if (!seen.has(rel)) { seen.add(rel); out.push({ relPath: rel, code }); }
+  }
+  return out;
+}
+
+/**
  * Run whole-project compile gates for every gateable language present.
  * Returns one entry per language that had files; languages with no files are
  * omitted (the caller treats an empty array as "no non-TS gate needed").
@@ -505,6 +800,25 @@ export function jarManifestInfo(jarPath: string): { read: boolean; mainClass: st
 export async function runNonTsProjectGates(
   files: StagedSourceFile[],
   moduleName: string,
+  opts?: {
+    /**
+     * The caller gates NODE files only and a separate scaffolder writes the
+     * program's entry point afterwards (the canvas path). The entry-point fold
+     * at the end of this function cannot see that file, so it would reject a
+     * buildable app with "no runnable entry point".
+     *
+     * Measured: a generated Swift app whose scaffolder-written `main.swift`
+     * carries the top-level statements while its three node files are pure
+     * declarations — `swiftc` builds it and `./app` runs and exits 0, yet the
+     * fold called it a library. (It only surfaced once the duplicate-type
+     * errors that had been masking it were fixed.)
+     *
+     * Languages whose entry is PROMOTED into a node (`PROMOTABLE_ENTRY_LANGS`
+     * in perFileScaffolder) still satisfy the fold from the node itself, so
+     * skipping it is never a false PASS for them.
+     */
+    scaffoldSuppliesEntry?: boolean;
+  },
 ): Promise<LanguageGate[]> {
   const gates: LanguageGate[] = [];
 
@@ -518,14 +832,59 @@ export async function runNonTsProjectGates(
     byLang.set(lang, list);
   }
 
+  // `.h` is shared by C and C++, so `resolveGateLanguage` returns null for an
+  // unlabelled one, and a planner that labels it `c` in a C++ project sends it
+  // to the SEPARATE C staging dir. Either way the C++ files cannot find their
+  // own header. Route EVERY `.h` to the gate the project actually uses — C++
+  // when it has any C++ file, else C. Measured live: (a) a C to-hex tool whose
+  // unlabelled header was dropped from both gates; (b) a C++ string-reverser
+  // whose header was labelled `c` and split off, failing `#include
+  // "string_reverser.h"`.
+  const headerFiles = files.filter((f) => /\.h$/i.test(f.relPath));
+  if (headerFiles.length) {
+    const target: GateLanguage = byLang.get('cpp')?.length ? 'cpp' : 'c';
+    for (const lang of ['c', 'cpp'] as GateLanguage[]) {
+      const bucket = byLang.get(lang);
+      if (!bucket) continue;
+      const rest = bucket.filter((f) => !/\.h$/i.test(f.relPath));
+      if (rest.length) byLang.set(lang, rest); else byLang.delete(lang);
+    }
+    byLang.set(target, [...(byLang.get(target) || []), ...headerFiles]);
+  }
+
   // ── Go: stage a module and build the whole set ─────────────────────────
   const goFiles = byLang.get('go');
   if (goFiles?.length) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-gobuild-'));
-    try {
+    // Auto-decide the staging layout: try the import-resolved layout first, and
+    // only fall back to the naive per-file layout if it does not compile.
+    // Whichever closes cleanly wins; a build verifies the choice rather than
+    // trusting the heuristic.
+    const resolved = planGoStaging(goFiles, moduleName);
+    const naive = goFiles.map((f) => ({ relPath: goStagePath(f.relPath, f.code), code: f.code }));
+    const sameLayout = JSON.stringify(resolved) === JSON.stringify(naive);
+    // `go build ./...` writes each main package's binary into the CURRENT
+    // directory, named after the package's own directory — so a `package main`
+    // staged in `src/` fails with `go: build output "src" already exists and is
+    // a directory` (measured live on a generated file-size CLI whose entry sat
+    // in `src/`). Sending the binaries to a scratch dir keeps the check honest:
+    // every package is still compiled, and nothing collides with the tree (a
+    // dot-directory is ignored by `./...`, so the output cannot be re-gated).
+    const binDir = path.join(dir, '.bin');
+    const attempt = async (layout: GoStagedFile[]) => {
+      fs.rmSync(dir, { recursive: true, force: true });
+      fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, 'go.mod'), `module ${moduleName}\n\ngo 1.21\n`);
-      for (const f of goFiles) stageFile(dir, f.relPath, f.code);
-      const r = await runTool(toolchainBin('go'), ['build', './...'], { cwd: dir, timeout: 90000, });
+      for (const f of layout) stageFile(dir, f.relPath, f.code);
+      fs.mkdirSync(binDir, { recursive: true });
+      return runTool(toolchainBin('go'), ['build', '-o', `${binDir}/`, './...'], { cwd: dir, timeout: 90000, });
+    };
+    try {
+      let r = await attempt(resolved);
+      if (!r.ok && !sameLayout) {
+        const fallback = await attempt(naive);
+        if (fallback.ok) r = fallback;
+      }
       pushGate(gates, 'go', r.ok ? [] : [r.error]);
     } catch (err: any) {
       pushGate(gates, 'go', [`go build staging failed: ${err?.message || err}`]);
@@ -575,7 +934,8 @@ export async function runNonTsProjectGates(
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-cgate-'));
     try {
       const absFiles = cFiles.map((f) => stageFile(dir, f.relPath, f.code));
-      const failures = await perFileGate(toolchainBin('c'), (abs) => ['-fsyntax-only', '-std=c11', '-I', dir, '-I', path.dirname(abs), abs], absFiles, dir, 60000);
+      const includes = includeDirsFor(dir, absFiles).flatMap((d) => ['-I', d]);
+      const failures = await perFileGate(toolchainBin('c'), (abs) => ['-fsyntax-only', '-std=c11', ...includes, abs], absFiles, dir, 60000);
       pushGate(gates, 'c', failures);
     } catch (err: any) {
       pushGate(gates, 'c', [`gcc staging failed: ${err?.message || err}`]);
@@ -588,7 +948,8 @@ export async function runNonTsProjectGates(
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-cppgate-'));
     try {
       const absFiles = cppFiles.map((f) => stageFile(dir, f.relPath, f.code));
-      const failures = await perFileGate(toolchainBin('cpp'), (abs) => ['-fsyntax-only', '-std=c++17', '-I', dir, '-I', path.dirname(abs), abs], absFiles, dir, 60000);
+      const includes = includeDirsFor(dir, absFiles).flatMap((d) => ['-I', d]);
+      const failures = await perFileGate(toolchainBin('cpp'), (abs) => ['-fsyntax-only', '-std=c++17', ...includes, abs], absFiles, dir, 60000);
       pushGate(gates, 'cpp', failures);
     } catch (err: any) {
       pushGate(gates, 'cpp', [`g++ staging failed: ${err?.message || err}`]);
@@ -681,9 +1042,10 @@ export async function runNonTsProjectGates(
         const { read, mainClass } = jarManifestInfo(path.join(dir, 'out.jar'));
         if (read && !mainClass) {
           errors.push(
-            'kotlinc produced a jar with no Main-Class: the file set compiles but cannot be ' +
-            'launched with `java -jar`. This happens when more than one `fun main` is present ' +
-            '(kotlinc cannot choose). VACA builds apps, not libraries: leave exactly one `fun main`.',
+            `${pickEntryCandidate(kotlinFiles, 'kotlin').relPath}: kotlinc produced a jar with no Main-Class: ` +
+            'the file set compiles but cannot be launched with `java -jar`. This happens when more ' +
+            'than one `fun main` is present (kotlinc cannot choose). VACA builds apps, not ' +
+            'libraries: leave exactly one `fun main`.',
           );
         }
       }
@@ -700,7 +1062,7 @@ export async function runNonTsProjectGates(
   if (phpFiles?.length) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-phpgate-'));
     try {
-      const absFiles = phpFiles.map((f) => stageFile(dir, f.relPath, f.code));
+      const absFiles = phpFiles.filter((f) => !isConfigDotfile(f.relPath)).map((f) => stageFile(dir, f.relPath, f.code));
       const failures = await perFileGate(toolchainBin('php'), (abs) => ['-l', abs], absFiles, dir, 30000);
       pushGate(gates, 'php', failures);
     } catch (err: any) {
@@ -715,11 +1077,31 @@ export async function runNonTsProjectGates(
   if (rubyFiles?.length) {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-rubygate-'));
     try {
-      const absFiles = rubyFiles.map((f) => stageFile(dir, f.relPath, f.code));
+      const absFiles = rubyFiles.filter((f) => !isConfigDotfile(f.relPath)).map((f) => stageFile(dir, f.relPath, f.code));
       const failures = await perFileGate(toolchainBin('ruby'), (abs) => ['-c', abs], absFiles, dir, 30000);
       pushGate(gates, 'ruby', failures);
     } catch (err: any) {
       pushGate(gates, 'ruby', [`ruby -c staging failed: ${err?.message || err}`]);
+    } finally {
+      try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* noop */ }
+    }
+  }
+
+  // ── JavaScript: syntax check per file (node --check) ───────────────────
+  // A JS build used to fall through every gate and report the catch-all
+  // "no gate applied (unverified)". `node --check` parses the file without
+  // executing it, so a real syntax error (unclosed brace, stray token) is
+  // caught while Node's own module-type detection accepts both ESM (`import`/
+  // `export`) and CommonJS shapes.
+  const jsFiles = byLang.get('javascript');
+  if (jsFiles?.length) {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-jsgate-'));
+    try {
+      const absFiles = jsFiles.filter((f) => !isConfigDotfile(f.relPath)).map((f) => stageFile(dir, f.relPath, f.code));
+      const failures = await perFileGate(toolchainBin('javascript'), (abs) => ['--check', abs], absFiles, dir, 30000);
+      pushGate(gates, 'javascript', failures);
+    } catch (err: any) {
+      pushGate(gates, 'javascript', [`node --check staging failed: ${err?.message || err}`]);
     } finally {
       try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* noop */ }
     }
@@ -731,7 +1113,8 @@ export async function runNonTsProjectGates(
   // fragment (a Python file of bare functions, a PHP file of only `function`
   // definitions) passes them and then cannot be run at all. Folded into each
   // language's existing gate so callers see ONE verdict per language.
-  for (const [language, files] of byLang) {
+  const entryFoldSource: Array<[GateLanguage, StagedSourceFile[]]> = opts?.scaffoldSuppliesEntry ? [] : [...byLang];
+  for (const [language, files] of entryFoldSource) {
     const entryErrors = entryGateErrors(files, language);
     if (!entryErrors.length) continue;
     const existing = gates.find((g) => g.language === language);
