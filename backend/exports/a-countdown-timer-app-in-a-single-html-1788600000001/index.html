@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown Timer</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+  .card { background: #14141f; border: 1px solid #2a2a3a; border-radius: 12px; padding: 28px; text-align: center; }
+  #display { font-size: 64px; color: #00d9ff; margin: 12px 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+  input { background: #0f0f1a; border: 1px solid #2a2a3a; color: #e6e6e6; border-radius: 8px;
+          padding: 8px 12px; font-size: 18px; width: 90px; text-align: center; }
+  button { background: #00d9ff; color: #04141a; border: none; border-radius: 8px;
+           padding: 10px 16px; font-size: 15px; margin: 6px 4px; cursor: pointer; }
+  #pauseBtn { background: #2a2a3a; color: #e6e6e6; }
+  #resetBtn { background: #2a2a3a; color: #e6e6e6; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>Countdown Timer</h2>
+  <div id="display">00:00</div>
+  <div>
+    <input id="minutes" type="number" min="0" max="99" value="5"> minutes
+  </div>
+  <div>
+    <button id="startBtn">Start</button>
+    <button id="pauseBtn">Pause</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+</div>
+<script>
+  let totalSeconds = 0;
+  let remaining = 0;
+  let intervalId = null;
+  let running = false;
+
+  function format(secs) {
+    const m = String(Math.floor(secs / 60)).padStart(2, '0');
+    const s = String(secs % 60).padStart(2, '0');
+    return m + ':' + s;
+  }
+
+  function render() {
+    document.getElementById('display').textContent = format(remaining);
+  }
+
+  function tick() {
+    if (remaining <= 0) {
+      stopTimer();
+      remaining = 0;
+      render();
+      return;
+    }
+    remaining -= 1;
+    render();
+  }
+
+  function startTimer() {
+    if (running) return;
+    if (remaining <= 0) {
+      const mins = parseInt(document.getElementById('minutes').value, 10) || 0;
+      remaining = totalSeconds = mins * 60;
+    }
+    running = true;
+    intervalId = setInterval(tick, 1000);
+    render();
+  }
+
+  function stopTimer() {
+    running = false;
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  }
+
+  function pauseTimer() {
+    stopTimer();
+  }
+
+  function resetTimer() {
+    stopTimer();
+    remaining = 0;
+    render();
+  }
+
+  document.getElementById('startBtn').addEventListener('click', startTimer);
+  document.getElementById('pauseBtn').addEventListener('click', pauseTimer);
+  document.getElementById('resetBtn').addEventListener('click', resetTimer);
+
+  render();
+</script>
+</body>
+</html>

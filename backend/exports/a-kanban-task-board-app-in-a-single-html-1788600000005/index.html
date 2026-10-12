@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kanban Board</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; padding: 24px; }
+  h1 { color: #00d9ff; margin: 0 0 16px 0; }
+  .board { display: flex; gap: 16px; align-items: flex-start; }
+  .col { background: #14141f; border: 1px solid #2a2a3a; border-radius: 12px;
+         flex: 1; min-height: 200px; padding: 12px; }
+  .col h2 { font-size: 15px; margin: 0 0 10px 0; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+  .col.drag-over { border-color: #00d9ff; }
+  .task { background: #0f0f1a; border: 1px solid #2a2a3a; border-radius: 8px;
+          padding: 10px; margin-bottom: 8px; cursor: grab; font-size: 14px; }
+  .task .del { float: right; background: none; border: none; color: #ff5c5c;
+               cursor: pointer; font-size: 14px; }
+  .add-row { display: flex; gap: 6px; margin-top: 10px; }
+  .add-row input { flex: 1; background: #0f0f1a; border: 1px solid #2a2a3a; color: #e6e6e6;
+                   border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+  button.add { background: #00d9ff; color: #04141a; border: none; border-radius: 6px;
+               padding: 6px 10px; font-size: 13px; cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>📋 Kanban Board</h1>
+<div id="board" class="board"></div>
+<script>
+  const STORAGE_KEY = 'vaca-kanban';
+  const COLUMNS = ['todo', 'doing', 'done'];
+  const COL_LABELS = { todo: 'To Do', doing: 'In Progress', done: 'Done' };
+  let tasks = [];
+  let draggedId = null;
+
+  function loadTasks() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      tasks = Array.isArray(raw) ? raw : [];
+    } catch (e) {
+      tasks = [];
+    }
+    if (tasks.length === 0) {
+      tasks = [
+        { id: 1, col: 'todo', text: 'Write puzzle generator' },
+        { id: 2, col: 'todo', text: 'Build scoreboard page' },
+        { id: 3, col: 'doing', text: 'Chunk exports library' },
+        { id: 4, col: 'done', text: 'Serve R20 on :8002' },
+      ];
+    }
+  }
+
+  function saveTasks() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }
+
+  function nextId() {
+    return tasks.reduce((m, t) => Math.max(m, t.id), 0) + 1;
+  }
+
+  function addTask(col) {
+    const input = document.querySelector('.add-row input[data-col="' + col + '"]');
+    const text = input.value.trim();
+    if (!text) return;
+    tasks.push({ id: nextId(), col: col, text: text });
+    input.value = '';
+    saveTasks();
+    render();
+  }
+
+  function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    saveTasks();
+    render();
+  }
+
+  function onDragStart(id) {
+    draggedId = id;
+  }
+
+  function onDrop(col) {
+    if (draggedId === null) return;
+    const task = tasks.find(t => t.id === draggedId);
+    if (task && task.col !== col) {
+      task.col = col;
+      saveTasks();
+    }
+    draggedId = null;
+    render();
+  }
+
+  function render() {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+    COLUMNS.forEach(col => {
+      const colEl = document.createElement('div');
+      colEl.className = 'col';
+      colEl.dataset.col = col;
+      const list = tasks.filter(t => t.col === col);
+      colEl.innerHTML = '<h2>' + COL_LABELS[col] + ' (' + list.length + ')</h2>';
+      list.forEach(task => {
+        const el = document.createElement('div');
+        el.className = 'task';
+        el.draggable = true;
+        el.dataset.id = task.id;
+        el.innerHTML = '<button class="del" data-id="' + task.id + '">✕</button>' +
+                       '<span>' + task.text + '</span>';
+        el.addEventListener('dragstart', () => onDragStart(task.id));
+        el.querySelector('.del').addEventListener('click', () => deleteTask(task.id));
+        colEl.appendChild(el);
+      });
+      const row = document.createElement('div');
+      row.className = 'add-row';
+      row.innerHTML = '<input data-col="' + col + '" placeholder="Add task…">' +
+                      '<button class="add" data-col="' + col + '">+</button>';
+      row.querySelector('.add').addEventListener('click', () => addTask(col));
+      row.querySelector('input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') addTask(col);
+      });
+      colEl.appendChild(row);
+      colEl.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        colEl.classList.add('drag-over');
+      });
+      colEl.addEventListener('dragleave', () => colEl.classList.remove('drag-over'));
+      colEl.addEventListener('drop', (e) => {
+        e.preventDefault();
+        colEl.classList.remove('drag-over');
+        onDrop(col);
+      });
+      board.appendChild(colEl);
+    });
+  }
+
+  loadTasks();
+  render();
+</script>
+</body>
+</html>

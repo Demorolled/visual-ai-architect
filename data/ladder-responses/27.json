@@ -1,0 +1,401 @@
+{
+ "success": true,
+ "projectId": "fbbaf9ab-9686-4059-9bc2-39fa3f43a341",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "hangman",
+  "description": "Word guessing hangman game with categories \u2014 an interactive game tool with a visual interface.",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "game_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "game_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "score_store",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "score_store",
+    "destination_module": "canvas_ui",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 hangman-game \u00b7 GitHub Topics \u00b7 GitHub\n    The project leverages a combination of models and methods to predict missing letters in a word, enhancing the Hangman gameplay experience. The core methodologies include a Bidirectional LSTM (BiLSTM) \n  \u2022 Top 10 hangman Open-Source Projects - LibHunt\n    Which are the best open-source hangman projects? This list will help you: dotnet-console-games, Discord-Trivia-Bot, cli-games, python-projects, hangman-game, hang-movie-man, and words.\n  \u2022 \u2b5022 clarkeben/Hangman-Game: A simple hangman word game using Swift for iOS.\n  \u2022 \u2b5018 venkat-0706/Hangman-Game-Python: Hangman is a word-guessing game. The computer selects a random word, and the player tries to guess it letter by letter. The player has a limited numbe\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 29: SESSION UPDATE \u2014 July 26, 2026: BATCH 2 \u2014 15 APPS (MEDIUM \u2192 EXTREME)\n    29.1 TIER 1 \u2014 MEDIUM (3 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  password-manager.html   (11.2 KB) \u2014 Generator + vault + strength meter + export\n  habit-tracker.html      (10.5 KB) \u2014 Streaks, heatmap, weekly view, stats\n  calendar-planner.html   (11.8 KB) \u2014 Monthly calendar, event CRUD, categories\n\n2\n  \u2022 Section 36: SESSION UPDATE \u2014 July 31, 2026: DSPARK, INTENT UPGRADE & TRAINING LOOP\n    36.1 DSPARK LLM SERVING (production primary)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n- llama.cpp GGUF server (OpenAI-compatible) on :8000 \u2014 scripts/start-dspark.sh,\n  auto-started when the backend launches; status (running/loading/draft mode)\n  and tok/s surfaced live in the frontend LLM setti\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "hangman",
+   "score": 1
+  },
+  {
+   "app_type": "hangman_2",
+   "score": 1
+  },
+  {
+   "app_type": "scrabble_word_game",
+   "score": 0.8842629438805237
+  },
+  {
+   "app_type": "word_search_2",
+   "score": 0.7206728665329307
+  },
+  {
+   "app_type": "word_search",
+   "score": 0.6725911354182047
+  }
+ ],
+ "project": {
+  "id": "fbbaf9ab-9686-4059-9bc2-39fa3f43a341",
+  "name": "a hangman word game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "hangman blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "game_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "score_store"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "canvas_ui"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 0,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 5,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "generated": [
+   "game_engine",
+   "ui_screens",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "matched": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "export const startGame = async () => {\n  try {\n    const game = await gameEngine.initialize();\n    game.start();\n  } catch (error) {\n    console.error('Error starting game:', error);\n  }\n};\n\nexport const handleInput = (input: string) => {\n  try {\n    const game = gameEngine.getGame();\n    if (!game) return;\n    game.receiveInput(input);\n  } catch (error) {\n    console.error('Error handling input:', error);\n  }\n};\n\nexport const getGameState = () => {\n  try {\n    const game = gameEngine.getGame();\n    if (!game) return null;\n    return {\n      category: game.category,\n      word: game.word,\n      guessedLetters: game.guessedLetters,\n      remainingTries: game.remainingTries,\n      isWon: game.isWon,\n      isLost: game.isLost,\n    };\n  } catch (error) {\n    console.error('Error getting game state:', error);\n    return null;\n  }\n};\n\nexport const resetGame = () => {\n  try {\n    gameEngine.reset();\n  } catch (error) {\n    console.error('Error resetting game:', error);\n  }\n};\n\nexport const loadGame = (gameData: { category: string; word: string; guessedLetters: string[]; remainingTries: number; isWon: boolean; isLost: boolean }) => {\n  try {\n    gameEngine.loadGame(gameData);\n  } catch (error) {\n    console.error('Error loading game:', error);\n  }\n};\n\nexport const getCategories = () => {\n  try {\n    return gameEngine.getCategories();\n  } catch (error) {\n    console.error('Error getting categories:', error);\n    return [];\n  }\n};\n\nexport const getCategoryWords = (category: string) => {\n  try {\n    return gameEngine.getCategoryWords(category);\n  } catch (error) {\n    console.error('Error getting category words:', error);\n    return [];\n  }\n};\n\nexport const getGameStatus = () => {\n  try {\n    const game = gameEngine.getGame();\n    if (!game) return null;\n    return {\n      isWon: game.isWon,\n      isLost: game.isLost,\n    };\n  } catch (error) {\n    console.error('Error getting game status:', error);\n    return null;\n  }\n};\n\nexport const getGameProgress = () => {\n  try {\n    const game = gameEngine.getGame();\n    if (!game) return null;\n    const guessed = game.guessedLetters.filter(l => l !== '_').length;\n    const total = game.word.length;\n    return { guessed, total };\n  } catch (error) {\n    console.error('Error getting game progress:', error);\n    return null;\n  }\n};\n\nexport const getGameLog = () => {\n  try {\n    return gameEngine.getGameLog();\n  } catch (error) {\n    console.error('Error getting game log:', error);\n    return [];\n  }\n};\n\nexport const getGameStats = () => {\n  try {\n    return gameEngine.getGameStats();\n  } catch (error) {\n    console.error('Error getting game stats:', error);\n    return null;\n  }\n};",
+   "nodeId": "mod_1",
+   "nodeLabel": "game_engine",
+   "dependencies": [],
+   "exports": [
+    "startGame",
+    "handleInput",
+    "getGameState",
+    "resetGame",
+    "loadGame",
+    "getCategories",
+    "getCategoryWords",
+    "getGameStatus",
+    "getGameProgress",
+    "getGameLog",
+    "getGameStats"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'gameEngine'. (line 3)",
+    "TS2304: Cannot find name 'gameEngine'. (line 12)",
+    "TS2304: Cannot find name 'gameEngine'. (line 22)",
+    "TS2304: Cannot find name 'gameEngine'. (line 40)",
+    "TS2304: Cannot find name 'gameEngine'. (line 48)",
+    "TS2304: Cannot find name 'gameEngine'. (line 56)",
+    "TS2304: Cannot find name 'gameEngine'. (line 65)",
+    "TS2304: Cannot find name 'gameEngine'. (line 74)",
+    "TS2304: Cannot find name 'gameEngine'. (line 88)",
+    "TS2304: Cannot find name 'gameEngine'. (line 101)",
+    "TS2304: Cannot find name 'gameEngine'. (line 110)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { handleInput, getGameState, resetGame, loadGame, getCategories, getCategoryWords, getGameStatus, getGameProgress, getGameLog, getGameStats } from '../game-engine/game-engine.ts';\n\nexport function render(container: HTMLElement) {\n  const mainContainer = document.createElement('div');\n  mainContainer.classList.add('app');\n\n  const categoryLabel = document.createElement('label');\n  categoryLabel.textContent = 'Category: Animals';\n  mainContainer.appendChild(categoryLabel);\n\n  const categoryToggle = document.createElement('select');\n  categoryToggle.innerHTML = '<option value=\"A\">A</option><option value=\"B\">B</option><option value=\"C\">C</option><option value=\"D\">D</option>';\n  categoryToggle.addEventListener('change', (e) => {\n    filterLetters(e.target.value);\n  });\n  mainContainer.appendChild(categoryToggle);\n\n  const display = document.createElement('div');\n  display.classList.add('display');\n  display.textContent = '_ _ _ _ _';\n  mainContainer.appendChild(display);\n\n  const input = document.createElement('input');\n  input.type = 'text';\n  input.setAttribute('placeholder', 'Enter a letter');\n  input.addEventListener('change', (e) => checkGuess(e.target.value));\n  mainContainer.appendChild(input);\n\n  const livesLabel = document.createElement('div');\n  livesLabel.classList.add('lives');\n  livesLabel.textContent = 'Lives: 5';\n  mainContainer.appendChild(livesLabel);\n\n  const playButton = document.createElement('button');\n  playButton.textContent = 'PLAY';\n  playButton.addEventListener('click', () => {\n    startGame();\n  });\n  mainContainer.appendChild(playButton);\n\n  container.appendChild(mainContainer);\n}\n\nfunction filterLetters(category: string) {\n  // Placeholder logic\n  console.log(`Filtering letters by category: ${category}`);\n}\n\nfunction checkGuess(guess: string) {\n  // Placeholder logic\n  console.log(`Checking guess: ${guess}`);\n}\n\nfunction startGame() {\n  // Placeholder logic\n  console.log('Game started');\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2339: Property 'value' does not exist on type 'EventTarget'. (line 14)",
+    "TS2339: Property 'value' does not exist on type 'EventTarget'. (line 26)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { startGame, getGameState, loadGame, getCategories, getCategoryWords, getGameStatus, getGameProgress, getGameLog, getGameStats } from '../game-engine/game-engine.ts';\n\nexport function handleInput(input: string): void {\n  const gameStatus = getGameStatus();\n  if (!gameStatus) return;\n  if (gameStatus.isWon || gameStatus.isLost) return;\n  \n  const { guessedLetters, remainingTries, word } = gameStatus;\n  const guessed = new Set(guessedLetters);\n  \n  let hasMatch = false;\n  for (let i = 0; i < word.length; i++) {\n    if (guessed.has(word[i])) {\n      hasMatch = true;\n      document.getElementById(`letter-${i}`)?.textContent = word[i];\n    }\n  }\n  \n  if (!hasMatch && remainingTries > 0) {\n    document.getElementById('hangmanStage')?.classList.add('stage-' + (14 - remainingTries));\n    decrementTries();\n  } else if (remainingTries <= 0) {\n    revealWord();\n    document.getElementById('hangmanStage')?.classList.add('stage-14');\n    gameOver();\n  } else {\n    incrementTries();\n  }\n  \n  const progress = document.getElementById('progress');\n  if (progress) {\n    const total = word.length;\n    const guessedCount = guessed.size;\n    progress.style.width = `${(guessedCount / total) * 100}%`;\n    progress.textContent = `${guessedCount}/${total}`;\n  }\n}\n\nexport function revealWord(): void {\n  const letters = document.querySelectorAll('.letter');\n  letters.forEach((letter) => {\n    letter.textContent = letter.dataset.letter;\n  });\n}\n\nexport function gameOver(): void {\n  const result = document.getElementById('result');\n  if (getGameStatus().isWon) {\n    result.textContent = '\ud83c\udf89 You won! \ud83c\udf89';\n  } else {\n    result.textContent = '\ud83d\udca5 Game over! \ud83d\udca5';\n  }\n  document.querySelectorAll('.letter').forEach((letter) => {\n    letter.classList.add('revealed');\n  });\n  document.getElementById('hangmanStage')?.classList.add('stage-14');\n}\n\nexport function decrementTries(): void {\n  const tries = parseInt(document.getElementById('tries')?.textContent || '0');\n  if (tries > 0) {\n    document.getElementById('tries')?.textContent = (tries - 1).toString();\n  }\n}\n\nexport function incrementTries(): void {\n  const tries = parseInt(document.getElementById('tries')?.textContent || '0');\n  if (tries < 13) {\n    document.getElementById('tries')?.textContent = (tries + 1).toString();\n  }\n}\n\nexport function resetGame(): void {\n  revealWord();\n  document.querySelectorAll('.letter').forEach((letter) => {\n    letter.textContent = '';\n    letter.classList.remove('revealed');\n  });\n  document.getElementById('hangmanStage')?.classList.remove('stage-14');\n  document.getElementById('tries')?.textContent = '13';\n  document.getElementById('result')?.textContent = '';\n  document.getElementById('progress')?.textContent = '0/0';\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "handleInput",
+    "revealWord",
+    "gameOver",
+    "decrementTries",
+    "incrementTries",
+    "resetGame"
+   ],
+   "errors": [
+    "TS2339: Property 'guessedLetters' does not exist on type '{ isWon: any; isLost: any; }'. (line 8)",
+    "TS2339: Property 'remainingTries' does not exist on type '{ isWon: any; isLost: any; }'. (line 8)",
+    "TS2339: Property 'word' does not exist on type '{ isWon: any; isLost: any; }'. (line 8)",
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 15)",
+    "TS2339: Property 'dataset' does not exist on type 'Element'. (line 42)",
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 62)",
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 69)",
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 80)",
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 81)",
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 82)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "score-store.ts",
+   "language": "typescript",
+   "code": "export function updateScore(player: string, points: number): void {\n  const existingPlayer = Object.keys(gameState.playerScores).includes(player);\n  if (existingPlayer) {\n    gameState.playerScores[player] += points;\n  } else {\n    gameState.playerScores[player] = points;\n  }\n  saveGameState();\n}\n\nexport async function saveGameState(): Promise<void> {\n  try {\n    const jsonString = JSON.stringify(gameState, null, 2);\n    fs.writeFileSync('score_store/state_and_events.json', jsonString);\n  } catch (error) {\n    console.error('Failed to save game state:', error);\n  }\n}\n\nexport function getScores(): { [player: string]: number } {\n  return gameState.playerScores;\n}\n\nexport function resetScores(): void {\n  gameState.playerScores = {};\n  saveGameState();\n}\n\nlet gameState: { playerScores: { [player: string]: number } } = {\n  playerScores: {},\n};",
+   "nodeId": "mod_3",
+   "nodeLabel": "score_store",
+   "dependencies": [],
+   "exports": [
+    "updateScore",
+    "getScores",
+    "resetScores"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'fs'. (line 14)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "canvas-ui.ts",
+   "language": "typescript",
+   "code": "import { updateScore, getScores, resetScores, handleInput } from '../score-store/score-store.ts';\n\nexport function render(container: HTMLElement) {\n  container.innerHTML = `\n    <div class=\"category\">Category: Animals</div>\n    <div class=\"word\" id=\"wordDisplay\">_ _ _ _ _</div>\n    <div class=\"lives\" id=\"livesDisplay\">5</div>\n    <div class=\"letter-grid\">\n      <button class=\"letter-btn\" onclick=\"guess('a')\">A</button>\n      <button class=\"letter-btn\" onclick=\"guess('b')\">B</button>\n      <button class=\"letter-btn\" onclick=\"guess('c')\">C</button>\n      <button class=\"letter-btn\" onclick=\"guess('d')\">D</button>\n    </div>\n    <button class=\"start-btn\" onclick=\"startGame()\">PLAY</button>\n  `;\n\n  const letterButtons = document.querySelectorAll('.letter-btn');\n  letterButtons.forEach((btn) => {\n    btn.addEventListener('click', (e) => {\n      const letter = (e.target as HTMLButtonElement).textContent;\n      guess(letter);\n    });\n  });\n\n  const startBtn = document.querySelector('.start-btn');\n  if (startBtn) {\n    startBtn.addEventListener('click', startGame);\n  }\n}\n\nlet gameRunning = false;\nlet currentWord = '';\nlet guessedLetters = new Set<string>();\n\nfunction guess(letter: string) {\n  if (!gameRunning) return;\n  if (guessedLetters.has(letter)) return;\n\n  guessedLetters.add(letter);\n  const wordArray = currentWord.split('');\n  for (let i = 0; i < wordArray.length; i++) {\n    if (wordArray[i] === letter) {\n      wordArray[i] = letter;\n    }\n  }\n  currentWord = wordArray.join('');\n\n  document.getElementById('wordDisplay')!.textContent = currentWord;\n  document.getElementById('livesDisplay')!.textContent = `Lives: ${5 - missedLetters.length}`;\n\n  if (currentWord.split('').every((l) => l !== '_')) {\n    alert('\ud83c\udf89 You won! The word was: ' + currentWord);\n    gameRunning = false;\n  } else if (missedLetters.length === 5) {\n    alert('\ud83d\udca5 You lost! The word was: ' + currentWord);\n    gameRunning = false;\n  }\n}\n\nfunction missedLetters(): string[] {\n  return Array.from(guessedLetters).filter((l) => !currentWord.includes(l));\n}\n\nfunction startGame() {\n  gameRunning = true;\n  currentWord = 'elephant';\n  guessedLetters.clear();\n  document.getElementById('wordDisplay')!.textContent = '_ '.repeat(currentWord.length);\n  document.getElementById('livesDisplay')!.textContent = 'Lives: 5';\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "canvas_ui",
+   "dependencies": [
+    "score_store"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2305: Module '\"../score-store/score-store.ts\"' has no exported member 'handleInput'. (line 1)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a hangman word game</title>\n  <meta name=\"description\" content=\"a hangman word game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a hangman word game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n      // \u2500\u2500 Declare module namespaces (used by the legacy IIFEs below) \u2500\u2500\n      var game_engine = {}; var ui_screens = {}; var input_handler = {}; var score_store = {}; var canvas_ui = {};\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n// \u2500\u2500 game-engine.ts \u2500\u2500\n\n(function(exports) {\nexports.getGameStats = exports.getGameLog = exports.getGameProgress = exports.getGameStatus = exports.getCategoryWords = exports.getCategories = exports.loadGame = exports.resetGame = exports.getGameState = exports.handleInput = exports.startGame = void 0;\nconst startGame = async () => {\n    try {\n        const game = await gameEngine.initialize();\n        game.start();\n    }\n    catch (error) {\n        console.error('Error starting game:', error);\n    }\n};\nexports.startGame = startGame;\nconst handleInput = (input) => {\n    try {\n        const game = gameEngine.getGame();\n        if (!game)\n            return;\n        game.receiveInput(input);\n    }\n    catch (error) {\n        console.error('Error handling input:', error);\n    }\n};\nexports.handleInput = handleInput;\nconst getGameState = () => {\n    try {\n        const game = gameEngine.getGame();\n        if (!game)\n            return null;\n        return {\n            category: game.category,\n            word: game.word,\n            guessedLetters: game.guessedLetters,\n            remainingTries: game.remainingTries,\n            isWon: game.isWon,\n            isLost: game.isLost,\n        };\n    }\n    catch (error) {\n        console.error('Error getting game state:', error);\n        return null;\n    }\n};\nexports.getGameState = getGameState;\nconst resetGame = () => {\n    try {\n        gameEngine.reset();\n    }\n    catch (error) {\n        console.error('Error resetting game:', error);\n    }\n};\nexports.resetGame = resetGame;\nconst loadGame = (gameData) => {\n    try {\n        gameEngine.loadGame(gameData);\n    }\n    catch (error) {\n        console.error('Error loading game:', error);\n    }\n};\nexports.loadGame = loadGame;\nconst getCategories = () => {\n    try {\n        return gameEngine.getCategories();\n    }\n    catch (error) {\n        console.error('Error getting categories:', error);\n        return [];\n    }\n};\nexports.getCategories = getCategories;\nconst getCategoryWords = (category) => {\n    try {\n        return gameEngine.getCategoryWords(category);\n    }\n    catch (error) {\n        console.error('Error getting category words:', error);\n        return [];\n    }\n};\nexports.getCategoryWords = getCategoryWords;\nconst getGameStatus = () => {\n    try {\n        const game = gameEngine.getGame();\n        if (!game)\n            return null;\n        return {\n            isWon: game.isWon,\n            isLost: game.isLost,\n        };\n    }\n    catch (error) {\n        console.error('Error getting game status:', error);\n        return null;\n    }\n};\nexports.getGameStatus = getGameStatus;\nconst getGameProgress = () => {\n    try {\n        const game = gameEngine.getGame();\n        if (!game)\n            return null;\n        const guessed = game.guessedLetters.filter(l => l !== '_').length;\n        const total = game.word.length;\n        return { guessed, total };\n    }\n    catch (error) {\n        console.error('Error getting game progress:', error);\n        return null;\n    }\n};\nexports.getGameProgress = getGameProgress;\nconst getGameLog = () => {\n    try {\n        return gameEngine.getGameLog();\n    }\n    catch (error) {\n        console.error('Error getting game log:', error);\n        return [];\n    }\n};\nexports.getGameLog = getGameLog;\nconst getGameStats = () => {\n    try {\n        return gameEngine.getGameStats();\n    }\n    catch (error) {\n        console.error('Error getting game stats:', error);\n        return null;\n    }\n};\nexports.getGameStats = getGameStats;\n})(typeof game_engine !== 'undefined' ? game_engine : {});\n\n// \u2500\u2500 ui-screens.ts \u2500\u2500\n\n(function(exports) {\nexports.render = render;\nfunction render(container) {\n    const mainContainer = document.createElement('div');\n    mainContainer.classList.add('app');\n    const categoryLabel = document.createElement('label');\n    categoryLabel.textContent = 'Category: Animals';\n    mainContainer.appendChild(categoryLabel);\n    const categoryToggle = document.createElement('select');\n    categoryToggle.innerHTML = '<option value=\"A\">A</option><option value=\"B\">B</option><option value=\"C\">C</option><option value=\"D\">D</option>';\n    categoryToggle.addEventListener('change', (e) => {\n        filterLetters(e.target.value);\n    });\n    mainContainer.appendChild(categoryToggle);\n    const display = document.createElement('div');\n    display.classList.add('display');\n    display.textContent = '_ _ _ _ _';\n    mainContainer.appendChild(display);\n    const input = document.createElement('input');\n    input.type = 'text';\n    input.setAttribute('placeholder', 'Enter a letter');\n    input.addEventListener('change', (e) => checkGuess(e.target.value));\n    mainContainer.appendChild(input);\n    const livesLabel = document.createElement('div');\n    livesLabel.classList.add('lives');\n    livesLabel.textContent = 'Lives: 5';\n    mainContainer.appendChild(livesLabel);\n    const playButton = document.createElement('button');\n    playButton.textContent = 'PLAY';\n    playButton.addEventListener('click', () => {\n        startGame();\n    });\n    mainContainer.appendChild(playButton);\n    container.appendChild(mainContainer);\n}\nfunction filterLetters(category) {\n    // Placeholder logic\n    console.log(\\`Filtering letters by category: \\${category}\\`);\n}\nfunction checkGuess(guess) {\n    // Placeholder logic\n    console.log(\\`Checking guess: \\${guess}\\`);\n}\nfunction startGame() {\n    // Placeholder logic\n    console.log('Game started');\n}\n})(typeof ui_screens !== 'undefined' ? ui_screens : {});\n\n// \u2500\u2500 input-handler.ts \u2500\u2500\n\n(function(exports) {\nexports.handleInput = handleInput;\nexports.revealWord = revealWord;\nexports.gameOver = gameOver;\nexports.decrementTries = decrementTries;\nexports.incrementTries = incrementTries;\nexports.resetGame = resetGame;\nconst game_engine_ts_1 = require(\"../game-engine/game-engine.ts\");\nfunction handleInput(input) {\n    var _a, _b, _c;\n    const gameStatus = (0, game_engine_ts_1.getGameStatus)();\n    if (!gameStatus)\n        return;\n    if (gameStatus.isWon || gameStatus.isLost)\n        return;\n    const { guessedLetters, remainingTries, word } = gameStatus;\n    const guessed = new Set(guessedLetters);\n    let hasMatch = false;\n    for (let i = 0; i < word.length; i++) {\n        if (guessed.has(word[i])) {\n            hasMatch = true;\n            (_a = document.getElementById(\\`letter-\\${i}\\`)) === null || _a === void 0 ? void 0 : _a.textContent = word[i];\n        }\n    }\n    if (!hasMatch && remainingTries > 0) {\n        (_b = document.getElementById('hangmanStage')) === null || _b === void 0 ? void 0 : _b.classList.add('stage-' + (14 - remainingTries));\n        decrementTries();\n    }\n    else if (remainingTries <= 0) {\n        revealWord();\n        (_c = document.getElementById('hangmanStage')) === null || _c === void 0 ? void 0 : _c.classList.add('stage-14');\n        gameOver();\n    }\n    else {\n        incrementTries();\n    }\n    const progress = document.getElementById('progress');\n    if (progress) {\n        const total = word.length;\n        const guessedCount = guessed.size;\n        progress.style.width = \\`\\${(guessedCount / total) * 100}%\\`;\n        progress.textContent = \\`\\${guessedCount}/\\${total}\\`;\n    }\n}\nfunction revealWord() {\n    const letters = document.querySelectorAll('.letter');\n    letters.forEach((letter) => {\n        letter.textContent = letter.dataset.letter;\n    });\n}\nfunction gameOver() {\n    var _a;\n    const result = document.getElementById('result');\n    if ((0, game_engine_ts_1.getGameStatus)().isWon) {\n        result.textContent = '\ud83c\udf89 You won! \ud83c\udf89';\n    }\n    else {\n        result.textContent = '\ud83d\udca5 Game over! \ud83d\udca5';\n    }\n    document.querySelectorAll('.letter').forEach((letter) => {\n        letter.classList.add('revealed');\n    });\n    (_a = document.getElementById('hangmanStage')) === null || _a === void 0 ? void 0 : _a.classList.add('stage-14');\n}\nfunction decrementTries() {\n    var _a, _b;\n    const tries = parseInt(((_a = document.getElementById('tries')) === null || _a === void 0 ? void 0 : _a.textContent) || '0');\n    if (tries > 0) {\n        (_b = document.getElementById('tries')) === null || _b === void 0 ? void 0 : _b.textContent = (tries - 1).toString();\n    }\n}\nfunction incrementTries() {\n    var _a, _b;\n    const tries = parseInt(((_a = document.getElementById('tries')) === null || _a === void 0 ? void 0 : _a.textContent) || '0');\n    if (tries < 13) {\n        (_b = document.getElementById('tries')) === null || _b === void 0 ? void 0 : _b.textContent = (tries + 1).toString();\n    }\n}\nfunction resetGame() {\n    var _a, _b, _c, _d;\n    revealWord();\n    document.querySelectorAll('.letter').forEach((letter) => {\n        letter.textContent = '';\n        letter.classList.remove('revealed');\n    });\n    (_a = document.getElementById('hangmanStage')) === null || _a === void 0 ? void 0 : _a.classList.remove('stage-14');\n    (_b = document.getElementById('tries')) === null || _b === void 0 ? void 0 : _b.textContent = '13';\n    (_c = document.getElementById('result')) === null || _c === void 0 ? void 0 : _c.textContent = '';\n    (_d = document.getElementById('progress')) === null || _d === void 0 ? void 0 : _d.textContent = '0/0';\n}\n})(typeof input_handler !== 'undefined' ? input_handler : {});\n\n// \u2500\u2500 score-store.ts \u2500\u2500\n\n(function(exports) {\nexports.updateScore = updateScore;\nexports.saveGameState = saveGameState;\nexports.getScores = getScores;\nexports.resetScores = resetScores;\nfunction updateScore(player, points) {\n    const existingPlayer = Object.keys(gameState.playerScores).includes(player);\n    if (existingPlayer) {\n        gameState.playerScores[player] += points;\n    }\n    else {\n        gameState.playerScores[player] = points;\n    }\n    saveGameState();\n}\nasync function saveGameState() {\n    try {\n        const jsonString = JSON.stringify(gameState, null, 2);\n        fs.writeFileSync('score_store/state_and_events.json', jsonString);\n    }\n    catch (error) {\n        console.error('Failed to save game state:', error);\n    }\n}\nfunction getScores() {\n    return gameState.playerScores;\n}\nfunction resetScores() {\n    gameState.playerScores = {};\n    saveGameState();\n}\nlet gameState = {\n    playerScores: {},\n};\n})(typeof score_store !== 'undefined' ? score_store : {});\n\n// \u2500\u2500 canvas-ui.ts \u2500\u2500\n\n(function(exports) {\nexports.render = render;\nfunction render(container) {\n    container.innerHTML = \\`\n    <div class=\"category\">Category: Animals</div>\n    <div class=\"word\" id=\"wordDisplay\">_ _ _ _ _</div>\n    <div class=\"lives\" id=\"livesDisplay\">5</div>\n    <div class=\"letter-grid\">\n      <button class=\"letter-btn\" onclick=\"guess('a')\">A</button>\n      <button class=\"letter-btn\" onclick=\"guess('b')\">B</button>\n      <button class=\"letter-btn\" onclick=\"guess('c')\">C</button>\n      <button class=\"letter-btn\" onclick=\"guess('d')\">D</button>\n    </div>\n    <button class=\"start-btn\" onclick=\"startGame()\">PLAY</button>\n  \\`;\n    const letterButtons = document.querySelectorAll('.letter-btn');\n    letterButtons.forEach((btn) => {\n        btn.addEventListener('click', (e) => {\n            const letter = e.target.textContent;\n            guess(letter);\n        });\n    });\n    const startBtn = document.querySelector('.start-btn');\n    if (startBtn) {\n        startBtn.addEventListener('click', startGame);\n    }\n}\nlet gameRunning = false;\nlet currentWord = '';\nlet guessedLetters = new Set();\nfunction guess(letter) {\n    if (!gameRunning)\n        return;\n    if (guessedLetters.has(letter))\n        return;\n    guessedLetters.add(letter);\n    const wordArray = currentWord.split('');\n    for (let i = 0; i < wordArray.length; i++) {\n        if (wordArray[i] === letter) {\n            wordArray[i] = letter;\n        }\n    }\n    currentWord = wordArray.join('');\n    document.getElementById('wordDisplay').textContent = currentWord;\n    document.getElementById('livesDisplay').textContent = \\`Lives: \\${5 - missedLetters.length}\\`;\n    if (currentWord.split('').every((l) => l !== '_')) {\n        alert('\ud83c\udf89 You won! The word was: ' + currentWord);\n        gameRunning = false;\n    }\n    else if (missedLetters.length === 5) {\n        alert('\ud83d\udca5 You lost! The word was: ' + currentWord);\n        gameRunning = false;\n    }\n}\nfunction missedLetters() {\n    return Array.from(guessedLetters).filter((l) => !currentWord.includes(l));\n}\nfunction startGame() {\n    gameRunning = true;\n    currentWord = 'elephant';\n    guessedLetters.clear();\n    document.getElementById('wordDisplay').textContent = '_ '.repeat(currentWord.length);\n    document.getElementById('livesDisplay').textContent = 'Lives: 5';\n}\n})(typeof canvas_ui !== 'undefined' ? canvas_ui : {});\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n  try { if(typeof game_engine.startGame === 'function' && !/^class\\s/.test(String(game_engine.startGame))) game_engine.startGame(document.getElementById('app-container')); else console.log('game-engine.ts: awaiting user interaction'); } catch(e) { console.warn('game_engine init:', e); }\n  try { ui_screens.render(document.getElementById('app-container')); } catch(e) { console.error('Error calling ui_screens.render:', e); addError(e.message); }\n  try { if(typeof input_handler.handleInput === 'function' && !/^class\\s/.test(String(input_handler.handleInput))) input_handler.handleInput(document.getElementById('app-container')); else console.log('input-handler.ts: awaiting user interaction'); } catch(e) { console.warn('input_handler init:', e); }\n  try { if(typeof score_store.updateScore === 'function' && !/^class\\s/.test(String(score_store.updateScore))) score_store.updateScore(document.getElementById('app-container')); else console.log('score-store.ts: awaiting user interaction'); } catch(e) { console.warn('score_store init:', e); }\n  try { canvas_ui.render(document.getElementById('app-container')); } catch(e) { console.error('Error calling canvas_ui.render:', e); addError(e.message); }\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a hangman word game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a hangman word game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "game_engine",
+    "ui_screens",
+    "input_handler",
+    "score_store",
+    "canvas_ui"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 29011,
+ "totalErrors": 25,
+ "validatedCount": 1,
+ "failedCount": 5,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "startGame",
+    "handleInput",
+    "getGameState",
+    "resetGame",
+    "loadGame",
+    "getCategories",
+    "getCategoryWords",
+    "getGameStatus",
+    "getGameProgress",
+    "getGameLog",
+    "getGameStats"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "handleInput",
+    "revealWord",
+    "gameOver",
+    "decrementTries",
+    "incrementTries",
+    "resetGame"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "score-store.ts",
+   "dependencies": [],
+   "exports": [
+    "updateScore",
+    "getScores",
+    "resetScores"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "canvas-ui.ts",
+   "dependencies": [
+    "score_store"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "game_engine",
+    "ui_screens",
+    "input_handler",
+    "score_store",
+    "canvas_ui"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 29011,
+  "totalErrors": 25,
+  "validated": 1,
+  "failed": 5,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 116942
+ }
+}

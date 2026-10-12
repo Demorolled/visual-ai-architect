@@ -1,0 +1,370 @@
+{
+ "success": true,
+ "projectId": "78293ae8-d378-4f65-b8d8-d39085384109",
+ "matchedBy": "semantic",
+ "matchScore": 0.9051361100027009,
+ "blueprint": {
+  "app_type": "checkers_2",
+  "description": "Classic checkers/draughts with AI opponent \u2014 Interactive checkers with real-time visualization and analysis",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Game Controller",
+    "destination_module": "Game Engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Game Engine",
+    "destination_module": "Game State",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "Game State",
+    "destination_module": "AI Opponent",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "AI Opponent",
+    "destination_module": "Render View",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 6,
+  "web": 4,
+  "github": 0,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 3D Checkers Pro - Advanced AI-Powered Game - GitHub\n    A professional 3D checkers game with advanced AI, multiple play modes, and comprehensive learning features. Built with pure JavaScript and Three.js for an immersive gaming experience.\n  \u2022 checkers-game \u00b7 GitHub Topics \u00b7 GitHub\n    A general-purpose, browser-based game table for casual games and rapid board game development.\n  \u2022 obs-studio (video): Stream and record easily\n  \u2022 mpv (video): Command line media player\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n  \u2022 Section 35: SESSION UPDATE \u2014 July 26, 2026: BATCH 3 FIXES \u2014 5 REMAINING ISSUES RESOLVED\n    35.1 OVERVIEW\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nAll 5 remaining open issues from section 30.6 were fixed:\n  1. chess-engine.html \u2014 Move history + undo + lastMove highlights + localStorage\n  2. paint-studio.html \u2014 Race condition in restoreFromData() \u2192 sequential loading\n  3. terminal-os.html \u2014 innerHTML += \u2192 createElem\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "checkers_2",
+   "score": 0.9051361100027009
+  },
+  {
+   "app_type": "checkers",
+   "score": 0.8451875684721384
+  },
+  {
+   "app_type": "simon_says_2",
+   "score": 0.58650808243982
+  },
+  {
+   "app_type": "match_3_puzzle_2",
+   "score": 0.4700159919404218
+  },
+  {
+   "app_type": "crossword_builder_2",
+   "score": 0.4529108136578384
+  }
+ ],
+ "project": {
+  "id": "78293ae8-d378-4f65-b8d8-d39085384109",
+  "name": "a checkers game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "checkers_2 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "input",
+    "label": "Game Controller"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Game Engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "Game State"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "AI Opponent"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Render View"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 3,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 2,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "generated": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "matched": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "game-controller.ts",
+   "language": "typescript",
+   "code": "export class GameController {\n  private board: string[][];\n  private currentPlayer: 'white' | 'black';\n  private selectedPiece: { row: number; col: number; type: 'king' | 'pawn' } | null;\n  private gameOver: boolean;\n  private winner: 'white' | 'black' | null;\n\n  constructor() {\n    this.board = this.initializeBoard();\n    this.currentPlayer = 'white';\n    this.selectedPiece = null;\n    this.gameOver = false;\n    this.winner = null;\n  }\n\n  private initializeBoard() {\n    const board = Array.from({ length: 8 }, () => new Array(8).fill(null));\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (row < 3 && (row + col) % 2 === 1) board[row][col] = 'white';\n        if (row > 4 && (row + col) % 2 === 1) board[row][col] = 'black';\n      }\n    }\n    return board;\n  }\n\n  private isValidMove(row: number, col: number) {\n    if (row < 0 || row >= 8 || col < 0 || col >= 8) return false;\n    return (row + col) % 2 === 1;\n  }\n\n  private isSelectedPiece(row: number, col: number) {\n    if (this.selectedPiece) {\n      return this.selectedPiece.row === row && this.selectedPiece.col === col;\n    }\n    return false;\n  }\n\n  private isPlayerTurn(row: number, col: number) {\n    return this.board[row][col] === this.currentPlayer;\n  }\n\n  private isOpponent(row: number, col: number) {\n    return this.board[row][col] !== this.currentPlayer;\n  }\n\n  private isKing(row: number, col: number) {\n    return this.board[row][col] === 'white' && row === 0 || this.board[row][col] === 'black' && row === 7;\n  }\n\n  private isMoveValid(row: number, col: number) {\n    if (this.isValidMove(row, col)) {\n      const piece = this.board[row][col];\n      if (piece === this.currentPlayer) {\n        if (this.isPlayerTurn(row, col)) {\n          return true;\n        }\n      }\n    }\n    return false;\n  }\n\n  private isCapture(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isJump(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isMultiJump(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isGameOver() {\n    let whiteCount = 0;\n    let blackCount = 0;\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (this.board[row][col] === 'white') whiteCount++;\n        if (this.board[row][col] === 'black') blackCount++;\n      }\n    }\n    return whiteCount === 0 || blackCount === 0;\n  }\n\n  private getWinner() {\n    let whiteCount = 0;\n    let blackCount = 0;\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (this.board[row][col] === 'white') whiteCount++;\n        if (this.board[row][col] === 'black') blackCount++;\n      }\n    }\n    if (whiteCount === 0) return 'black';\n    if (blackCount === 0) return 'white';\n    return null;\n  }\n\n  public handleMove(row: number, col: number) {\n    if (this.gameOver) return;\n    if (this.isSelectedPiece(row, col)) {\n      this.selectedPiece = { row, col, type: this.board[row][col] };\n      return;\n    }\n    if (this.isPlayerTurn(row, col)) {\n      const selected = this.board[row][col];\n      if (selected) {\n        this.board[row][col] = null;\n        this.board[row][col] = selected;\n        this.selectedPiece = { row, col, type: selected };\n        return;\n      }\n    }\n    if (this.isOpponent(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer };\n        return;\n      }\n    }\n    if (this.isCapture(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer };\n        return;\n      }\n    }\n    if (this.isJump(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer };\n        return;\n      }\n    }\n    if (this.isMultiJump(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer };\n        return;\n      }\n    }\n    this.gameOver = true;\n    this.winner = this.getWinner();\n  }\n\n  public getBoard() {\n    return this.board;\n  }\n\n  public getCurrentPlayer() {\n    return this.currentPlayer;\n  }\n\n  public getGameOver() {\n    return this.gameOver;\n  }\n\n  public getWinner() {\n    return this.winner;\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Game Controller",
+   "dependencies": [],
+   "exports": [
+    "GameController"
+   ],
+   "errors": [
+    "TS2393: Duplicate function implementation. (line 99)",
+    "TS2322: Type 'string' is not assignable to type '\"king\" | \"pawn\"'. (line 116)",
+    "TS2322: Type 'string' is not assignable to type '\"king\" | \"pawn\"'. (line 124)",
+    "TS2322: Type '\"white\" | \"black\"' is not assignable to type '\"king\" | \"pawn\"'. (line 133)",
+    "TS2322: Type '\"white\" | \"black\"' is not assignable to type '\"king\" | \"pawn\"'. (line 142)",
+    "TS2322: Type '\"white\" | \"black\"' is not assignable to type '\"king\" | \"pawn\"'. (line 151)",
+    "TS2322: Type '\"white\" | \"black\"' is not assignable to type '\"king\" | \"pawn\"'. (line 160)",
+    "TS2393: Duplicate function implementation. (line 180)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "import { GameController } from '../game-controller/game-controller.ts';\n\nexport class GameEngine {\n  private board: Array<Array<string | null>>;\n  private currentPlayer: 'white' | 'black';\n  private selectedPiece: { row: number; col: number; type: 'king' | 'pawn' } | null;\n  private gameOver: boolean;\n  private winner: 'white' | 'black' | null;\n\n  constructor() {\n    this.board = this.initializeBoard();\n    this.currentPlayer = 'white';\n    this.selectedPiece = null;\n    this.gameOver = false;\n    this.winner = null;\n  }\n\n  private initializeBoard() {\n    const board = Array.from({ length: 8 }, () => new Array(8).fill(null));\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (row < 3 && (row + col) % 2 === 1) board[row][col] = 'white';\n        if (row > 4 && (row + col) % 2 === 1) board[row][col] = 'black';\n      }\n    }\n    return board;\n  }\n\n  private isValidMove(row: number, col: number) {\n    if (row < 0 || row >= 8 || col < 0 || col >= 8) return false;\n    return (row + col) % 2 === 1;\n  }\n\n  private isSelectedPiece(row: number, col: number) {\n    if (this.selectedPiece) {\n      return this.selectedPiece.row === row && this.selectedPiece.col === col;\n    }\n    return false;\n  }\n\n  private isPlayerTurn(row: number, col: number) {\n    return this.board[row][col] === this.currentPlayer;\n  }\n\n  private isOpponent(row: number, col: number) {\n    return this.board[row][col] !== this.currentPlayer;\n  }\n\n  private isKing(row: number, col: number) {\n    return this.board[row][col] === 'white' && row === 0 || this.board[row][col] === 'black' && row === 7;\n  }\n\n  private isMoveValid(row: number, col: number) {\n    if (this.isValidMove(row, col)) {\n      const piece = this.board[row][col];\n      if (piece === this.currentPlayer) {\n        if (this.isPlayerTurn(row, col)) {\n          return true;\n        }\n      }\n    }\n    return false;\n  }\n\n  private isCapture(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isJump(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isMultiJump(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isGameOver() {\n    let whiteCount = 0;\n    let blackCount = 0;\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (this.board[row][col] === 'white') whiteCount++;\n        if (this.board[row][col] === 'black') blackCount++;\n      }\n    }\n    return whiteCount === 0 || blackCount === 0;\n  }\n\n  private getWinner() {\n    let whiteCount = 0;\n    let blackCount = 0;\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (this.board[row][col] === 'white') whiteCount++;\n        if (this.board[row][col] === 'black') blackCount++;\n      }\n    }\n    if (whiteCount === 0) return 'black';\n    if (blackCount === 0) return 'white';\n    return null;\n  }\n\n  public handleMove(row: number, col: number) {\n    if (this.gameOver) return;\n    if (this.isSelectedPiece(row, col)) {\n      this.selectedPiece = { row, col, type: this.board[row][col] as 'king' | 'pawn' };\n      return;\n    }\n    if (this.isPlayerTurn(row, col)) {\n      const selected = this.board[row][col];\n      if (selected) {\n        this.board[row][col] = null;\n        this.board[row][col] = selected;\n        this.selectedPiece = { row, col, type: selected as 'king' | 'pawn' };\n        return;\n      }\n    }\n    if (this.isOpponent(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n        return;\n      }\n    }\n    if (this.isCapture(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n        return;\n      }\n    }\n    if (this.isJump(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n        return;\n      }\n    }\n    if (this.isMultiJump(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n        return;\n      }\n    }\n    this.gameOver = true;\n    this.winner = this.getWinner();\n    return;\n  }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "Game Engine",
+   "dependencies": [
+    "Game Controller"
+   ],
+   "exports": [
+    "GameEngine"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "game-state.ts",
+   "language": "typescript",
+   "code": "import { GameEngine } from '../game-engine/game-engine.ts';\n\nexport class GameState {\n  private board: Array<Array<string | null>>;\n  private currentPlayer: 'white' | 'black';\n  private selectedPiece: { row: number; col: number; type: 'king' | 'pawn' } | null;\n  private gameOver: boolean;\n  private winner: 'white' | 'black' | null;\n\n  constructor() {\n    this.board = this.initializeBoard();\n    this.currentPlayer = 'white';\n    this.selectedPiece = null;\n    this.gameOver = false;\n    this.winner = null;\n  }\n\n  private initializeBoard() {\n    const board = Array.from({ length: 8 }, () => new Array(8).fill(null));\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (row < 3 && (row + col) % 2 === 1) board[row][col] = 'white';\n        if (row > 4 && (row + col) % 2 === 1) board[row][col] = 'black';\n      }\n    }\n    return board;\n  }\n\n  private isValidMove(row: number, col: number) {\n    if (row < 0 || row >= 8 || col < 0 || col >= 8) return false;\n    return (row + col) % 2 === 1;\n  }\n\n  private isSelectedPiece(row: number, col: number) {\n    if (this.selectedPiece) {\n      return this.selectedPiece.row === row && this.selectedPiece.col === col;\n    }\n    return false;\n  }\n\n  private isPlayerTurn(row: number, col: number) {\n    return this.board[row][col] === this.currentPlayer;\n  }\n\n  private isOpponent(row: number, col: number) {\n    return this.board[row][col] !== this.currentPlayer;\n  }\n\n  private isKing(row: number, col: number) {\n    return this.board[row][col] === 'white' && row === 0 || this.board[row][col] === 'black' && row === 7;\n  }\n\n  private isMoveValid(row: number, col: number) {\n    if (this.isValidMove(row, col)) {\n      const piece = this.board[row][col];\n      if (piece === this.currentPlayer) {\n        if (this.isPlayerTurn(row, col)) {\n          return true;\n        }\n      }\n    }\n    return false;\n  }\n\n  private isCapture(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isJump(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isMultiJump(row: number, col: number) {\n    const piece = this.board[row][col];\n    if (piece && this.isOpponent(row, col)) {\n      return true;\n    }\n    return false;\n  }\n\n  private isGameOver() {\n    let whiteCount = 0;\n    let blackCount = 0;\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (this.board[row][col] === 'white') whiteCount++;\n        if (this.board[row][col] === 'black') blackCount++;\n      }\n    }\n    return whiteCount === 0 || blackCount === 0;\n  }\n\n  private getWinner() {\n    let whiteCount = 0;\n    let blackCount = 0;\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (this.board[row][col] === 'white') whiteCount++;\n        if (this.board[row][col] === 'black') blackCount++;\n      }\n    }\n    if (whiteCount === 0) return 'black';\n    if (blackCount === 0) return 'white';\n    return null;\n  }\n\n  public handleMove(row: number, col: number) {\n    if (this.gameOver) return;\n    if (this.isSelectedPiece(row, col)) {\n      this.selectedPiece = { row, col, type: this.board[row][col] as 'king' | 'pawn' };\n      return;\n    }\n    if (this.isPlayerTurn(row, col)) {\n      const selected = this.board[row][col];\n      if (selected) {\n        this.board[row][col] = null;\n        this.board[row][col] = selected;\n        this.selectedPiece = { row, col, type: selected as 'king' | 'pawn' };\n        return;\n      }\n    }\n    if (this.isOpponent(row, col)) {\n      const opponent = this.board[row][col];\n      if (opponent) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n        return;\n      }\n    }\n    if (this.isCapture(row, col)) {\n      this.board[row][col] = null;\n      this.board[row][col] = this.currentPlayer;\n      this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n      return;\n    }\n    if (this.isJump(row, col)) {\n      this.board[row][col] = null;\n      this.board[row][col] = this.currentPlayer;\n      this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n      return;\n    }\n    if (this.isMultiJump(row, col)) {\n      this.board[row][col] = null;\n      this.board[row][col] = this.currentPlayer;\n      this.selectedPiece = { row, col, type: this.currentPlayer as 'king' | 'pawn' };\n      return;\n    }\n    if (this.isGameOver()) {\n      this.gameOver = true;\n      this.winner = this.getWinner();\n      return;\n    }\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "Game State",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ai-opponent.ts",
+   "language": "typescript",
+   "code": "import { GameState } from '../game-state/game-state.ts';\n\nexport class AIController {\n  private depthLimit: number;\n\n  constructor(depthLimit?: number) {\n    this.depthLimit = depthLimit || 3;\n  }\n\n  public makeMove(board: Array<Array<string | null>>, currentPlayer: 'white' | 'black'): { row: number; col: number } {\n    const bestMove = this.minimax(board, this.depthLimit, -Infinity, Infinity, currentPlayer);\n    return bestMove;\n  }\n\n  private minimax(board: Array<Array<string | null>>, depth: number, alpha: number, beta: number, player: 'white' | 'black'): { row: number; col: number } {\n    if (depth === 0 || this.isGameOver(board)) {\n      return { row: -1, col: -1 };\n    }\n\n    let bestMove = { row: -1, col: -1 };\n    let bestValue = player === 'white' ? -Infinity : Infinity;\n\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (board[row][col] === player) {\n          for (let dr of [-1, 1]) {\n            for (let dc of [-1, 1]) {\n              const newRow = row + dr;\n              const newCol = col + dc;\n              if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8 && board[newRow][newCol] === null) {\n                const tempBoard = this.cloneBoard(board);\n                tempBoard[newRow][newCol] = player;\n                tempBoard[row][col] = null;\n                const value = this.minimax(tempBoard, depth - 1, alpha, beta, player === 'white' ? 'black' : 'white').row;\n                if (player === 'white') {\n                  if (value > bestValue) {\n                    bestValue = value;\n                    bestMove = { row: newRow, col: newCol };\n                    alpha = Math.max(alpha, bestValue);\n                  }\n                } else {\n                  if (value < bestValue) {\n                    bestValue = value;\n                    bestMove = { row: newRow, col: newCol };\n                    beta = Math.min(beta, bestValue);\n                  }\n                }\n                if (alpha >= beta) break;\n              }\n            }\n          }\n        }\n      }\n    }\n    return bestMove;\n  }\n\n  private isGameOver(board: Array<Array<string | null>>): boolean {\n    let whiteCount = 0;\n    let blackCount = 0;\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        if (board[row][col] === 'white') whiteCount++;\n        if (board[row][col] === 'black') blackCount++;\n      }\n    }\n    return whiteCount === 0 || blackCount === 0;\n  }\n\n  private cloneBoard(board: Array<Array<string | null>>): Array<Array<string | null>> {\n    return board.map(row => row.slice());\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "AI Opponent",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "AIController"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "render-view.ts",
+   "language": "typescript",
+   "code": "import { AIController } from '../ai-opponent/ai-opponent.ts';\n\nexport function render(container: HTMLElement) {\n  const app = document.createElement('div');\n  app.className = 'app';\n  app.style.maxWidth = '960px';\n  app.style.margin = '0 auto';\n  app.style.padding = '24px';\n\n  const board = document.createElement('div');\n  board.className = 'grid';\n  board.style.display = 'grid';\n  board.style.gridTemplateColumns = 'repeat(8, 1fr)';\n  board.style.gap = '1px';\n  board.style.border = '1px solid #333';\n  board.style.position = 'relative';\n\n  for (let row = 0; row < 8; row++) {\n    for (let col = 0; col < 8; col++) {\n      const cell = document.createElement('div');\n      cell.className = 'cell';\n      cell.style.display = 'flex';\n      cell.style.alignItems = 'center';\n      cell.style.justifyContent = 'center';\n      cell.style.fontSize = '20px';\n      cell.style.cursor = 'pointer';\n      cell.dataset.row = row;\n      cell.dataset.col = col;\n      cell.textContent = '';\n      cell.onclick = () => {\n        const r = parseInt(cell.dataset.row);\n        const c = parseInt(cell.dataset.col);\n        if (boardState[r][c] === null) {\n          boardState[r][c] = currentPlayer;\n          cell.textContent = currentPlayer;\n          cell.style.backgroundColor = currentPlayer === 'white' ? '#d9d9d9' : '#4a4a4a';\n          currentPlayer = currentPlayer === 'white' ? 'black' : 'white';\n        }\n      };\n      board.appendChild(cell);\n    }\n  }\n\n  const status = document.createElement('div');\n  status.className = 'status';\n  status.style.marginTop = '12px';\n  status.style.fontSize = '14px';\n  status.textContent = 'Turn: white';\n\n  const buttons = document.createElement('div');\n  buttons.className = 'row';\n  buttons.style.marginTop = '12px';\n  buttons.style.gap = '8px';\n\n  const newGameBtn = document.createElement('button');\n  newGameBtn.className = 'btn';\n  newGameBtn.textContent = 'New Game';\n  newGameBtn.onclick = () => {\n    boardState = Array.from({ length: 8 }, () => Array(8).fill(null));\n    currentPlayer = 'white';\n    status.textContent = 'Turn: white';\n    currentPlayer = 'white';\n  };\n\n  const aiMoveBtn = document.createElement('button');\n  aiMoveBtn.className = 'btn';\n  aiMoveBtn.textContent = 'AI Move';\n  aiMoveBtn.onclick = () => {\n    const ai = new AIController();\n    const move = ai.makeMove(boardState, currentPlayer);\n    if (move) {\n      boardState[move.row][move.col] = currentPlayer;\n      currentPlayer = currentPlayer === 'white' ? 'black' : 'white';\n      status.textContent = `Turn: ${currentPlayer}`;\n    }\n  };\n\n  buttons.appendChild(newGameBtn);\n  buttons.appendChild(aiMoveBtn);\n\n  app.appendChild(board);\n  app.appendChild(status);\n  app.appendChild(buttons);\n\n  container.appendChild(app);\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "Render View",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2322: Type 'number' is not assignable to type 'string'. (line 27)",
+    "TS2322: Type 'number' is not assignable to type 'string'. (line 28)",
+    "TS2304: Cannot find name 'boardState'. (line 33)",
+    "TS2304: Cannot find name 'boardState'. (line 34)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 34)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 35)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 36)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 37)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 37)",
+    "TS2304: Cannot find name 'boardState'. (line 59)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 60)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 62)",
+    "TS2304: Cannot find name 'boardState'. (line 70)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 70)",
+    "TS2304: Cannot find name 'boardState'. (line 72)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 72)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 73)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 73)",
+    "TS2304: Cannot find name 'currentPlayer'. (line 74)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a checkers game</title>\n  <meta name=\"description\" content=\"a checkers game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a checkers game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-maiJAO/game-controller/game-controller.ts\n  var GameController = class {\n    constructor() {\n      __publicField(this, \"board\");\n      __publicField(this, \"currentPlayer\");\n      __publicField(this, \"selectedPiece\");\n      __publicField(this, \"gameOver\");\n      __publicField(this, \"winner\");\n      this.board = this.initializeBoard();\n      this.currentPlayer = \"white\";\n      this.selectedPiece = null;\n      this.gameOver = false;\n      this.winner = null;\n    }\n    initializeBoard() {\n      const board = Array.from({ length: 8 }, () => new Array(8).fill(null));\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (row < 3 && (row + col) % 2 === 1) board[row][col] = \"white\";\n          if (row > 4 && (row + col) % 2 === 1) board[row][col] = \"black\";\n        }\n      }\n      return board;\n    }\n    isValidMove(row, col) {\n      if (row < 0 || row >= 8 || col < 0 || col >= 8) return false;\n      return (row + col) % 2 === 1;\n    }\n    isSelectedPiece(row, col) {\n      if (this.selectedPiece) {\n        return this.selectedPiece.row === row && this.selectedPiece.col === col;\n      }\n      return false;\n    }\n    isPlayerTurn(row, col) {\n      return this.board[row][col] === this.currentPlayer;\n    }\n    isOpponent(row, col) {\n      return this.board[row][col] !== this.currentPlayer;\n    }\n    isKing(row, col) {\n      return this.board[row][col] === \"white\" && row === 0 || this.board[row][col] === \"black\" && row === 7;\n    }\n    isMoveValid(row, col) {\n      if (this.isValidMove(row, col)) {\n        const piece = this.board[row][col];\n        if (piece === this.currentPlayer) {\n          if (this.isPlayerTurn(row, col)) {\n            return true;\n          }\n        }\n      }\n      return false;\n    }\n    isCapture(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isJump(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isMultiJump(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isGameOver() {\n      let whiteCount = 0;\n      let blackCount = 0;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (this.board[row][col] === \"white\") whiteCount++;\n          if (this.board[row][col] === \"black\") blackCount++;\n        }\n      }\n      return whiteCount === 0 || blackCount === 0;\n    }\n    getWinner() {\n      let whiteCount = 0;\n      let blackCount = 0;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (this.board[row][col] === \"white\") whiteCount++;\n          if (this.board[row][col] === \"black\") blackCount++;\n        }\n      }\n      if (whiteCount === 0) return \"black\";\n      if (blackCount === 0) return \"white\";\n      return null;\n    }\n    handleMove(row, col) {\n      if (this.gameOver) return;\n      if (this.isSelectedPiece(row, col)) {\n        this.selectedPiece = { row, col, type: this.board[row][col] };\n        return;\n      }\n      if (this.isPlayerTurn(row, col)) {\n        const selected = this.board[row][col];\n        if (selected) {\n          this.board[row][col] = null;\n          this.board[row][col] = selected;\n          this.selectedPiece = { row, col, type: selected };\n          return;\n        }\n      }\n      if (this.isOpponent(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      if (this.isCapture(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      if (this.isJump(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      if (this.isMultiJump(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      this.gameOver = true;\n      this.winner = this.getWinner();\n    }\n    getBoard() {\n      return this.board;\n    }\n    getCurrentPlayer() {\n      return this.currentPlayer;\n    }\n    getGameOver() {\n      return this.gameOver;\n    }\n    getWinner() {\n      return this.winner;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-maiJAO/game-engine/game-engine.ts\n  var GameEngine = class {\n    constructor() {\n      __publicField(this, \"board\");\n      __publicField(this, \"currentPlayer\");\n      __publicField(this, \"selectedPiece\");\n      __publicField(this, \"gameOver\");\n      __publicField(this, \"winner\");\n      this.board = this.initializeBoard();\n      this.currentPlayer = \"white\";\n      this.selectedPiece = null;\n      this.gameOver = false;\n      this.winner = null;\n    }\n    initializeBoard() {\n      const board = Array.from({ length: 8 }, () => new Array(8).fill(null));\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (row < 3 && (row + col) % 2 === 1) board[row][col] = \"white\";\n          if (row > 4 && (row + col) % 2 === 1) board[row][col] = \"black\";\n        }\n      }\n      return board;\n    }\n    isValidMove(row, col) {\n      if (row < 0 || row >= 8 || col < 0 || col >= 8) return false;\n      return (row + col) % 2 === 1;\n    }\n    isSelectedPiece(row, col) {\n      if (this.selectedPiece) {\n        return this.selectedPiece.row === row && this.selectedPiece.col === col;\n      }\n      return false;\n    }\n    isPlayerTurn(row, col) {\n      return this.board[row][col] === this.currentPlayer;\n    }\n    isOpponent(row, col) {\n      return this.board[row][col] !== this.currentPlayer;\n    }\n    isKing(row, col) {\n      return this.board[row][col] === \"white\" && row === 0 || this.board[row][col] === \"black\" && row === 7;\n    }\n    isMoveValid(row, col) {\n      if (this.isValidMove(row, col)) {\n        const piece = this.board[row][col];\n        if (piece === this.currentPlayer) {\n          if (this.isPlayerTurn(row, col)) {\n            return true;\n          }\n        }\n      }\n      return false;\n    }\n    isCapture(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isJump(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isMultiJump(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isGameOver() {\n      let whiteCount = 0;\n      let blackCount = 0;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (this.board[row][col] === \"white\") whiteCount++;\n          if (this.board[row][col] === \"black\") blackCount++;\n        }\n      }\n      return whiteCount === 0 || blackCount === 0;\n    }\n    getWinner() {\n      let whiteCount = 0;\n      let blackCount = 0;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (this.board[row][col] === \"white\") whiteCount++;\n          if (this.board[row][col] === \"black\") blackCount++;\n        }\n      }\n      if (whiteCount === 0) return \"black\";\n      if (blackCount === 0) return \"white\";\n      return null;\n    }\n    handleMove(row, col) {\n      if (this.gameOver) return;\n      if (this.isSelectedPiece(row, col)) {\n        this.selectedPiece = { row, col, type: this.board[row][col] };\n        return;\n      }\n      if (this.isPlayerTurn(row, col)) {\n        const selected = this.board[row][col];\n        if (selected) {\n          this.board[row][col] = null;\n          this.board[row][col] = selected;\n          this.selectedPiece = { row, col, type: selected };\n          return;\n        }\n      }\n      if (this.isOpponent(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      if (this.isCapture(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      if (this.isJump(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      if (this.isMultiJump(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      this.gameOver = true;\n      this.winner = this.getWinner();\n      return;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-maiJAO/game-state/game-state.ts\n  var GameState = class {\n    constructor() {\n      __publicField(this, \"board\");\n      __publicField(this, \"currentPlayer\");\n      __publicField(this, \"selectedPiece\");\n      __publicField(this, \"gameOver\");\n      __publicField(this, \"winner\");\n      this.board = this.initializeBoard();\n      this.currentPlayer = \"white\";\n      this.selectedPiece = null;\n      this.gameOver = false;\n      this.winner = null;\n    }\n    initializeBoard() {\n      const board = Array.from({ length: 8 }, () => new Array(8).fill(null));\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (row < 3 && (row + col) % 2 === 1) board[row][col] = \"white\";\n          if (row > 4 && (row + col) % 2 === 1) board[row][col] = \"black\";\n        }\n      }\n      return board;\n    }\n    isValidMove(row, col) {\n      if (row < 0 || row >= 8 || col < 0 || col >= 8) return false;\n      return (row + col) % 2 === 1;\n    }\n    isSelectedPiece(row, col) {\n      if (this.selectedPiece) {\n        return this.selectedPiece.row === row && this.selectedPiece.col === col;\n      }\n      return false;\n    }\n    isPlayerTurn(row, col) {\n      return this.board[row][col] === this.currentPlayer;\n    }\n    isOpponent(row, col) {\n      return this.board[row][col] !== this.currentPlayer;\n    }\n    isKing(row, col) {\n      return this.board[row][col] === \"white\" && row === 0 || this.board[row][col] === \"black\" && row === 7;\n    }\n    isMoveValid(row, col) {\n      if (this.isValidMove(row, col)) {\n        const piece = this.board[row][col];\n        if (piece === this.currentPlayer) {\n          if (this.isPlayerTurn(row, col)) {\n            return true;\n          }\n        }\n      }\n      return false;\n    }\n    isCapture(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isJump(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isMultiJump(row, col) {\n      const piece = this.board[row][col];\n      if (piece && this.isOpponent(row, col)) {\n        return true;\n      }\n      return false;\n    }\n    isGameOver() {\n      let whiteCount = 0;\n      let blackCount = 0;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (this.board[row][col] === \"white\") whiteCount++;\n          if (this.board[row][col] === \"black\") blackCount++;\n        }\n      }\n      return whiteCount === 0 || blackCount === 0;\n    }\n    getWinner() {\n      let whiteCount = 0;\n      let blackCount = 0;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (this.board[row][col] === \"white\") whiteCount++;\n          if (this.board[row][col] === \"black\") blackCount++;\n        }\n      }\n      if (whiteCount === 0) return \"black\";\n      if (blackCount === 0) return \"white\";\n      return null;\n    }\n    handleMove(row, col) {\n      if (this.gameOver) return;\n      if (this.isSelectedPiece(row, col)) {\n        this.selectedPiece = { row, col, type: this.board[row][col] };\n        return;\n      }\n      if (this.isPlayerTurn(row, col)) {\n        const selected = this.board[row][col];\n        if (selected) {\n          this.board[row][col] = null;\n          this.board[row][col] = selected;\n          this.selectedPiece = { row, col, type: selected };\n          return;\n        }\n      }\n      if (this.isOpponent(row, col)) {\n        const opponent = this.board[row][col];\n        if (opponent) {\n          this.board[row][col] = null;\n          this.board[row][col] = this.currentPlayer;\n          this.selectedPiece = { row, col, type: this.currentPlayer };\n          return;\n        }\n      }\n      if (this.isCapture(row, col)) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer };\n        return;\n      }\n      if (this.isJump(row, col)) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer };\n        return;\n      }\n      if (this.isMultiJump(row, col)) {\n        this.board[row][col] = null;\n        this.board[row][col] = this.currentPlayer;\n        this.selectedPiece = { row, col, type: this.currentPlayer };\n        return;\n      }\n      if (this.isGameOver()) {\n        this.gameOver = true;\n        this.winner = this.getWinner();\n        return;\n      }\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-maiJAO/ai-opponent/ai-opponent.ts\n  var AIController = class {\n    constructor(depthLimit) {\n      __publicField(this, \"depthLimit\");\n      this.depthLimit = depthLimit || 3;\n    }\n    makeMove(board, currentPlayer2) {\n      const bestMove = this.minimax(board, this.depthLimit, -Infinity, Infinity, currentPlayer2);\n      return bestMove;\n    }\n    minimax(board, depth, alpha, beta, player) {\n      if (depth === 0 || this.isGameOver(board)) {\n        return { row: -1, col: -1 };\n      }\n      let bestMove = { row: -1, col: -1 };\n      let bestValue = player === \"white\" ? -Infinity : Infinity;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (board[row][col] === player) {\n            for (let dr of [-1, 1]) {\n              for (let dc of [-1, 1]) {\n                const newRow = row + dr;\n                const newCol = col + dc;\n                if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8 && board[newRow][newCol] === null) {\n                  const tempBoard = this.cloneBoard(board);\n                  tempBoard[newRow][newCol] = player;\n                  tempBoard[row][col] = null;\n                  const value = this.minimax(tempBoard, depth - 1, alpha, beta, player === \"white\" ? \"black\" : \"white\").row;\n                  if (player === \"white\") {\n                    if (value > bestValue) {\n                      bestValue = value;\n                      bestMove = { row: newRow, col: newCol };\n                      alpha = Math.max(alpha, bestValue);\n                    }\n                  } else {\n                    if (value < bestValue) {\n                      bestValue = value;\n                      bestMove = { row: newRow, col: newCol };\n                      beta = Math.min(beta, bestValue);\n                    }\n                  }\n                  if (alpha >= beta) break;\n                }\n              }\n            }\n          }\n        }\n      }\n      return bestMove;\n    }\n    isGameOver(board) {\n      let whiteCount = 0;\n      let blackCount = 0;\n      for (let row = 0; row < 8; row++) {\n        for (let col = 0; col < 8; col++) {\n          if (board[row][col] === \"white\") whiteCount++;\n          if (board[row][col] === \"black\") blackCount++;\n        }\n      }\n      return whiteCount === 0 || blackCount === 0;\n    }\n    cloneBoard(board) {\n      return board.map((row) => row.slice());\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-maiJAO/render-view/render-view.ts\n  function render(container) {\n    const app = document.createElement(\"div\");\n    app.className = \"app\";\n    app.style.maxWidth = \"960px\";\n    app.style.margin = \"0 auto\";\n    app.style.padding = \"24px\";\n    const board = document.createElement(\"div\");\n    board.className = \"grid\";\n    board.style.display = \"grid\";\n    board.style.gridTemplateColumns = \"repeat(8, 1fr)\";\n    board.style.gap = \"1px\";\n    board.style.border = \"1px solid #333\";\n    board.style.position = \"relative\";\n    for (let row = 0; row < 8; row++) {\n      for (let col = 0; col < 8; col++) {\n        const cell = document.createElement(\"div\");\n        cell.className = \"cell\";\n        cell.style.display = \"flex\";\n        cell.style.alignItems = \"center\";\n        cell.style.justifyContent = \"center\";\n        cell.style.fontSize = \"20px\";\n        cell.style.cursor = \"pointer\";\n        cell.dataset.row = row;\n        cell.dataset.col = col;\n        cell.textContent = \"\";\n        cell.onclick = () => {\n          const r = parseInt(cell.dataset.row);\n          const c = parseInt(cell.dataset.col);\n          if (boardState[r][c] === null) {\n            boardState[r][c] = currentPlayer;\n            cell.textContent = currentPlayer;\n            cell.style.backgroundColor = currentPlayer === \"white\" ? \"#d9d9d9\" : \"#4a4a4a\";\n            currentPlayer = currentPlayer === \"white\" ? \"black\" : \"white\";\n          }\n        };\n        board.appendChild(cell);\n      }\n    }\n    const status = document.createElement(\"div\");\n    status.className = \"status\";\n    status.style.marginTop = \"12px\";\n    status.style.fontSize = \"14px\";\n    status.textContent = \"Turn: white\";\n    const buttons = document.createElement(\"div\");\n    buttons.className = \"row\";\n    buttons.style.marginTop = \"12px\";\n    buttons.style.gap = \"8px\";\n    const newGameBtn = document.createElement(\"button\");\n    newGameBtn.className = \"btn\";\n    newGameBtn.textContent = \"New Game\";\n    newGameBtn.onclick = () => {\n      boardState = Array.from({ length: 8 }, () => Array(8).fill(null));\n      currentPlayer = \"white\";\n      status.textContent = \"Turn: white\";\n      currentPlayer = \"white\";\n    };\n    const aiMoveBtn = document.createElement(\"button\");\n    aiMoveBtn.className = \"btn\";\n    aiMoveBtn.textContent = \"AI Move\";\n    aiMoveBtn.onclick = () => {\n      const ai = new AIController();\n      const move = ai.makeMove(boardState, currentPlayer);\n      if (move) {\n        boardState[move.row][move.col] = currentPlayer;\n        currentPlayer = currentPlayer === \"white\" ? \"black\" : \"white\";\n        status.textContent = `Turn: ${currentPlayer}`;\n      }\n    };\n    buttons.appendChild(newGameBtn);\n    buttons.appendChild(aiMoveBtn);\n    app.appendChild(board);\n    app.appendChild(status);\n    app.appendChild(buttons);\n    container.appendChild(app);\n  }\n\n  // ../../../../../tmp/vaca-preview-maiJAO/_preview_entry.ts\n  try {\n    if (typeof GameController === \"function\" && !/^class\\s/.test(String(GameController))) {\n      GameController(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-controller.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Controller.GameController:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof GameEngine === \"function\" && !/^class\\s/.test(String(GameEngine))) {\n      GameEngine(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Engine.GameEngine:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof GameState === \"function\" && !/^class\\s/.test(String(GameState))) {\n      GameState(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-state.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_State.GameState:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof AIController === \"function\" && !/^class\\s/.test(String(AIController))) {\n      AIController(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ai-opponent.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling AI_Opponent.AIController:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"render-view.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Render_View.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a checkers game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a checkers game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 46987,
+ "totalErrors": 27,
+ "validatedCount": 4,
+ "failedCount": 2,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "game-controller.ts",
+   "dependencies": [],
+   "exports": [
+    "GameController"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [
+    "Game Controller"
+   ],
+   "exports": [
+    "GameEngine"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "game-state.ts",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "ai-opponent.ts",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "AIController"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "render-view.ts",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 46987,
+  "totalErrors": 27,
+  "validated": 4,
+  "failed": 2,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 1156319
+ }
+}

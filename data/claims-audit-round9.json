@@ -1,0 +1,183 @@
+{
+ "results": [
+  {
+   "claim": "read named files",
+   "probe": "read backend/src/index.ts",
+   "passed": true,
+   "detail": "response[:200]: The first few lines of `backend/src/index.ts` are as follows:\n\n```typescript\nimport express from 'express';\nimport cors from 'cors';\nimport dotenv from 'dotenv';\nimport http from 'http';\nimport path f (attempt 1)",
+   "score": 9
+  },
+  {
+   "claim": "search codebase",
+   "probe": "search for sessionMemory",
+   "passed": true,
+   "detail": "response[:220]: The word \"sessionMemory\" is referenced in the following files:\n\n- CHANGE_LOG.md\n- backend/dist/database/sessionMemory.d.ts\n- backend/dist/database/sessionMemory.js\n- backend/dist/database/sessionMemory.test.js\n- backend/",
+   "score": 9
+  },
+  {
+   "claim": "create file in chat-files",
+   "probe": "create audit-test file",
+   "passed": true,
+   "detail": "files: ['data/chat-files/audit-test-fc.txt'] (attempt 1) | resp: \u2705 Created \"audit-test-fc.txt\" \u2014 done for real this time.\n\u2022 File: /home/final-flash1/Desktop/visual-ai-architect/data/chat-files/audit-test-fc.txt  (11",
+   "score": 9
+  },
+  {
+   "claim": "write memory",
+   "probe": "remember favorite color teal",
+   "passed": true,
+   "detail": "notes matching 'teal': True | resp: \u2705 Saved to my memory \u2014 done for real this time.\n\u2022 File: data/session-memory.json  |  Note: \"my favorite color is teal\" (1 total)\n\u2022 It's now part of my",
+   "score": 9
+  },
+  {
+   "claim": "recall memory",
+   "probe": "what is my favorite color?",
+   "passed": true,
+   "detail": "resp: Your favorite color is teal.",
+   "score": 8
+  },
+  {
+   "claim": "code generation",
+   "probe": "fibonacci python function",
+   "passed": true,
+   "detail": "resp[:200]: Certainly! Here's a Python function that computes Fibonacci numbers using memoization:\n\n```python\ndef fibonacci(n, memo={}):\n    if n in memo:\n        return memo[n]\n    if n <= 1:\n        return n\n  ",
+   "score": 8
+  },
+  {
+   "claim": "write-code files array",
+   "probe": "/write-code returns files[] of written {path,content}",
+   "passed": true,
+   "detail": "files: ['src/index.ts', 'src/todo-service.ts', 'src/todo-storage.ts'] | written-ok: ['src/index.ts', 'src/todo-service.ts', 'src/todo-storage.ts'] | resp keys: ['cliSmoke', 'compileStatus', 'contractViolations', 'exportDir', 'files', 'mode', 'renderSmoke', 'repairRounds', 'success', 'summary']",
+   "score": 9
+  },
+  {
+   "claim": "blueprint generation",
+   "probe": "build todo blueprint (wiring + edges reference real modules/nodes)",
+   "passed": false,
+   "detail": "checklist=0 wiring=0 dangleMod=0 nodes=0 edges=0 dangleEdge=0 | matchedBy=None err=timed out",
+   "score": 6
+  },
+  {
+   "claim": "self-analysis",
+   "probe": "read own source + explain",
+   "passed": true,
+   "detail": "resp[:250]: The `getSoulPromptModifier` function in `soulService.ts` generates a personality prompt modifier based on the current soul configuration. This modifier is used to shape the personality of the language model (LLM) by injecting it into the system promp",
+   "score": 8
+  },
+  {
+   "claim": "LLM integration",
+   "probe": "/api/health llm block",
+   "passed": true,
+   "detail": "health llm: {\"up\": true, \"model\": \"qwen2.5-coder-14b-uncensored-dspark\"}",
+   "score": 8
+  },
+  {
+   "claim": "WebSocket",
+   "probe": "socket.io polling handshake",
+   "passed": true,
+   "detail": "handshake: HTTP/1.1 200 OK\r\nX-Powered-By: Express\r\nVary: Origin\r\nAccess-Control-Allow-Credentials: true\r\nAccept-Ranges: bytes\r\nCach",
+   "score": 8
+  },
+  {
+   "claim": "live codegen progress stream",
+   "probe": "generation_progress events over /ws during write-code",
+   "passed": true,
+   "detail": "events: 14 | generating:8% \u2192 generating:17% \u2192 validating:40% \u2192 validating:70% \u2192 validating:76% \u2192 validating:87% \u2192 validating:94% \u2192 validating:100% \u2192 validating:92% \u2192 validating:87% \u2192 validating:92% \u2192 validating:93% \u2192 validating:95% \u2192 done:100%",
+   "score": 9
+  },
+  {
+   "claim": "TTS",
+   "probe": "voices list + real MP3 synthesis",
+   "passed": true,
+   "detail": "voices: 12 | synth: HTTP 200, 16992 bytes, audio/mpeg, magic=True",
+   "score": 10
+  },
+  {
+   "claim": "emotional response",
+   "probe": "stressed user message",
+   "passed": true,
+   "detail": "resp[:250]: I understand that you're feeling stressed about your deadline tomorrow. It can be tough when things don't go as planned. Do you have any specific concerns or tasks that are causing the most difficulty?",
+   "score": 8
+  },
+  {
+   "claim": "emotional continuity",
+   "probe": "turn-2 worse news \u2192 warm + references turn 1",
+   "passed": false,
+   "detail": "turn2 warm=False referencesTurn1=True | resp[:220]: That's tough, considering everything else you're dealing with. Losing work can be really stressful. Have you tried to recover any files? Sometimes there are backup options or ways to retrieve lost data.",
+   "score": 4
+  },
+  {
+   "claim": "emotion",
+   "probe": "soul.json emotional_state history freshness",
+   "passed": true,
+   "detail": "dominant: neutral | entries: 25 | last_ts: 2026-08-16T14:23:18.594Z (was stale pre-P2: Jul 4)",
+   "score": 8
+  },
+  {
+   "claim": "project mgmt",
+   "probe": "save/load/export/import round-trip + disk persistence",
+   "passed": true,
+   "detail": "create:201 | get:200 | update:200 | export:200 | import:201 | delete:200/gone:404 | disk=True",
+   "score": 10
+  },
+  {
+   "claim": "workflow: define the idea",
+   "probe": "blueprint description states the core functionality/problem",
+   "passed": false,
+   "detail": "desc[:200]: ",
+   "score": 3
+  },
+  {
+   "claim": "workflow: sketch the architecture",
+   "probe": "blueprint wiring_graph nodes+edges (no dangling refs)",
+   "passed": false,
+   "detail": "wiring=0 nodes=0 edges=0 dangleMod=0 dangleEdge=0",
+   "score": 5
+  },
+  {
+   "claim": "workflow: choose a language",
+   "probe": "blueprint target_stack names concrete technologies per layer",
+   "passed": false,
+   "detail": "stack: {}",
+   "score": 4
+  },
+  {
+   "claim": "workflow: core-first (core separate from UI)",
+   "probe": "write-code emits core/business-logic files separate from UI files",
+   "passed": false,
+   "detail": "core=False ui=False | no files: write cycle failed",
+   "score": 3
+  },
+  {
+   "claim": "workflow: UI design",
+   "probe": "write-code emits UI/component files (or ui_screens in blueprint checklist)",
+   "passed": false,
+   "detail": "ui=False checklist_has_ui_screens=False | no files: write cycle failed",
+   "score": 4
+  },
+  {
+   "claim": "workflow: wire up the UI",
+   "probe": "UI connected to core (wiring edge ui\u2192api and/or UI+API files in one write)",
+   "passed": false,
+   "detail": "wireEdge=False uiAndApiFiles=False | no files: write cycle failed",
+   "score": 4
+  },
+  {
+   "claim": "workflow: testing",
+   "probe": "write-code emits unit/integration test files",
+   "passed": false,
+   "detail": "tests=False | no files: write cycle failed",
+   "score": 3
+  },
+  {
+   "claim": "workflow: deployment",
+   "probe": "write-code emits deployment artifacts (Dockerfile/scripts)",
+   "passed": false,
+   "detail": "deploy=False | no files: write cycle failed",
+   "score": 3
+  }
+ ],
+ "total": 169,
+ "max": 250,
+ "pct": 68,
+ "at": "2026-08-16T10:47:24Z"
+}

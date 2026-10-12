@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkers Game</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: #0f0f1a;
+  color: #e0e0e0;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 50px);
+  grid-template-rows: repeat(8, 50px);
+  gap: 2px;
+  margin: 20px;
+}
+.cell {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.red { background: #a20d1d; color: #ffffff; }
+.black { background: #2c2c3e; color: #ffffff; }
+.selected { outline: 2px solid #ffcc00; }
+.highlight { background: rgba(255, 204, 0, 0.2); }
+#status { text-align: center; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="board" id="board"></div>
+<div id="status" role="status"></div>
+
+<script>
+const BOARD_SIZE = 8;
+const PLAYER_RED = 'red';
+const PLAYER_BLACK = 'black';
+let currentPlayer = PLAYER_RED;
+let selectedPiece = null;
+let highlightedCells = [];
+
+const boardState = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
+
+// Initialize board
+function initBoard() {
+  for (let row = 0; row < BOARD_SIZE; row++) {
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      if ((row + col) % 2 !== 0) {
+        if (row < 3) boardState[row][col] = PLAYER_BLACK;
+        if (row > 4) boardState[row][col] = PLAYER_RED;
+      }
+    }
+  }
+  renderBoard();
+}
+
+// Render the board
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  highlightedCells = [];
+
+  for (let row = 0; row < BOARD_SIZE; row++) {
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.style.backgroundColor = (row + col) % 2 === 0 ? '#1a1a2e' : '#0f0f1a';
+      cell.style.border = '1px solid #0a0a14';
+
+      if (boardState[row][col]) {
+        cell.textContent = boardState[row][col] === PLAYER_RED ? '●' : '○';
+        cell.classList.add(boardState[row][col]);
+        cell.addEventListener('click', () => handleCellClick(row, col));
+      }
+
+      board.appendChild(cell);
+    }
+  }
+}
+
+// Handle cell click
+function handleCellClick(row, col) {
+  if (selectedPiece) {
+    const moves = getValidMoves(row, col);
+    if (moves.some(m => m.destinationRow === row && m.destinationCol === col)) {
+      boardState[moves.find(m => m.

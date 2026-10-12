@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "request": "Build a simple counter app in a single HTML file. It has a big number display, increment and decrement buttons, and a reset button. The counter value persists across page reloads using localStorage.",
+  "intent": {"goal": "simple counter app in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Counter app HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "", "files": ["index.html"]
+}

@@ -1,0 +1,264 @@
+{
+ "success": true,
+ "projectId": "da3fce28-927f-4776-8ae8-b7463cb1d7b0",
+ "matchedBy": "semantic",
+ "matchScore": 0.945071540697936,
+ "blueprint": {
+  "app_type": "file_encryption_tool",
+  "description": "AES-256 file encryption/decryption utility \u2014 Interactive desktop tool for file encryption tool",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Data Store",
+    "destination_module": "Search & Filter",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Search & Filter",
+    "destination_module": "User Interface",
+    "data_passed": "results"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 GitHub - AlDanial/cloc: cloc counts blank lines, comment lines, and ...\n    Overview cloc counts blank lines, comment lines, and physical lines of source code in many programming languages. Given two versions of a code base, cloc can compute differences in blank, comment, and\n  \u2022 line-counter \u00b7 GitHub Topics \u00b7 GitHub\n    Line Counter is a command-line tool written in Go that allows you to count the number of non-comment lines in a file or directory containing Go source code files.\n  \u2022 \u2b503 vikramdotcom/COMMAND-LINE-WORDS-COUNTER-BY-VIKRAM: Word Counter CLI (TypeScript) A lightweight command-line utility written in TypeScript to count words in text files. Whether you\u2019re a writer, develope\n  \u2022 \u2b503 xiyuanyang-code/CodeLines: Repo Code Line Counter: a CLI tool counting the number of code lines in a repository, with options to ignore specific folders and filter by file exten\n  \u2022 gitea (developer-tools): Accelerate DevOps with Gitea\n  \u2022 neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 5: BACKEND APPLICATION\n    5.1 PACKAGE DETAILS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nRuntime:    Node.js (ESM - type:module)\nRunner:     tsx (dev), tsc \u2192 node (prod)\nFramework:  Express 4.18.2\nAI SDK:     OpenAI SDK 6.37.0\nWebSocket:  socket.io 4.8.3\nPort:       3001\nTesting:    Vitest 4.1.8\nTypeScript: 5.3.3, target ES2022, strict mode\n\n5.2 \n  \u2022 Section 28: SESSION UPDATE \u2014 July 26, 2026: SYSTEM IMPROVEMENTS\n    28.1 12 NEW APPS CREATED (projects/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTier 1 \u2014 Simple:\n  memory-game.html       (9.9 KB) \u2014 Card flipping memory game\n  quote-generator.html   (12 KB)  \u2014 Random quote generator with categories\n\nTier 2 \u2014 Medium:\n  pomodoro-timer.html    (8 KB)   \u2014 Work/break timer\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/\n  \u2022 git_status \u2014 development tool\n    Get the current git repository status (branch, changed files, staged/unstaged)\n    Code: // Tool: git_status\n// Category: development\n// Risk: readonly\n// Get the current git repository status (branch, changed files, staged/unstaged)\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam"
+ },
+ "candidates": [
+  {
+   "app_type": "file_encryption_tool",
+   "score": 0.945071540697936
+  },
+  {
+   "app_type": "backup_tool",
+   "score": 0.8099299419858625
+  },
+  {
+   "app_type": "pe_file_viewer",
+   "score": 0.6273500981126146
+  },
+  {
+   "app_type": "hudi_merger_tool",
+   "score": 0.5904452359113153
+  },
+  {
+   "app_type": "file_explorer",
+   "score": 0.5872199982951628
+  }
+ ],
+ "project": {
+  "id": "da3fce28-927f-4776-8ae8-b7463cb1d7b0",
+  "name": "a file line counter cli tool",
+  "targetOS": "linux",
+  "nodeCount": 4,
+  "edgeCount": 2,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "file_encryption_tool blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "database",
+    "label": "Data Store"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Search & Filter"
+   },
+   {
+    "id": "mod_2",
+    "type": "ui",
+    "label": "User Interface"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 1,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 2,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "generated": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "matched": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "export interface FileMetadata {\n  name: string;\n  content: string;\n  size: number;\n  modified: string;\n}\n\nexport async function loadFiles(): Promise<FileMetadata[]> {\n  try {\n    const files = await readFile('files.json');\n    return JSON.parse(files) as FileMetadata[];\n  } catch (err) {\n    console.error('Failed to load files:', err);\n    return [];\n  }\n}\n\nexport async function saveFiles(files: FileMetadata[]): Promise<void> {\n  try {\n    await writeFile('files.json', JSON.stringify(files, null, 2));\n  } catch (err) {\n    console.error('Failed to save files:', err);\n  }\n}\n\nexport async function addFile(file: FileMetadata): Promise<void> {\n  try {\n    const existing = await loadFiles();\n    const unique = existing.find(f => f.name === file.name);\n    if (unique) {\n      unique.content = file.content;\n      unique.size = file.size;\n      unique.modified = new Date().toISOString();\n    } else {\n      existing.push(file);\n    }\n    await saveFiles(existing);\n  } catch (err) {\n    console.error('Failed to add file:', err);\n  }\n}\n\nexport async function deleteFile(name: string): Promise<void> {\n  try {\n    const existing = await loadFiles();\n    const filtered = existing.filter(f => f.name !== name);\n    await saveFiles(filtered);\n  } catch (err) {\n    console.error('Failed to delete file:', err);\n  }\n}\n\nexport async function searchFiles(query: string): Promise<FileMetadata[]> {\n  try {\n    const files = await loadFiles();\n    return files.filter(f => f.name.includes(query) || f.content.includes(query));\n  } catch (err) {\n    console.error('Failed to search files:', err);\n    return [];\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Data Store",
+   "dependencies": [],
+   "exports": [
+    "FileMetadata"
+   ],
+   "errors": [
+    "TS2552: Cannot find name 'readFile'. Did you mean 'addFile'? (line 10)",
+    "TS2304: Cannot find name 'writeFile'. (line 20)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "search-filter.ts",
+   "language": "typescript",
+   "code": "import { FileMetadata } from '../data-store/data-store.ts';\n\nexport function searchAndFilter(query: string): FileMetadata[] {\n  const files = (window as any).loadFiles();\n  if (!files) return [];\n  return files.filter(f => f.name.includes(query) || f.content.includes(query));\n}\n\nexport function addFile(file: FileMetadata): void {\n  (window as any).addFile(file);\n}\n\nexport function deleteFile(name: string): void {\n  (window as any).deleteFile(name);\n}\n\nexport function searchFiles(query: string): FileMetadata[] {\n  const files = (window as any).loadFiles();\n  if (!files) return [];\n  return files.filter(f => f.name.includes(query) || f.content.includes(query));\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "Search & Filter",
+   "dependencies": [
+    "Data Store"
+   ],
+   "exports": [
+    "searchAndFilter",
+    "addFile",
+    "deleteFile",
+    "searchFiles"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "user-interface.ts",
+   "language": "typescript",
+   "code": "import { searchAndFilter, addFile, deleteFile, searchFiles } from '../search-filter/search-filter.ts';\n\nexport function render(container: HTMLElement) {\n  const title = document.createElement('h1');\n  title.textContent = 'File Encryption Tool';\n  container.appendChild(title);\n\n  const fileInput = document.createElement('input');\n  fileInput.type = 'file';\n  fileInput.id = 'fileInput';\n  fileInput.accept = '.txt,.json,.js';\n  fileInput.addEventListener('change', handleFileChange);\n  container.appendChild(fileInput);\n\n  const actionBtn = document.createElement('button');\n  actionBtn.textContent = 'Encrypt/Decrypt';\n  actionBtn.id = 'actionBtn';\n  actionBtn.addEventListener('click', handleAction);\n  container.appendChild(actionBtn);\n\n  const outputDiv = document.createElement('div');\n  outputDiv.id = 'outputDiv';\n  container.appendChild(outputDiv);\n\n  function handleFileChange(event: Event) {\n    const target = event.target as HTMLInputElement;\n    if (target.files && target.files.length > 0) {\n      const file = target.files[0];\n      if (file) {\n        const reader = new FileReader();\n        reader.onload = (e) => {\n          if (e.target?.result) {\n            const content = e.target.result;\n            const lines = (content as string).split('\\n').length;\n            outputDiv.textContent = `File: ${file.name} \u00b7 ${lines} lines`;\n          }\n        };\n        reader.readAsText(file);\n      }\n    }\n  }\n\n  function handleAction() {\n    const output = document.getElementById('outputDiv');\n    if (output) {\n      output.textContent = 'Processing...';\n    }\n    const files = document.getElementById('fileInput');\n    if (files && files.files && files.files.length > 0) {\n      const file = files.files[0];\n      if (file) {\n        const reader = new FileReader();\n        reader.onload = (e) => {\n          if (e.target?.result) {\n            const content = e.target.result;\n            const lines = (content as string).split('\\n').length;\n            outputDiv.textContent = `File: ${file.name} \u00b7 ${lines} lines`;\n          }\n        };\n        reader.readAsText(file);\n      }\n    }\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "User Interface",
+   "dependencies": [
+    "Search & Filter"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2339: Property 'files' does not exist on type 'HTMLElement'. (line 49)",
+    "TS2339: Property 'files' does not exist on type 'HTMLElement'. (line 49)",
+    "TS2339: Property 'files' does not exist on type 'HTMLElement'. (line 50)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a file line counter cli tool</title>\n  <meta name=\"description\" content=\"a file line counter cli tool \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a file line counter cli tool...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-27wJCP/search-filter/search-filter.ts\n  function searchAndFilter(query) {\n    const files = window.loadFiles();\n    if (!files) return [];\n    return files.filter((f) => f.name.includes(query) || f.content.includes(query));\n  }\n\n  // ../../../../../tmp/vaca-preview-27wJCP/user-interface/user-interface.ts\n  function render(container) {\n    const title = document.createElement(\"h1\");\n    title.textContent = \"File Encryption Tool\";\n    container.appendChild(title);\n    const fileInput = document.createElement(\"input\");\n    fileInput.type = \"file\";\n    fileInput.id = \"fileInput\";\n    fileInput.accept = \".txt,.json,.js\";\n    fileInput.addEventListener(\"change\", handleFileChange);\n    container.appendChild(fileInput);\n    const actionBtn = document.createElement(\"button\");\n    actionBtn.textContent = \"Encrypt/Decrypt\";\n    actionBtn.id = \"actionBtn\";\n    actionBtn.addEventListener(\"click\", handleAction);\n    container.appendChild(actionBtn);\n    const outputDiv = document.createElement(\"div\");\n    outputDiv.id = \"outputDiv\";\n    container.appendChild(outputDiv);\n    function handleFileChange(event) {\n      const target = event.target;\n      if (target.files && target.files.length > 0) {\n        const file = target.files[0];\n        if (file) {\n          const reader = new FileReader();\n          reader.onload = (e) => {\n            var _a;\n            if ((_a = e.target) == null ? void 0 : _a.result) {\n              const content = e.target.result;\n              const lines = content.split(\"\\n\").length;\n              outputDiv.textContent = `File: ${file.name} \\xB7 ${lines} lines`;\n            }\n          };\n          reader.readAsText(file);\n        }\n      }\n    }\n    function handleAction() {\n      const output = document.getElementById(\"outputDiv\");\n      if (output) {\n        output.textContent = \"Processing...\";\n      }\n      const files = document.getElementById(\"fileInput\");\n      if (files && files.files && files.files.length > 0) {\n        const file = files.files[0];\n        if (file) {\n          const reader = new FileReader();\n          reader.onload = (e) => {\n            var _a;\n            if ((_a = e.target) == null ? void 0 : _a.result) {\n              const content = e.target.result;\n              const lines = content.split(\"\\n\").length;\n              outputDiv.textContent = `File: ${file.name} \\xB7 ${lines} lines`;\n            }\n          };\n          reader.readAsText(file);\n        }\n      }\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-27wJCP/_preview_entry.ts\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Data_Store.FileMetadata:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof searchAndFilter === \"function\" && !/^class\\s/.test(String(searchAndFilter))) {\n      searchAndFilter(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"search-filter.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Search___Filter.searchAndFilter:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"user-interface.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling User_Interface.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (3) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 3 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a file line counter cli tool</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a file line counter cli tool initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 12639,
+ "totalErrors": 5,
+ "validatedCount": 2,
+ "failedCount": 2,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "data-store.ts",
+   "dependencies": [],
+   "exports": [
+    "FileMetadata"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "search-filter.ts",
+   "dependencies": [
+    "Data Store"
+   ],
+   "exports": [
+    "searchAndFilter",
+    "addFile",
+    "deleteFile",
+    "searchFiles"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "user-interface.ts",
+   "dependencies": [
+    "Search & Filter"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 1,
+ "summary": {
+  "totalFiles": 4,
+  "totalChars": 12639,
+  "totalErrors": 5,
+  "validated": 2,
+  "failed": 2,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 105187
+ }
+}

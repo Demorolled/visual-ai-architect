@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "createdAt": "2026-10-08T15:50:43.568Z",
+  "request": "a multi-file PHP CLI task manager with add, list and done subcommands that reads and writes a JSON file",
+  "intent": {
+    "goal": "multi-file PHP CLI task manager with add, list and done subcommands that reads and writes a JSON file",
+    "targetUser": "",
+    "coreFeatures": [
+      "todo / task list",
+      "create items",
+      "persistent storage"
+    ],
+    "uiStyle": "cli",
+    "language": ""
+  },
+  "questions": [
+    {
+      "key": "database",
+      "question": "Where should tasks be stored?\n\nPlease choose the best option for persistent storage.",
+      "options": [
+        "SQL database (recommended) — stores tasks in a relational database that's very performant",
+        "Flat file JSON (simple and portable) — good for smaller projects or development"
+      ]
+    }
+  ],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "src/main.php",
+      "summary": "Entry point, parses args and invokes appropriate function.",
+      "language": "",
+      "exports": []
+    },
+    {
+      "path": "taskManager/src/taskService.php",
+      "summary": "(Task service) Contains the business logic for task operations like adding a new item, listing all tasks, marking a task as done, etc. This is where we map those subcommands to actions and keep that logic contained.",
+      "language": "",
+      "exports": []
+    },
+    {
+      "path": "taskManager/src/taskStorage.php",
+      "summary": "(Persistent storage) Handles reading from/writing to the JSON database file (src/tasks.json). For this example, we assume each entry in there is an item with properties like { id: string | number; description?: string } where 'description' can be a markdown-formatted content block. We load items first at runtime.",
+      "language": "",
+      "exports": []
+    },
+    {
+      "path": "config.php",
+      "summary": "(Config) Defines constants (like default DB location, cache dir), which are used across multiple components. Also any env variables or settings related to database connection; if you plan your code well it does not actually require values from config.",
+      "language": "",
+      "exports": []
+    },
+    {
+      "path": "__tests__/taskManager/addTask.test.php",
+      "summary": "(Test) Contains unit tests for task operations (add, list, done), e.g., we'll assert the expected behavior after adding a new item to the store (src/taskService). All 3 subcommands should be validated at minimum.",
+      "language": "",
+      "exports": []
+    },
+    {
+      "path": "__tests__/taskManager/listTasks.test.php",
+      "summary": "(Test) Performs integration tests for reading task lists from the JSON file, making sure they match expected output based on previous operations or test data.",
+      "language": "",
+      "exports": []
+    }
+  ],
+  "mode": "per-file",
+  "repairRounds": 2,
+  "tscErrors": 0,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nmodelVeronice.txt sections: 1. PROJECT OVERVIEW, 2. RUNNING SERVICES (as of scan time), 3. RUNTIME TOOLS, 4. FRONTEND APPLICATION, 5. BACKEND APPLICATION, 6. LLM CONFIGURATION, 7. INSTALLED OLLAMA MODELS, 8. LOCAL GGUF MODELS, 9. DATA & KNOWLEDGE STORES, 10. TRAINING SYSTEM, 11. SYSTEM MONITOR DAEMON, 12. GENERATED PROJECTS (projects/), 13. PROFILE & USER\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-patterns ──\n[1.\n…(truncated)",
+  "files": [
+    "src/main.php",
+    "taskManager/src/taskService.php",
+    "taskManager/src/taskStorage.php",
+    "config.php",
+    "__tests__/taskManager/addTask.test.php",
+    "__tests__/taskManager/listTasks.test.php"
+  ]
+}

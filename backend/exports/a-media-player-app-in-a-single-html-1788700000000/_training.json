@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T18:00:00.000Z",
+  "request": "Build a media player app in a single HTML file. It shows a playlist of tracks with play, pause, previous, and next controls, a draggable seek bar with current and total time, volume control, shuffle and repeat modes, animated visualizer bars, keyboard shortcuts (space plays/pauses, arrow keys skip), and persists the playlist order, shuffle flag, repeat flag, and volume in localStorage.",
+  "intent": {"goal": "media player app in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Media player HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "media player with synth tones, playlist, seek, volume, shuffle, repeat, visualizer, keyboard shortcuts, localStorage persistence",
+  "files": ["index.html"],
+  "tier": "extreme"
+}

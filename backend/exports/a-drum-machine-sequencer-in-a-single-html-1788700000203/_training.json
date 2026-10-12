@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:30:00.000Z",
+  "request": "Build a drum machine step sequencer in a single HTML file. A 16-step grid has four rows for kick, snare, hi-hat, and bass, clicking a step toggles it on, Play steps through the pattern in time with the tempo slider (60-180 BPM) using Web Audio oscillator tones, the current step is highlighted on the grid, solo pads preview each drum sound, patterns can be cleared and saved to and restored from localStorage, and play position animates across the 16 steps.",
+  "intent": {
+    "goal": "build a drum machine step sequencer in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Drum Sequencer HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a drum machine step sequencer in a single HTML file. A 16-step grid has four rows for kick, snare, hi-hat, and bass, clicking a step toggles it on, Play steps through the pattern in time with the tempo slider (60-180 BPM) using Web Audio oscillator tones, the current step is highlighted on the grid, solo pads preview each drum sound, patterns can be cleared and saved to and restored from localStorage, and play position animates across the 16 steps.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

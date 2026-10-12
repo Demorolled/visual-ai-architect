@@ -559,3 +559,25 @@ describe('fileDeclaresEntryPoint — Swift top-level control flow counts as an e
     expect(fileDeclaresEntryPoint('import Foundation\nfunc f() {}\n', 'swift', 'VowelService.swift')).toBe(false);
   });
 });
+
+describe('fileDeclaresEntryPoint — a PHP one-liner still declares an entry', () => {
+  // Measured live through the detector: `<?php echo "hi";` — a valid script —
+  // was reported as "no runnable entry point" because the php branch skipped
+  // any line starting with the opening tag, statement and all.
+  it('accepts `<?php echo ...;` on the opening line', () => {
+    expect(fileDeclaresEntryPoint('<?php echo "hello world";', 'php', 'cli.php')).toBe(true);
+  });
+
+  it('accepts a same-line top-level assignment', () => {
+    expect(fileDeclaresEntryPoint('<?php $argv = $argv ?? [];', 'php', 'cli.php')).toBe(true);
+  });
+
+  it('still accepts the tag on its own line with the statement below', () => {
+    expect(fileDeclaresEntryPoint('<?php\necho "hi";\n', 'php', 'cli.php')).toBe(true);
+  });
+
+  it('still rejects a bag of function definitions with no top-level code', () => {
+    const code = ['<?php', '', 'function run() {', '    echo "hi";', '}', '', 'function other() {', '    return [];', '}'].join('\n');
+    expect(fileDeclaresEntryPoint(code, 'php', 'cli.php')).toBe(false);
+  });
+});

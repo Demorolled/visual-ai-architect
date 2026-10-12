@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Void Raider — Arcade Space Shooter</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #04050d; color: #cfd8ff; font-family: monospace; }
+  #app { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 10px; }
+  canvas { border: 1px solid #1c2240; border-radius: 6px; background: #05060f; }
+  #hud { font-size: 13px; color: #7f8ac0; letter-spacing: 1px; }
+  kbd { background: #151a30; border: 1px solid #2a3355; border-radius: 3px; padding: 1px 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="game" width="800" height="600"></canvas>
+  <div id="hud">←/A →/D move &nbsp;·&nbsp; SPACE fire &nbsp;·&nbsp; R restart</div>
+</div>
+<script>
+'use strict';
+/* Void Raider — playable build of the void_raider blueprint.
+   The five typed modules live in src/: ship-controls, wave-manager, enemy-ai,
+   combat-engine, game-renderer. This HTML is the runnable wrapper wiring them
+   together (mirrors the module logic 1:1, see module comments below). */
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// ── Input → ShipControls (mirrors src/ship-controls/ship-controls.ts) ────
+// ShipControls translates keyboard state into requests for the combat engine.
+const keys = { left: false, right: false, fire: false };
+const KEYMAP = { ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right', Space: 'fire' };
+window.addEventListener('keydown', (e) => {
+  const action = KEYMAP[e.code];
+  if (!action) return;
+  e.preventDefault();
+  keys[action] = true;
+  if (e.code === 'KeyR') resetGame();
+});
+window.addEventListener('keyup', (e) => {
+  const action = KEYMAP[e.code];
+  if (!action) return;
+  keys[action] = false;
+});
+
+// ── World state (mirrors src/combat-engine/combat-engine.ts) ─────────────
+const state = {
+  player: { x: W / 2, y: H - 50, hp: 100, maxHp: 100, shield: 50 },
+  projectiles: [],
+  enemies: [],
+  score: 0,
+  lives: 3,
+  round: 1,
+  gameStatus: 'running', // running | gameover
+};
+let fireCooldown = 0;
+
+// ── WaveManager (mirrors src/wave-manager/wave-manager.ts) ───────────────
+// registerWave escalates: enemy count, strength and speed grow with round.
+function registerWave(round) {
+  const enemyCount = Math.min(3 + round * 2, 22);
+  const strength = 1 + Math.floor(round / 2);
+  const speed = 55 + round * 8;
+  state.enemies = [];
+  let id = 1;
+  const cols = 8;
+  const gapX = Math.floor((W - 140) / cols);
+  for (let i = 0; i < enemyCount; i++) {
+    const row = Math.floor(i / cols);
+    state.enemies.push({
+      id: id++,
+      x: 70 + (i % cols) * gapX,
+      y: -40 - row * 55,
+      hp: strength,
+      maxHp: strength,
+      speed,
+      state: 'alive',
+      event: '',
+    });
+  }
+}
+
+// ── EnemyAI (mirrors src/enemy-ai/enemy-ai.ts) ───────────────────────────
+// EnemyAI materializes waves into the live enemy fleet and takes hits.
+function updateEnemies(dt) {
+  for (const e of state.enemies) {
+    if (e.state !== 'alive') continue;
+    e.y += e.speed * dt;
+    if (e.y > H + 30) { e.y = -30; e.x = 50 + Math.random() * (W - 100); }
+  }
+}
+
+// ── CombatEngine (mirrors src/combat-engine/combat-engine.ts) ────────────
+function tryFire() {
+  if (fireCooldown > 0 || state.gameStatus !== 'running') return;
+  fireCooldown = 0.26;
+  state.projectiles.push({ x: state.player.x, y: state.player.y - 14, vy: -430, owner: 'player' });
+}
+
+function update(dt) {
+  if (state.gameStatus !== 'running') return;
+  fireCooldown = Math.max(0, fireCooldown - dt);
+
+  // Player movement (ShipControls → CombatEngine requests).
+  if (keys.left) state.player.x -= 300 * dt;
+  if (keys.right) state.player.x += 300 * dt;
+  state.player.x = Math.max(18, Math.min(W - 18, state.player.x));
+  if (keys.fire) tryFire();
+
+  updateEnemies(dt);
+
+  // Projectiles.
+  for (const p of state.projectiles) p.y += p.vy * dt;
+  state.projectiles = state.projectiles.filter((p) => p.y > -30 && p.y < H + 30);
+
+  // Player projectiles vs enemies (EnemyAI.attackEnemy).
+  for (const p of state.projectiles) {
+    if (p.owner !== 'player') continue;
+    for (const e of state.enemies) {
+      if (e.state !== 'alive') continue;
+      if (Math.abs(p.x - e.x) < 20 && Math.abs(p.y - e.y) < 20) {
+        p.y = -999;
+        e.hp -= 1;
+        if (e.hp <= 0) { e.state = 'dead'; e.event = 'destroyed'; state.score += 100; }
+        break;
+      }
+    }
+  }
+  state.projectiles = state.projectiles.filter((p) => p.y > -30);
+
+  // Enemies reaching the player line: lose a life.
+  for (const e of state.enemies) {
+    if (e.state !== 'alive') continue;
+    if (e.y > H - 40) {
+      e.state = 'dead';
+      e.event = 'reached-line';
+      state.lives -= 1;
+      state.player.hp = state.player.maxHp;
+      if (state.lives <= 0) { state.gameStatus = 'gameover'; return; }
+    }
+  }
+
+  // Wave cleared → next round.
+  if (state.enemies.every((e) => e.state !== 'alive')) {
+    state.round += 1;
+    registerWave(state.round);
+  }
+}
+
+// ── GameRenderer (mirrors src/game-renderer/game-renderer.ts) ────────────
+function render() {
+  ctx.clearRect(0, 0, W, H);
+  // Starfield.
+  for (let i = 0; i < 90; i++) {
+    const sx = (i * 137.5) % W, sy = (i * 89.3) % H;
+    ctx.fillStyle = (i % 3 === 0) ? '#2a3560' : '#141a38';
+    ctx.fillRect(sx, sy, 2, 2);
+  }
+
+  // Player ship (triangle pointing up).
+  ctx.save();
+  ctx.translate(state.player.x, state.player.y);
+  ctx.fillStyle = '#00d9ff';
+  ctx.beginPath();
+  ctx.moveTo(0, -14); ctx.lineTo(10, 10); ctx.lineTo(-10, 10);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+
+  // Enemies (squares that pulse).
+  for (const e of state.enemies) {
+    if (e.state !== 'alive') continue;
+    const pulse = 0.7 + 0.3 * Math.sin(performance.now() / 180 + e.id);
+    ctx.fillStyle = e.hp > e.maxHp / 2 ? `rgba(248,113,113,${pulse})` : `rgba(251,191,36,${pulse})`;
+    ctx.fillRect(e.x - 9, e.y - 9, 18, 18);
+  }
+
+  // Projectiles.
+  ctx.fillStyle = '#4ade80';
+  for (const p of state.projectiles) ctx.fillRect(p.x - 2, p.y - 7, 4, 12);
+
+  // HUD.
+  ctx.font = '15px monospace';
+  ctx.fillStyle = '#7f8ac0';
+  ctx.fillText(`SCORE ${state.score}`, 14, 24);
+  ctx.fillText(`ROUND ${state.round}`, W - 110, 24);
+  ctx.fillStyle = '#4ade80';
+  ctx.fillText(`LIVES ${'▲'.repeat(Math.max(0, state.lives))}`, 14, 46);
+  // Health bar.
+  ctx.fillStyle = '#1c2240';
+  ctx.fillRect(14, 54, 120, 8);
+  ctx.fillStyle = state.player.hp > 40 ? '#4ade80' : '#f87171';
+  ctx.fillRect(14, 54, 120 * (state.player.hp / state.player.maxHp), 8);
+
+  if (state.gameStatus === 'gameover') {
+    ctx.fillStyle = 'rgba(0,0,0,0.65)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#f87171';
+    ctx.font = 'bold 42px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('GAME OVER', W / 2, H / 2 - 10);
+    ctx.fillStyle = '#7f8ac0';
+    ctx.font = '16px monospace';
+    ctx.fillText(`Score ${state.score} — press R to restart`, W / 2, H / 2 + 26);
+    ctx.textAlign = 'left';
+  }
+}
+
+function resetGame() {
+  state.player.x = W / 2; state.player.y = H - 50;
+  state.player.hp = state.player.maxHp;
+  state.projectiles = [];
+  state.score = 0; state.lives = 3; state.round = 1;
+  state.gameStatus = 'running';
+  registerWave(1);
+}
+
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+
+registerWave(1);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

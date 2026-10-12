@@ -1,0 +1,16 @@
+import http from 'http';
+import yargs from 'yargs';
+
+const { hostname, port } = yargs(process.argv.slice(2))
+  .usage('$0 [options]')
+  .option('p', { alias: 'port', type: 'number', default: 3000, description: 'Port number to listen on' })
+  .option('h', { alias: 'hostname', type: 'string', default: '127.0.0.1', description: 'Hostname to listen on' })
+  .help()
+  .parse();
+
+const routes = { '/': 'Hello World\n' };
+
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end(routes[req.url] ?? routes['/']);
+}).listen(port, hostname, () => console.log(`Server running at http://${hostname}:${port}/`));

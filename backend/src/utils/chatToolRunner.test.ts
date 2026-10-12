@@ -4,7 +4,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { getRegistry } from '../tools/ToolRegistry.js';
 import { fileSystemTools } from '../tools/tools/FileSystemTool.js';
-import { runChatTool, truncateMid } from './chatToolRunner.js';
+import { runChatTool, truncateMid, tokenizeQuery, matchWikiSections } from './chatToolRunner.js';
 
 let tmpDir = '';
 
@@ -78,5 +78,49 @@ describe('chatToolRunner', () => {
 
   it('truncateMid passes through short strings unchanged', () => {
     expect(truncateMid('short', 1000)).toBe('short');
+  });
+});
+
+// ── Tokenized query + wiki-section matching (added Aug 14: knowledge_query
+//    now retrieves wiki sections, not just code patterns) ──
+
+const SECTIONS = [
+  { number: 58, title: 'TODO 2.1 DONE — SPECULATIVE DECODING BRANDING DROPPED', body: 'draft mode is NOT an accelerator, measurements, llama.cpp' },
+  { number: 59, title: 'SESSION UPDATE — VOID RAIDER GAME BUILDS + BLUEPRINT RESEARCH INJECTION', body: 'Four full builds of the arcade space-shooter void raider. 7B model cannot produce a playable game loop; wave manager, enemy AI, combat engine, game renderer. Java CLI, canvas, ship controls.' },
+  { number: 3, title: 'RUNTIME TOOLS', body: 'Node.js, npm, Python, TypeScript versions' },
+];
+
+describe('tokenizeQuery', () => {
+  it('splits a natural-language query into words', () => {
+    const tokens = tokenizeQuery('what do you know about building arcade games');
+    expect(tokens).toContain('arcade');
+    expect(tokens).toContain('building');
+  });
+
+  it('drops short tokens but keeps 3+ char words', () => {
+    expect(tokenizeQuery('do you know')).toEqual(['you', 'know']);
+  });
+});
+
+describe('matchWikiSections', () => {
+  it('ranks sections by token hits — §59 wins for an arcade-games query', () => {
+    const hits = matchWikiSections(SECTIONS, 'building arcade games', 2);
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits[0].number).toBe(59);
+  });
+
+  it('returns fewer than max when few sections match', () => {
+    const hits = matchWikiSections(SECTIONS, 'node npm runtime', 2);
+    expect(hits.length).toBe(1);
+    expect(hits[0].number).toBe(3);
+  });
+
+  it('returns empty for a query with no matches', () => {
+    const hits = matchWikiSections(SECTIONS, 'quantum entanglement physics', 2);
+    expect(hits).toEqual([]);
+  });
+
+  it('handles an empty query', () => {
+    expect(matchWikiSections(SECTIONS, '')).toEqual([]);
   });
 });

@@ -108,6 +108,9 @@ exportRoutes.post('/:projectId/per-file-scaffold', async (req, res) => {
       files: generationResult.files,
       nodes: project.nodes as any,
       edges: project.edges as any,
+      // Tree Mode: more than one app tree exports as separate apps (`apps/<app>/`)
+      // plus a shared `bridge/` for the cross-app handoffs.
+      trees: project.trees ?? [],
       appGoal,
       appPurpose,
     });

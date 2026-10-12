@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note Taking App</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .col { display: flex; flex-direction: column; gap: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .card { background: #15152a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; }
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+    #statusMsg { padding: 8px 12px; border-radius: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Notes</h1>
+    <div class="row">
+      <input id="titleInput" type="text" placeholder="Title" value="">
+      <button class="btn btn-primary" onclick="addNote()">💾 Save</button>
+    </div>
+    <div class="grid" id="noteList"></div>
+    <div id="statusMsg" role="status"></div>
+  </div>
+  <script>
+    const noteList = document.getElementById('noteList');
+    const statusMsg = document.getElementById('statusMsg');
+
+    let notes = [];
+
+    function addNote() {
+      const title = document.getElementById('titleInput').value.trim();
+      if (!title) {
+        statusMsg.textContent = 'Title cannot be empty.';
+        return;
+      }
+
+      notes.push({ id: Date.now(), title });
+      updateNoteList();
+      document.getElementById('titleInput').value = '';
+      statusMsg.textContent = 'Note saved.';
+    }
+
+    function updateNoteList() {
+      noteList.innerHTML = '';
+      notes.forEach(note => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${note.title}</h3>
+          <button class="btn" onclick="editNote(${note.id})">✎ Edit</button>
+          <button class="btn btn-danger" onclick="deleteNote(${note.id})">✕ Delete</button>
+        `;
+        noteList.appendChild(card);
+      });
+    }
+
+    function editNote(id) {
+      const note = notes.find(n => n.id === id);
+      if (note) {
+        const newTitle = prompt('Edit title:', note.title);
+        if (newTitle !== null && newTitle.trim() !== '') {
+          note.title = newTitle.trim();
+          updateNoteList();
+          statusMsg.textContent = 'Note updated.';
+        } else {
+          statusMsg.textContent = 'Title cannot be empty.';
+        }
+      }
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(n => n.id !== id);
+      updateNoteList();
+      statusMsg.textContent = 'Note deleted.';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+{
+ "success": true,
+ "projectId": "07880d36-736b-41d4-a313-34c5bbce876f",
+ "matchedBy": "semantic",
+ "matchScore": 0.5714037213850238,
+ "blueprint": {
+  "app_type": "unit_converter_3",
+  "description": "Unit Converter. \u2394 Unit Converter",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "core_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "core_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "data_store",
+    "data_passed": "state_and_events"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 6,
+  "web": 4,
+  "github": 0,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 temperature-converter \u00b7 GitHub Topics \u00b7 GitHub\n    Temperature Convertor is a web-based temperature calculator application built using HTML, CSS, and JavaScript. It allows users to convert temperatures between different units, such as Celsius, Fahrenh\n  \u2022 Temperature Converter App - GitHub\n    Convert temperature between Celsius, Kelvin, and Fahrenheit. User-friendly interface with dropdown menus for easy selection. Accurate temperature conversion formulas applied for all units. Supports po\n  \u2022 gitea (developer-tools): Accelerate DevOps with Gitea\n  \u2022 neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n  \u2022 Section 33: SESSION UPDATE \u2014 July 26, 2026: BATCH 5 \u2014 15 GUI BUILDER APPS\n    33.1 GUI BUILDER APPS (15 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nThese apps are design tools for building and generating UI components.\nAll include: localStorage persistence, escapeHTML() sanitization,\nlive preview, export functionality, and dark theme styling.\n\nCategory: Component Builders (5 apps\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 json_to_csv \u2014 data tool\n    Convert a JSON array of objects to CSV format\n    Code: // Tool: json_to_csv\n// Category: data\n// Risk: readonly\n// Convert a JSON array of objects to CSV format\n  \u2022 network_info \u2014 monitoring tool\n    Get network interface information (interfaces, IP addresses, MACs)\n    Code: // Tool: network_info\n// Category: monitoring\n// Risk: readonly\n// Get network interface information (interfaces, IP addresses, MACs)\n  \u2022 auto-learn-verify fibonacci util - Full architecture\n    Complete project architecture for auto-learn-verify fibonacci util with 1 nodes targeting linux\n    Code: interface Fibonacci {\n  n: number;\n}\n\nlet _fibCache = new Map<number, number>();\n\nexport function fib(n: number): number {\n  if (n < 0) {\n    throw new Error(\"Negative argument provided\");\n  }\n\n  if (_fibCache.has(n)) {\n    return _fibCache.get(n)!;\n"
+ },
+ "candidates": [
+  {
+   "app_type": "unit_converter_3",
+   "score": 0.5714037213850238
+  },
+  {
+   "app_type": "video_converter",
+   "score": 0.5491886376285652
+  },
+  {
+   "app_type": "currency_converter_2",
+   "score": 0.5290287185098582
+  },
+  {
+   "app_type": "unit_converter_2",
+   "score": 0.5246075739423945
+  },
+  {
+   "app_type": "currency_converter",
+   "score": 0.5197905439912035
+  }
+ ],
+ "project": {
+  "id": "07880d36-736b-41d4-a313-34c5bbce876f",
+  "name": "a temperature converter app",
+  "targetOS": "linux",
+  "nodeCount": 5,
+  "edgeCount": 3,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "unit_converter_3 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "core_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "data_store"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 3,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 1,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "generated": [
+   "core_engine",
+   "ui_screens",
+   "input_handler",
+   "data_store"
+  ],
+  "matched": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "core-engine.ts",
+   "language": "typescript",
+   "code": "export interface InputData {\n  temperature: number;\n  fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n  toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n}\n\nexport interface ConversionResult {\n  convertedTemperature: number;\n}\n\nexport function handleConversion(input: InputData): ConversionResult {\n  let convertedTemp = input.temperature;\n\n  if (input.fromUnit === 'Celsius') {\n    if (input.toUnit === 'Fahrenheit') {\n      convertedTemp = (input.temperature * 9 / 5) + 32;\n    } else if (input.toUnit === 'Kelvin') {\n      convertedTemp = input.temperature + 273.15;\n    }\n  } else if (input.fromUnit === 'Fahrenheit') {\n    if (input.toUnit === 'Celsius') {\n      convertedTemp = (input.temperature - 32) * 5 / 9;\n    } else if (input.toUnit === 'Kelvin') {\n      convertedTemp = ((input.temperature - 32) * 5 / 9) + 273.15;\n    }\n  } else if (input.fromUnit === 'Kelvin') {\n    if (input.toUnit === 'Celsius') {\n      convertedTemp = input.temperature - 273.15;\n    } else if (input.toUnit === 'Fahrenheit') {\n      convertedTemp = ((input.temperature - 273.15) * 9 / 5) + 32;\n    }\n  }\n\n  return { convertedTemperature: convertedTemp };\n}\n\nexport function renderConversionResult(result: ConversionResult): void {\n  console.log(`Converted temperature: ${result.convertedTemperature}`);\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "core_engine",
+   "dependencies": [],
+   "exports": [
+    "InputData",
+    "ConversionResult",
+    "handleConversion",
+    "renderConversionResult"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { InputData, ConversionResult, handleConversion, renderConversionResult } from '../core-engine/core-engine.ts';\n\nexport function render(container) {\n  container.innerHTML = `\n    <div class=\"app\">\n      <h1>TempConverter</h1>\n      <div class=\"row\">\n        <input type=\"number\" id=\"celsiusInput\" placeholder=\"Celsius\" />\n        <input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Fahrenheit\" />\n        <input type=\"number\" id=\"kelvinInput\" placeholder=\"Kelvin\" />\n      </div>\n      <button class=\"btn\" onclick=\"convertTemps()\">Convert</button>\n      <button class=\"btn\" onclick=\"resetInputs()\">Reset</button>\n      <div id=\"results\"></div>\n    </div>\n  `;\n\n  function convertTemps() {\n    const celsiusInput = parseFloat(document.getElementById('celsiusInput').value);\n    const fahrenheitInput = parseFloat(document.getElementById('fahrenheitInput').value);\n    const kelvinInput = parseFloat(document.getElementById('kelvinInput').value);\n\n    if (isNaN(celsiusInput)) {\n      document.getElementById('results').textContent = 'Please enter a valid temperature value';\n      return;\n    }\n\n    const convertedCelsius = ((fahrenheitInput - 32) * 5 / 9).toFixed(2);\n    const convertedFahrenheit = ((celsiusInput * 9 / 5) + 32).toFixed(2);\n    const convertedKelvin = (celsiusInput + 273.15).toFixed(2);\n\n    document.getElementById('results').textContent = `Celsius: ${convertedCelsius}, Fahrenheit: ${convertedFahrenheit}, Kelvin: ${convertedKelvin}`;\n  }\n\n  function resetInputs() {\n    document.getElementById('celsiusInput').value = '';\n    document.getElementById('fahrenheitInput').value = '';\n    document.getElementById('kelvinInput').value = '';\n    document.getElementById('results').textContent = '';\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 19)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 20)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 21)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 36)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 37)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 38)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { InputData, handleConversion, renderConversionResult } from '../core-engine/core-engine.ts';\n\nexport interface ConversionRequest {\n  temperature: number;\n  fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n  toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n}\n\nexport interface ConversionResult {\n  convertedTemperature: number;\n}\n\nexport function processConversionRequest(request: ConversionRequest): ConversionResult {\n  try {\n    const result = handleConversion(request);\n    return result;\n  } catch (error) {\n    throw new Error(`Failed to process conversion: ${error.message}`);\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "ConversionRequest",
+    "ConversionResult",
+    "processConversionRequest"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "import { ConversionRequest, ConversionResult, processConversionRequest } from '../input-handler/input-handler.ts';\n\n// Tool: data_store\n// Category: database\n// Risk: readonly\n\nexport function handleConversion(request: ConversionRequest): ConversionResult {\n  const { temperature, fromUnit, toUnit } = request;\n\n  const conversionTable: Record<string, Record<string, (temp: number) => number>> = {\n    Celsius: { Fahrenheit: (temp: number) => (temp * 9 / 5) + 32, Kelvin: (temp: number) => temp + 273.15 },\n    Fahrenheit: { Celsius: (temp: number) => (temp - 32) * 5 / 9, Kelvin: (temp: number) => ((temp - 32) * 5 / 9) + 273.15 },\n    Kelvin: { Celsius: (temp: number) => temp - 273.15, Fahrenheit: (temp: number) => ((temp - 273.15) * 9 / 5) + 32 },\n  };\n\n  const converter = conversionTable[fromUnit]?.[toUnit];\n  if (!converter) {\n    throw new Error('Unsupported conversion');\n  }\n\n  const convertedTemperature = converter(temperature);\n\n  return { convertedTemperature };\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "data_store",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "handleConversion"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a temperature converter app</title>\n  <meta name=\"description\" content=\"a temperature converter app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a temperature converter app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-mPn3Ht/ui-screens/ui-screens.ts\n  function render(container) {\n    container.innerHTML = `\n    <div class=\"app\">\n      <h1>TempConverter</h1>\n      <div class=\"row\">\n        <input type=\"number\" id=\"celsiusInput\" placeholder=\"Celsius\" />\n        <input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Fahrenheit\" />\n        <input type=\"number\" id=\"kelvinInput\" placeholder=\"Kelvin\" />\n      </div>\n      <button class=\"btn\" onclick=\"convertTemps()\">Convert</button>\n      <button class=\"btn\" onclick=\"resetInputs()\">Reset</button>\n      <div id=\"results\"></div>\n    </div>\n  `;\n    function convertTemps() {\n      const celsiusInput = parseFloat(document.getElementById(\"celsiusInput\").value);\n      const fahrenheitInput = parseFloat(document.getElementById(\"fahrenheitInput\").value);\n      const kelvinInput = parseFloat(document.getElementById(\"kelvinInput\").value);\n      if (isNaN(celsiusInput)) {\n        document.getElementById(\"results\").textContent = \"Please enter a valid temperature value\";\n        return;\n      }\n      const convertedCelsius = ((fahrenheitInput - 32) * 5 / 9).toFixed(2);\n      const convertedFahrenheit = (celsiusInput * 9 / 5 + 32).toFixed(2);\n      const convertedKelvin = (celsiusInput + 273.15).toFixed(2);\n      document.getElementById(\"results\").textContent = `Celsius: ${convertedCelsius}, Fahrenheit: ${convertedFahrenheit}, Kelvin: ${convertedKelvin}`;\n    }\n    function resetInputs() {\n      document.getElementById(\"celsiusInput\").value = \"\";\n      document.getElementById(\"fahrenheitInput\").value = \"\";\n      document.getElementById(\"kelvinInput\").value = \"\";\n      document.getElementById(\"results\").textContent = \"\";\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-mPn3Ht/data-store/data-store.ts\n  function handleConversion2(request) {\n    var _a;\n    const { temperature, fromUnit, toUnit } = request;\n    const conversionTable = {\n      Celsius: { Fahrenheit: (temp) => temp * 9 / 5 + 32, Kelvin: (temp) => temp + 273.15 },\n      Fahrenheit: { Celsius: (temp) => (temp - 32) * 5 / 9, Kelvin: (temp) => (temp - 32) * 5 / 9 + 273.15 },\n      Kelvin: { Celsius: (temp) => temp - 273.15, Fahrenheit: (temp) => (temp - 273.15) * 9 / 5 + 32 }\n    };\n    const converter = (_a = conversionTable[fromUnit]) == null ? void 0 : _a[toUnit];\n    if (!converter) {\n      throw new Error(\"Unsupported conversion\");\n    }\n    const convertedTemperature = converter(temperature);\n    return { convertedTemperature };\n  }\n\n  // ../../../../../tmp/vaca-preview-mPn3Ht/_preview_entry.ts\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"core-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling core_engine.InputData:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"input-handler.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling input_handler.ConversionRequest:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof handleConversion2 === \"function\" && !/^class\\s/.test(String(handleConversion2))) {\n      handleConversion2(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling data_store.handleConversion:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (4) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 4 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a temperature converter app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a temperature converter app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 13183,
+ "totalErrors": 6,
+ "validatedCount": 4,
+ "failedCount": 1,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "core-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "InputData",
+    "ConversionResult",
+    "handleConversion",
+    "renderConversionResult"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "ConversionRequest",
+    "ConversionResult",
+    "processConversionRequest"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "data-store.ts",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "handleConversion"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 5,
+  "totalChars": 13183,
+  "totalErrors": 6,
+  "validated": 4,
+  "failed": 1,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 192649
+ }
+}

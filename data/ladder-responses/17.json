@@ -1,0 +1,410 @@
+{
+ "success": true,
+ "projectId": "62671616-fa5a-4c61-8c9b-19425f79fc3c",
+ "matchedBy": "semantic",
+ "matchScore": 0.8078685464956301,
+ "blueprint": {
+  "app_type": "chat_app",
+  "description": "Real-time messaging app with chat rooms, direct messages, online presence, and persistent message history.",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express (WebSocket)",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "message_models",
+   "message_store",
+   "chat_logic",
+   "websocket_server",
+   "user_auth"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "websocket_server",
+    "data_passed": "connect_and_send_events"
+   },
+   {
+    "source_module": "websocket_server",
+    "destination_module": "chat_logic",
+    "data_passed": "inbound_messages"
+   },
+   {
+    "source_module": "chat_logic",
+    "destination_module": "message_store",
+    "data_passed": "persist_and_query_messages"
+   },
+   {
+    "source_module": "message_models",
+    "destination_module": "message_store",
+    "data_passed": "schemas"
+   },
+   {
+    "source_module": "user_auth",
+    "destination_module": "websocket_server",
+    "data_passed": "session_validation"
+   },
+   {
+    "source_module": "ui_screens",
+    "destination_module": "user_auth",
+    "data_passed": "login_actions"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Best Employee Comms App - Work Communication Tool\n    \n  \u2022 Top 10 Collaboration Software - Free List of the Top Products\n    \n  \u2022 \u2b509966 fluxerapp/fluxer: A free and open source instant messaging and VoIP chat app built for friends, groups, and communities.\n  \u2022 \u2b509409 AppImage/AppImageKit: Package desktop applications as AppImages that run on common Linux-based operating systems, such as RHEL, CentOS, openSUSE, SLED, Ubuntu, Fedora, debi\n  \u2022 rocket.chat (communication): Rocket.Chat v7.0 Roadmap Webinar\n  \u2022 zulip (communication): Organized team chat\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 0,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 5: BACKEND APPLICATION\n    5.1 PACKAGE DETAILS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nRuntime:    Node.js (ESM - type:module)\nRunner:     tsx (dev), tsc \u2192 node (prod)\nFramework:  Express 4.18.2\nAI SDK:     OpenAI SDK 6.37.0\nWebSocket:  socket.io 4.8.3\nPort:       3001\nTesting:    Vitest 4.1.8\nTypeScript: 5.3.3, target ES2022, strict mode\n\n5.2 \n  \u2022 Section 22: JARVIS 55 \u2014 CORE MODULES\n    22.1 Engine (src/core/engine.ts)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n- Central orchestrator for chat, tool execution, and learning\n- Builds system prompt with emotion context + skills context\n- Restores conversation history from SQLite on init\n- Auto-learns by saving datasheets from each interaction\n-"
+ },
+ "candidates": [
+  {
+   "app_type": "chat_app",
+   "score": 0.8078685464956301
+  },
+  {
+   "app_type": "chat-go",
+   "score": 0.49586499149789454
+  },
+  {
+   "app_type": "teamchat-go",
+   "score": 0.4648969979242852
+  },
+  {
+   "app_type": "language_detection",
+   "score": 0.3003987527960122
+  }
+ ],
+ "project": {
+  "id": "62671616-fa5a-4c61-8c9b-19425f79fc3c",
+  "name": "a chat app",
+  "targetOS": "linux",
+  "nodeCount": 7,
+  "edgeCount": 5,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "chat_app blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "database",
+    "label": "message_models"
+   },
+   {
+    "id": "mod_2",
+    "type": "database",
+    "label": "message_store"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "chat_logic"
+   },
+   {
+    "id": "mod_4",
+    "type": "api",
+    "label": "websocket_server"
+   },
+   {
+    "id": "mod_5",
+    "type": "api",
+    "label": "user_auth"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_4",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_4",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_3",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_4",
+    "source": "mod_5",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 6,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "message_models",
+   "message_store",
+   "chat_logic",
+   "websocket_server",
+   "user_auth"
+  ],
+  "generated": [
+   "user_auth",
+   "message_models",
+   "websocket_server",
+   "ui_screens",
+   "chat_logic",
+   "message_store"
+  ],
+  "matched": [
+   "ui_screens",
+   "message_models",
+   "message_store",
+   "chat_logic",
+   "websocket_server",
+   "user_auth"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "user-auth.ts",
+   "language": "typescript",
+   "code": "export interface AuthToken {\n  token: string;\n  expiresAt: Date;\n}\n\nexport interface AuthUser {\n  id: number;\n  username: string;\n  email: string;\n  role: 'admin' | 'user';\n  createdAt: Date;\n  authToken?: AuthToken;\n}\n\nexport class AuthService {\n  private users: AuthUser[] = [];\n  private tokens: { [token: string]: AuthUser } = {};\n\n  register(username: string, email: string, password: string, role: 'admin' | 'user'): void {\n    const user = { id: this.users.length + 1, username, email, role, createdAt: new Date(), authToken: null };\n    this.users.push(user);\n    this.tokens[user.authToken!] = user;\n  }\n\n  login(username: string, password: string): AuthToken | null {\n    const user = this.users.find(u => u.username === username && u.authToken);\n    if (!user) return null;\n    if (user.authToken!.token !== password) return null;\n    return user.authToken!;\n  }\n\n  logout(token: string): void {\n    delete this.tokens[token];\n  }\n\n  getUser(token: string): AuthUser | null {\n    return this.tokens[token];\n  }\n}",
+   "nodeId": "mod_5",
+   "nodeLabel": "user_auth",
+   "dependencies": [],
+   "exports": [
+    "AuthToken",
+    "AuthUser",
+    "AuthService"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "message-models.ts",
+   "language": "typescript",
+   "code": "export interface Message {\n  id: number;\n  text: string;\n  sender: string;\n  timestamp: Date;\n}\n\nexport const messages: Message[] = [];\n\nexport function sendMessage(text: string, sender: string): void {\n  const newMessage: Message = {\n    id: messages.length + 1,\n    text,\n    sender,\n    timestamp: new Date(),\n  };\n  messages.push(newMessage);\n}\n\nexport function getMessages(): Message[] {\n  return messages;\n}\n\nexport function removeMessage(id: number): void {\n  messages.splice(id - 1, 1);\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "message_models",
+   "dependencies": [],
+   "exports": [
+    "Message",
+    "messages",
+    "sendMessage",
+    "getMessages",
+    "removeMessage"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "websocket-server.ts",
+   "language": "typescript",
+   "code": "import { AuthToken, AuthUser, AuthService } from '../user-auth/user-auth.ts';\n\nexport interface ChatRoom {\n  id: string;\n  name: string;\n  members: { id: string; name: string }[];\n}\n\nexport interface MessageStore {\n  addMessage(message: { id: string; content: string; sender: string; recipient: string; room: string; timestamp: string }): void;\n  getMessagesForRoom(room: string, limit: number): { id: string; content: string; sender: string; recipient: string; room: string; timestamp: string }[];\n}\n\nexport interface UserPresence {\n  user: { id: string; name: string };\n  online: boolean;\n}\n\nexport function inboundMessages(ws: WebSocket) {\n  ws.onmessage = (event) => {\n    try {\n      const data = JSON.parse(event.data) as { type: 'message'; content: string; sender: string; recipient: string; room: string };\n      \n      if (!data || !data.type || !data.content || !data.sender) {\n        ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));\n        return;\n      }\n      \n      const user = { id: data.sender, name: data.sender };\n      const presence = { user, online: true };\n      \n      if (data.type === 'message') {\n        const message: { id: string; content: string; sender: string; recipient: string; room: string; timestamp: string } = {\n          id: Date.now().toString(),\n          content: data.content,\n          sender: data.sender,\n          recipient: data.recipient,\n          room: data.room,\n          timestamp: new Date().toISOString(),\n        };\n        \n        // Store message\n        // Send to recipient\n        if (data.recipient) {\n          const recipientPresence = { user: { id: data.recipient, name: data.recipient }, online: true };\n          ws.send(JSON.stringify({ type: 'message', content: message.content, sender: message.sender, recipient: message.recipient, room: message.room }));\n        }\n        \n        // Send to room\n        if (data.room) {\n          const roomMembers = [{ id: data.sender, name: data.sender }, { id: data.recipient, name: data.recipient }];\n          for (const member of roomMembers) {\n            if (member.id !== data.sender && member.id !== data.recipient) {\n              ws.send(JSON.stringify({ type: 'message', content: message.content, sender: message.sender, recipient: message.recipient, room: message.room }));\n            }\n          }\n        }\n      }\n    } catch (err) {\n      console.error('Error processing inbound message:', err);\n      ws.send(JSON.stringify({ type: 'error', message: 'Failed to process message' }));\n    }\n  };\n}\n\nexport function connect_and_send_events(ws: WebSocket) {\n  ws.onopen = () => {\n    const userId = Math.floor(Math.random() * 1000).toString();\n    const user = { id: userId, name: `User ${userId}` };\n    const presence = { user, online: true };\n    \n    ws.send(JSON.stringify({ type: 'connected', userId }));\n    \n    // Send initial messages\n    const initialMessages = [\n      { id: '1', content: 'Welcome to the chat!', sender: 'system', recipient: null, room: null, timestamp: new Date().toISOString() },\n      { id: '2', content: 'This is a sample chat app.', sender: 'system', recipient: null, room: null, timestamp: new Date().toISOString() },\n      { id: '3', content: 'Send messages, join rooms, and chat with others!', sender: 'system', recipient: null, room: null, timestamp: new Date().toISOString() },\n    ];\n    initialMessages.forEach((msg) => {\n      ws.send(JSON.stringify({ type: 'message', content: msg.content, sender: msg.sender, recipient: msg.recipient, room: msg.room }));\n    });\n  };\n  \n  ws.onclose = () => {\n    const userId = getWebSocketForUser(ws);\n    if (userId) {\n      const presence = { user: { id: userId, name: `User ${userId}` }, online: false };\n      ws.send(JSON.stringify({ type: 'disconnected', userId }));\n    }\n  };\n}\n\nfunction getWebSocketForUser(ws: WebSocket): string | null {\n  const user = { id: '1', name: 'User 1' };\n  const presence = { user, online: true };\n  return user.id;\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "websocket_server",
+   "dependencies": [
+    "user_auth"
+   ],
+   "exports": [
+    "ChatRoom",
+    "MessageStore",
+    "UserPresence",
+    "inboundMessages",
+    "connect_and_send_events"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { ChatRoom, MessageStore, UserPresence, inboundMessages, connect_and_send_events } from '../websocket-server/websocket-server.ts';\n\nexport function render(container: HTMLElement) {\n  container.innerHTML = `\n    <div class=\"chat-list\" style=\"display:flex;flex-direction:column;gap:10px\">\n      <div class=\"chat-list-header\" style=\"display:flex;align-items:center;gap:8px\">\n        <div style=\"font-size:0.8rem;color:#888\">Chat Rooms</div>\n        <button class=\"btn btn-primary\" onclick=\"openRoomModal()\">+ New Room</button>\n      </div>\n      <div id=\"chatRoomsList\" style=\"flex:1;overflow-y:auto;max-height:300px\"></div>\n    </div>\n    <div class=\"chat-panel\" style=\"display:flex;flex-direction:column;gap:10px\">\n      <div class=\"chat-panel-header\" style=\"display:flex;align-items:center;gap:8px\">\n        <div style=\"font-size:0.8rem;color:#888\">Chat Messages</div>\n        <div class=\"chat-users\" style=\"display:flex;gap:4px\">\n          <div class=\"chat-user\" style=\"background:#60a5fa;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">User 1</div>\n          <div class=\"chat-user\" style=\"background:#4ade80;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">User 2</div>\n          <div class=\"chat-user\" style=\"background:#f87171;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">User 3</div>\n        </div>\n      </div>\n      <div id=\"chatMessages\" style=\"flex:1;overflow-y:auto;max-height:400px\"></div>\n      <div class=\"chat-input\" style=\"display:flex;gap:8px\">\n        <input id=\"chatInput\" type=\"text\" placeholder=\"Type a message...\" style=\"flex:1;padding:6px 12px;background:#1a1a2e;border:1px solid #222;color:#e0e0f0;font-size:0.8rem\">\n        <button class=\"btn\" onclick=\"sendMessage()\">Send</button>\n      </div>\n    </div>\n  `;\n\n  const chatRoomsList = document.getElementById('chatRoomsList') as HTMLElement;\n  const chatMessages = document.getElementById('chatMessages') as HTMLElement;\n  const chatInput = document.getElementById('chatInput') as HTMLInputElement;\n\n  const rooms = [\n    { id: '1', name: 'Room 1', members: ['user1', 'user2', 'user3'] },\n    { id: '2', name: 'Room 2', members: ['user2', 'user3', 'user4'] },\n    { id: '3', name: 'Room 3', members: ['user3', 'user4', 'user5'] },\n  ];\n\n  const messages = [\n    { id: '1', sender: 'user1', text: 'Hello, world!', color: '#00d9ff', fontSize: '0.8rem' },\n    { id: '2', sender: 'user2', text: 'What are you up to?', color: '#4ade80', fontSize: '0.8rem' },\n    { id: '3', sender: 'user3', text: 'Just coding. How about you?', color: '#f87171', fontSize: '0.8rem' },\n  ];\n\n  rooms.forEach(room => {\n    const roomEl = document.createElement('div');\n    roomEl.className = 'chat-room';\n    roomEl.innerHTML = `\n      <div class=\"chat-room-header\" style=\"display:flex;align-items:center;gap:8px\">\n        <div style=\"font-size:0.8rem;color:#888\">${room.name}</div>\n        <div class=\"chat-users\" style=\"display:flex;gap:4px\">\n          ${room.members.map(member => `<div class=\"chat-user\" style=\"background:#60a5fa;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">${member}</div>`).join('')}\n        </div>\n      </div>\n      <div class=\"chat-messages\" style=\"max-height:200px;overflow-y:auto;position:relative\">\n        ${messages.map(msg => `<div class=\"chat-message\" style=\"color:${msg.color};font-size:${msg.fontSize}\">${msg.text}</div>`).join('')}\n      </div>\n    `;\n    chatRoomsList.appendChild(roomEl);\n  });\n\n  function sendMessage() {\n    const text = chatInput.value.trim();\n    if (!text) return;\n    chatInput.value = '';\n    chatInput.focus();\n\n    messages.push({ id: Date.now().toString(), sender: 'user1', text, color: '#00d9ff', fontSize: '0.8rem' });\n\n    chatMessages.innerHTML = '';\n    messages.forEach(msg => {\n      const messageEl = document.createElement('div');\n      messageEl.className = 'chat-message';\n      messageEl.innerHTML = `<div class=\"chat-message-text\" style=\"color:${msg.color};font-size:${msg.fontSize}\">${msg.text}</div>`;\n      chatMessages.appendChild(messageEl);\n    });\n\n    chatMessages.scrollTop = chatMessages.scrollHeight;\n  }\n\n  function openRoomModal() {\n    const modal = document.createElement('div');\n    modal.className = 'modal';\n    modal.innerHTML = `\n      <div class=\"modal-content\">\n        <span class=\"close-modal\" onclick=\"closeModal(this)\">\u00d7</span>\n        <div class=\"modal-title\">New Chat Room</div>\n        <div class=\"modal-body\">\n          <label>Name</label>\n          <input id=\"roomName\" type=\"text\" placeholder=\"Room name\">\n          <label>Members</label>\n          <input id=\"roomMembers\" type=\"text\" placeholder=\"Comma-separated list of members\">\n          <button class=\"btn btn-primary\" onclick=\"createRoom()\">Create</button>\n        </div>\n      </div>\n    `;\n    document.body.appendChild(modal);\n  }\n\n  function closeModal(button: HTMLElement) {\n    button.parentElement.remove();\n  }\n\n  function createRoom() {\n    const name = document.getElementById('roomName') as HTMLInputElement;\n    const members = document.getElementById('roomMembers') as HTMLInputElement;\n    const room = { id: Date.now().toString(), name: name.value, members: members.value.split(',').map(m => m.trim()) };\n    rooms.push(room);\n    openRoomModal();\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "websocket_server"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "chat-logic.ts",
+   "language": "typescript",
+   "code": "import { ChatRoom, UserPresence } from '../websocket-server/websocket-server.ts';\n\nexport interface ChatMessage {\n  id: string;\n  content: string;\n  sender: string;\n  recipient: string;\n  room: string;\n  timestamp: Date;\n}\n\nexport interface MessageStore {\n  messages: ChatMessage[];\n  addMessage(message: ChatMessage): void;\n  getMessagesForRoom(room: string, limit: number): ChatMessage[];\n}\n\nexport function inboundMessages(ws: WebSocket) {\n  ws.onmessage = (event) => {\n    try {\n      const data = JSON.parse(event.data) as { type: 'message'; content: string; sender: string; recipient: string; room: string };\n      \n      if (!data || !data.type || !data.content || !data.sender) {\n        ws.send(JSON.stringify({ type: 'error', message: 'Invalid message format' }));\n        return;\n      }\n      \n      const user = { id: data.sender, name: data.sender };\n      const presence = { user, online: true };\n      \n      if (data.type === 'message') {\n        const message: ChatMessage = {\n          id: Date.now().toString(),\n          content: data.content,\n          sender: data.sender,\n          recipient: data.recipient,\n          room: data.room,\n          timestamp: new Date(),\n        };\n        \n        // Store message\n        // Send to recipient\n        if (data.recipient) {\n          const recipientPresence = { user: { id: data.recipient, name: data.recipient }, online: true };\n          ws.send(JSON.stringify({ type: 'message', content: message.content, sender: message.sender, recipient: message.recipient, room: message.room }));\n        }\n        \n        // Send to room\n        if (data.room) {\n          const roomMembers = [{ id: data.sender, name: data.sender }, { id: data.recipient, name: data.recipient }];\n          for (const member of roomMembers) {\n            if (member.id !== data.sender && member.id !== data.recipient) {\n              ws.send(JSON.stringify({ type: 'message', content: message.content, sender: message.sender, recipient: message.recipient, room: message.room }));\n            }\n          }\n        }\n      }\n    } catch (err) {\n      console.error('Error processing inbound message:', err);\n      ws.send(JSON.stringify({ type: 'error', message: 'Failed to process message' }));\n    }\n  };\n}\n\nexport function connect_and_send_events(ws: WebSocket) {\n  ws.onopen = () => {\n    const userId = Math.floor(Math.random() * 1000).toString();\n    const user = { id: userId, name: `User ${userId}` };\n    const presence = { user, online: true };\n    \n    ws.send(JSON.stringify({ type: 'connected', userId }));\n    \n    // Send initial messages\n    const initialMessages = [\n      { id: '1', content: 'Welcome to the chat!', sender: 'system', recipient: null, room: null, timestamp: new Date() },\n      { id: '2', content: 'This is a sample chat app.', sender: 'system', recipient: null, room: null, timestamp: new Date() },\n      { id: '3', content: 'Send messages, join rooms, and chat with others!', sender: 'system', recipient: null, room: null, timestamp: new Date() },\n    ];\n    initialMessages.forEach((msg) => {\n      ws.send(JSON.stringify({ type: 'message', content: msg.content, sender: msg.sender, recipient: msg.recipient, room: msg.room }));\n    });\n  };\n  \n  ws.onclose = () => {\n    const userId = getWebSocketForUser(ws);\n    if (userId) {\n      const presence = { user: { id: userId, name: `User ${userId}` }, online: false };\n      ws.send(JSON.stringify({ type: 'disconnected', userId }));\n    }\n  };\n}\n\nexport function getWebSocketForUser(ws: WebSocket): string | null {\n  const user = { id: '1', name: 'User 1' };\n  const presence = { user, online: true };\n  return user.id;\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "chat_logic",
+   "dependencies": [
+    "websocket_server"
+   ],
+   "exports": [
+    "ChatMessage",
+    "MessageStore",
+    "inboundMessages",
+    "connect_and_send_events",
+    "getWebSocketForUser"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "message-store.ts",
+   "language": "typescript",
+   "code": "import { Message, messages, sendMessage, getMessages, removeMessage } from '../message-models/message-models.ts';\n\nexport class MessageStore {\n  private messages: { [key: string]: { id: string; content: string; sender: string; recipient: string; room: string; timestamp: Date } } = {};\n\n  persistAndQueryMessages(msg: { id: string; content: string; sender: string; recipient: string; room: string; timestamp: Date }): void {\n    this.messages[msg.id] = msg;\n    // Save to a proper database and return the persisted message\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "message_store",
+   "dependencies": [
+    "message_models"
+   ],
+   "exports": [
+    "MessageStore"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a chat app</title>\n  <meta name=\"description\" content=\"a chat app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a chat app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-IFbfog/ui-screens/ui-screens.ts\n  function render(container) {\n    container.innerHTML = `\n    <div class=\"chat-list\" style=\"display:flex;flex-direction:column;gap:10px\">\n      <div class=\"chat-list-header\" style=\"display:flex;align-items:center;gap:8px\">\n        <div style=\"font-size:0.8rem;color:#888\">Chat Rooms</div>\n        <button class=\"btn btn-primary\" onclick=\"openRoomModal()\">+ New Room</button>\n      </div>\n      <div id=\"chatRoomsList\" style=\"flex:1;overflow-y:auto;max-height:300px\"></div>\n    </div>\n    <div class=\"chat-panel\" style=\"display:flex;flex-direction:column;gap:10px\">\n      <div class=\"chat-panel-header\" style=\"display:flex;align-items:center;gap:8px\">\n        <div style=\"font-size:0.8rem;color:#888\">Chat Messages</div>\n        <div class=\"chat-users\" style=\"display:flex;gap:4px\">\n          <div class=\"chat-user\" style=\"background:#60a5fa;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">User 1</div>\n          <div class=\"chat-user\" style=\"background:#4ade80;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">User 2</div>\n          <div class=\"chat-user\" style=\"background:#f87171;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">User 3</div>\n        </div>\n      </div>\n      <div id=\"chatMessages\" style=\"flex:1;overflow-y:auto;max-height:400px\"></div>\n      <div class=\"chat-input\" style=\"display:flex;gap:8px\">\n        <input id=\"chatInput\" type=\"text\" placeholder=\"Type a message...\" style=\"flex:1;padding:6px 12px;background:#1a1a2e;border:1px solid #222;color:#e0e0f0;font-size:0.8rem\">\n        <button class=\"btn\" onclick=\"sendMessage()\">Send</button>\n      </div>\n    </div>\n  `;\n    const chatRoomsList = document.getElementById(\"chatRoomsList\");\n    const chatMessages = document.getElementById(\"chatMessages\");\n    const chatInput = document.getElementById(\"chatInput\");\n    const rooms = [\n      { id: \"1\", name: \"Room 1\", members: [\"user1\", \"user2\", \"user3\"] },\n      { id: \"2\", name: \"Room 2\", members: [\"user2\", \"user3\", \"user4\"] },\n      { id: \"3\", name: \"Room 3\", members: [\"user3\", \"user4\", \"user5\"] }\n    ];\n    const messages = [\n      { id: \"1\", sender: \"user1\", text: \"Hello, world!\", color: \"#00d9ff\", fontSize: \"0.8rem\" },\n      { id: \"2\", sender: \"user2\", text: \"What are you up to?\", color: \"#4ade80\", fontSize: \"0.8rem\" },\n      { id: \"3\", sender: \"user3\", text: \"Just coding. How about you?\", color: \"#f87171\", fontSize: \"0.8rem\" }\n    ];\n    rooms.forEach((room) => {\n      const roomEl = document.createElement(\"div\");\n      roomEl.className = \"chat-room\";\n      roomEl.innerHTML = `\n      <div class=\"chat-room-header\" style=\"display:flex;align-items:center;gap:8px\">\n        <div style=\"font-size:0.8rem;color:#888\">${room.name}</div>\n        <div class=\"chat-users\" style=\"display:flex;gap:4px\">\n          ${room.members.map((member) => `<div class=\"chat-user\" style=\"background:#60a5fa;color:#fff;padding:2px 6px;border-radius:3px;font-size:0.6rem\">${member}</div>`).join(\"\")}\n        </div>\n      </div>\n      <div class=\"chat-messages\" style=\"max-height:200px;overflow-y:auto;position:relative\">\n        ${messages.map((msg) => `<div class=\"chat-message\" style=\"color:${msg.color};font-size:${msg.fontSize}\">${msg.text}</div>`).join(\"\")}\n      </div>\n    `;\n      chatRoomsList.appendChild(roomEl);\n    });\n    function sendMessage() {\n      const text = chatInput.value.trim();\n      if (!text) return;\n      chatInput.value = \"\";\n      chatInput.focus();\n      messages.push({ id: Date.now().toString(), sender: \"user1\", text, color: \"#00d9ff\", fontSize: \"0.8rem\" });\n      chatMessages.innerHTML = \"\";\n      messages.forEach((msg) => {\n        const messageEl = document.createElement(\"div\");\n        messageEl.className = \"chat-message\";\n        messageEl.innerHTML = `<div class=\"chat-message-text\" style=\"color:${msg.color};font-size:${msg.fontSize}\">${msg.text}</div>`;\n        chatMessages.appendChild(messageEl);\n      });\n      chatMessages.scrollTop = chatMessages.scrollHeight;\n    }\n    function openRoomModal() {\n      const modal = document.createElement(\"div\");\n      modal.className = \"modal\";\n      modal.innerHTML = `\n      <div class=\"modal-content\">\n        <span class=\"close-modal\" onclick=\"closeModal(this)\">\\xD7</span>\n        <div class=\"modal-title\">New Chat Room</div>\n        <div class=\"modal-body\">\n          <label>Name</label>\n          <input id=\"roomName\" type=\"text\" placeholder=\"Room name\">\n          <label>Members</label>\n          <input id=\"roomMembers\" type=\"text\" placeholder=\"Comma-separated list of members\">\n          <button class=\"btn btn-primary\" onclick=\"createRoom()\">Create</button>\n        </div>\n      </div>\n    `;\n      document.body.appendChild(modal);\n    }\n    function closeModal(button) {\n      button.parentElement.remove();\n    }\n    function createRoom() {\n      const name = document.getElementById(\"roomName\");\n      const members = document.getElementById(\"roomMembers\");\n      const room = { id: Date.now().toString(), name: name.value, members: members.value.split(\",\").map((m) => m.trim()) };\n      rooms.push(room);\n      openRoomModal();\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-IFbfog/message-store/message-store.ts\n  var MessageStore = class {\n    constructor() {\n      __publicField(this, \"messages\", {});\n    }\n    persistAndQueryMessages(msg) {\n      this.messages[msg.id] = msg;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-IFbfog/_preview_entry.ts\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"user-auth.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling user_auth.AuthToken:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"message-models.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling message_models.Message:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"websocket-server.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling websocket_server.ChatRoom:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"chat-logic.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling chat_logic.ChatMessage:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof MessageStore === \"function\" && !/^class\\s/.test(String(MessageStore))) {\n      MessageStore(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"message-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling message_store.MessageStore:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (6) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 6 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a chat app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a chat app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "user_auth",
+    "message_models",
+    "websocket_server",
+    "ui_screens",
+    "chat_logic",
+    "message_store"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 27436,
+ "totalErrors": 0,
+ "validatedCount": 7,
+ "failedCount": 0,
+ "importGraph": {
+  "mod_5": {
+   "entryFile": "user-auth.ts",
+   "dependencies": [],
+   "exports": [
+    "AuthToken",
+    "AuthUser",
+    "AuthService"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "message-models.ts",
+   "dependencies": [],
+   "exports": [
+    "Message",
+    "messages",
+    "sendMessage",
+    "getMessages",
+    "removeMessage"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "websocket-server.ts",
+   "dependencies": [
+    "user_auth"
+   ],
+   "exports": [
+    "ChatRoom",
+    "MessageStore",
+    "UserPresence",
+    "inboundMessages",
+    "connect_and_send_events"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "websocket_server"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "chat-logic.ts",
+   "dependencies": [
+    "websocket_server"
+   ],
+   "exports": [
+    "ChatMessage",
+    "MessageStore",
+    "inboundMessages",
+    "connect_and_send_events",
+    "getWebSocketForUser"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "message-store.ts",
+   "dependencies": [
+    "message_models"
+   ],
+   "exports": [
+    "MessageStore"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "user_auth",
+    "message_models",
+    "websocket_server",
+    "ui_screens",
+    "chat_logic",
+    "message_store"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": true,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 7,
+  "totalChars": 27436,
+  "totalErrors": 0,
+  "validated": 7,
+  "failed": 0,
+  "isAllValidated": true
+ },
+ "timingMs": {
+  "total": 210212
+ }
+}

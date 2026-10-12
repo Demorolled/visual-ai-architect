@@ -9,13 +9,17 @@
 
 import { dirname, isAbsolute, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 import { getRegistry } from '../tools/ToolRegistry.js';
 import type { ToolContext } from '../tools/Tool.js';
 import type { ChatToolKind, ChatToolRequest } from './chatToolDetector.js';
+import { parseWikiSections } from '../routes/wiki.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 /** backend/src/utils → project root. */
 export const PROJECT_ROOT = resolve(__dirname, '..', '..', '..');
+/** project root → modelVeronice.txt (the wiki). */
+const WIKI_PATH = join(PROJECT_ROOT, 'modelVeronice.txt');
 
 const MAX_FILE_CHARS = 6000;
 const MAX_SEARCH_CHARS = 3000;
@@ -36,6 +40,39 @@ export function truncateMid(s: string, max: number): string {
   const head = Math.floor(max * 0.6);
   const tail = max - head;
   return s.slice(0, head) + `\n… [truncated, ${s.length - max} chars omitted] …\n` + s.slice(-tail);
+}
+
+/**
+ * Tokenize a query into matchable words (≥3 chars).
+ */
+export function tokenizeQuery(query: string): string[] {
+  return query
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(t => t.length >= 3);
+}
+
+/**
+ * Rank wiki sections by how many query tokens appear in title+body, returning
+ * the top `max` matches. Pure — unit-testable without the wiki on disk.
+ */
+export function matchWikiSections(
+  sections: { number: number; title: string; body: string }[],
+  query: string,
+  max: number = 2
+): { number: number; title: string; body: string }[] {
+  const tokens = tokenizeQuery(query);
+  if (tokens.length === 0) return [];
+  return sections
+    .map(s => {
+      const hay = `${s.title} ${s.body}`.toLowerCase();
+      const hits = tokens.filter(t => hay.includes(t)).length;
+      return { s, hits };
+    })
+    .filter(x => x.hits > 0)
+    .sort((a, b) => b.hits - a.hits)
+    .slice(0, max)
+    .map(x => x.s);
 }
 
 interface RawToolData {
@@ -196,6 +233,29 @@ export async function runChatTool(req: ChatToolRequest): Promise<ChatToolOutcome
       patterns.length > 0
         ? truncateMid(JSON.stringify(patterns, null, 1), MAX_KNOWLEDGE_CHARS)
         : `(no knowledge-base patterns found for "${req.input.query}")`;
+
+    // Also pull matching WIKI sections (modelVeronice.txt) so knowledge
+    // lookups retrieve the wiki too — e.g. §59 (void raider game builds)
+    // for an "arcade games" query. Tokenized match against title + body.
+    let wikiText = '';
+    try {
+      const wiki = readFileSync(WIKI_PATH, 'utf-8');
+      const wikiHits = matchWikiSections(parseWikiSections(wiki), String(req.input.query || ''), 2);
+      if (wikiHits.length > 0) {
+        wikiText =
+          `\n\n📗 MATCHING WIKI SECTIONS (modelVeronice.txt):\n` +
+          wikiHits
+            .map(
+              h =>
+                `\n— Section ${h.number}: ${h.title}\n` +
+                truncateMid(h.body, 1200)
+            )
+            .join('\n');
+      }
+    } catch {
+      wikiText = ''; // wiki unreadable — patterns alone are enough
+    }
+
     return {
       handled: true,
       tool: req.tool,
@@ -203,7 +263,7 @@ export async function runChatTool(req: ChatToolRequest): Promise<ChatToolOutcome
       contextBlock:
         `[REAL KNOWLEDGE — knowledge_query tool, ${ms()}ms]\n` +
         `Query: "${req.input.query}" — ${patterns.length} pattern${patterns.length === 1 ? '' : 's'}\n` +
-        `──────\n${patternText}\n──────\n` +
+        `──────\n${patternText}${wikiText}\n──────\n` +
         `Answer the user's question based ONLY on these real knowledge-base results. ` +
         `If the knowledge base has nothing relevant, say so honestly and rely on what you actually know.`,
     };

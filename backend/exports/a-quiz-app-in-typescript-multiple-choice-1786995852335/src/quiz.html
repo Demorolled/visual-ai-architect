@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz App</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #0a0a14; color: #e0e0e0; }
+.app { max-width: 700px; margin: 0 auto; }
+.question { margin-bottom: 20px; }
+.question h2 { font-size: 1.2rem; margin: 0; color: #00d9ff; }
+.question p { margin: 5px 0 15px; color: #aaa; font-size: 0.9rem; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option { padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: 0.2s; }
+.option:hover { border-color: rgba(255,255,255,0.12); }
+.option.selected { background: rgba(0,217,255,0.06); border-color: #00d9ff; color: #00d9ff; }
+.btn { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+.btn-primary { background: #00d9ff; color: #0a0a14; }
+.btn-primary:hover { background: #00c4ff; }
+.btn-secondary { background: rgba(255,255,255,0.08); color: #aaa; }
+.btn-secondary:hover { background: rgba(255,255,255,0.16); }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Quiz App</h1>
+  <div class="question" id="questionDisplay"></div>
+  <div class="options" id="optionsContainer"></div>
+  <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+  <div id="resultDisplay" style="margin-top:20px"></div>
+</div>
+<script>
+  const questions = [
+    { question: 'What is the capital of France?', options: ['Paris', 'Berlin', 'Madrid', 'Rome'], correct: 'Paris' },
+    { question: 'What is 2 + 2?', options: ['3', '4', '5', '6'], correct: '4' },
+    { question: 'Which planet is known as the Red Planet?', options: ['Earth', 'Mars', 'Venus', 'Jupiter'], correct: 'Mars' },
+    { question: 'What is the largest ocean on Earth?', options: ['Atlantic', 'Indian', 'Arctic', 'Pacific'], correct: 'Pacific' },
+    { question: 'Which famous scientist wrote "On the Origin of Species"?', options: ['Albert Einstein', 'Charles Darwin', 'Nikola Tesla', 'Galileo Galilei'], correct: 'Charles Darwin' },
+  ];
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+
+  function displayQuestion() {
+    const question = questions[currentQuestionIndex];
+    const questionDisplay = document.getElementById('questionDisplay');
+    questionDisplay.innerHTML = `<h2>${question.question}</h2><p>${question.options.map(o => `<label><input type="radio" name="option" value="${o}">${o}</label>`).join('<br>')}</p>`;
+
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.disabled = true;
+  }
+
+  function selectOption(option) {
+    const question = questions[currentQuestionIndex];
+    const correct = question.correct;
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (selected && selected.value === correct) {
+      score++;
+      selected.parentElement.style.backgroundColor = '#4ade80';
+    } else {
+      selected.parentElement.style.backgroundColor = '#ef4444';
+    }
+    const nextBtn = document.

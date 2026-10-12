@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note-Taking App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0a0a14;
+      color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .app {
+      max-width: 400px;
+      padding: 20px;
+      background: #15152a;
+      border-radius: 12px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #00d9ff;
+    }
+    .notes {
+      margin-top: 10px;
+    }
+    .note {
+      background: #1e1e2e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .note-title {
+      font-size: 0.8rem;
+      color: #e0e0e0;
+      flex: 1;
+    }
+    .note-content {
+      font-size: 0.7rem;
+      color: #888888;
+      flex: 1;
+    }
+    .note-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #00d9ff;
+      color: #0a0a14;
+    }
+    .btn-primary:hover {
+      background: #00c4ff;
+    }
+    .btn-danger {
+      background: #ff4747;
+      color: #0a0a14;
+    }
+    .btn-danger:hover {
+      background: #ff1f1f;
+    }
+    .btn-secondary {
+      background: #444;
+      color: #e0e0e0;
+    }
+    .btn-secondary:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Note-Taking App</h1>
+    <div class="notes" id="notesContainer"></div>
+    <div class="row" style="margin-top: 20px">
+      <input id="noteTitleInput" type="text" placeholder="Enter title" style="flex: 1; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; background: #1e1e2e; color: #e0e0e0; font-size: 0.8rem">
+      <button class="btn btn-primary" onclick="addNote()" style="margin-left: 10px">➕ Add</button>
+    </div>
+  </div>
+
+  <script>
+    const notesContainer = document.getElementById('notesContainer');
+    let notes = [];
+    let nextId = 1;
+
+    function addNote() {
+      const titleInput = document.getElementById('noteTitleInput');
+      const title = titleInput.value.trim();
+      if (!title) return;
+      notes.push({ id: nextId++, title });
+      renderNotes();
+      titleInput.value = '';
+    }
+
+    function renderNotes() {
+      notesContainer.innerHTML = '';
+      if (notes.length === 0) {
+        notesContainer.innerHTML = '<p style="color:#888888">No notes yet</p>';
+        return;
+      }
+      notes.forEach(note => {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'note';
+        noteDiv.innerHTML = `
+          <div class="note-title">${note.title}</div>
+          <div class="note-actions">
+            <button class="btn btn-primary" onclick="editNote(${note.id})">✎ Edit</button>
+            <button class="btn btn-danger" onclick="deleteNote(${note.id})">✕ Delete</button>
+          </div>
+        `;
+        notesContainer.appendChild(noteDiv);
+      });
+    }
+
+    function editNote(id) {
+      const note = notes.find(n => n.id === id);
+      if (!note) return;
+      const newTitle = prompt('Edit title:', note.title);
+      if (newTitle !== null) {
+        note.title = newTitle;
+        renderNotes();
+      }
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(n => n.id !== id);
+      renderNotes();
+    }
+
+    renderNotes();
+  </script>
+</body>
+</html>

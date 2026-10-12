@@ -1,0 +1,1 @@
+{"instruction": "What is the VACA `gui-layout` node type for?", "input": "", "output": "`gui-layout` GUI Layout — Imported GUI widget layout", "source": "frontend/src/types.ts#NODE_TYPE_OPTIONS"}

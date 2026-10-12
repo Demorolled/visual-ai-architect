@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Taking App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a2e;
+      color: #ffffff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #15152a;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      margin-bottom: 16px;
+      color: #4ade80;
+    }
+    .notes-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 16px;
+    }
+    .notes-list li {
+      background: #1f1f33;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .notes-list li:hover {
+      background: #2a2a40;
+    }
+    .notes-list li .note-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .notes-list li .note-content {
+      color: #888;
+    }
+    .note-form {
+      margin-bottom: 16px;
+    }
+    .note-form label {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .note-form input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      background: #1f1f33;
+      color: #ffffff;
+    }
+    .note-form textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      background: #1f1f33;
+      color: #ffffff;
+    }
+    .note-form button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background: #4ade80;
+      color: #ffffff;
+      cursor: pointer;
+    }
+    .note-form button:hover {
+      background: #36d399;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Note Taking App</h1>
+    <ul id="notesList" class="notes-list"></ul>
+    <div class="note-form">
+      <label for="noteTitle">Title</label>
+      <input id="noteTitle" type="text" placeholder="Enter note title">
+      <label for="noteContent">Content</label>
+      <textarea id="noteContent" rows="4" placeholder="Enter note content"></textarea>
+      <button onclick="addNote()">Add Note</button>
+    </div>
+  </div>
+
+  <script>
+    const notes = [];
+
+    function renderNotes() {
+      const list = document.getElementById('notesList');
+      list.innerHTML = '';
+      notes.forEach(note => {
+        const li = document.createElement('li');
+        li.innerHTML = `<div class="note-title">${note.title}</div><div class="note-content">${note.content}</div>`;
+        list.appendChild(li);
+      });
+    }
+
+    function addNote() {
+      const title = document.getElementById('noteTitle').value.trim();
+      const content = document.getElementById('noteContent').value.trim();
+      if (title && content) {
+        notes.push({ title, content });
+        renderNotes();
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteContent').value = '';
+      }
+    }
+
+    renderNotes();
+  </script>
+</body>
+</html>

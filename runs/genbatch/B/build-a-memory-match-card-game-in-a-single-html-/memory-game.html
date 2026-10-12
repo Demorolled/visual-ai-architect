@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Memory Card Game</title><style>.card{background:#15152a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;margin:8px;display:flex;flex-direction:column;align-items:center}.moved{pointer-events:none;}</style></head><body><div id="app" style="max-width:960px;margin:0 auto;padding:24px"><div class="grid" id="cards"></div><button id="playBtn" class="btn" onclick="startGame()">▶ Play</button><div id="statusMsg">Game stopped</div>
+
+<div>Best time: <span id="bestTime">0s</span></div>
+<div>Moves: <span id="moves">0</span></div>
+<div>Timer: <span id="timer">0s</span></div>
+
+<script>
+let cards = [], moves = 0, timerId = null, statusMsg = {};
+function startGame() { moves = 0; document.getElementById('cards').innerHTML = ''; for (let i = 0; i < 16; i += 1) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.textContent = `Card ${i + 1}`;
+    card.onclick = (e) =  & gt;
+    {
+        moves += 1;
+        updateTimer();
+    }
+    ;
+    document.getElementById('cards').appendChild(card);
+} statusMsg.textContent = 'Game started • Moves: 0'; }
+function updateTimer() { const timer = document.getElementById('timer'); timer.textContent = `${Date.now()}s`; }
+</script>
+</body></html>

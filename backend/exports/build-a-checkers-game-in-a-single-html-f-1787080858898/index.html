@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkers Game</title>
+<style>
+  body {
+    background: #10101a;
+    color: #e0e0f0;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .game-board {
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    gap: 2px;
+  }
+  .square {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .square.dark {
+    background: #333;
+  }
+  .square.light {
+    background: #555;
+  }
+  .checker {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+  }
+  .checker.red {
+    background: #f04747;
+    color: #fff;
+  }
+  .checker.black {
+    background: #2a9d8f;
+    color: #fff;
+  }
+  .checker.crown {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  }
+  #status {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    color: #e0e0f0;
+    font-size: 0.8rem;
+    font-family: 'Segoe UI', sans-serif;
+    transition: background 0.2s;
+  }
+  #status.success {
+    background: rgba(40,200,120,0.8);
+  }
+  #status.error {
+    background: rgba(255,50,50,0.8);
+  }
+</style>
+</head>
+<body>
+<div class="game-board" id="gameBoard"></div>
+<div id="status"></div>
+
+<script>
+  const ROWS = 8;
+  const COLS = 8;
+  let currentPlayer = 'red';
+  let selectedPiece = null;
+  let selectedSquare = null;
+  let status = '';
+  let board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+
+  function initBoard() {
+    const boardElement = document.getElementById('gameBoard');
+    boardElement.innerHTML = '';
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        const isDark = (row + col) % 2 === 1;
+        const square = document.createElement('div');
+        square.classList.add('square', isDark ? 'dark' : 'light');
+        square.dataset.row = row;
+        square.dataset.col = col;
+        square.addEventListener('click', () => handleSquareClick(row, col));
+        boardElement.appendChild(square);
+        if (isDark && (row < 3 || row > 4)) {
+          const piece = document.createElement('div');
+          piece.classList.add('checker', row < 3 ? 'red' : 'black');
+          piece.dataset.player = row < 3 ? 'red' : 'black';
+          square.appendChild(piece);
+          board[row][col] = row < 3 ? 'red' : 'black';
+        }
+      }
+    }
+  }
+
+  function handleSquareClick(row, col) {
+    const boardElement = document.getElementById('gameBoard');
+    const squares = Array.from(boardElement.children);
+    const square = squares.find(s => s.dataset.row === row && s.dataset.col === col);
+    const piece = square.querySelector('.checker');
+
+    if (selectedPiece && selectedSquare) {
+      const moves = getValidMoves(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col));
+      const isMove = moves.some(m => m.row === row && m.col === col);
+      if (isMove) {
+        const capturedRow = (parseInt(selectedSquare.dataset.row) + row) / 2;
+        const capturedCol = (parseInt(selectedSquare.dataset.col) + col) / 2;
+        const capturedPiece = squares.find(s => s.dataset.row === capturedRow && s.dataset.col === capturedCol).querySelector('.checker');
+        if (capturedPiece) {
+          capturedPiece.remove();
+          board[capturedRow][capturedCol] = null;
+        }
+        selectedPiece.remove();
+        square.appendChild(selectedPiece);
+        selectedPiece.style.transform = '';
+        selectedSquare.style.transform = '';
+        selectedPiece.dataset.row = row;
+        selectedPiece.dataset.col = col;
+        selectedSquare = null;
+        selectedPiece = null;
+        board[parseInt(selectedSquare.dataset.row)][parseInt(selectedSquare.dataset.col)] = null;
+        board[row][col] = currentPlayer;
+        status = `Move to ${row},${col}`;
+        document.getElementById('status').textContent = status;
+        currentPlayer = currentPlayer === 'red' ? 'black' : 'red';
+        return;
+      }
+    }
+
+    if (piece && piece.dataset.player === currentPlayer) {
+      selectedPiece = piece;
+      selectedSquare = square;
+      status = `Selected ${piece.dataset.player} piece at ${row},${col}`;
+      document.getElementById('status').textContent = status;
+      return;
+    }
+
+    const moves = getValidMoves(row, col);
+    moves.forEach(m => {
+      const moveSquare = squares.find(s => s.dataset.row === m.row && s.dataset.col === m.col);
+      moveSquare.style.transform = 'scale(1.2)';
+    });
+  }
+
+  function getValidMoves(row, col) {
+    const directions = [
+      { dr: 1, dc: 1 },
+      { dr: 1, dc: -1 },
+      { dr: -1, dc: 1 },
+      { dr: -1, dc: -1 }
+    ];
+    const moves = [];
+    const player = board[row][col];
+
+    for (const dir of directions) {
+      const r = row + dir.dr;
+      const c = col + dir.dc;
+      if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === null) {
+        moves.push({ row: r, col: c });
+      }
+    }
+
+    return moves;
+  }
+
+  initBoard();
+</script>
+</body>
+</html>

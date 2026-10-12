@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stopwatch App</title>
+  <style>
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+      text-align: center;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background-color: #28a745;
+      color: white;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Stopwatch</h1>
+    <div class="row">
+      <span id="timer">00:00:00</span>
+      <button id="startBtn" class="btn btn-primary" onclick="startStopwatch()">Start</button>
+      <button id="stopBtn" class="btn btn-danger" onclick="stopStopwatch()">Stop</button>
+      <button id="resetBtn" class="btn" onclick="resetStopwatch()">Reset</button>
+    </div>
+  </div>
+  <script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let timerInterval = null;
+
+    function startStopwatch() {
+      if (!timerInterval) {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(updateTimer, 10);
+      }
+    }
+
+    function stopStopwatch() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function resetStopwatch() {
+      elapsedTime = 0;
+      document.getElementById('timer').textContent = '00:00:00';
+    }
+
+    function updateTimer() {
+      elapsedTime = Date.now() - startTime;
+      const seconds = Math.floor((elapsedTime / 1000) % 60);
+      const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+      const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+
+      document.getElementById('timer').textContent = 
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+  </script>
+</body>
+</html>

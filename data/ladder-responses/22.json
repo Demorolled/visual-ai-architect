@@ -1,0 +1,347 @@
+{
+ "success": true,
+ "projectId": "138c500f-b120-411a-9b31-22d2eafbe63c",
+ "matchedBy": "semantic",
+ "matchScore": 0.876072967873921,
+ "blueprint": {
+  "app_type": "snake_game",
+  "description": "Classic Snake with grid movement, growing body, collision detection, and progression \u2014 Snake implementation with linked-list body representation, directional input, food collision, self-collision detection, scoring, and speed progression",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Snake Controller",
+   "Movement Engine",
+   "Collision Detector",
+   "Game State",
+   "Grid Renderer"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Snake Controller",
+    "destination_module": "Movement Engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Movement Engine",
+    "destination_module": "Collision Detector",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "Collision Detector",
+    "destination_module": "Game State",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "Game State",
+    "destination_module": "Grid Renderer",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 23 Snake Open-Source Projects - LibHunt\n    Which are the best open-source Snake projects? This list will help you: dotnet-console-games, 3dstool, snake, SnakeClassic, snake-game, nibbles, and snake_pathfinding_ai.\n  \u2022 Top 23 snake-game Open-Source Projects - LibHunt\n    Which are the best open-source snake-game projects? This list will help you: snk, snake, snake, snake-asm, snake-game, sssnake, and snake-c-wasm.\n  \u2022 \u2b506037 Platane/snk: \ud83d\udfe9\u2b1c Generates a snake game from a github user contributions graph and output a screen capture as animated svg or gif\n  \u2022 \u2b502166 yujqiao/DungeonRush: \ud83d\udc7e\ud83d\udc0d A opensource game inspired by Snake, written in pure C with SDL\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 9: DATA & KNOWLEDGE STORES\n    9.1 DATA DIRECTORY (data/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesigns.json                 \u2014 Generated design catalog (design storage)\ndesign-specs-v2.json         \u2014 Design specifications (v2)\nnode-designs.json            \u2014 Node design catalog\nsession-memory.json          \u2014 Session memory/persistence\ndesig\n  \u2022 Section 10: TRAINING SYSTEM\n    10.1 LLM TRAINING APP (llm-training-app/) \u2014 LEGACY (superseded by 10.2 gui_trainer/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFrontend:     HTML + CSS + JS (custom UI, no framework)\nBackend:      Python FastAPI\nEngine:       Custom engine.py + mindspace_api.\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "snake_game",
+   "score": 0.876072967873921
+  },
+  {
+   "app_type": "snake_evolution_2",
+   "score": 0.8552911526399113
+  },
+  {
+   "app_type": "snake_evolution",
+   "score": 0.7832891224131211
+  },
+  {
+   "app_type": "racing_game",
+   "score": 0.396155323336091
+  },
+  {
+   "app_type": "fishing_game",
+   "score": 0.39310792944052475
+  }
+ ],
+ "project": {
+  "id": "138c500f-b120-411a-9b31-22d2eafbe63c",
+  "name": "a snake game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "snake_game blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "input",
+    "label": "Snake Controller"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Movement Engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "Collision Detector"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "Game State"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Grid Renderer"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 3,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 2,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Snake Controller",
+   "Movement Engine",
+   "Collision Detector",
+   "Game State",
+   "Grid Renderer"
+  ],
+  "generated": [
+   "Snake Controller",
+   "Movement Engine",
+   "Collision Detector",
+   "Game State",
+   "Grid Renderer"
+  ],
+  "matched": [
+   "Snake Controller",
+   "Movement Engine",
+   "Collision Detector",
+   "Game State",
+   "Grid Renderer"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "snake-controller.ts",
+   "language": "typescript",
+   "code": "export class SnakeController {\n  private snake: { x: number; y: number; dir: 'left' | 'right' | 'up' | 'down' }[];\n  private food: { x: number; y: number };\n  private dir: 'left' | 'right' | 'up' | 'down';\n  private gameRunning: boolean;\n  private gridSize: number;\n  private speed: number;\n\n  constructor(gridSize: number, speed: number) {\n    this.gridSize = gridSize;\n    this.speed = speed;\n    this.gameRunning = true;\n    this.snake = [{ x: 4, y: 4 }, { x: 3, y: 4 }, { x: 2, y: 4 }];\n    this.food = { x: 10, y: 10 };\n    this.dir = 'right';\n  }\n\n  public getGameState(): { snake: { x: number; y: number }[]; food: { x: number; y: number }; running: boolean } {\n    return { snake: this.snake.map(s => ({ x: s.x, y: s.y })), food: this.food, running: this.gameRunning };\n  }\n\n  public startGame(): void {\n    this.gameRunning = true;\n  }\n\n  public stopGame(): void {\n    this.gameRunning = false;\n  }\n\n  public move(): void {\n    if (!this.gameRunning) return;\n\n    const head = { x: this.snake[0].x, y: this.snake[0].y };\n    const nextDir = this.dir;\n\n    switch (nextDir) {\n      case 'left':\n        head.x--;\n        break;\n      case 'right':\n        head.x++;\n        break;\n      case 'up':\n        head.y--;\n        break;\n      case 'down':\n        head.y++;\n        break;\n    }\n\n    this.snake.unshift(head);\n\n    if (head.x === this.food.x && head.y === this.food.y) {\n      this.placeFood();\n    } else {\n      this.snake.pop();\n    }\n\n    if (!this.gameRunning) {\n      this.snake = [{ x: 4, y: 4 }, { x: 3, y: 4 }, { x: 2, y: 4 }];\n      this.food = { x: 10, y: 10 };\n      this.dir = 'right';\n    }\n  }\n\n  private placeFood(): void {\n    const foodPlaced = false;\n    if (foodPlaced) {\n      this.food = { x: Math.floor(Math.random() * this.gridSize), y: Math.floor(Math.random() * this.gridSize) };\n    }\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Snake Controller",
+   "dependencies": [],
+   "exports": [
+    "SnakeController"
+   ],
+   "errors": [
+    "TS2741: Property 'dir' is missing in type '{ x: number; y: number; }' but required in type '{ x: number; y: number; dir: \"up\" | \"down\" | \"left\" | \"right\"; }'. (line 13)",
+    "TS2741: Property 'dir' is missing in type '{ x: number; y: number; }' but required in type '{ x: number; y: number; dir: \"up\" | \"down\" | \"left\" | \"right\"; }'. (line 13)",
+    "TS2741: Property 'dir' is missing in type '{ x: number; y: number; }' but required in type '{ x: number; y: number; dir: \"up\" | \"down\" | \"left\" | \"right\"; }'. (line 13)",
+    "TS2345: Argument of type '{ x: number; y: number; }' is not assignable to parameter of type '{ x: number; y: number; dir: \"up\" | \"down\" | \"left\" | \"right\"; }'. (line 51)",
+    "TS2741: Property 'dir' is missing in type '{ x: number; y: number; }' but required in type '{ x: number; y: number; dir: \"up\" | \"down\" | \"left\" | \"right\"; }'. (line 60)",
+    "TS2741: Property 'dir' is missing in type '{ x: number; y: number; }' but required in type '{ x: number; y: number; dir: \"up\" | \"down\" | \"left\" | \"right\"; }'. (line 60)",
+    "TS2741: Property 'dir' is missing in type '{ x: number; y: number; }' but required in type '{ x: number; y: number; dir: \"up\" | \"down\" | \"left\" | \"right\"; }'. (line 60)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "movement-engine.ts",
+   "language": "typescript",
+   "code": "export class MovementEngine {\n  private snake: { head: { x: number; y: number }; body: { x: number; y: number }[]; direction: 'up' | 'down' | 'left' | 'right' }[] = [];\n  private gridSize: { width: number; height: number };\n  private food: { x: number; y: number };\n  private speed: number = 200;\n  private direction: 'up' | 'down' | 'left' | 'right' = 'right';\n\n  constructor(gridSize: { width: number; height: number }) {\n    this.gridSize = gridSize;\n    this.food = this.generateFood();\n  }\n\n  public addSnake(): void {\n    this.snake.push({\n      head: { x: 5, y: 5 },\n      body: [{ x: 4, y: 5 }, { x: 3, y: 5 }],\n      direction: 'right',\n    });\n  }\n\n  public move(): void {\n    this.snake.forEach((snake) => {\n      const newHead = { ...snake.head };\n      switch (snake.direction) {\n        case 'up':\n          newHead.y--;\n          break;\n        case 'down':\n          newHead.y++;\n          break;\n        case 'left':\n          newHead.x--;\n          break;\n        case 'right':\n          newHead.x++;\n          break;\n      }\n      newHead.x = (newHead.x + this.gridSize.width) % this.gridSize.width;\n      newHead.y = (newHead.y + this.gridSize.height) % this.gridSize.height;\n      snake.head = newHead;\n      snake.body.unshift(newHead);\n      if (!this.checkCollision(snake)) {\n        snake.body.pop();\n      }\n    });\n  }\n\n  private checkCollision(snake: { head: { x: number; y: number }; body: { x: number; y: number }[]; direction: 'up' | 'down' | 'left' | 'right' }): boolean {\n    const head = snake.head;\n    for (const bodyPart of snake.body) {\n      if (head.x === bodyPart.x && head.y === bodyPart.y) {\n        return true;\n      }\n    }\n    if (head.x < 0 || head.x >= this.gridSize.width || head.y < 0 || head.y >= this.gridSize.height) {\n      return true;\n    }\n    return false;\n  }\n\n  private generateFood(): { x: number; y: number } {\n    let x, y;\n    do {\n      x = Math.floor(Math.random() * this.gridSize.width);\n      y = Math.floor(Math.random() * this.gridSize.height);\n    } while (this.snake.some((s) => s.head.x === x && s.head.y === y));\n    return { x, y };\n  }\n\n  public getScore(): number {\n    return this.snake.length - 1;\n  }\n\n  public getSpeed(): number {\n    return this.speed;\n  }\n\n  public setSpeed(newSpeed: number): void {\n    this.speed = newSpeed;\n  }\n\n  public getFoodPosition(): { x: number; y: number } {\n    return this.food;\n  }\n\n  public updateDirection(newDirection: 'up' | 'down' | 'left' | 'right'): void {\n    this.direction = newDirection;\n  }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "Movement Engine",
+   "dependencies": [],
+   "exports": [
+    "MovementEngine"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "collision-detector.ts",
+   "language": "typescript",
+   "code": "import { MovementEngine } from '../movement-engine/movement-engine.ts';\n\nexport class CollisionDetector {\n  private snake: { head: { x: number; y: number }; body: { x: number; y: number }[]; direction: 'up' | 'down' | 'left' | 'right' }[] = [];\n  private gridSize: { width: number; height: number };\n  private food: { x: number; y: number };\n  private speed: number = 200;\n  private direction: 'up' | 'down' | 'left' | 'right' = 'right';\n\n  constructor(gridSize: { width: number; height: number }) {\n    this.gridSize = gridSize;\n    this.food = this.generateFood();\n  }\n\n  public addSnake(): void {\n    this.snake.push({\n      head: { x: 5, y: 5 },\n      body: [{ x: 4, y: 5 }, { x: 3, y: 5 }],\n      direction: 'right',\n    });\n  }\n\n  public move(): void {\n    this.snake.forEach((snake) => {\n      const newHead = { ...snake.head };\n      switch (snake.direction) {\n        case 'up':\n          newHead.y--;\n          break;\n        case 'down':\n          newHead.y++;\n          break;\n        case 'left':\n          newHead.x--;\n          break;\n        case 'right':\n          newHead.x++;\n          break;\n      }\n      newHead.x = (newHead.x + this.gridSize.width) % this.gridSize.width;\n      newHead.y = (newHead.y + this.gridSize.height) % this.gridSize.height;\n      snake.head = newHead;\n      snake.body.unshift(newHead);\n      if (!this.checkCollision(snake)) {\n        snake.body.pop();\n      }\n    });\n  }\n\n  private checkCollision(snake: { head: { x: number; y: number }; body: { x: number; y: number }[]; direction: 'up' | 'down' | 'left' | 'right' }): boolean {\n    const head = snake.head;\n    for (const bodyPart of snake.body) {\n      if (head.x === bodyPart.x && head.y === bodyPart.y) {\n        return true;\n      }\n    }\n    return false;\n  }\n\n  private generateFood(): { x: number; y: number } {\n    let x, y;\n    do {\n      x = Math.floor(Math.random() * this.gridSize.width);\n      y = Math.floor(Math.random() * this.gridSize.height);\n    } while (this.snake.some((s) => s.head.x === x && s.head.y === y));\n    return { x, y };\n  }\n\n  public getScore(): number {\n    return this.snake.length - 1;\n  }\n\n  public getSpeed(): number {\n    return this.speed;\n  }\n\n  public setSpeed(newSpeed: number): void {\n    this.speed = newSpeed;\n  }\n\n  public getFoodPosition(): { x: number; y: number } {\n    return this.food;\n  }\n\n  public updateDirection(newDirection: 'up' | 'down' | 'left' | 'right'): void {\n    this.direction = newDirection;\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "Collision Detector",
+   "dependencies": [
+    "Movement Engine"
+   ],
+   "exports": [
+    "CollisionDetector"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "game-state.ts",
+   "language": "typescript",
+   "code": "import { CollisionDetector } from '../collision-detector/collision-detector.ts';\n\nexport class GameState {\n  private snake: { head: { x: number; y: number }; body: { x: number; y: number }[]; direction: 'up' | 'down' | 'left' | 'right' }[] = [];\n  private gridSize: { width: number; height: number };\n  private food: { x: number; y: number };\n  private speed: number = 200;\n  private direction: 'up' | 'down' | 'left' | 'right' = 'right';\n\n  constructor(gridSize: { width: number; height: number }) {\n    this.gridSize = gridSize;\n    this.food = this.generateFood();\n  }\n\n  public addSnake(): void {\n    this.snake.push({\n      head: { x: 5, y: 5 },\n      body: [{ x: 4, y: 5 }, { x: 3, y: 5 }],\n      direction: 'right',\n    });\n  }\n\n  public move(): void {\n    this.snake.forEach((snake) => {\n      const newHead = { ...snake.head };\n      switch (snake.direction) {\n        case 'up':\n          newHead.y--;\n          break;\n        case 'down':\n          newHead.y++;\n          break;\n        case 'left':\n          newHead.x--;\n          break;\n        case 'right':\n          newHead.x++;\n          break;\n      }\n      newHead.x = (newHead.x + this.gridSize.width) % this.gridSize.width;\n      newHead.y = (newHead.y + this.gridSize.height) % this.gridSize.height;\n      snake.head = newHead;\n      snake.body.unshift(newHead);\n      if (!this.checkCollision(snake)) {\n        snake.body.pop();\n      }\n    });\n  }\n\n  private checkCollision(snake: { head: { x: number; y: number }; body: { x: number; y: number }[]; direction: 'up' | 'down' | 'left' | 'right' }): boolean {\n    const head = snake.head;\n    for (const bodyPart of snake.body) {\n      if (head.x === bodyPart.x && head.y === bodyPart.y) {\n        return true;\n      }\n    }\n    return false;\n  }\n\n  private generateFood(): { x: number; y: number } {\n    let x, y;\n    do {\n      x = Math.floor(Math.random() * this.gridSize.width);\n      y = Math.floor(Math.random() * this.gridSize.height);\n    } while (this.snake.some((s) => s.head.x === x && s.head.y === y));\n    return { x, y };\n  }\n\n  public getScore(): number {\n    return this.snake.length - 1;\n  }\n\n  public getSpeed(): number {\n    return this.speed;\n  }\n\n  public setSpeed(newSpeed: number): void {\n    this.speed = newSpeed;\n  }\n\n  public getFoodPosition(): { x: number; y: number } {\n    return this.food;\n  }\n\n  public updateDirection(newDirection: 'up' | 'down' | 'left' | 'right'): void {\n    this.direction = newDirection;\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "Game State",
+   "dependencies": [
+    "Collision Detector"
+   ],
+   "exports": [
+    "GameState"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "grid-renderer.ts",
+   "language": "typescript",
+   "code": "import { GameState } from '../game-state/game-state.ts';\n\nexport function renderGrid(container: HTMLElement) {\n    container.innerHTML = '<div style=\"display:flex;gap:10px;align-items:center\"><div style=\"font-size:1.2rem;color:#e0e0f0\">Score: <span style=\"color:#f87171\">0</span></div><div style=\"font-size:1.2rem;color:#e0e0f0\">Speed: <span style=\"color:#f472b6\">5</span></div><div style=\"font-size:1.2rem;color:#e0e0f0\">Game State: <span style=\"color:#a7c080\">Running</span></div></div><div id=\"gameCanvas\" style=\"width:400px;height:400px;border:1px solid #4a4a6a;background:#12121e\"></div><div style=\"text-align:center;margin-top:10px\"><button class=\"btn\" onclick=\"restartGame()\">\ud83d\udd04 Restart</button><button class=\"btn\" onclick=\"togglePause()\">\u23f8 Pause</button></div>';\n    const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;\n    const ctx = canvas.getContext('2d');\n    if (!ctx) return;\n    canvas.width = 400;\n    canvas.height = 400;\n    const gridSize = 20;\n    const cellSize = canvas.width / gridSize;\n    let gameRunning = true;\n    let snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];\n    let food = { x: 15, y: 15 };\n    let direction = { x: 0, y: 1 };\n    let score = 0;\n    let highScore = 0;\n    let speed = 5;\n    let lastUpdate = 0;\n    const foods = [];\n    const MAX_FOODS = 5;\n    const GROWTH_PROBABILITY = 0.2;\n    const GROWTH_REWARD = 10;\n    const SNAKE_SPEED = 200;\n    const canvasRect = canvas.getBoundingClientRect();\n    const margin = { top: canvasRect.top, bottom: window.innerHeight - canvasRect.bottom, left: canvasRect.left, right: canvasRect.right };\n    const update = () => {\n        if (!gameRunning) return;\n        const now = Date.now();\n        if (now - lastUpdate < SNAKE_SPEED) return;\n        lastUpdate = now;\n        const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };\n        snake.unshift(head);\n        if (head.x === food.x && head.y === food.y) {\n            score += 10;\n            if (Math.random() < GROWTH_PROBABILITY) {\n                foods.push({ x: head.x, y: head.y });\n            }\n            if (snake.length > 1 && snake.some(p => p.x === head.x && p.y === head.y)) {\n                gameRunning = false;\n                return;\n            }\n        } else {\n            snake.pop();\n        }\n        for (let i = 0; i < foods.length; i++) {\n            if (head.x === foods[i].x && head.y === foods[i].y) {\n                foods[i] = null;\n                score += 20;\n                if (Math.random() < GROWTH_PROBABILITY) {\n                    foods.push({ x: head.x, y: head.y });\n                }\n                if (snake.length > 1 && snake.some(p => p.x === head.x && p.y === head.y)) {\n                    gameRunning = false;\n                    return;\n                }\n            }\n        }\n        foods.filter(f => f !== null);\n        if (head.x < 0 || head.x >= gridSize || head.y < 0 || head.y >= gridSize || snake.some(p => p.x === head.x && p.y === head.y)) {\n            gameRunning = false;\n            return;\n        }\n        if (!gameRunning) {\n            setTimeout(() => { gameRunning = true; snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]; direction = { x: 0, y: 1 }; score = 0; }, 2000);\n        }\n    };\n    const draw = () => {\n        ctx.clearRect(0, 0, canvas.width, canvas.height);\n        ctx.fillStyle = '#000';\n        ctx.fillRect(0, 0, canvas.width, canvas.height);\n        for (let i = snake.length - 1; i > 0; i--) {\n            ctx.fillStyle = `rgba(0,255,0,${(snake.length - i) / 10})`;\n            ctx.fillRect(snake[i].x * cellSize, snake[i].y * cellSize, cellSize, cellSize);\n        }\n        ctx.fillStyle = '#0f0';\n        ctx.fillRect(snake[0].x * cellSize, snake[0].y * cellSize, cellSize, cellSize);\n        ctx.fillStyle = '#f00';\n        ctx.fillRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);\n        for (let i = 0; i < foods.length; i++) {\n            if (foods[i] !== null) {\n                ctx.fillStyle = '#00f';\n                ctx.fillRect(foods[i].x * cellSize, foods[i].y * cellSize, cellSize, cellSize);\n            }\n        }\n    };\n    const restartGame = () => {\n        gameRunning = true;\n        snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];\n        direction = { x: 0, y: 1 };\n        score = 0;\n        foods = [];\n        speed = 5;\n        lastUpdate = 0;\n    };\n    const togglePause = () => {\n        gameRunning = !gameRunning;\n    };\n    const render = () => {\n        update();\n        draw();\n        requestAnimationFrame(render);\n    };\n    render();\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "Grid Renderer",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "renderGrid"
+   ],
+   "errors": [
+    "TS2588: Cannot assign to 'foods' because it is a constant. (line 92)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a snake game</title>\n  <meta name=\"description\" content=\"a snake game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a snake game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n      // \u2500\u2500 Declare module namespaces (used by the legacy IIFEs below) \u2500\u2500\n      var Snake_Controller = {}; var Movement_Engine = {}; var Collision_Detector = {}; var Game_State = {}; var Grid_Renderer = {};\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n// \u2500\u2500 snake-controller.ts \u2500\u2500\n\n(function(exports) {\nexports.SnakeController = void 0;\nclass SnakeController {\n    constructor(gridSize, speed) {\n        this.gridSize = gridSize;\n        this.speed = speed;\n        this.gameRunning = true;\n        this.snake = [{ x: 4, y: 4 }, { x: 3, y: 4 }, { x: 2, y: 4 }];\n        this.food = { x: 10, y: 10 };\n        this.dir = 'right';\n    }\n    getGameState() {\n        return { snake: this.snake.map(s => ({ x: s.x, y: s.y })), food: this.food, running: this.gameRunning };\n    }\n    startGame() {\n        this.gameRunning = true;\n    }\n    stopGame() {\n        this.gameRunning = false;\n    }\n    move() {\n        if (!this.gameRunning)\n            return;\n        const head = { x: this.snake[0].x, y: this.snake[0].y };\n        const nextDir = this.dir;\n        switch (nextDir) {\n            case 'left':\n                head.x--;\n                break;\n            case 'right':\n                head.x++;\n                break;\n            case 'up':\n                head.y--;\n                break;\n            case 'down':\n                head.y++;\n                break;\n        }\n        this.snake.unshift(head);\n        if (head.x === this.food.x && head.y === this.food.y) {\n            this.placeFood();\n        }\n        else {\n            this.snake.pop();\n        }\n        if (!this.gameRunning) {\n            this.snake = [{ x: 4, y: 4 }, { x: 3, y: 4 }, { x: 2, y: 4 }];\n            this.food = { x: 10, y: 10 };\n            this.dir = 'right';\n        }\n    }\n    placeFood() {\n        const foodPlaced = false;\n        if (foodPlaced) {\n            this.food = { x: Math.floor(Math.random() * this.gridSize), y: Math.floor(Math.random() * this.gridSize) };\n        }\n    }\n}\nexports.SnakeController = SnakeController;\n})(typeof Snake_Controller !== 'undefined' ? Snake_Controller : {});\n\n// \u2500\u2500 movement-engine.ts \u2500\u2500\n\n(function(exports) {\nexports.MovementEngine = void 0;\nclass MovementEngine {\n    constructor(gridSize) {\n        this.snake = [];\n        this.speed = 200;\n        this.direction = 'right';\n        this.gridSize = gridSize;\n        this.food = this.generateFood();\n    }\n    addSnake() {\n        this.snake.push({\n            head: { x: 5, y: 5 },\n            body: [{ x: 4, y: 5 }, { x: 3, y: 5 }],\n            direction: 'right',\n        });\n    }\n    move() {\n        this.snake.forEach((snake) => {\n            const newHead = Object.assign({}, snake.head);\n            switch (snake.direction) {\n                case 'up':\n                    newHead.y--;\n                    break;\n                case 'down':\n                    newHead.y++;\n                    break;\n                case 'left':\n                    newHead.x--;\n                    break;\n                case 'right':\n                    newHead.x++;\n                    break;\n            }\n            newHead.x = (newHead.x + this.gridSize.width) % this.gridSize.width;\n            newHead.y = (newHead.y + this.gridSize.height) % this.gridSize.height;\n            snake.head = newHead;\n            snake.body.unshift(newHead);\n            if (!this.checkCollision(snake)) {\n                snake.body.pop();\n            }\n        });\n    }\n    checkCollision(snake) {\n        const head = snake.head;\n        for (const bodyPart of snake.body) {\n            if (head.x === bodyPart.x && head.y === bodyPart.y) {\n                return true;\n            }\n        }\n        if (head.x < 0 || head.x >= this.gridSize.width || head.y < 0 || head.y >= this.gridSize.height) {\n            return true;\n        }\n        return false;\n    }\n    generateFood() {\n        let x, y;\n        do {\n            x = Math.floor(Math.random() * this.gridSize.width);\n            y = Math.floor(Math.random() * this.gridSize.height);\n        } while (this.snake.some((s) => s.head.x === x && s.head.y === y));\n        return { x, y };\n    }\n    getScore() {\n        return this.snake.length - 1;\n    }\n    getSpeed() {\n        return this.speed;\n    }\n    setSpeed(newSpeed) {\n        this.speed = newSpeed;\n    }\n    getFoodPosition() {\n        return this.food;\n    }\n    updateDirection(newDirection) {\n        this.direction = newDirection;\n    }\n}\nexports.MovementEngine = MovementEngine;\n})(typeof Movement_Engine !== 'undefined' ? Movement_Engine : {});\n\n// \u2500\u2500 collision-detector.ts \u2500\u2500\n\n(function(exports) {\nexports.CollisionDetector = void 0;\nclass CollisionDetector {\n    constructor(gridSize) {\n        this.snake = [];\n        this.speed = 200;\n        this.direction = 'right';\n        this.gridSize = gridSize;\n        this.food = this.generateFood();\n    }\n    addSnake() {\n        this.snake.push({\n            head: { x: 5, y: 5 },\n            body: [{ x: 4, y: 5 }, { x: 3, y: 5 }],\n            direction: 'right',\n        });\n    }\n    move() {\n        this.snake.forEach((snake) => {\n            const newHead = Object.assign({}, snake.head);\n            switch (snake.direction) {\n                case 'up':\n                    newHead.y--;\n                    break;\n                case 'down':\n                    newHead.y++;\n                    break;\n                case 'left':\n                    newHead.x--;\n                    break;\n                case 'right':\n                    newHead.x++;\n                    break;\n            }\n            newHead.x = (newHead.x + this.gridSize.width) % this.gridSize.width;\n            newHead.y = (newHead.y + this.gridSize.height) % this.gridSize.height;\n            snake.head = newHead;\n            snake.body.unshift(newHead);\n            if (!this.checkCollision(snake)) {\n                snake.body.pop();\n            }\n        });\n    }\n    checkCollision(snake) {\n        const head = snake.head;\n        for (const bodyPart of snake.body) {\n            if (head.x === bodyPart.x && head.y === bodyPart.y) {\n                return true;\n            }\n        }\n        return false;\n    }\n    generateFood() {\n        let x, y;\n        do {\n            x = Math.floor(Math.random() * this.gridSize.width);\n            y = Math.floor(Math.random() * this.gridSize.height);\n        } while (this.snake.some((s) => s.head.x === x && s.head.y === y));\n        return { x, y };\n    }\n    getScore() {\n        return this.snake.length - 1;\n    }\n    getSpeed() {\n        return this.speed;\n    }\n    setSpeed(newSpeed) {\n        this.speed = newSpeed;\n    }\n    getFoodPosition() {\n        return this.food;\n    }\n    updateDirection(newDirection) {\n        this.direction = newDirection;\n    }\n}\nexports.CollisionDetector = CollisionDetector;\n})(typeof Collision_Detector !== 'undefined' ? Collision_Detector : {});\n\n// \u2500\u2500 game-state.ts \u2500\u2500\n\n(function(exports) {\nexports.GameState = void 0;\nclass GameState {\n    constructor(gridSize) {\n        this.snake = [];\n        this.speed = 200;\n        this.direction = 'right';\n        this.gridSize = gridSize;\n        this.food = this.generateFood();\n    }\n    addSnake() {\n        this.snake.push({\n            head: { x: 5, y: 5 },\n            body: [{ x: 4, y: 5 }, { x: 3, y: 5 }],\n            direction: 'right',\n        });\n    }\n    move() {\n        this.snake.forEach((snake) => {\n            const newHead = Object.assign({}, snake.head);\n            switch (snake.direction) {\n                case 'up':\n                    newHead.y--;\n                    break;\n                case 'down':\n                    newHead.y++;\n                    break;\n                case 'left':\n                    newHead.x--;\n                    break;\n                case 'right':\n                    newHead.x++;\n                    break;\n            }\n            newHead.x = (newHead.x + this.gridSize.width) % this.gridSize.width;\n            newHead.y = (newHead.y + this.gridSize.height) % this.gridSize.height;\n            snake.head = newHead;\n            snake.body.unshift(newHead);\n            if (!this.checkCollision(snake)) {\n                snake.body.pop();\n            }\n        });\n    }\n    checkCollision(snake) {\n        const head = snake.head;\n        for (const bodyPart of snake.body) {\n            if (head.x === bodyPart.x && head.y === bodyPart.y) {\n                return true;\n            }\n        }\n        return false;\n    }\n    generateFood() {\n        let x, y;\n        do {\n            x = Math.floor(Math.random() * this.gridSize.width);\n            y = Math.floor(Math.random() * this.gridSize.height);\n        } while (this.snake.some((s) => s.head.x === x && s.head.y === y));\n        return { x, y };\n    }\n    getScore() {\n        return this.snake.length - 1;\n    }\n    getSpeed() {\n        return this.speed;\n    }\n    setSpeed(newSpeed) {\n        this.speed = newSpeed;\n    }\n    getFoodPosition() {\n        return this.food;\n    }\n    updateDirection(newDirection) {\n        this.direction = newDirection;\n    }\n}\nexports.GameState = GameState;\n})(typeof Game_State !== 'undefined' ? Game_State : {});\n\n// \u2500\u2500 grid-renderer.ts \u2500\u2500\n\n(function(exports) {\nexports.renderGrid = renderGrid;\nfunction renderGrid(container) {\n    container.innerHTML = '<div style=\"display:flex;gap:10px;align-items:center\"><div style=\"font-size:1.2rem;color:#e0e0f0\">Score: <span style=\"color:#f87171\">0</span></div><div style=\"font-size:1.2rem;color:#e0e0f0\">Speed: <span style=\"color:#f472b6\">5</span></div><div style=\"font-size:1.2rem;color:#e0e0f0\">Game State: <span style=\"color:#a7c080\">Running</span></div></div><div id=\"gameCanvas\" style=\"width:400px;height:400px;border:1px solid #4a4a6a;background:#12121e\"></div><div style=\"text-align:center;margin-top:10px\"><button class=\"btn\" onclick=\"restartGame()\">\ud83d\udd04 Restart</button><button class=\"btn\" onclick=\"togglePause()\">\u23f8 Pause</button></div>';\n    const canvas = document.getElementById('gameCanvas');\n    const ctx = canvas.getContext('2d');\n    if (!ctx)\n        return;\n    canvas.width = 400;\n    canvas.height = 400;\n    const gridSize = 20;\n    const cellSize = canvas.width / gridSize;\n    let gameRunning = true;\n    let snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];\n    let food = { x: 15, y: 15 };\n    let direction = { x: 0, y: 1 };\n    let score = 0;\n    let highScore = 0;\n    let speed = 5;\n    let lastUpdate = 0;\n    const foods = [];\n    const MAX_FOODS = 5;\n    const GROWTH_PROBABILITY = 0.2;\n    const GROWTH_REWARD = 10;\n    const SNAKE_SPEED = 200;\n    const canvasRect = canvas.getBoundingClientRect();\n    const margin = { top: canvasRect.top, bottom: window.innerHeight - canvasRect.bottom, left: canvasRect.left, right: canvasRect.right };\n    const update = () => {\n        if (!gameRunning)\n            return;\n        const now = Date.now();\n        if (now - lastUpdate < SNAKE_SPEED)\n            return;\n        lastUpdate = now;\n        const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };\n        snake.unshift(head);\n        if (head.x === food.x && head.y === food.y) {\n            score += 10;\n            if (Math.random() < GROWTH_PROBABILITY) {\n                foods.push({ x: head.x, y: head.y });\n            }\n            if (snake.length > 1 && snake.some(p => p.x === head.x && p.y === head.y)) {\n                gameRunning = false;\n                return;\n            }\n        }\n        else {\n            snake.pop();\n        }\n        for (let i = 0; i < foods.length; i++) {\n            if (head.x === foods[i].x && head.y === foods[i].y) {\n                foods[i] = null;\n                score += 20;\n                if (Math.random() < GROWTH_PROBABILITY) {\n                    foods.push({ x: head.x, y: head.y });\n                }\n                if (snake.length > 1 && snake.some(p => p.x === head.x && p.y === head.y)) {\n                    gameRunning = false;\n                    return;\n                }\n            }\n        }\n        foods.filter(f => f !== null);\n        if (head.x < 0 || head.x >= gridSize || head.y < 0 || head.y >= gridSize || snake.some(p => p.x === head.x && p.y === head.y)) {\n            gameRunning = false;\n            return;\n        }\n        if (!gameRunning) {\n            setTimeout(() => { gameRunning = true; snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }]; direction = { x: 0, y: 1 }; score = 0; }, 2000);\n        }\n    };\n    const draw = () => {\n        ctx.clearRect(0, 0, canvas.width, canvas.height);\n        ctx.fillStyle = '#000';\n        ctx.fillRect(0, 0, canvas.width, canvas.height);\n        for (let i = snake.length - 1; i > 0; i--) {\n            ctx.fillStyle = \\`rgba(0,255,0,\\${(snake.length - i) / 10})\\`;\n            ctx.fillRect(snake[i].x * cellSize, snake[i].y * cellSize, cellSize, cellSize);\n        }\n        ctx.fillStyle = '#0f0';\n        ctx.fillRect(snake[0].x * cellSize, snake[0].y * cellSize, cellSize, cellSize);\n        ctx.fillStyle = '#f00';\n        ctx.fillRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);\n        for (let i = 0; i < foods.length; i++) {\n            if (foods[i] !== null) {\n                ctx.fillStyle = '#00f';\n                ctx.fillRect(foods[i].x * cellSize, foods[i].y * cellSize, cellSize, cellSize);\n            }\n        }\n    };\n    const restartGame = () => {\n        gameRunning = true;\n        snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];\n        direction = { x: 0, y: 1 };\n        score = 0;\n        foods = [];\n        speed = 5;\n        lastUpdate = 0;\n    };\n    const togglePause = () => {\n        gameRunning = !gameRunning;\n    };\n    const render = () => {\n        update();\n        draw();\n        requestAnimationFrame(render);\n    };\n    render();\n}\n})(typeof Grid_Renderer !== 'undefined' ? Grid_Renderer : {});\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n  try { if(typeof Snake_Controller.SnakeController === 'function' && !/^class\\s/.test(String(Snake_Controller.SnakeController))) Snake_Controller.SnakeController(document.getElementById('app-container')); else console.log('snake-controller.ts: awaiting user interaction'); } catch(e) { console.warn('Snake Controller init:', e); }\n  try { if(typeof Movement_Engine.MovementEngine === 'function' && !/^class\\s/.test(String(Movement_Engine.MovementEngine))) Movement_Engine.MovementEngine(document.getElementById('app-container')); else console.log('movement-engine.ts: awaiting user interaction'); } catch(e) { console.warn('Movement Engine init:', e); }\n  try { if(typeof Collision_Detector.CollisionDetector === 'function' && !/^class\\s/.test(String(Collision_Detector.CollisionDetector))) Collision_Detector.CollisionDetector(document.getElementById('app-container')); else console.log('collision-detector.ts: awaiting user interaction'); } catch(e) { console.warn('Collision Detector init:', e); }\n  try { if(typeof Game_State.GameState === 'function' && !/^class\\s/.test(String(Game_State.GameState))) Game_State.GameState(document.getElementById('app-container')); else console.log('game-state.ts: awaiting user interaction'); } catch(e) { console.warn('Game State init:', e); }\n  try { if(typeof Grid_Renderer.renderGrid === 'function' && !/^class\\s/.test(String(Grid_Renderer.renderGrid))) Grid_Renderer.renderGrid(document.getElementById('app-container')); else console.log('grid-renderer.ts: awaiting user interaction'); } catch(e) { console.warn('Grid Renderer init:', e); }\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a snake game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a snake game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Snake Controller",
+    "Movement Engine",
+    "Collision Detector",
+    "Game State",
+    "Grid Renderer"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 33807,
+ "totalErrors": 8,
+ "validatedCount": 4,
+ "failedCount": 2,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "snake-controller.ts",
+   "dependencies": [],
+   "exports": [
+    "SnakeController"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "movement-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "MovementEngine"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "collision-detector.ts",
+   "dependencies": [
+    "Movement Engine"
+   ],
+   "exports": [
+    "CollisionDetector"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "game-state.ts",
+   "dependencies": [
+    "Collision Detector"
+   ],
+   "exports": [
+    "GameState"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "grid-renderer.ts",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "renderGrid"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Snake Controller",
+    "Movement Engine",
+    "Collision Detector",
+    "Game State",
+    "Grid Renderer"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 3,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 33807,
+  "totalErrors": 8,
+  "validated": 4,
+  "failed": 2,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 239330
+ }
+}

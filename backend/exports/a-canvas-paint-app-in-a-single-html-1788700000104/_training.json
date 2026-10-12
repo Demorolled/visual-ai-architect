@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:00:00.000Z",
+  "request": "Build a canvas paint app in a single HTML file. It has pen and eraser tools with adjustable brush size, a color picker, a bucket fill tool that flood-fills a connected region, undo and redo stacks limited to 30 steps with keyboard shortcuts, PNG export as a download, localStorage autosave on every stroke, and a clear button.",
+  "intent": {
+    "goal": "build a canvas paint app in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Canvas Paint HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a canvas paint app in a single HTML file. It has pen and eraser tools with adjustable brush size, a color picker, a bucket fill tool that flood-fills a connected region, undo and redo stacks limited to 30 steps with keyboard shortcuts, PNG export as a download, localStorage autosave on every stroke, and a clear button.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

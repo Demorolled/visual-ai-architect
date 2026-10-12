@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-17T09:51:55.323Z",
+  "request": "a full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+  "intent": {
+    "goal": "full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+    "targetUser": "deployment",
+    "coreFeatures": [
+      "note-taking"
+    ],
+    "uiStyle": "",
+    "language": "typescript"
+  },
+  "questions": [
+    {
+      "key": "db",
+      "question": "How should notes be stored?",
+      "options": [
+        "SQLite",
+        "PostgreSQL",
+        "MySQL"
+      ]
+    },
+    {
+      "key": "interface",
+      "question": "What kind of interface do you want?",
+      "options": [
+        "Terminal (CLI)",
+        "Web app",
+        "Desktop app"
+      ]
+    }
+  ],
+  "answers": {
+    "db": "SQLite",
+    "interface": "Terminal (CLI)"
+  },
+  "planFiles": [
+    {
+      "path": "backend/index.ts",
+      "summary": "Entry point for the Express API",
+      "language": "typescript",
+      "exports": [
+        "createApp"
+      ]
+    },
+    {
+      "path": "backend/note.ts",
+      "summary": "Note service and repository",
+      "language": "typescript",
+      "exports": [
+        "NoteService",
+        "NoteRepository"
+      ]
+    },
+    {
+      "path": "backend/types.ts",
+      "summary": "Type definitions",
+      "language": "typescript",
+      "exports": [
+        "Note"
+      ]
+    },
+    {
+      "path": "backend/db.ts",
+      "summary": "SQLite database setup",
+      "language": "typescript",
+      "exports": [
+        "initDatabase"
+      ]
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "summary": "Main React component",
+      "language": "tsx",
+      "exports": [
+        "App"
+      ]
+    },
+    {
+      "path": "frontend/src/NoteList.tsx",
+      "summary": "Note list component",
+      "language": "tsx",
+      "exports": [
+        "NoteList"
+      ]
+    },
+    {
+      "path": "frontend/src/NoteForm.tsx",
+      "summary": "Note form component",
+      "language": "tsx",
+      "exports": [
+        "NoteForm"
+      ]
+    },
+    {
+      "path": "frontend/src/index.tsx",
+      "summary": "React entry point",
+      "language": "tsx",
+      "exports": [
+        "renderApp"
+      ]
+    },
+    {
+      "path": "frontend/src/types.ts",
+      "summary": "Type definitions",
+      "language": "tsx",
+      "exports": [
+        "Note"
+      ]
+    },
+    {
+      "path": "frontend/src/store.ts",
+      "summary": "React state management",
+      "language": "tsx",
+      "exports": [
+        "useNotes",
+        "addNote",
+        "deleteNote"
+      ]
+    },
+    {
+      "path": "frontend/src/App.test.tsx",
+      "summary": "Unit tests for React components",
+      "language": "tsx",
+      "exports": [
+        "testApp"
+      ]
+    },
+    {
+      "path": "frontend/src/NoteList.test.tsx",
+      "summary": "Unit tests for NoteList",
+      "language": "tsx",
+      "exports": [
+        "testNoteList"
+      ]
+    },
+    {
+      "path": "frontend/src/NoteForm.test.tsx",
+      "summary": "Unit tests for NoteForm",
+      "language": "tsx",
+      "exports": [
+        "testNoteForm"
+      ]
+    },
+    {
+      "path": "Dockerfile",
+      "summary": "Dockerfile for deployment",
+      "language": "dockerfile",
+      "exports": []
+    },
+    {
+      "path": "index.html",
+      "summary": "Single self-contained GUI page (HTML + CSS + JS inline, no build step) that renders the complete app interface and wires it to the logic. This is what makes the app viewable in the browser preview — build the full UI here. STRICT RULES: (1) do NOT reference external files — no <script src=\"...\">, no <link href=\"...\">, no CSS or JS files; the preview iframe cannot load external files, so inline ALL CSS in a <style> tag and ALL JavaScript in a <script> tag directly in this file; (2) plain browser JavaScript only — no React, no TypeScript, no imports, no JSX, no build step; (3) include working inline code that actually renders the interface so the page is never blank.",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "chunked",
+  "repairRounds": 13,
+  "tscErrors": 5,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nmodelVeronice.txt sections: 1. PROJECT OVERVIEW, 2. RUNNING SERVICES (as of scan time), 3. RUNTIME TOOLS, 4. FRONTEND APPLICATION, 5. BACKEND APPLICATION, 6. LLM CONFIGURATION, 7. INSTALLED OLLAMA MODELS, 8. LOCAL GGUF MODELS, 9. DATA & KNOWLEDGE STORES, 10. TRAINING SYSTEM, 11. SYSTEM MONITOR DAEMON, 12. GENERATED PROJECTS (projects/), 13. PROFILE & USER\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node (tsx).\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-patterns \n…(truncated)",
+  "files": [
+    "backend/types.ts",
+    "backend/note.ts",
+    "backend/index.ts",
+    "backend/db.ts",
+    "frontend/src/NoteList.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/NoteForm.tsx",
+    "frontend/src/index.tsx",
+    "frontend/src/types.ts",
+    "frontend/src/store.ts",
+    "frontend/src/App.test.tsx",
+    "frontend/src/NoteList.test.tsx",
+    "frontend/src/NoteForm.test.tsx",
+    "Dockerfile",
+    "index.html"
+  ]
+}

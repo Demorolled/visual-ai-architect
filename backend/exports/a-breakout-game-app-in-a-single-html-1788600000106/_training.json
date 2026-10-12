@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "tier": "hard",
+  "request": "Build a breakout game in a single HTML file. Canvas-based: a paddle moves with arrow keys or mouse, a ball bounces off walls, paddle and bricks, bricks disappear on hit and the score rises, missing the ball costs a life, and there are 3 lives then game over with restart.",
+  "intent": {
+    "goal": "build a breakout game in a single html file",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "App HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "",
+  "files": [
+    "index.html"
+  ]
+}

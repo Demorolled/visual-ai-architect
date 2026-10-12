@@ -1,0 +1,1 @@
+{"instruction": "What is the VACA backend route mount `/api/manifesto` bound to?", "input": "", "output": "`/api/manifesto` is served by `manifestoRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}

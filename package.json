@@ -11,7 +11,7 @@
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:frontend": "npm run dev --workspace=frontend",
     "dev:backend": "npm run dev --workspace=backend",
-    "build": "npm run build --workspace=frontend && npm run build --workspace=backend && bash scripts/check-training.sh",
+    "build": "npm run build --workspace=frontend && npm run build --workspace=backend && bash scripts/run-tests-clean.sh && bash scripts/check-training.sh",
     "start": "npm run start --workspace=backend",
     "check:training": "bash scripts/check-training.sh",
     "test:tsc-concurrency": "python3 tests/test-tsc-concurrency.py",

@@ -10,7 +10,6 @@ coverage
 *.swp
 *.swo
 .davinci_cache/
-sandbox/
 projects/*/generated/
 projects/*/output/
 knowledge/rnn-model.json
@@ -38,6 +37,10 @@ training/cloud/out/
 adapters/
 adapters_raw/
 
+# Dequantized HF checkpoints — rebuilt from a GGUF by training/unlearn/gguf_to_hf.py
+# (~30GB each, so they must never be committed)
+training/unlearn/models/
+
 # Caches
 huggingface_tokenizers_cache/
 unsloth_compiled_cache/
@@ -60,3 +63,13 @@ training/dataset/backup-*/
 
 # Cloned dataset repos that keep their own git history
 data/galaxy/
+
+# ────────────────────────────────────────────────────────────────────────────
+# Excluded before the first public push: internal tool state, runtime caches,
+# regenerable LoRA smoke-test adapters (~345MB), and stray mistyped files.
+# ────────────────────────────────────────────────────────────────────────────
+.freebuff/
+backend/.session_cache/
+training/unlearn/adapters-smoke/
+backend/--help
+backend/-h

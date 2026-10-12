@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "tier": "hard",
+  "request": "Build a wordle clone in a single HTML file. A 5-letter word is picked from a word list; the player types guesses, each guess is scored green/yellow/gray against the target, the on-screen keyboard reflects used letters, and there are 6 attempts.",
+  "intent": {
+    "goal": "build a wordle clone in a single html file",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "App HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "",
+  "files": [
+    "index.html"
+  ]
+}

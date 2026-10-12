@@ -1,0 +1,857 @@
+{
+  "tasks_file": "/home/homellmlab/Desktop/visual-ai-architect/corpora/vaca/tasks.txt",
+  "n_tasks": 40,
+  "role": "scaffold",
+  "n_applicable": 40,
+  "baseline": null,
+  "num_predict": 1200,
+  "num_ctx": 8192,
+  "summary": {
+    "coder14b": {
+      "tag": "qwen2.5-coder:14b",
+      "role": "scaffold",
+      "n_applicable": 40,
+      "passed": 37,
+      "parse_ok": 40,
+      "exports_ok": 39,
+      "pass_rate": 0.925,
+      "file_named": 40,
+      "non_trivial": 40,
+      "mean_exports_coverage": 0.9697,
+      "n_with_exports": 33,
+      "mean_sibling_coverage": 0.74,
+      "n_with_siblings": 40,
+      "elapsed_s": 456.6
+    },
+    "base": {
+      "tag": "vaca-r40-off-adapter:latest",
+      "role": "scaffold",
+      "n_applicable": 40,
+      "passed": 0,
+      "parse_ok": 40,
+      "exports_ok": 38,
+      "pass_rate": 0.0,
+      "file_named": 1,
+      "non_trivial": 31,
+      "mean_exports_coverage": 0.9394,
+      "n_with_exports": 33,
+      "mean_sibling_coverage": 0.0094,
+      "n_with_siblings": 40,
+      "elapsed_s": 105.0
+    }
+  },
+  "per_task": {
+    "coder14b": {
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": true
+      },
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.6666666666666666,
+        "file_named": true
+      },
+      "3d-chees-game-1786611956524__src-canvas.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.42857142857142855,
+        "file_named": true
+      },
+      "3d-chees-game-1786611956524__src-entities-cheese.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.42857142857142855,
+        "file_named": true
+      },
+      "3d-chees-game-1786611956524__src-entities-enemy.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.5714285714285714,
+        "file_named": true
+      },
+      "3d-chees-game-1786611956524__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": true
+      },
+      "3d-chees-game-1786611956524__src-input.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.14285714285714285,
+        "file_named": true
+      },
+      "3d-chees-game-1786611956524__src-scene.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.5714285714285714,
+        "file_named": true
+      },
+      "3d-chess-game-1787074372022__src-board.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0.625,
+        "file_named": true
+      },
+      "3d-chess-game-1787074372022__src-game.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0.625,
+        "file_named": true
+      },
+      "3d-chess-game-1787074372022__src-input.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0.375,
+        "file_named": true
+      },
+      "3d-chess-game-1787074372022__src-main.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "3d-chess-game-1787074372022__src-render.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0.5,
+        "file_named": true
+      },
+      "3d-chess-game-create-a-3d-chess-game-1786817101988__chess3d.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-ai.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.75,
+        "file_named": true
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-game.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.75,
+        "file_named": true
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-tile.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.75,
+        "file_named": true
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-cli.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-cli.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-history.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.6666666666666666,
+        "file_named": true
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-ledger.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-budget.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786997848181__src-budget.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-command-line-expense-tracker-in-typesc-1786357706649__src-utils.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786988799000__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "loadTodos",
+          "saveTodos"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-contact.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-utils.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.25,
+        "file_named": true
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-cli.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-index.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-cli.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.6666666666666666,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.6666666666666666,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-flashcards.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.6666666666666666,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-test-flashcards.test.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0.5,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-cards.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-api.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": true
+      }
+    },
+    "base": {
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-canvas.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-entities-cheese.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-entities-enemy.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-input.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-scene.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-board.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-game.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0.375,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-input.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-main.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-render.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-create-a-3d-chess-game-1786817101988__chess3d.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-ai.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-game.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-tile.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-cli.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-cli.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-history.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-ledger.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-budget.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786997848181__src-budget.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-command-line-expense-tracker-in-typesc-1786357706649__src-utils.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786988799000__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-contact.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-utils.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "validateEmail",
+          "validatePhone"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-cli.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-cli.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-config.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "getConfig"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-flashcards.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": true
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-test-flashcards.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-cards.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      }
+    }
+  }
+}

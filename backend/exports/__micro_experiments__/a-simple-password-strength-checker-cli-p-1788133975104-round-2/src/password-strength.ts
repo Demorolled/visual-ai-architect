@@ -1,0 +1,1 @@
+const checks=[/.{8}/,/\d/,/[a-z]/,/A-Z/,/[^A-Za-z0-9]/];const rate=pw=>['Weak','Medium','Strong'][Math.min(2,checks.filter(c=>c.test(pw)).length)];export{rate};

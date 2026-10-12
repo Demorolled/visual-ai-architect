@@ -1,0 +1,34 @@
+package src
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func run() {
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: note add|list|search")
+		return
+	}
+
+	cmd := os.Args[1]
+	switch cmd {
+	case "add":
+		title := ""
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Title: ")
+	title, _ = reader.ReadString('\n')
+	title = title[:len(title)-1]
+
+	content := ""
+	fmt.Print("Content: ")
+	content, _, _ = reader.ReadLine()
+
+	addNote(title, string(content))
+	case "list":
+	listNotes()
+	default:
+		fmt.Printf("Unknown command: %s\n", cmd)
+	}
+}

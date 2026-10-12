@@ -1,0 +1,1 @@
+export function parseInput(rawInput: string): string { return rawInput.trim(); }

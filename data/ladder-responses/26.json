@@ -1,0 +1,348 @@
+{
+ "success": true,
+ "projectId": "950d8af2-7f8a-4454-b2e5-a14854f555e8",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "maze_generator_solver",
+  "description": "Maze generation (DFS/Prim) and pathfinding solver \u2014 an interactive game tool with a visual interface.",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "game_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "game_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "score_store",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "score_store",
+    "destination_module": "canvas_ui",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 maze-generator \u00b7 GitHub Topics \u00b7 GitHub\n    A maze is a type of puzzle involving a collection of paths, usually where a player has to find a route from start to finish. A huge variety of algorithms exist for generating and solving mazes.\n  \u2022 maze-game \u00b7 GitHub Topics \u00b7 GitHub\n    A JavaScript procedural generator for Mazes, Terrains, and Biomes. Designed for game developers and professional hobbyists, Labyrinthos.js offers a very simple-to-use API for crafting complex, customi\n  \u2022 \u2b5045 erikbuck/MazeVenture: This is a simple Unity 3D Game (created in 24 hours at a hack-a-thon) using a mix of 3D models created by Erik M. Buck and free assets from the Unity \n  \u2022 \u2b5018 romandykyi/Labyrinthian: Labyrinthian is a dependency-free .NET Standard 2.1 C# library that empowers game developers and enthusiasts with versatile maze generation capabiliti\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 31: SESSION UPDATE \u2014 July 26, 2026: BATCH 4 \u2014 13 REASONING/LOGIC APPS\n    31.1 REASONING ENGINE APPS (13 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nThese apps focus on algorithmic reasoning, logic simulation, and\ncomputational thinking. All include localStorage persistence and\nuse safe innerHTML patterns (escapeHTML where user input is present).\n\nCategory: Search & Backt\n  \u2022 Section 9: DATA & KNOWLEDGE STORES\n    9.1 DATA DIRECTORY (data/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesigns.json                 \u2014 Generated design catalog (design storage)\ndesign-specs-v2.json         \u2014 Design specifications (v2)\nnode-designs.json            \u2014 Node design catalog\nsession-memory.json          \u2014 Session memory/persistence\ndesig\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "maze_generator_solver",
+   "score": 1
+  },
+  {
+   "app_type": "maze_generator_solver_2",
+   "score": 1
+  },
+  {
+   "app_type": "pac_man_clone_2",
+   "score": 0.5844036154692478
+  },
+  {
+   "app_type": "pac_man_clone",
+   "score": 0.5811603653393391
+  },
+  {
+   "app_type": "maze_solver",
+   "score": 0.5437501051161879
+  }
+ ],
+ "project": {
+  "id": "950d8af2-7f8a-4454-b2e5-a14854f555e8",
+  "name": "a maze generation game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "maze_generator_solver blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "game_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "score_store"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "canvas_ui"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 3,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 2,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "generated": [
+   "game_engine",
+   "ui_screens",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "matched": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "export function generateMaze(width: number, height: number): number[][] {\n    const maze: number[][] = Array.from({ length: height }, () => Array(width).fill(0));\n    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n    const stack: number[][] = [[0, 0]];\n    maze[0][0] = 1;\n    const backtrackingStack: number[][] = [[0, 0]];\n    const visited: boolean[][] = Array.from({ length: height }, () => Array(width).fill(false));\n    const backtrack: number[][] = [];\n    const walls: number[][] = [];\n    let cellsVisited = 1;\n    let backtrackIndex = 0;\n\n    const carvePath = (x: number, y: number) => {\n        visited[y][x] = true;\n        const directionsCopy = [...directions];\n        if (backtrackIndex > 0) {\n            const prev = backtrack[backtrackIndex - 1];\n            const dx = x - prev[0];\n            const dy = y - prev[1];\n            directionsCopy.push([-dx, -dy]);\n        }\n        backtrackIndex = backtrack.length;\n        backtrack.push([x, y]);\n        const dirs = directionsCopy.filter(([dx2, dy2]) => x + dx2 >= 0 && x + dx2 < width && y + dy2 >= 0 && y + dy2 < height && !visited[y + dy2][x + dx2]);\n        if (dirs.length === 0) {\n            const last = backtrack[backtrackIndex - 1];\n            maze[y + 1][x] = 1; maze[y - 1][x] = 1; maze[y][x + 1] = 1; maze[y][x - 1] = 1;\n            backtrack.pop();\n            backtrackIndex--;\n            if (backtrack.length > 0) {\n                const [bx, by] = backtrack[backtrackIndex - 1];\n                stack.push([bx, by]);\n                backtrackingStack.push([bx, by]);\n                cellsVisited--;\n            } else {\n                return;\n            }\n        } else {\n            const [dx, dy] = dirs[Math.floor(Math.random() * dirs.length)];\n            const nx = x + dx; const ny = y + dy;\n            maze[y + (dy + 1) / 2][x + (dx + 1) / 2] = 1;\n            cellsVisited++;\n            stack.push([nx, ny]);\n            backtrackingStack.push([nx, ny]);\n            backtrackIndex = backtrackingStack.length;\n            carvePath(nx, ny);\n        }\n    };\n\n    carvePath(0, 0);\n    const start = [0, 0];\n    const end = [width - 1, height - 1];\n    maze[height - 1][width - 1] = 2;\n    return { maze, start, end };\n}\n\nexport function solveMaze(maze: number[][], start: number[], end: number[]): number[][] {\n    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n    const queue: number[][] = [start];\n    const visited: boolean[][] = Array.from({ length: maze.length }, () => Array(maze[0].length).fill(false));\n    const path: number[][] = [];\n    let found = false;\n\n    const isValid = (x: number, y: number) => x >= 0 && x < maze[0].length && y >= 0 && y < maze.length && maze[y][x] !== 0 && !visited[y][x];\n\n    while (queue.length > 0 && !found) {\n        const [cx, cy] = queue.shift()!;\n        visited[cy][cx] = true;\n        path.push([cx, cy]);\n        if (cx === end[0] && cy === end[1]) {\n            found = true;\n            break;\n        }\n        for (const [dx, dy] of directions) {\n            const nx = cx + dx; const ny = cy + dy;\n            if (isValid(nx, ny)) {\n                queue.push([nx, ny]);\n            }\n        }\n    }\n\n    if (found) {\n        const solutionPath: number[][] = [];\n        let cx = end[0]; let cy = end[1];\n        while (cx !== start[0] || cy !== start[1]) {\n            solutionPath.push([cx, cy]);\n            const last = path[path.length - 1];\n            path.pop();\n            cx = last[0]; cy = last[1];\n        }\n        solutionPath.push(start);\n        return solutionPath.reverse();\n    }\n    return [];\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "game_engine",
+   "dependencies": [],
+   "exports": [
+    "generateMaze",
+    "solveMaze"
+   ],
+   "errors": [
+    "TS2353: Object literal may only specify known properties, and 'maze' does not exist in type 'number[][]'. (line 54)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { generateMaze, solveMaze } from '../game-engine/game-engine.ts';\n\nexport function render(container: HTMLElement): void {\n    container.innerHTML = `\n        <div class=\"game-container\">\n            <div class=\"maze-grid\" id=\"mazeGrid\"></div>\n            <div class=\"controls\">\n                <button id=\"newGameBtn\">New Game</button>\n                <button id=\"resetBtn\">Reset</button>\n                <label>Difficulty: <select id=\"difficultySelect\">\n                    <option value=\"10\">10x10</option>\n                    <option value=\"20\">20x20</option>\n                    <option value=\"30\">30x30</option>\n                    <option value=\"40\">40x40</option>\n                </select></label>\n                <button id=\"solveBtn\">Solve</button>\n            </div>\n            <div class=\"path-display\" id=\"pathDisplay\"></div>\n        </div>\n    `;\n\n    const mazeGrid = document.getElementById('mazeGrid') as HTMLDivElement;\n    const newGameBtn = document.getElementById('newGameBtn') as HTMLButtonElement;\n    const resetBtn = document.getElementById('resetBtn') as HTMLButtonElement;\n    const difficultySelect = document.getElementById('difficultySelect') as HTMLSelectElement;\n    const solveBtn = document.getElementById('solveBtn') as HTMLButtonElement;\n    const pathDisplay = document.getElementById('pathDisplay') as HTMLDivElement;\n\n    let maze: number[][];\n    let start: number[];\n    let end: number[];\n    let path: number[][] = [];\n    let isSolving = false;\n\n    function generateMaze(size: number): void {\n        const w = size, h = size;\n        const maze: number[][] = Array.from({ length: h }, () => Array(w).fill(0));\n        const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n        const stack: number[][] = [[0, 0]];\n        maze[0][0] = 1;\n        const backtrackingStack: number[][] = [[0, 0]];\n        const visited: boolean[][] = Array.from({ length: h }, () => Array(w).fill(false));\n        const backtrack: number[][] = [];\n        const walls: number[][] = [];\n        let cellsVisited = 1;\n        let backtrackIndex = 0;\n\n        const carvePath = (x: number, y: number) => {\n            visited[y][x] = true;\n            const directionsCopy = [...directions];\n            if (backtrackIndex > 0) {\n                const prev = backtrack[backtrackIndex - 1];\n                const dx = x - prev[0];\n                const dy = y - prev[1];\n                directionsCopy.push([-dx, -dy]);\n            }\n            backtrackIndex = backtrack.length;\n            backtrack.push([x, y]);\n            const dirs = directionsCopy.filter(([dx2, dy2]) => x + dx2 >= 0 && x + dx2 < w && y + dy2 >= 0 && y + dy2 < h && !visited[y + dy2][x + dx2]);\n            if (dirs.length === 0) {\n                const last = backtrack[backtrackIndex - 1];\n                maze[y + 1][x] = 1; maze[y - 1][x] = 1; maze[y][x + 1] = 1; maze[y][x - 1] = 1;\n                backtrack.pop();\n                backtrackIndex--;\n                if (backtrack.length > 0) {\n                    const [bx, by] = backtrack[backtrackIndex - 1];\n                    stack.push([bx, by]);\n                    backtrackingStack.push([bx, by]);\n                    cellsVisited--;\n                } else {\n                    return;\n                }\n            } else {\n                const [dx, dy] = dirs[Math.floor(Math.random() * dirs.length)];\n                const nx = x + dx; const ny = y + dy;\n                maze[y + (dy + 1) / 2][x + (dx + 1) / 2] = 1;\n                cellsVisited++;\n                stack.push([nx, ny]);\n                backtrackingStack.push([nx, ny]);\n                carvePath(nx, ny);\n            }\n        };\n\n        carvePath(0, 0);\n        start = [0, 0];\n        end = [w - 1, h - 1];\n        maze[h - 1][w - 1] = 2;\n        renderMaze(maze);\n    }\n\n    function renderMaze(maze: number[][]): void {\n        mazeGrid.innerHTML = '';\n        const size = maze.length;\n        for (let y = 0; y < size; y++) {\n            for (let x = 0; x < size; x++) {\n                const cell = document.createElement('div');\n                cell.className = 'cell';\n                if (maze[y][x] === 0) cell.classList.add('wall');\n                if (y === start[1] && x === start[0]) cell.classList.add('start');\n                if (y === end[1] && x === end[0]) cell.classList.add('end');\n                if (path.length > 0 && path.some(p => p[0] === x && p[1] === y)) cell.classList.add('path');\n                cell.style.cssText = `left:${x * 20}px;top:${y * 20}px;width:20px;height:20px`;\n                cell.addEventListener('mouseover', () => {\n                    if (path.length > 0 && path.some(p => p[0] === x && p[1] === y)) {\n                        pathDisplay.innerHTML = path.map(p => `(${p[0]},${p[1]})`).join(' -> ');\n                    }\n                });\n                cell.addEventListener('mouseout', () => {\n                    pathDisplay.innerHTML = '';\n                });\n                cell.addEventListener('click', () => {\n                    if (!isSolving) {\n                        if (path.length > 0 && path.some(p => p[0] === x && p[1] === y)) {\n                            path = [];\n                            pathDisplay.innerHTML = '';\n                        } else {\n                            path = [];\n                            path.push([x, y]);\n                            pathDisplay.innerHTML = path.map(p => `(${p[0]},${p[1]})`).join(' -> ');\n                        }\n                    }\n                });\n                cell.addEventListener('mousedown', () => {\n                    if (!isSolving) {\n                        if (path.length > 0 && path.some(p => p[0] === x && p[1] === y)) {\n                            path = [];\n                            pathDisplay.innerHTML = '';\n                        } else {\n                            path = [];\n                            path.push([x, y]);\n                            pathDisplay.innerHTML = path.map(p => `(${p[0]},${p[1]})`).join(' -> ');\n                        }\n                    }\n                });\n                mazeGrid.appendChild(cell);\n            }\n        }\n    }\n\n    function solveMaze(): void {\n        if (isSolving) return;\n        isSolving = true;\n        const solution = solveMazeAlgo(maze, start, end);\n        if (solution.length > 0) {\n            path = solution;\n            renderMaze(maze);\n            pathDisplay.innerHTML = path.map(p => `(${p[0]},${p[1]})`).join(' -> ');\n        } else {\n            path = [];\n            pathDisplay.innerHTML = '';\n        }\n        isSolving = false;\n    }\n\n    function solveMazeAlgo(maze: number[][], start: number[], end: number[]): number[][] {\n        const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n        const queue: number[][] = [start];\n        const visited: boolean[][] = Array.from({ length: maze.length }, () => Array(maze[0].length).fill(false));\n        const path: number[][] = [];\n        let found = false;\n\n        const isValid = (x: number, y: number) => x >= 0 && x < maze[0].length && y >= 0 && y < maze.length && maze[y][x] !== 0 && !visited[y][x];\n\n        while (queue.length > 0 && !found) {\n            const [cx, cy] = queue.shift()!;\n            visited[cy][cx] = true;\n            path.push([cx, cy]);\n            if (cx === end[0] && cy === end[1]) {\n                found = true;\n                break;\n            }\n            for (const [dx, dy] of directions) {\n                const nx = cx + dx; const ny = cy + dy;\n                if (isValid(nx, ny)) {\n                    queue.push([nx, ny]);\n                }\n            }\n        }\n\n        if (found) {\n            const solutionPath: number[][] = [];\n            let cx = end[0]; let cy = end[1];\n            while (cx !== start[0] || cy !== start[1]) {\n                solutionPath.push([cx, cy]);\n                const last = path[path.length - 1];\n                path.pop();\n                cx = last[0]; cy = last[1];\n            }\n            solutionPath.push(start);\n            return solutionPath.reverse();\n        }\n        return [];\n    }\n\n    newGameBtn.addEventListener('click', () => {\n        generateMaze(Number(difficultySelect.value));\n    });\n\n    resetBtn.addEventListener('click', () => {\n        path = [];\n        pathDisplay.innerHTML = '';\n        renderMaze(maze);\n    });\n\n    solveBtn.addEventListener('click', solveMaze);\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { generateMaze, solveMaze } from '../game-engine/game-engine.ts';\n\nexport function handleInput(input: string): { result: string; errors?: string[] } {\n    const lines = input.split('\\n');\n    const mazeData: number[][] = [];\n    const start: number[] = [];\n    const end: number[] = [];\n    let foundPath = false;\n    let path: number[][] = [];\n\n    for (let i = 0; i < lines.length; i++) {\n        const cols = lines[i].split(' ').map((c) => parseInt(c));\n        if (cols.length > 0) {\n            if (cols.some((c) => c === 2)) {\n                end = [cols.indexOf(2), i];\n                cols[cols.indexOf(2)] = 0;\n            }\n            if (cols.some((c) => c === 1)) {\n                start = [cols.indexOf(1), i];\n                cols[cols.indexOf(1)] = 0;\n            }\n            mazeData.push(cols);\n        }\n    }\n\n    if (start.length === 0 || end.length === 0) {\n        return { result: 'Error: Start or end not found', errors: [] };\n    }\n\n    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n    const queue: number[][] = [start];\n    const visited: boolean[][] = Array.from({ length: mazeData.length }, () => Array(mazeData[0].length).fill(false));\n    const pathStack: number[][] = [];\n    let found = false;\n\n    const isValid = (x: number, y: number) => x >= 0 && x < mazeData[0].length && y >= 0 && y < mazeData.length && mazeData[y][x] !== 0 && !visited[y][x];\n\n    while (queue.length > 0 && !found) {\n        const [cx, cy] = queue.shift()!;\n        visited[cy][cx] = true;\n        pathStack.push([cx, cy]);\n        if (cx === end[0] && cy === end[1]) {\n            found = true;\n            break;\n        }\n        for (const [dx, dy] of directions) {\n            const nx = cx + dx; const ny = cy + dy;\n            if (isValid(nx, ny)) {\n                queue.push([nx, ny]);\n            }\n        }\n    }\n\n    if (found) {\n        path = [];\n        let cx = end[0]; let cy = end[1];\n        while (cx !== start[0] || cy !== start[1]) {\n            path.push([cx, cy]);\n            const last = pathStack[pathStack.length - 1];\n            pathStack.pop();\n            cx = last[0]; cy = last[1];\n        }\n        path.push(start);\n        path.reverse();\n        foundPath = true;\n    }\n\n    const result = mazeData.map((row, y) => row.map((cell, x) => {\n        if (cell === 2) return 'E';\n        if (cell === 1) return 'S';\n        if (path.some(([px, py]) => px === x && py === y)) return 'P';\n        return String(cell);\n    })).join('\\n');\n\n    return { result, errors: foundPath ? [] : ['Path not found'] };\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ],
+   "errors": [
+    "TS2588: Cannot assign to 'end' because it is a constant. (line 15)",
+    "TS2588: Cannot assign to 'start' because it is a constant. (line 19)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "score-store.ts",
+   "language": "typescript",
+   "code": "import { handleInput } from '../input-handler/input-handler.ts';\n\nexport class ScoreStore {\n  private scores: Record<number, string>;\n\n  constructor() {\n    this.scores = {};\n    this.loadScores();\n  }\n\n  loadScores(): void {\n    try {\n      const saved = localStorage.getItem('highscores');\n      if (saved) this.scores = JSON.parse(saved);\n    } catch {}\n  }\n\n  saveScore(score: number, name: string): void {\n    if (score <= 0) return;\n    this.scores[score] = name;\n    this.saveToStorage();\n  }\n\n  saveToStorage(): void {\n    try {\n      localStorage.setItem('highscores', JSON.stringify(this.scores));\n    } catch {}\n  }\n\n  getTopScores(): number[] {\n    return Object.keys(this.scores)\n      .map(Number)\n      .sort((a, b) => b - a)\n      .slice(0, 10);\n  }\n\n  getScoreName(score: number): string | null {\n    return this.scores[score] || null;\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "score_store",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "ScoreStore"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "canvas-ui.ts",
+   "language": "typescript",
+   "code": "import { ScoreStore } from '../score-store/score-store.ts';\n\nexport function render(container: HTMLElement): void {\n  const app = document.createElement('div');\n  app.style.display = 'flex';\n  app.style.flexDirection = 'column';\n  app.style.gap = '10px';\n  app.style.alignItems = 'center';\n  container.appendChild(app);\n\n  const title = document.createElement('h1');\n  title.textContent = 'Maze Runner';\n  app.appendChild(title);\n\n  const newGameBtn = document.createElement('button');\n  newGameBtn.textContent = 'New Game';\n  newGameBtn.className = 'btn btn-primary';\n  newGameBtn.onclick = () => { /* New Game */ };\n  app.appendChild(newGameBtn);\n\n  const resetBtn = document.createElement('button');\n  resetBtn.textContent = 'Reset Game';\n  resetBtn.className = 'btn btn-secondary';\n  resetBtn.onclick = () => { /* Reset Game */ };\n  app.appendChild(resetBtn);\n\n  const difficultySlider = document.createElement('input');\n  difficultySlider.type = 'range';\n  difficultySlider.min = '1';\n  difficultySlider.max = '10';\n  difficultySlider.value = '5';\n  difficultySlider.oninput = () => { /* Update Difficulty */ };\n  app.appendChild(difficultySlider);\n\n  const pathAlgoToggle = document.createElement('input');\n  pathAlgoToggle.type = 'checkbox';\n  pathAlgoToggle.id = 'pathAlgoToggle';\n  pathAlgoToggle.onchange = () => { /* Toggle Pathfinding Algorithm */ };\n  const pathAlgoLabel = document.createElement('label');\n  pathAlgoLabel.htmlFor = 'pathAlgoToggle';\n  pathAlgoLabel.textContent = 'Pathfinding Algorithm';\n  app.appendChild(document.createElement('br'));\n  app.appendChild(pathAlgoLabel);\n  app.appendChild(pathAlgoToggle);\n\n  const stepsDisplay = document.createElement('div');\n  stepsDisplay.textContent = 'Steps: 0';\n  app.appendChild(stepsDisplay);\n\n  const pauseBtn = document.createElement('button');\n  pauseBtn.textContent = '\u23f8 Pause';\n  pauseBtn.className = 'btn btn-secondary';\n  pauseBtn.onclick = () => { /* Toggle Pause */ };\n  app.appendChild(pauseBtn);\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "canvas_ui",
+   "dependencies": [
+    "score_store"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a maze generation game</title>\n  <meta name=\"description\" content=\"a maze generation game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a maze generation game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n      // \u2500\u2500 Declare module namespaces (used by the legacy IIFEs below) \u2500\u2500\n      var game_engine = {}; var ui_screens = {}; var input_handler = {}; var score_store = {}; var canvas_ui = {};\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n// \u2500\u2500 game-engine.ts \u2500\u2500\n\n(function(exports) {\nexports.generateMaze = generateMaze;\nexports.solveMaze = solveMaze;\nfunction generateMaze(width, height) {\n    const maze = Array.from({ length: height }, () => Array(width).fill(0));\n    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n    const stack = [[0, 0]];\n    maze[0][0] = 1;\n    const backtrackingStack = [[0, 0]];\n    const visited = Array.from({ length: height }, () => Array(width).fill(false));\n    const backtrack = [];\n    const walls = [];\n    let cellsVisited = 1;\n    let backtrackIndex = 0;\n    const carvePath = (x, y) => {\n        visited[y][x] = true;\n        const directionsCopy = [...directions];\n        if (backtrackIndex > 0) {\n            const prev = backtrack[backtrackIndex - 1];\n            const dx = x - prev[0];\n            const dy = y - prev[1];\n            directionsCopy.push([-dx, -dy]);\n        }\n        backtrackIndex = backtrack.length;\n        backtrack.push([x, y]);\n        const dirs = directionsCopy.filter(([dx2, dy2]) => x + dx2 >= 0 && x + dx2 < width && y + dy2 >= 0 && y + dy2 < height && !visited[y + dy2][x + dx2]);\n        if (dirs.length === 0) {\n            const last = backtrack[backtrackIndex - 1];\n            maze[y + 1][x] = 1;\n            maze[y - 1][x] = 1;\n            maze[y][x + 1] = 1;\n            maze[y][x - 1] = 1;\n            backtrack.pop();\n            backtrackIndex--;\n            if (backtrack.length > 0) {\n                const [bx, by] = backtrack[backtrackIndex - 1];\n                stack.push([bx, by]);\n                backtrackingStack.push([bx, by]);\n                cellsVisited--;\n            }\n            else {\n                return;\n            }\n        }\n        else {\n            const [dx, dy] = dirs[Math.floor(Math.random() * dirs.length)];\n            const nx = x + dx;\n            const ny = y + dy;\n            maze[y + (dy + 1) / 2][x + (dx + 1) / 2] = 1;\n            cellsVisited++;\n            stack.push([nx, ny]);\n            backtrackingStack.push([nx, ny]);\n            backtrackIndex = backtrackingStack.length;\n            carvePath(nx, ny);\n        }\n    };\n    carvePath(0, 0);\n    const start = [0, 0];\n    const end = [width - 1, height - 1];\n    maze[height - 1][width - 1] = 2;\n    return { maze, start, end };\n}\nfunction solveMaze(maze, start, end) {\n    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n    const queue = [start];\n    const visited = Array.from({ length: maze.length }, () => Array(maze[0].length).fill(false));\n    const path = [];\n    let found = false;\n    const isValid = (x, y) => x >= 0 && x < maze[0].length && y >= 0 && y < maze.length && maze[y][x] !== 0 && !visited[y][x];\n    while (queue.length > 0 && !found) {\n        const [cx, cy] = queue.shift();\n        visited[cy][cx] = true;\n        path.push([cx, cy]);\n        if (cx === end[0] && cy === end[1]) {\n            found = true;\n            break;\n        }\n        for (const [dx, dy] of directions) {\n            const nx = cx + dx;\n            const ny = cy + dy;\n            if (isValid(nx, ny)) {\n                queue.push([nx, ny]);\n            }\n        }\n    }\n    if (found) {\n        const solutionPath = [];\n        let cx = end[0];\n        let cy = end[1];\n        while (cx !== start[0] || cy !== start[1]) {\n            solutionPath.push([cx, cy]);\n            const last = path[path.length - 1];\n            path.pop();\n            cx = last[0];\n            cy = last[1];\n        }\n        solutionPath.push(start);\n        return solutionPath.reverse();\n    }\n    return [];\n}\n})(typeof game_engine !== 'undefined' ? game_engine : {});\n\n// \u2500\u2500 ui-screens.ts \u2500\u2500\n\n(function(exports) {\nexports.render = render;\nfunction render(container) {\n    container.innerHTML = \\`\n        <div class=\"game-container\">\n            <div class=\"maze-grid\" id=\"mazeGrid\"></div>\n            <div class=\"controls\">\n                <button id=\"newGameBtn\">New Game</button>\n                <button id=\"resetBtn\">Reset</button>\n                <label>Difficulty: <select id=\"difficultySelect\">\n                    <option value=\"10\">10x10</option>\n                    <option value=\"20\">20x20</option>\n                    <option value=\"30\">30x30</option>\n                    <option value=\"40\">40x40</option>\n                </select></label>\n                <button id=\"solveBtn\">Solve</button>\n            </div>\n            <div class=\"path-display\" id=\"pathDisplay\"></div>\n        </div>\n    \\`;\n    const mazeGrid = document.getElementById('mazeGrid');\n    const newGameBtn = document.getElementById('newGameBtn');\n    const resetBtn = document.getElementById('resetBtn');\n    const difficultySelect = document.getElementById('difficultySelect');\n    const solveBtn = document.getElementById('solveBtn');\n    const pathDisplay = document.getElementById('pathDisplay');\n    let maze;\n    let start;\n    let end;\n    let path = [];\n    let isSolving = false;\n    function generateMaze(size) {\n        const w = size, h = size;\n        const maze = Array.from({ length: h }, () => Array(w).fill(0));\n        const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n        const stack = [[0, 0]];\n        maze[0][0] = 1;\n        const backtrackingStack = [[0, 0]];\n        const visited = Array.from({ length: h }, () => Array(w).fill(false));\n        const backtrack = [];\n        const walls = [];\n        let cellsVisited = 1;\n        let backtrackIndex = 0;\n        const carvePath = (x, y) => {\n            visited[y][x] = true;\n            const directionsCopy = [...directions];\n            if (backtrackIndex > 0) {\n                const prev = backtrack[backtrackIndex - 1];\n                const dx = x - prev[0];\n                const dy = y - prev[1];\n                directionsCopy.push([-dx, -dy]);\n            }\n            backtrackIndex = backtrack.length;\n            backtrack.push([x, y]);\n            const dirs = directionsCopy.filter(([dx2, dy2]) => x + dx2 >= 0 && x + dx2 < w && y + dy2 >= 0 && y + dy2 < h && !visited[y + dy2][x + dx2]);\n            if (dirs.length === 0) {\n                const last = backtrack[backtrackIndex - 1];\n                maze[y + 1][x] = 1;\n                maze[y - 1][x] = 1;\n                maze[y][x + 1] = 1;\n                maze[y][x - 1] = 1;\n                backtrack.pop();\n                backtrackIndex--;\n                if (backtrack.length > 0) {\n                    const [bx, by] = backtrack[backtrackIndex - 1];\n                    stack.push([bx, by]);\n                    backtrackingStack.push([bx, by]);\n                    cellsVisited--;\n                }\n                else {\n                    return;\n                }\n            }\n            else {\n                const [dx, dy] = dirs[Math.floor(Math.random() * dirs.length)];\n                const nx = x + dx;\n                const ny = y + dy;\n                maze[y + (dy + 1) / 2][x + (dx + 1) / 2] = 1;\n                cellsVisited++;\n                stack.push([nx, ny]);\n                backtrackingStack.push([nx, ny]);\n                carvePath(nx, ny);\n            }\n        };\n        carvePath(0, 0);\n        start = [0, 0];\n        end = [w - 1, h - 1];\n        maze[h - 1][w - 1] = 2;\n        renderMaze(maze);\n    }\n    function renderMaze(maze) {\n        mazeGrid.innerHTML = '';\n        const size = maze.length;\n        for (let y = 0; y < size; y++) {\n            for (let x = 0; x < size; x++) {\n                const cell = document.createElement('div');\n                cell.className = 'cell';\n                if (maze[y][x] === 0)\n                    cell.classList.add('wall');\n                if (y === start[1] && x === start[0])\n                    cell.classList.add('start');\n                if (y === end[1] && x === end[0])\n                    cell.classList.add('end');\n                if (path.length > 0 && path.some(p => p[0] === x && p[1] === y))\n                    cell.classList.add('path');\n                cell.style.cssText = \\`left:\\${x * 20}px;top:\\${y * 20}px;width:20px;height:20px\\`;\n                cell.addEventListener('mouseover', () => {\n                    if (path.length > 0 && path.some(p => p[0] === x && p[1] === y)) {\n                        pathDisplay.innerHTML = path.map(p => \\`(\\${p[0]},\\${p[1]})\\`).join(' -> ');\n                    }\n                });\n                cell.addEventListener('mouseout', () => {\n                    pathDisplay.innerHTML = '';\n                });\n                cell.addEventListener('click', () => {\n                    if (!isSolving) {\n                        if (path.length > 0 && path.some(p => p[0] === x && p[1] === y)) {\n                            path = [];\n                            pathDisplay.innerHTML = '';\n                        }\n                        else {\n                            path = [];\n                            path.push([x, y]);\n                            pathDisplay.innerHTML = path.map(p => \\`(\\${p[0]},\\${p[1]})\\`).join(' -> ');\n                        }\n                    }\n                });\n                cell.addEventListener('mousedown', () => {\n                    if (!isSolving) {\n                        if (path.length > 0 && path.some(p => p[0] === x && p[1] === y)) {\n                            path = [];\n                            pathDisplay.innerHTML = '';\n                        }\n                        else {\n                            path = [];\n                            path.push([x, y]);\n                            pathDisplay.innerHTML = path.map(p => \\`(\\${p[0]},\\${p[1]})\\`).join(' -> ');\n                        }\n                    }\n                });\n                mazeGrid.appendChild(cell);\n            }\n        }\n    }\n    function solveMaze() {\n        if (isSolving)\n            return;\n        isSolving = true;\n        const solution = solveMazeAlgo(maze, start, end);\n        if (solution.length > 0) {\n            path = solution;\n            renderMaze(maze);\n            pathDisplay.innerHTML = path.map(p => \\`(\\${p[0]},\\${p[1]})\\`).join(' -> ');\n        }\n        else {\n            path = [];\n            pathDisplay.innerHTML = '';\n        }\n        isSolving = false;\n    }\n    function solveMazeAlgo(maze, start, end) {\n        const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n        const queue = [start];\n        const visited = Array.from({ length: maze.length }, () => Array(maze[0].length).fill(false));\n        const path = [];\n        let found = false;\n        const isValid = (x, y) => x >= 0 && x < maze[0].length && y >= 0 && y < maze.length && maze[y][x] !== 0 && !visited[y][x];\n        while (queue.length > 0 && !found) {\n            const [cx, cy] = queue.shift();\n            visited[cy][cx] = true;\n            path.push([cx, cy]);\n            if (cx === end[0] && cy === end[1]) {\n                found = true;\n                break;\n            }\n            for (const [dx, dy] of directions) {\n                const nx = cx + dx;\n                const ny = cy + dy;\n                if (isValid(nx, ny)) {\n                    queue.push([nx, ny]);\n                }\n            }\n        }\n        if (found) {\n            const solutionPath = [];\n            let cx = end[0];\n            let cy = end[1];\n            while (cx !== start[0] || cy !== start[1]) {\n                solutionPath.push([cx, cy]);\n                const last = path[path.length - 1];\n                path.pop();\n                cx = last[0];\n                cy = last[1];\n            }\n            solutionPath.push(start);\n            return solutionPath.reverse();\n        }\n        return [];\n    }\n    newGameBtn.addEventListener('click', () => {\n        generateMaze(Number(difficultySelect.value));\n    });\n    resetBtn.addEventListener('click', () => {\n        path = [];\n        pathDisplay.innerHTML = '';\n        renderMaze(maze);\n    });\n    solveBtn.addEventListener('click', solveMaze);\n}\n})(typeof ui_screens !== 'undefined' ? ui_screens : {});\n\n// \u2500\u2500 input-handler.ts \u2500\u2500\n\n(function(exports) {\nexports.handleInput = handleInput;\nfunction handleInput(input) {\n    const lines = input.split('\\n');\n    const mazeData = [];\n    const start = [];\n    const end = [];\n    let foundPath = false;\n    let path = [];\n    for (let i = 0; i < lines.length; i++) {\n        const cols = lines[i].split(' ').map((c) => parseInt(c));\n        if (cols.length > 0) {\n            if (cols.some((c) => c === 2)) {\n                end = [cols.indexOf(2), i];\n                cols[cols.indexOf(2)] = 0;\n            }\n            if (cols.some((c) => c === 1)) {\n                start = [cols.indexOf(1), i];\n                cols[cols.indexOf(1)] = 0;\n            }\n            mazeData.push(cols);\n        }\n    }\n    if (start.length === 0 || end.length === 0) {\n        return { result: 'Error: Start or end not found', errors: [] };\n    }\n    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];\n    const queue = [start];\n    const visited = Array.from({ length: mazeData.length }, () => Array(mazeData[0].length).fill(false));\n    const pathStack = [];\n    let found = false;\n    const isValid = (x, y) => x >= 0 && x < mazeData[0].length && y >= 0 && y < mazeData.length && mazeData[y][x] !== 0 && !visited[y][x];\n    while (queue.length > 0 && !found) {\n        const [cx, cy] = queue.shift();\n        visited[cy][cx] = true;\n        pathStack.push([cx, cy]);\n        if (cx === end[0] && cy === end[1]) {\n            found = true;\n            break;\n        }\n        for (const [dx, dy] of directions) {\n            const nx = cx + dx;\n            const ny = cy + dy;\n            if (isValid(nx, ny)) {\n                queue.push([nx, ny]);\n            }\n        }\n    }\n    if (found) {\n        path = [];\n        let cx = end[0];\n        let cy = end[1];\n        while (cx !== start[0] || cy !== start[1]) {\n            path.push([cx, cy]);\n            const last = pathStack[pathStack.length - 1];\n            pathStack.pop();\n            cx = last[0];\n            cy = last[1];\n        }\n        path.push(start);\n        path.reverse();\n        foundPath = true;\n    }\n    const result = mazeData.map((row, y) => row.map((cell, x) => {\n        if (cell === 2)\n            return 'E';\n        if (cell === 1)\n            return 'S';\n        if (path.some(([px, py]) => px === x && py === y))\n            return 'P';\n        return String(cell);\n    })).join('\\n');\n    return { result, errors: foundPath ? [] : ['Path not found'] };\n}\n})(typeof input_handler !== 'undefined' ? input_handler : {});\n\n// \u2500\u2500 score-store.ts \u2500\u2500\n\n(function(exports) {\nexports.ScoreStore = void 0;\nclass ScoreStore {\n    constructor() {\n        this.scores = {};\n        this.loadScores();\n    }\n    loadScores() {\n        try {\n            const saved = localStorage.getItem('highscores');\n            if (saved)\n                this.scores = JSON.parse(saved);\n        }\n        catch (_a) { }\n    }\n    saveScore(score, name) {\n        if (score <= 0)\n            return;\n        this.scores[score] = name;\n        this.saveToStorage();\n    }\n    saveToStorage() {\n        try {\n            localStorage.setItem('highscores', JSON.stringify(this.scores));\n        }\n        catch (_a) { }\n    }\n    getTopScores() {\n        return Object.keys(this.scores)\n            .map(Number)\n            .sort((a, b) => b - a)\n            .slice(0, 10);\n    }\n    getScoreName(score) {\n        return this.scores[score] || null;\n    }\n}\nexports.ScoreStore = ScoreStore;\n})(typeof score_store !== 'undefined' ? score_store : {});\n\n// \u2500\u2500 canvas-ui.ts \u2500\u2500\n\n(function(exports) {\nexports.render = render;\nfunction render(container) {\n    const app = document.createElement('div');\n    app.style.display = 'flex';\n    app.style.flexDirection = 'column';\n    app.style.gap = '10px';\n    app.style.alignItems = 'center';\n    container.appendChild(app);\n    const title = document.createElement('h1');\n    title.textContent = 'Maze Runner';\n    app.appendChild(title);\n    const newGameBtn = document.createElement('button');\n    newGameBtn.textContent = 'New Game';\n    newGameBtn.className = 'btn btn-primary';\n    newGameBtn.onclick = () => { };\n    app.appendChild(newGameBtn);\n    const resetBtn = document.createElement('button');\n    resetBtn.textContent = 'Reset Game';\n    resetBtn.className = 'btn btn-secondary';\n    resetBtn.onclick = () => { };\n    app.appendChild(resetBtn);\n    const difficultySlider = document.createElement('input');\n    difficultySlider.type = 'range';\n    difficultySlider.min = '1';\n    difficultySlider.max = '10';\n    difficultySlider.value = '5';\n    difficultySlider.oninput = () => { };\n    app.appendChild(difficultySlider);\n    const pathAlgoToggle = document.createElement('input');\n    pathAlgoToggle.type = 'checkbox';\n    pathAlgoToggle.id = 'pathAlgoToggle';\n    pathAlgoToggle.onchange = () => { };\n    const pathAlgoLabel = document.createElement('label');\n    pathAlgoLabel.htmlFor = 'pathAlgoToggle';\n    pathAlgoLabel.textContent = 'Pathfinding Algorithm';\n    app.appendChild(document.createElement('br'));\n    app.appendChild(pathAlgoLabel);\n    app.appendChild(pathAlgoToggle);\n    const stepsDisplay = document.createElement('div');\n    stepsDisplay.textContent = 'Steps: 0';\n    app.appendChild(stepsDisplay);\n    const pauseBtn = document.createElement('button');\n    pauseBtn.textContent = '\u23f8 Pause';\n    pauseBtn.className = 'btn btn-secondary';\n    pauseBtn.onclick = () => { };\n    app.appendChild(pauseBtn);\n}\n})(typeof canvas_ui !== 'undefined' ? canvas_ui : {});\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n  try { if(typeof game_engine.generateMaze === 'function' && !/^class\\s/.test(String(game_engine.generateMaze))) game_engine.generateMaze(document.getElementById('app-container')); else console.log('game-engine.ts: awaiting user interaction'); } catch(e) { console.warn('game_engine init:', e); }\n  try { ui_screens.render(document.getElementById('app-container')); } catch(e) { console.error('Error calling ui_screens.render:', e); addError(e.message); }\n  try { if(typeof input_handler.handleInput === 'function' && !/^class\\s/.test(String(input_handler.handleInput))) input_handler.handleInput(document.getElementById('app-container')); else console.log('input-handler.ts: awaiting user interaction'); } catch(e) { console.warn('input_handler init:', e); }\n  try { if(typeof score_store.ScoreStore === 'function' && !/^class\\s/.test(String(score_store.ScoreStore))) score_store.ScoreStore(document.getElementById('app-container')); else console.log('score-store.ts: awaiting user interaction'); } catch(e) { console.warn('score_store init:', e); }\n  try { canvas_ui.render(document.getElementById('app-container')); } catch(e) { console.error('Error calling canvas_ui.render:', e); addError(e.message); }\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a maze generation game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a maze generation game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "game_engine",
+    "ui_screens",
+    "input_handler",
+    "score_store",
+    "canvas_ui"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 40865,
+ "totalErrors": 3,
+ "validatedCount": 4,
+ "failedCount": 2,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "generateMaze",
+    "solveMaze"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "score-store.ts",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "ScoreStore"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "canvas-ui.ts",
+   "dependencies": [
+    "score_store"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "game_engine",
+    "ui_screens",
+    "input_handler",
+    "score_store",
+    "canvas_ui"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 1,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 40865,
+  "totalErrors": 3,
+  "validated": 4,
+  "failed": 2,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 259670
+ }
+}

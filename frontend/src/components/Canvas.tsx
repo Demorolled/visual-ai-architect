@@ -1,38 +1,107 @@
-import { useCallback, useRef, useEffect, useState } from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { NodeType, NodeStatus, CodeLanguage, WizardStep } from '../types';
 import { Node } from 'reactflow';
 import Canvas3D, { resetCameraView, panCamera, centerOnNodes } from './Canvas3D';
 import type { UIDragData } from './Canvas3D';
 import NodeDetailOverlay from './NodeDetailOverlay';
 import NodeCodeEditor from './NodeCodeEditor';
-import { useProjectStore, getNextNodeId } from '../store/projectStore';
+import NodeSetupDialog, { NodeSetupResult } from './NodeSetupDialog';
+import ConnectNodesDialog from './ConnectNodesDialog';
+import PlanLibraryDialog from './PlanLibraryDialog';
+import PlanCoworkerPanel from './PlanCoworkerPanel';
+import PlanResumeBanner from './PlanResumeBanner';
+import { broadcastReasoningMessage } from '../utils/reasoningSync';
+import { api } from '../api/client';
+import { useProjectStore, getNextNodeId, isRootNode, treeIdOfNode } from '../store/projectStore';
 import { autoLearn } from '../utils/autoLearn';
 import { userProfile } from '../utils/userProfile';
 import './Canvas.css';
 
 const POST_GEN_STEPS: WizardStep[] = ['review', 'saving', 'complete'];
 
-const typeColors: Record<string, string> = {
-  master: '#f59e0b',
-  input: '#4ade80',
-  output: '#f87171',
-  logic: '#60a5fa',
-  api: '#a78bfa',
-  database: '#fbbf24',
-  ui: '#f472b6',
-  'ui-functions': '#f472b6',
-  'gui-layout': '#00d9ff',
-};
+// (The per-type colour map that used to live here moved into the setup window's
+// type badge; the inline prompt it styled is gone.)
 
 export default function Canvas() {
   const store = useProjectStore();
-  const { addNode, setSelectedNode, updateNodePosition, targetOS, wizardStep } = store;
+  const {
+    addNode, setSelectedNode, updateNodePosition, targetOS, wizardStep,
+    planMode, planSeedId, setPlanSeedId, setUserGoal,
+    trees, activeTreeId, setActiveTree, addTree, removeTree,
+  } = store;
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  // ── Multi-select ──
+  // Shift/Cmd/Ctrl-click builds a set of selected nodes. `selectedNodeId` above
+  // stays the PRIMARY selection (the one the detail overlay shows); the set is
+  // what the canvas highlights, and when it holds exactly two nodes the user can
+  // wire them directly without opening the node detail panel.
+  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+  const [pairConnectOpen, setPairConnectOpen] = useState(false);
   const [pendingNode, setPendingNode] = useState<{ node: { id: string; type: NodeType; x: number; y: number }; index: number } | null>(null);
   const [nodeName, setNodeName] = useState('');
   const [nodeDesc, setNodeDesc] = useState('');
   const { canUndo, canRedo, undo, redo } = useProjectStore();
+
+  // ── Plan-mode manual wiring ──
+  // Big Plan Mode's "wirring link": the user picks the two nodes themselves
+  // rather than relying on auto-detected connections.
+  const [wiringOpen, setWiringOpen] = useState(false);
+  // Reopening a saved design is part of the same plan surface, so the picker
+  // sits next to the wiring button rather than in a separate menu.
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  // Mapping the design to files/folders (no code). Kept as local UI state: the
+  // backend is the source of truth about whether a map exists (it refreshes it
+  // on every autosave once mapped).
+  const [mapping, setMapping] = useState(false);
+  const planCodeNodes = store.nodes.filter(n => n.type !== 'master');
+
+  const handleMapDesign = useCallback(async () => {
+    const st = useProjectStore.getState();
+    // Roots are metadata, not design modules — one per app tree, all excluded.
+    const design = st.nodes.filter(n => !isRootNode(n));
+    if (design.length === 0) return;
+    setMapping(true);
+    try {
+      const res = await api.mapPlan({
+        projectName: st.projectName,
+        goal: st.userGoal,
+        nodes: design.map(n => {
+          const d = n.data as any;
+          return {
+            id: n.id,
+            type: d?.type || n.type || 'logic',
+            label: d?.label || n.id,
+            description: d?.description || '',
+            language: d?.language,
+            isMaster: n.id === st.planSeedId,
+            qa: (d?.planQa || []).map((x: any) => ({ q: x.q, a: x.a })),
+          };
+        }),
+        edges: st.edges.map(e => ({ source: e.source, target: e.target, label: (e as any).label })),
+      });
+      const data = res.data || {};
+      const count = Array.isArray(data.files) ? data.files.length : 0;
+      const removed = Array.isArray(data.removed) ? data.removed.length : 0;
+      broadcastReasoningMessage({
+        role: 'ai',
+        text:
+          `🗺 Mapped the design to ${count} file${count === 1 ? '' : 's'} → data/plans/${data.dirName}/map/ ` +
+          `(wiring.md + map.json, no code generated)` +
+          (removed ? ` · dropped ${removed} file${removed === 1 ? '' : 's'} no longer in the design` : '') +
+          `. It now refreshes with every autosave.`,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err: any) {
+      broadcastReasoningMessage({
+        role: 'ai',
+        text: `⚠ Could not map the design: ${err?.response?.data?.error || err?.message || 'unknown error'}`,
+        timestamp: new Date().toISOString(),
+      });
+    } finally {
+      setMapping(false);
+    }
+  }, []);
 
   // ── Post-hoc rework state ──
   const [reworkNeeded, setReworkNeeded] = useState(false);
@@ -66,6 +135,15 @@ export default function Canvas() {
 
   useEffect(() => {
     if (masterCreatedRef.current) return;
+    // Tree Mode: the first app tree is started through addTree, which registers
+    // the tree AND places its root node in one write (they must never disagree).
+    // The guard stays "only on a truly empty canvas" — a project that already
+    // has nodes gets its trees from the load-time migration instead.
+    if (store.nodes.length === 0 && store.trees.length === 0) {
+      addTree({ name: 'App 1' });
+      masterCreatedRef.current = true;
+      return;
+    }
     const hasMaster = store.nodes.some((n: Node) => n.type === 'master');
     if (!hasMaster && store.nodes.length === 0) {
       const masterNode: Node = {
@@ -96,11 +174,69 @@ export default function Canvas() {
     }
   }, [store.nodes.length]);
 
+  // ── Frame a just-applied connection so the new edge is on screen ──
+  // Connect & Describe highlights the fresh edge in the store; when that
+  // happens, pan the camera to the pair so the user SEES the 2 nodes wired.
+  const framedEdgeRef = useRef<string | null>(null);
+  useEffect(() => {
+    const id = store.highlightedEdgeId;
+    if (!id || id === framedEdgeRef.current) return;
+    framedEdgeRef.current = id;
+    const edge = store.edges.find(e => e.id === id);
+    if (!edge) return;
+    const positions = [edge.source, edge.target]
+      .map(nid => store.nodes.find(n => n.id === nid)?.position)
+      .filter((p): p is { x: number; y: number } => Boolean(p));
+    if (positions.length === 2) centerOnNodes(positions, 140);
+  }, [store.highlightedEdgeId, store.edges, store.nodes]);
+
   // ── Node Selection (click in 3D scene) ──
-  const handleSelectNode = useCallback((id: string | null) => {
-    setSelectedNodeId(id);
-    setSelectedNode(id);
-  }, [setSelectedNode]);
+  // Plain click replaces the selection (and toggles off when it re-clicks the
+  // sole selected node); Shift/Cmd/Ctrl-click adds or removes one node so a
+  // second node can be picked for a direct connection.
+  const handleSelectNode = useCallback((id: string | null, additive = false) => {
+    if (!id) {
+      setSelectedNodeIds([]);
+      setSelectedNodeId(null);
+      setSelectedNode(null);
+      return;
+    }
+    let next: string[];
+    if (additive) {
+      next = selectedNodeIds.includes(id)
+        ? selectedNodeIds.filter((x) => x !== id)
+        : [...selectedNodeIds, id];
+    } else {
+      next = selectedNodeIds.length === 1 && selectedNodeIds[0] === id ? [] : [id];
+    }
+    setSelectedNodeIds(next);
+    if (next.length === 0) {
+      setSelectedNodeId(null);
+      setSelectedNode(null);
+    } else {
+      setSelectedNodeId(id);
+      setSelectedNode(id);
+    }
+  }, [selectedNodeIds, setSelectedNode]);
+
+  // ── Direct two-node connection ──
+  // The pair the user built with modifier-clicks, scoped to their app tree(s) so
+  // the Connect dialog's pickers only offer nodes that can legally be wired.
+  const pairNodes = useMemo(
+    () => selectedNodeIds
+      .map((id) => store.nodes.find((n) => n.id === id))
+      .filter((n): n is NonNullable<typeof n> => Boolean(n)),
+    [selectedNodeIds, store.nodes],
+  );
+  const pairTreeNodeIds = useMemo(() => {
+    if (pairNodes.length !== 2) return undefined;
+    const treeIds = new Set(
+      pairNodes.map((n) => treeIdOfNode(n, trees)).filter((t): t is string => Boolean(t)),
+    );
+    return store.nodes
+      .filter((n) => n.type !== 'master' && treeIds.has(treeIdOfNode(n, trees) as string))
+      .map((n) => n.id);
+  }, [pairNodes, store.nodes, trees]);
 
   // ── Node Double-click → Open Code Editor ──
   const codeEditorNodeId = useProjectStore((s) => s.codeEditorNodeId);
@@ -132,28 +268,40 @@ export default function Canvas() {
     }
   }, []);
 
-  const handleConfirmNode = useCallback(() => {
+  const handleConfirmNode = useCallback((result: NodeSetupResult) => {
     if (!pendingNode) return;
-    const name = nodeName.trim() || pendingNode.node.type;
+    const { type, language, name, purpose } = result;
+    // The first node placed while Plan Mode is on is the plan's seed: its
+    // purpose is the statement of intent, so it also becomes the goal the
+    // LLM co-pilot reasons from.
+    const isPlanSeed = planMode && !planSeedId;
     const newNode: Node = {
       id: getNextNodeId(),
-      type: pendingNode.node.type,
+      type,
       position: { x: pendingNode.node.x, y: pendingNode.node.y },
       data: {
         label: name,
-        description: nodeDesc,
-        type: pendingNode.node.type,
+        description: purpose,
+        type,
         status: 'pending' as NodeStatus,
-        language: (userProfile.get().preferences.preferredLanguages?.[0] || 'typescript') as CodeLanguage,
+        // Language comes from the setup window, NOT from
+        // `userProfile.preferences.preferredLanguages[0]`: the window is where
+        // the choice is actually made, and the profile only seeds it.
+        language,
+        ...(isPlanSeed && purpose ? { appGoal: purpose } : {}),
       },
     };
     addNode(newNode);
-    autoLearn.nodeCreated(name, pendingNode.node.type, 'typescript', nodeDesc);
+    autoLearn.nodeCreated(name, type, language, purpose);
+    if (isPlanSeed) {
+      setPlanSeedId(newNode.id);
+      if (purpose) setUserGoal(purpose);
+    }
     // Auto-open code editor for every newly placed node so the user can
     // read, write, or modify code immediately
     setCodeEditorNodeId(newNode.id);
     setPendingNode(null);
-  }, [pendingNode, nodeName, nodeDesc, addNode, setCodeEditorNodeId]);
+  }, [pendingNode, planMode, planSeedId, setPlanSeedId, setUserGoal, addNode, setCodeEditorNodeId]);
 
   const handleCancelNode = useCallback(() => {
     setPendingNode(null);
@@ -271,6 +419,7 @@ export default function Canvas() {
       {/* 3D Canvas */}
       <Canvas3D
         selectedNodeId={selectedNodeId}
+        selectedNodeIds={selectedNodeIds}
         onSelectNode={handleSelectNode}
         onDoubleClickNode={handleDoubleClickNode}
         onDragNode={handleDragNode}
@@ -282,6 +431,53 @@ export default function Canvas() {
         nodeId={selectedNodeId}
         onClose={() => handleSelectNode(null)}
       />
+
+      {/* ── Tree Mode: the project's app trees ── */}
+      <div className="tree-bar">
+        <span className="tree-bar-label">🌳 App trees</span>
+        {trees.map((t) => (
+          <button
+            key={t.id}
+            className={`tree-chip ${activeTreeId === t.id ? 'active' : ''}`}
+            onClick={() => setActiveTree(t.id)}
+            title={
+              `${t.name}${t.goal ? ` — ${t.goal}` : ''}\n` +
+              'Click to make this the active tree: new nodes you drop join it.'
+            }
+          >
+            {t.name}
+          </button>
+        ))}
+        <button
+          className="tree-bar-add"
+          onClick={() => addTree()}
+          title="Add another app tree — build a second app beside this one, then wire data between them"
+        >
+          ＋ New app tree
+        </button>
+        {trees.length > 1 && activeTreeId && (
+          <button
+            className="tree-bar-remove"
+            onClick={() => {
+              const tree = trees.find((t) => t.id === activeTreeId);
+              const count = store.nodes.filter(
+                (n) => (n.data as any)?.treeId === activeTreeId && n.type !== 'master',
+              ).length;
+              if (
+                confirm(
+                  `Delete the app tree "${tree?.name || activeTreeId}" and its ${count} node(s)?\n\n` +
+                  'Cross-tree connections wired to it are removed too.',
+                )
+              ) {
+                removeTree(activeTreeId);
+              }
+            }}
+            title="Delete the active app tree"
+          >
+            ✕
+          </button>
+        )}
+      </div>
 
       {/* ── Undo/Redo Floating Bar ── */}
       <div className="undo-redo-bar">
@@ -385,47 +581,108 @@ export default function Canvas() {
         </div>
       )}
 
-      {/* ── Pending Node Name Dialog ── */}
-      {pendingNode && (
-        <div className="node-name-overlay" onClick={handleCancelNode}>
-          <div className="node-name-dialog" onClick={(e) => e.stopPropagation()}>
-            <div className="node-name-header">
-              <span
-                className="node-name-type-badge"
-                style={{ background: typeColors[pendingNode.node.type] || '#666' }}
-              >
-                {pendingNode.node.type}
-              </span>
-              <span className="node-name-title">New Node</span>
-            </div>
-            <label className="node-name-field">
-              <span>Name</span>
-              <input
-                value={nodeName}
-                onChange={(e) => setNodeName(e.target.value)}
-                placeholder={`New ${pendingNode.node.type} node`}
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleConfirmNode();
-                  if (e.key === 'Escape') handleCancelNode();
-                }}
-              />
-            </label>
-            <label className="node-name-field">
-              <span>Description</span>
-              <textarea
-                value={nodeDesc}
-                onChange={(e) => setNodeDesc(e.target.value)}
-                placeholder="Describe what this node should do..."
-                rows={3}
-              />
-            </label>
-            <div className="node-name-actions">
-              <button className="nn-btn nn-cancel" onClick={handleCancelNode}>Cancel</button>
-              <button className="nn-btn nn-confirm" onClick={handleConfirmNode}>Add Node</button>
-            </div>
-          </div>
+      {/* ── Big Plan Mode: manual wiring link ── */}
+      {planMode && (
+        <div className="plan-wire-bar">
+          <span className="plan-wire-hint">
+            🧭 Design only — nothing is generated while you plan.
+          </span>
+          <button
+            className="plan-wire-btn"
+            onClick={() => setWiringOpen(true)}
+            disabled={planCodeNodes.length < 2}
+            title={
+              planCodeNodes.length < 2
+                ? 'Add a second node first — a link needs two nodes'
+                : 'Pick two nodes and describe how they connect'
+            }
+          >
+            🔗 Wire two nodes
+          </button>
+          <button
+            className="plan-wire-btn plan-wire-btn-secondary"
+            onClick={handleMapDesign}
+            disabled={mapping || planCodeNodes.length === 0}
+            title={
+              planCodeNodes.length === 0
+                ? 'Place the master node first — there is nothing to map yet'
+                : 'Map the design onto real files and folders — one per node, wired as a build would wire them. No code is generated.'
+            }
+          >
+            {mapping ? 'Mapping…' : '🗺 Map design to files'}
+          </button>
+          <button
+            className="plan-wire-btn plan-wire-btn-secondary"
+            onClick={() => setLibraryOpen(true)}
+            title="Reopen a design autosaved to data/plans and keep working on it"
+          >
+            📂 Open plan
+          </button>
         </div>
+      )}
+
+      {wiringOpen && (
+        <ConnectNodesDialog mode="plan" onClose={() => setWiringOpen(false)} />
+      )}
+
+      {libraryOpen && <PlanLibraryDialog onClose={() => setLibraryOpen(false)} />}
+
+      {/* ── Big Plan Mode: the co-worker's questions, answered against the
+             node each one is about ── */}
+      <PlanCoworkerPanel />
+
+      {/* ── An empty canvas that has a saved design on disk: offer to resume ── */}
+      <PlanResumeBanner />
+
+      {/* ── Two nodes picked on the canvas: wire them without the detail panel ── */}
+      {pairNodes.length === 2 && !pairConnectOpen && (
+        <div className="canvas-connect-bar">
+          <span className="canvas-connect-hint">
+            🔗 2 nodes selected — <strong>{pairNodes[0].data?.label || pairNodes[0].id}</strong>
+            {' → '}
+            <strong>{pairNodes[1].data?.label || pairNodes[1].id}</strong>
+          </span>
+          <button
+            className="canvas-connect-btn"
+            onClick={() => setPairConnectOpen(true)}
+            title="Describe what flows between these two nodes"
+          >
+            🔗 Connect these two…
+          </button>
+          <button
+            className="canvas-connect-btn canvas-connect-btn-secondary"
+            onClick={() => handleSelectNode(null)}
+            title="Clear the selection"
+          >
+            ✕ Clear
+          </button>
+        </div>
+      )}
+
+      {pairConnectOpen && pairNodes.length === 2 && (
+        <ConnectNodesDialog
+          mode="build"
+          initialSourceId={pairNodes[0].id}
+          initialTargetId={pairNodes[1].id}
+          allowedNodeIds={pairTreeNodeIds}
+          onClose={() => setPairConnectOpen(false)}
+        />
+      )}
+
+      {/* ── Node setup window: type + language + name + purpose ── */}
+      {pendingNode && (
+        <NodeSetupDialog
+          initialType={pendingNode.node.type}
+          mode={planMode ? 'plan' : 'build'}
+          isSeed={planMode && !planSeedId}
+          initialName={nodeName}
+          initialPurpose={nodeDesc}
+          defaultLanguage={
+            (userProfile.get().preferences.preferredLanguages?.[0] || 'typescript') as CodeLanguage
+          }
+          onConfirm={handleConfirmNode}
+          onCancel={handleCancelNode}
+        />
       )}
 
       {/* ── Node Code Editor ── */}

@@ -1,0 +1,384 @@
+{
+ "success": true,
+ "projectId": "262660c8-478b-44ae-b2e2-fdc05492cf5c",
+ "matchedBy": "semantic",
+ "matchScore": 0.6369720215917758,
+ "blueprint": {
+  "app_type": "url_shortener",
+  "description": "Shorten long URLs into compact links, redirect visitors to the original destination, and track per-link click statistics.",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "link_models",
+   "link_store",
+   "redirect_service",
+   "api_routes",
+   "stats_service"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "api_routes",
+    "data_passed": "create_and_query_links"
+   },
+   {
+    "source_module": "api_routes",
+    "destination_module": "redirect_service",
+    "data_passed": "redirect_requests"
+   },
+   {
+    "source_module": "redirect_service",
+    "destination_module": "link_store",
+    "data_passed": "resolve_slug_and_log_click"
+   },
+   {
+    "source_module": "api_routes",
+    "destination_module": "stats_service",
+    "data_passed": "stats_requests"
+   },
+   {
+    "source_module": "stats_service",
+    "destination_module": "link_store",
+    "data_passed": "aggregate_click_queries"
+   },
+   {
+    "source_module": "link_models",
+    "destination_module": "link_store",
+    "data_passed": "schemas"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Open Source TinyURL Alternatives: Top 12 URL Shorteners\n    Open Source TinyURL Alternatives URL Shorteners &amp; QR Code Generators like TinyURL The best open source alternative to TinyURL is Kutt. If that doesn&#x27;t suit you, our users have ranked more tha\n  \u2022 Best Open Source URL Shorteners 2026 - SourceForge\n    Browse free open source URL Shorteners and projects below. Use the toggles on the left to filter open source URL Shorteners by OS, license, language, programming language, and project status.\n  \u2022 \u2b501376 ash-jc-allen/short-url: A Laravel package for creating shortened URLs for your web apps.\n  \u2022 \u2b50265 poorna-soysa/url-shortener-app: This repository contains a n URL Shortener sample application built with .NET 10 ,  NET Aspire, PostgreSQL\n  \u2022 gitea (developer-tools): Accelerate DevOps with Gitea\n  \u2022 neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 1,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 46: BUILD-LADDER OPERATOR \u2014 55 REAL APP BUILDS, TESTED END-TO-END\n    The build-ladder operator (training/operator/) built 55 REAL apps through the\nlive VACA pipeline on 2026-08-09 \u2014 20 simple (python scripts), 10 hard\n(multi-step logic + a first web app), 25 extreme (browser apps tested in real\nheadless Chromium via Playwright, node http servers, and heavy python). E\n  \u2022 Section 4: FRONTEND APPLICATION\n    4.1 PACKAGE DETAILS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFramework:  React 18.2.0\nBuild Tool: Vite 8.x\nLanguage:   TypeScript 5.3.3\nState:      Zustand 4.4.7\n3D:         Three.js 0.184.0, @react-three/fiber 8.18.0, @react-three/drei 9.122.0\nFlow:       ReactFlow 11.10.1\nHTTP:       Axios 1.6.2\nPWA:        vite-plug\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 url_analyze \u2014 network tool\n    Parse, analyze, and validate a URL into its components\n    Code: // Tool: url_analyze\n// Category: network\n// Risk: readonly\n// Parse, analyze, and validate a URL into its components"
+ },
+ "candidates": [
+  {
+   "app_type": "url_shortener",
+   "score": 0.6369720215917758
+  },
+  {
+   "app_type": "shortlink-go",
+   "score": 0.4938389904456153
+  }
+ ],
+ "project": {
+  "id": "262660c8-478b-44ae-b2e2-fdc05492cf5c",
+  "name": "a url shortener app",
+  "targetOS": "linux",
+  "nodeCount": 7,
+  "edgeCount": 6,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "url_shortener blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "database",
+    "label": "link_models"
+   },
+   {
+    "id": "mod_2",
+    "type": "database",
+    "label": "link_store"
+   },
+   {
+    "id": "mod_3",
+    "type": "api",
+    "label": "redirect_service"
+   },
+   {
+    "id": "mod_4",
+    "type": "api",
+    "label": "api_routes"
+   },
+   {
+    "id": "mod_5",
+    "type": "api",
+    "label": "stats_service"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_4",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_4",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_3",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_4",
+    "target": "mod_5"
+   },
+   {
+    "id": "edge_4",
+    "source": "mod_5",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_5",
+    "source": "mod_1",
+    "target": "mod_2"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 5,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 1,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "link_models",
+   "link_store",
+   "redirect_service",
+   "api_routes",
+   "stats_service"
+  ],
+  "generated": [
+   "api_routes",
+   "link_models",
+   "ui_screens",
+   "redirect_service",
+   "stats_service",
+   "link_store"
+  ],
+  "matched": [
+   "ui_screens",
+   "link_models",
+   "link_store",
+   "redirect_service",
+   "api_routes",
+   "stats_service"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "api-routes.ts",
+   "language": "typescript",
+   "code": "export function setupApiRoutes() {\n    const links: { [key: string]: { original: string; clicks: number } } = {};\n\n    const addLink = (original: string) => {\n        const short = generateShort();\n        links[short] = { original, clicks: 0 };\n        return short;\n    };\n\n    const generateShort = () => {\n        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';\n        let short = '';\n        for (let i = 0; i < 6; i++) short += chars.charAt(Math.floor(Math.random() * chars.length));\n        return short;\n    };\n\n    const getOriginal = (short: string) => {\n        if (links[short]) {\n            links[short].clicks++;\n            return links[short].original;\n        }\n        return null;\n    };\n\n    return {\n        addLink,\n        getOriginal,\n    };\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "api_routes",
+   "dependencies": [],
+   "exports": [
+    "setupApiRoutes"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "link-models.ts",
+   "language": "typescript",
+   "code": "export interface Link {\n    id: number;\n    slug: string;\n    originalUrl: string;\n    clicks: number;\n    createdAt: Date;\n}\n\nexport class LinkService {\n    private links: Link[] = [];\n\n    constructor() {\n        try {\n            const saved = localStorage.getItem('shortLinks');\n            if (saved) this.links = JSON.parse(saved);\n        } catch (e) { }\n    }\n\n    createLink(originalUrl: string): string {\n        const slug = generateSlug();\n        const link: Link = { id: this.links.length + 1, slug, originalUrl, clicks: 0, createdAt: new Date() };\n        this.links.push(link);\n        localStorage.setItem('shortLinks', JSON.stringify(this.links));\n        return link.slug;\n    }\n\n    getLink(slug: string): string | null {\n        const link = this.links.find(l => l.slug === slug);\n        if (link) {\n            link.clicks++;\n            localStorage.setItem('shortLinks', JSON.stringify(this.links));\n            return link.originalUrl;\n        }\n        return null;\n    }\n\n    deleteLink(slug: string): void {\n        this.links = this.links.filter(l => l.slug !== slug);\n        localStorage.setItem('shortLinks', JSON.stringify(this.links));\n    }\n}\n\nfunction generateSlug() {\n    const unique = 'abcdefghijklmnopqrstuvwxyz0123456789';\n    return Array.from({ length: 6 }, () => unique[Math.floor(Math.random() * unique.length)]).join('');\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "link_models",
+   "dependencies": [],
+   "exports": [
+    "Link",
+    "LinkService"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { setupApiRoutes } from '../api-routes/api-routes.ts';\n\nexport function render(container: HTMLElement) {\n    container.innerHTML = `\n        <div class=\"flex items-center gap-4\">\n            <div class=\"w-96\">\n                <div class=\"p-6 bg-gray-800 rounded\">\n                    <div class=\"flex items-center justify-between mb-4\">\n                        <div class=\"text-2xl text-white font-semibold\">\ud83d\udd17 Shorten URL</div>\n                        <button class=\"px-4 py-2 rounded bg-primary text-white\" onclick=\"copyShortUrl()\">\ud83d\udccb Copy</button>\n                    </div>\n                    <div class=\"mb-4\">\n                        <label class=\"block text-gray-400 mb-2\">Original URL</label>\n                        <input id=\"originalUrl\" class=\"w-full px-4 py-2 rounded text-gray-300\" placeholder=\"Enter the full URL to shorten\">\n                    </div>\n                    <div class=\"mb-4\">\n                        <label class=\"block text-gray-400 mb-2\">Short ID</label>\n                        <input id=\"shortId\" class=\"w-full px-4 py-2 rounded text-gray-300\" placeholder=\"Optional custom ID\">\n                    </div>\n                    <button class=\"w-full px-4 py-2 rounded bg-primary text-white\" onclick=\"shorten()\">Shorten</button>\n                </div>\n            </div>\n            <div class=\"w-48\">\n                <div class=\"p-4 bg-gray-700 rounded\">\n                    <div class=\"text-white text-xl mb-2\">\ud83d\udd17 Your Short URL</div>\n                    <div id=\"shortUrlDisplay\" class=\"text-white font-bold text-2xl mb-4\"></div>\n                    <button class=\"w-full px-4 py-2 rounded bg-secondary text-white\" onclick=\"copyShortUrl()\">\ud83d\udccb Copy</button>\n                    <button class=\"w-full px-4 py-2 rounded bg-danger text-white\" onclick=\"deleteShortUrl()\">\u2715 Delete</button>\n                </div>\n            </div>\n        </div>\n        <div class=\"mt-8\">\n            <div class=\"p-6 bg-gray-800 rounded\">\n                <div class=\"text-white text-xl mb-4\">\ud83d\udd17 Redirects</div>\n                <div id=\"redirectsList\" class=\"flex flex-col gap-2\"></div>\n            </div>\n        </div>\n    `;\n\n    const originalInput = document.getElementById('originalUrl') as HTMLInputElement;\n    const shortIdInput = document.getElementById('shortId') as HTMLInputElement;\n    const shortUrlDisplay = document.getElementById('shortUrlDisplay') as HTMLSpanElement;\n    const redirectsList = document.getElementById('redirectsList') as HTMLDivElement;\n\n    const shortUrls: { original: string; short: string; clicks: number }[] = [];\n\n    function shorten() {\n        if (originalInput.value.trim() === '') return;\n        const shortId = shortIdInput.value.trim();\n        const original = originalInput.value.trim();\n\n        if (shortId && shortUrls.some(u => u.short === shortId)) {\n            alert('Short ID already exists');\n            return;\n        }\n\n        const short = shortId || generateShort();\n        const url = new URL(original);\n        const shortUrl = `${document.location.origin}/s/${short}`;\n\n        shortUrls.push({ original, short, clicks: 0 });\n        updateRedirectsList();\n        shortUrlDisplay.textContent = shortUrl;\n        originalInput.value = '';\n        shortIdInput.value = '';\n    }\n\n    function generateShort() {\n        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';\n        let short = '';\n        for (let i = 0; i < 6; i++) short += chars.charAt(Math.floor(Math.random() * chars.length));\n        return short;\n    }\n\n    function updateRedirectsList() {\n        redirectsList.innerHTML = shortUrls.map(u => {\n            const clicks = u.clicks;\n            return `<div class=\"flex items-center gap-2 mb-2\">\n                <span class=\"text-gray-300\">${u.original} \u2192 <a href=\"${u.original}\" target=\"_blank\" class=\"text-primary hover:text-primary-200\">${u.short}</a></span>\n                <span class=\"text-gray-400 ml-2\">(${clicks} clicks)</span>\n            </div>`;\n        }).join('');\n    }\n\n    function copyShortUrl() {\n        const short = document.querySelector('a[href^=\"/s/\"]');\n        if (short) navigator.clipboard.writeText(short.href);\n    }\n\n    function deleteShortUrl() {\n        shortUrls.length = 0;\n        updateRedirectsList();\n    }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2339: Property 'href' does not exist on type 'Element'. (line 87)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "redirect-service.ts",
+   "language": "typescript",
+   "code": "import { setupApiRoutes } from '../api-routes/api-routes.ts';\n\nexport class RedirectService {\n    private links: { [key: string]: { original: string; clicks: number } } = {};\n\n    public createLink(original: string): string {\n        const short = this.generateShort();\n        this.links[short] = { original, clicks: 0 };\n        return short;\n    }\n\n    public resolveSlugAndLogClick(slug: string): string | null {\n        if (this.links[slug]) {\n            this.links[slug].clicks++;\n            return this.links[slug].original;\n        }\n        return null;\n    }\n\n    private generateShort(): string {\n        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';\n        let short = '';\n        for (let i = 0; i < 6; i++) short += chars.charAt(Math.floor(Math.random() * chars.length));\n        return short;\n    }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "redirect_service",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "RedirectService"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "stats-service.ts",
+   "language": "typescript",
+   "code": "export function setupApiRoutes() {\n    const stats: { [key: string]: { totalClicks: number; uniqueVisitors: number } } = {};\n\n    const incrementClicks = (slug: string) => {\n        if (stats[slug]) {\n            stats[slug].totalClicks++;\n            stats[slug].uniqueVisitors = Array.from(new Set([stats[slug].uniqueVisitors, 1])).length;\n        }\n    };\n\n    const getStats = (slug: string) => stats[slug];\n\n    return {\n        incrementClicks,\n        getStats,\n    };\n}",
+   "nodeId": "mod_5",
+   "nodeLabel": "stats_service",
+   "dependencies": [],
+   "exports": [
+    "setupApiRoutes"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "link-store.ts",
+   "language": "typescript",
+   "code": "import { RedirectService } from '../redirect-service/redirect-service.ts';\nimport { setupApiRoutes } from '../stats-service/stats-service.ts';\nimport { Link, LinkService } from '../link-models/link-models.ts';\n\nexport class LinkStore {\n    private data: { [key: string]: { slug: string; originalUrl: string; clickCount: number; } } = {};\n\n    public async save(link: { slug: string; originalUrl: string; clickCount: number; }): Promise<void> {\n        this.data[link.slug] = link;\n    }\n\n    public async find(slug: string): Promise<{ slug: string; originalUrl: string; clickCount: number; } | null> {\n        return this.data[slug] || null;\n    }\n\n    public async update(link: { slug: string; originalUrl: string; clickCount: number; }): Promise<void> {\n        this.data[link.slug] = link;\n    }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "link_store",
+   "dependencies": [
+    "redirect_service",
+    "stats_service",
+    "link_models"
+   ],
+   "exports": [
+    "LinkStore"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a url shortener app</title>\n  <meta name=\"description\" content=\"a url shortener app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a url shortener app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-IRwVtE/api-routes/api-routes.ts\n  function setupApiRoutes() {\n    const links = {};\n    const addLink = (original) => {\n      const short = generateShort();\n      links[short] = { original, clicks: 0 };\n      return short;\n    };\n    const generateShort = () => {\n      const chars = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\n      let short = \"\";\n      for (let i = 0; i < 6; i++) short += chars.charAt(Math.floor(Math.random() * chars.length));\n      return short;\n    };\n    const getOriginal = (short) => {\n      if (links[short]) {\n        links[short].clicks++;\n        return links[short].original;\n      }\n      return null;\n    };\n    return {\n      addLink,\n      getOriginal\n    };\n  }\n\n  // ../../../../../tmp/vaca-preview-IRwVtE/ui-screens/ui-screens.ts\n  function render(container) {\n    container.innerHTML = `\n        <div class=\"flex items-center gap-4\">\n            <div class=\"w-96\">\n                <div class=\"p-6 bg-gray-800 rounded\">\n                    <div class=\"flex items-center justify-between mb-4\">\n                        <div class=\"text-2xl text-white font-semibold\">\\u{1F517} Shorten URL</div>\n                        <button class=\"px-4 py-2 rounded bg-primary text-white\" onclick=\"copyShortUrl()\">\\u{1F4CB} Copy</button>\n                    </div>\n                    <div class=\"mb-4\">\n                        <label class=\"block text-gray-400 mb-2\">Original URL</label>\n                        <input id=\"originalUrl\" class=\"w-full px-4 py-2 rounded text-gray-300\" placeholder=\"Enter the full URL to shorten\">\n                    </div>\n                    <div class=\"mb-4\">\n                        <label class=\"block text-gray-400 mb-2\">Short ID</label>\n                        <input id=\"shortId\" class=\"w-full px-4 py-2 rounded text-gray-300\" placeholder=\"Optional custom ID\">\n                    </div>\n                    <button class=\"w-full px-4 py-2 rounded bg-primary text-white\" onclick=\"shorten()\">Shorten</button>\n                </div>\n            </div>\n            <div class=\"w-48\">\n                <div class=\"p-4 bg-gray-700 rounded\">\n                    <div class=\"text-white text-xl mb-2\">\\u{1F517} Your Short URL</div>\n                    <div id=\"shortUrlDisplay\" class=\"text-white font-bold text-2xl mb-4\"></div>\n                    <button class=\"w-full px-4 py-2 rounded bg-secondary text-white\" onclick=\"copyShortUrl()\">\\u{1F4CB} Copy</button>\n                    <button class=\"w-full px-4 py-2 rounded bg-danger text-white\" onclick=\"deleteShortUrl()\">\\u2715 Delete</button>\n                </div>\n            </div>\n        </div>\n        <div class=\"mt-8\">\n            <div class=\"p-6 bg-gray-800 rounded\">\n                <div class=\"text-white text-xl mb-4\">\\u{1F517} Redirects</div>\n                <div id=\"redirectsList\" class=\"flex flex-col gap-2\"></div>\n            </div>\n        </div>\n    `;\n    const originalInput = document.getElementById(\"originalUrl\");\n    const shortIdInput = document.getElementById(\"shortId\");\n    const shortUrlDisplay = document.getElementById(\"shortUrlDisplay\");\n    const redirectsList = document.getElementById(\"redirectsList\");\n    const shortUrls = [];\n    function shorten() {\n      if (originalInput.value.trim() === \"\") return;\n      const shortId = shortIdInput.value.trim();\n      const original = originalInput.value.trim();\n      if (shortId && shortUrls.some((u) => u.short === shortId)) {\n        alert(\"Short ID already exists\");\n        return;\n      }\n      const short = shortId || generateShort();\n      const url = new URL(original);\n      const shortUrl = `${document.location.origin}/s/${short}`;\n      shortUrls.push({ original, short, clicks: 0 });\n      updateRedirectsList();\n      shortUrlDisplay.textContent = shortUrl;\n      originalInput.value = \"\";\n      shortIdInput.value = \"\";\n    }\n    function generateShort() {\n      const chars = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\n      let short = \"\";\n      for (let i = 0; i < 6; i++) short += chars.charAt(Math.floor(Math.random() * chars.length));\n      return short;\n    }\n    function updateRedirectsList() {\n      redirectsList.innerHTML = shortUrls.map((u) => {\n        const clicks = u.clicks;\n        return `<div class=\"flex items-center gap-2 mb-2\">\n                <span class=\"text-gray-300\">${u.original} \\u2192 <a href=\"${u.original}\" target=\"_blank\" class=\"text-primary hover:text-primary-200\">${u.short}</a></span>\n                <span class=\"text-gray-400 ml-2\">(${clicks} clicks)</span>\n            </div>`;\n      }).join(\"\");\n    }\n    function copyShortUrl() {\n      const short = document.querySelector('a[href^=\"/s/\"]');\n      if (short) navigator.clipboard.writeText(short.href);\n    }\n    function deleteShortUrl() {\n      shortUrls.length = 0;\n      updateRedirectsList();\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-IRwVtE/redirect-service/redirect-service.ts\n  var RedirectService = class {\n    constructor() {\n      __publicField(this, \"links\", {});\n    }\n    createLink(original) {\n      const short = this.generateShort();\n      this.links[short] = { original, clicks: 0 };\n      return short;\n    }\n    resolveSlugAndLogClick(slug) {\n      if (this.links[slug]) {\n        this.links[slug].clicks++;\n        return this.links[slug].original;\n      }\n      return null;\n    }\n    generateShort() {\n      const chars = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\n      let short = \"\";\n      for (let i = 0; i < 6; i++) short += chars.charAt(Math.floor(Math.random() * chars.length));\n      return short;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-IRwVtE/stats-service/stats-service.ts\n  function setupApiRoutes2() {\n    const stats = {};\n    const incrementClicks = (slug) => {\n      if (stats[slug]) {\n        stats[slug].totalClicks++;\n        stats[slug].uniqueVisitors = Array.from(/* @__PURE__ */ new Set([stats[slug].uniqueVisitors, 1])).length;\n      }\n    };\n    const getStats = (slug) => stats[slug];\n    return {\n      incrementClicks,\n      getStats\n    };\n  }\n\n  // ../../../../../tmp/vaca-preview-IRwVtE/link-store/link-store.ts\n  var LinkStore = class {\n    constructor() {\n      __publicField(this, \"data\", {});\n    }\n    async save(link) {\n      this.data[link.slug] = link;\n    }\n    async find(slug) {\n      return this.data[slug] || null;\n    }\n    async update(link) {\n      this.data[link.slug] = link;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-IRwVtE/_preview_entry.ts\n  try {\n    if (typeof setupApiRoutes === \"function\" && !/^class\\s/.test(String(setupApiRoutes))) {\n      setupApiRoutes(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"api-routes.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling api_routes.setupApiRoutes:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"link-models.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling link_models.Link:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof RedirectService === \"function\" && !/^class\\s/.test(String(RedirectService))) {\n      RedirectService(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"redirect-service.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling redirect_service.RedirectService:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof setupApiRoutes2 === \"function\" && !/^class\\s/.test(String(setupApiRoutes2))) {\n      setupApiRoutes2(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"stats-service.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling stats_service.setupApiRoutes:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof LinkStore === \"function\" && !/^class\\s/.test(String(LinkStore))) {\n      LinkStore(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"link-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling link_store.LinkStore:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (6) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 6 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a url shortener app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a url shortener app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "api_routes",
+    "link_models",
+    "ui_screens",
+    "redirect_service",
+    "stats_service",
+    "link_store"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 22232,
+ "totalErrors": 1,
+ "validatedCount": 6,
+ "failedCount": 1,
+ "importGraph": {
+  "mod_4": {
+   "entryFile": "api-routes.ts",
+   "dependencies": [],
+   "exports": [
+    "setupApiRoutes"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "link-models.ts",
+   "dependencies": [],
+   "exports": [
+    "Link",
+    "LinkService"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "redirect-service.ts",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "RedirectService"
+   ]
+  },
+  "mod_5": {
+   "entryFile": "stats-service.ts",
+   "dependencies": [],
+   "exports": [
+    "setupApiRoutes"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "link-store.ts",
+   "dependencies": [
+    "redirect_service",
+    "stats_service",
+    "link_models"
+   ],
+   "exports": [
+    "LinkStore"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "api_routes",
+    "link_models",
+    "ui_screens",
+    "redirect_service",
+    "stats_service",
+    "link_store"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 7,
+  "totalChars": 22232,
+  "totalErrors": 1,
+  "validated": 6,
+  "failed": 1,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 140800
+ }
+}

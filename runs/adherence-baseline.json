@@ -1,0 +1,3561 @@
+{
+  "tasks_file": "/home/homellmlab/Desktop/visual-ai-architect/corpora/vaca/tasks.txt",
+  "n_tasks": 197,
+  "role": "adherence",
+  "n_applicable": 197,
+  "baseline": null,
+  "num_predict": 1200,
+  "num_ctx": 8192,
+  "summary": {
+    "baseline": {
+      "tag": "vaca-r40-off-distill-adapter:latest",
+      "role": "adherence",
+      "n_applicable": 197,
+      "mean_score": 0.9333,
+      "fully_adherent": 128,
+      "pass_rate": 0.9333,
+      "check_failures": {
+        "exports_declared": 35,
+        "no_phantom_imports": 34,
+        "no_default_export": 14,
+        "sibling_imports_ok": 9
+      },
+      "elapsed_s": 0.0
+    }
+  },
+  "per_task": {
+    "baseline": {
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chees-game-1786611956524__src-canvas.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chees-game-1786611956524__src-entities-cheese.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chees-game-1786611956524__src-entities-enemy.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chees-game-1786611956524__src-game.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "startGame"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chees-game-1786611956524__src-input.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chees-game-1786611956524__src-scene.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "addEntity"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chess-game-1787074372022__src-board.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chess-game-1787074372022__src-game.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chess-game-1787074372022__src-input.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chess-game-1787074372022__src-main.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "3d-chess-game-1787074372022__src-render.js": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": [
+          "./engine"
+        ]
+      },
+      "3d-chess-game-create-a-3d-chess-game-1786817101988__chess3d.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-ai.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-game.js": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "Game"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-tile.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-cli.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "startCli"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-cli.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "run"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-history.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-ledger.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "deposit",
+          "withdraw",
+          "showBalance",
+          "getHistory"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-budget.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786997848181__src-budget.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-command-line-expense-tracker-in-typesc-1786357706649__src-utils.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": [
+          "../types"
+        ]
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786988799000__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-contact.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-utils.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-cli.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "parseArgs",
+          "printResults"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-index.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "run"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-cli.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-flashcards.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-test-flashcards.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-cards.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-api.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-frontend.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-services.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-tests.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "@testing-library/react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-__tests__-index.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "runTests"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-app.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": [
+          "./backend",
+          "./frontend"
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-frontend-store.ts": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "redux"
+        ],
+        "bad_imports": [
+          "./reducers"
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-routes.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-services.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-App.tsx": {
+        "score": 0.5714,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "App"
+        ],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-NoteList.tsx": {
+        "score": 0.5714,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "NoteList"
+        ],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-services-noteApi.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__src-services-noteService.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteApi.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteService.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__client-src-components-NoteForm.tsx": {
+        "score": 0.5714,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "NoteForm"
+        ],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__tests-app.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786896484419__src-services-noteService.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786897701361__client-src-App.test.tsx": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "@testing-library/react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786897701361__tests-server.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-App.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-NoteForm.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__src-notes.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__tests-notes.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786906927842__client-src-api-notes.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__backend-src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__frontend-src-AddNote.tsx": {
+        "score": 0.5714,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "AddNote"
+        ],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__tests-backend-notesService.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908038933__src-backend-controllers-noteController.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908038933__src-frontend-src-components-NoteApp.tsx": {
+        "score": 0.5714,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "NoteApp"
+        ],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908261632__src-database.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": [
+          "../types"
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908261632__src-services-notes.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": [
+          "../models/Note"
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-config-index.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-interface-api.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-services-notes.service.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "createNote",
+          "getNotes",
+          "updateNote",
+          "deleteNote"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__tests-frontend-NotesList.test.tsx": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "@testing-library/react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925409480__src-app.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925409480__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925714974__frontend-src-components-NoteList.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925714974__tests-backend-routes-note.test.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "supertest"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925927926__src-controllers-noteController.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925927926__tests-noteController.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteForm.js": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteList.js": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__src-utils-logger.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__backend-note.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteForm.test.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "testNoteForm"
+        ],
+        "phantom": [
+          "@testing-library/react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteList.test.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "testNoteList"
+        ],
+        "phantom": [
+          "@testing-library/react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786961607585__frontend-src-notesService.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786961607585__src-controllers.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786990924420__src-NoteItem.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786990924420__src-routes.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__src-database.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "sqlite3"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__src-models-notes.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__tests-frontend.test.tsx": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "@testing-library/react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993152454__src-tests-index.test.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "runTests"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-models.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-routes.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787011839360__client-src-Notes.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787011839360__tests-unit-routes.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-controllers.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-notes.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "createNote",
+          "getNotes",
+          "updateNote",
+          "deleteNote"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-app.test.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "testApp",
+          "testRoutes"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-notes.test.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "testCreateNote",
+          "testGetNotes",
+          "testUpdateNote",
+          "testDeleteNote"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-utils.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787013450703__src-api.ts": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "express"
+        ],
+        "bad_imports": [
+          "./models"
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787013450703__tests-unit.test.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787014007010__client-src-components-AddNote.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.controller.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": [
+          "../notes/notes.service.ts"
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044595344__src-AddNote.tsx": {
+        "score": 0.7143,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": false,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "react"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__client-src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__src-db.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "sqlite",
+          "sqlite3"
+        ],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787686629354__src-utils.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787740976664__build-pipeline.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787740976664__database-sqlite-db.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": false,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [
+          "sqlite",
+          "sqlite3"
+        ],
+        "bad_imports": []
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-habitService.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "addHabit",
+          "markDone",
+          "getStreaks"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-storageService.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-ui.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-taskService.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logAnalyzer.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logCounter.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logParser.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-logParser.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-moduleReport.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786986887187__src-markdown-reader.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786986887187__src-template-renderer.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786996575652__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786996575652__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-scheduler.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-music-playlist-manager-app-in-typescri-1786988402035__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-music-playlist-manager-app-in-typescri-1786988402035__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-music-playlist-manager-app-in-typescri-1786997631362__src-playlistService.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": false,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": [
+          "./types"
+        ]
+      },
+      "a-note-taking-app-in-typescript-store-no-1786967060818__src-notes.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-password-strength-checker-app-in-types-1787000544776__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-history.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786996932424__src-timer.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "start",
+          "stop",
+          "undo"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-questions.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-scoring.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-quiz.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-recipe.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786999611395__src-recipe.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-simple-password-generator-cli-tool-in--1787263797116__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-small-todo-list-cli-app-with-add-list--1786727010717__src-todo.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-small-todo-list-cli-app-with-add-list--1787520513922__main.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-portfolio.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "addTransaction",
+          "getHoldings",
+          "getProfitLoss"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-temperature-converter-app-in-typescrip-1786966906890__src-index.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "convertTemperature"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-commands.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-game.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-items.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-player.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "Inventory"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-render.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-stats.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-game.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "Player"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-ui.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "renderBoard",
+          "getPlayerInput"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-gameLogic.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "Board"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-main.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "runGame"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786357584176__src-game-logic.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-game-logic.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-tic-tac-toe.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-game-logic.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-ui.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360347970__src-game-logic.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360967129__src-game-logic.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "minimax"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786361527799__src-game-logic.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786362105481__src-main.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "startGame"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786362606779__src-game-logic.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-typescript-cli-tool-that-reads-a-csv-f-1786357640821__src-csv-parser.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-redirect.js": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "handleRedirect"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-shorten.js": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "createShortUrl"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-storage.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-voting-poll-app-in-typescript-create-p-1787001731335__src-pollService.ts": {
+        "score": 0.8571,
+        "adherent": false,
+        "checks": {
+          "exports_declared": false,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [
+          "createPoll",
+          "castVote",
+          "getResults"
+        ],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-voting-poll-app-in-typescript-create-p-1787001731335__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "a-voting-poll-app-in-typescript-create-p-1787001731335__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "an-event-countdown-planner-app-in-typesc-1787000399819__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "an-expense-tracker-app-in-typescript-add-1786987396890__src-expense.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "an-expense-tracker-app-in-typescript-add-1786987396890__src-storage.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "an-expense-tracker-app-in-typescript-add-1786997065329__src-expenses.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786566803017__src-todo.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786572070132__src-config.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786572070132__src-types.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "build-a-small-todo-app-add-tasks-mark-do-1788593586525__src-todo.ts": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      },
+      "build-a-todo-list-app-in-a-single-html-f-1786561227765__app.js": {
+        "score": 1,
+        "adherent": true,
+        "checks": {
+          "exports_declared": true,
+          "no_phantom_imports": true,
+          "sibling_imports_ok": true,
+          "no_default_export": true,
+          "no_prose_leak": true,
+          "no_jsx_in_ts": true,
+          "not_stub": true
+        },
+        "applicable": true,
+        "missing": [],
+        "phantom": [],
+        "bad_imports": []
+      }
+    }
+  }
+}

@@ -27,9 +27,13 @@ import { Router, Request, Response } from 'express';
 import { readFileSync, existsSync, statSync } from 'fs';
 import { resolve } from 'path';
 
+// Resolve to the repo ROOT (3 levels up from backend/src/routes — the same
+// convention as WIKI_PATH in internalKnowledge.ts). The previous 4-level
+// resolve pointed at the repo's PARENT directory, so the route could never
+// find a TODO fixes.txt placed at the repo root as documented.
 export const TODO_PATH =
   process.env.VACA_TODO_PATH ||
-  resolve(import.meta.dirname, '..', '..', '..', '..', 'TODO fixes.txt');
+  resolve(import.meta.dirname, '..', '..', '..', 'TODO fixes.txt');
 
 export interface TodoItem {
   id: string;

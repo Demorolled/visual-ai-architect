@@ -1,0 +1,16 @@
+{
+  "id": "stevenawoods/vaca-qlora-round-sky1",
+  "title": "VACA QLoRA Round Sky1",
+  "code_file": "train_sky1_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "competition_sources": [],
+  "dataset_sources": [
+    "stevenawoods/vaca-sky1-sft-corpus"
+  ],
+  "kernel_sources": [],
+  "model_sources": []
+}

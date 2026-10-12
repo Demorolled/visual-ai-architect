@@ -56,7 +56,7 @@ function loadLlmConfig() {
     primary: {
       provider: 'ollama',
       model: 'hf.co/mlabonne/gemma-3-12b-it-abliterated-GGUF:Q8_0',
-      baseUrl: 'http://127.0.0.1:11434/v1',
+      baseUrl: process.env.OLLAMA_BASE_URL || 'http://192.168.1.234:11434/v1',
     },
   };
 }
@@ -67,7 +67,7 @@ configRoutes.get('/llm', (_req, res) => {
   const primary = config.dspark || config.ollama || config.primary || {
     provider: 'ollama',
     model: 'hf.co/mlabonne/gemma-3-12b-it-abliterated-GGUF:Q8_0',
-    baseUrl: 'http://127.0.0.1:11434/v1',
+    baseUrl: process.env.OLLAMA_BASE_URL || 'http://192.168.1.234:11434/v1',
   };
   res.json({
     primary: {

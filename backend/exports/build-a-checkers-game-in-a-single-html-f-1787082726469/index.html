@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkers</title>
+<style>
+* {margin:0;padding:0;box-sizing:border-box}
+body {display:flex;justify-content:center;align-items:center;min-height:100vh;background:#0b0e14;font-family:'Arial',sans-serif}
+#board {display:grid;grid-template-columns:repeat(8,60px);grid-template-rows:repeat(8,60px);gap:2px}
+.square {width:60px;height:60px;background:#20242c;cursor:pointer;transition:0.1s}
+.square.red {background:#f87171}
+.square.black {background:#4ade80}
+.square.selected {box-shadow:0 0 10px rgba(255,255,255,0.5)}
+.piece {width:60px;height:60px;display:flex;justify-content:center;align-items:center;font-size:2rem;text-align:center;color:#1a1a2e;transition:0.1s}
+.piece.red {color:#f87171}
+.piece.black {color:#4ade80}
+</style>
+</head>
+<body>
+<div id="board"></div>
+<script>
+const board=document.getElementById('board');
+const SIZE=8;
+let turn='red';
+let selected=null;
+let moves=[];
+
+function initBoard(){board.innerHTML='';for(let i=0;i<SIZE;i++){for(let j=0;j<SIZE;j++){const square=document.createElement('div');square.classList.add('square');if((i+j)%2===0)square.classList.add('red');else square.classList.add('black');square.addEventListener('click',()=>{if(selected&&moves.some(m=>m.row===i&&m.col===j))movePiece(i,j);else selectPiece(i,j)});board.appendChild(square)}}}
+initBoard();
+</script>
+</body>
+</html>

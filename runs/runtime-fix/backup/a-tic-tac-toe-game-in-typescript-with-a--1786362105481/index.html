@@ -1,0 +1,137 @@
+<div class="app" style="max-width:960px;margin:0 auto;padding:24px">
+  <h1 style="margin-bottom:24px">Tic-Tac-Toe</h1>
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:16px">
+    <div class="row">
+      <div class="col">
+        <div class="card" style="background:#15152a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px">
+          <h3 style="margin:0 0 8px">X</h3>
+          <p style="margin:0 0 12px">X</p>
+          <button class="btn" onclick="play('X')">Play X</button>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card" style="background:#15152a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px">
+          <h3 style="margin:0 0 8px">O</h3>
+          <p style="margin:0 0 12px">O</p>
+          <button class="btn" onclick="play('O')">Play O</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="board" style="grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:16px" onclick="move(event)">
+    <div class="row">
+      <div class="col" id="0" onclick="move(event)"></div>
+      <div class="col" id="1" onclick="move(event)"></div>
+      <div class="col" id="2" onclick="move(event)"></div>
+    </div>
+    <div class="row">
+      <div class="col" id="3" onclick="move(event)"></div>
+      <div class="col" id="4" onclick="move(event)"></div>
+      <div class="col" id="5" onclick="move(event)"></div>
+    </div>
+    <div class="row">
+      <div class="col" id="6" onclick="move(event)"></div>
+      <div class="col" id="7" onclick="move(event)"></div>
+      <div class="col" id="8" onclick="move(event)"></div>
+    </div>
+  </div>
+  <div id="statusMsg" role="status" style="padding:8px 12px;border-radius:8px;margin-top:10px"></div>
+</div>
+<script>
+  const board = document.getElementById('board');
+  const statusMsg = document.getElementById('statusMsg');
+
+  function play(player) {
+    board.addEventListener('click', move);
+    minimax(board, player);
+  }
+
+  function move(event) {
+    const cell = event.target;
+    if (cell.textContent) return;
+    minimax(cell, 'X');
+  }
+
+  function minimax(cell, player) {
+    if (player === 'X') {
+      cell.textContent = 'X';
+    } else {
+      const aiMove = minimaxAI(board, 'O');
+      aiMove.forEach((move) => {
+        document.getElementById(move).textContent = 'O';
+      });
+    }
+    checkWinner();
+  }
+
+  function minimaxAI(board, player) {
+    const emptyCells = board.querySelectorAll('div:not([textContent])');
+    if (emptyCells.length === 0) return [];
+    let bestScore = -Infinity;
+    let bestMoves = [];
+
+    for (let i = 0; i < emptyCells.length; i++) {
+      const cell = emptyCells[i];
+      cell.textContent = player;
+      const score = minimaxScore(board, 'X', 'O');
+      cell.textContent = '';
+      if (score > bestScore) {
+        bestScore = score;
+        bestMoves = [i];
+      } else if (score === bestScore) {
+        bestMoves.push(i);
+      }
+    }
+
+    return bestMoves.map((i) => emptyCells[i].id);
+  }
+
+  function minimaxScore(board, player, opponent) {
+    if (winner(board, player)) {
+      return 1;
+    } else if (winner(board, opponent)) {
+      return -1;
+    } else if (full(board)) {
+      return 0;
+    }
+
+    let score = 0;
+    const emptyCells = board.querySelectorAll('div:not([textContent])');
+    for (let i = 0; i < emptyCells.length; i++) {
+      const cell = emptyCells[i];
+      cell.textContent = player;
+      score += minimaxScore(board, opponent, player);
+      cell.textContent = '';
+    }
+
+    return score;
+  }
+
+  function winner(board, player) {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (board.children[a].textContent === player &&
+          board.children[b].textContent === player &&
+          board.children[c].textContent === player) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function full(board) {
+    return [...board.children].every((cell) => cell.textContent);
+  }
+</script>

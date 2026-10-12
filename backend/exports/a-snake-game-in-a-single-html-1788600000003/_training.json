@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "request": "Build a snake game in a single HTML file. The snake moves on a grid every tick, arrow keys change direction, eating food grows it and increments the score, hitting a wall or itself ends the game with a game-over message and restart button.",
+  "intent": {"goal": "snake game in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Snake game HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "", "files": ["index.html"]
+}

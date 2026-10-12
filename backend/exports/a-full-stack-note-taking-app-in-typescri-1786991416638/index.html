@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note Taking App</title>
+<style>
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #1a1a2e; color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh; }
+.container { background: #10101a; padding: 20px; border-radius: 12px; box-shadow: 0 4px 30px rgba(0,0,0,0.3); width: 100%; max-width: 600px; }
+header { text-align: center; margin-bottom: 20px; }
+header h1 { color: #4ade80; margin: 0; font-size: 1.5rem; font-weight: 700; }
+header p { color: #666; font-size: 0.9rem; margin: 5px 0 20px; }
+.note-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.note { background: #12121e; padding: 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
+.note-content { font-size: 0.85rem; margin-bottom: 6px; }
+.note-actions { display: flex; gap: 6px; }
+.note-actions button { padding: 4px 10px; font-size: 0.75rem; border: none; border-radius: 4px; cursor: pointer; }
+.note-actions button.delete { background: #f87171; color: #fff; }
+.note-actions button.delete:hover { background: #f45151; }
+.note-actions button.edit { background: #4ade80; color: #fff; }
+.note-actions button.edit:hover { background: #34d399; }
+.note-form { margin-bottom: 20px; }
+.note-form textarea { width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; background: #12121e; color: #fff; font-size: 0.85rem; resize: vertical; min-height: 80px; }
+.note-form button { padding: 8px 16px; font-size: 0.85rem; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+.note-form button.add { background: #4ade80; color: #fff; }
+.note-form button.add:hover { background: #34d399; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>Note Taking App</h1>
+<p>Your personal note-taking assistant</p>
+</header>
+<div id="noteList" class="note-list"></div>
+<div class="note-form">
+<textarea id="noteContent" placeholder="Write your note here..." rows="5"></textarea>
+<button onclick="addNote()" class="add">➕ Add Note</button>
+</div>
+</div>
+<script>
+let notes = [];
+
+function renderNotes() {
+const noteList = document.getElementById('noteList');
+noteList.innerHTML = '';
+if (notes.length === 0) {
+noteList.innerHTML = '<p>No notes yet. Add your first one!</p>';
+return;
+}
+notes.forEach((note, index) => {
+const noteDiv = document.createElement('div');
+noteDiv.className = 'note';
+noteDiv.innerHTML = `<p class="note-content">${note}</p>
+<div class="note-actions">
+<button onclick="deleteNote(${index})" class="delete">🗑️</button>
+<button onclick="editNote(${index})" class="edit">✏️</button>
+</div>`;
+noteList.appendChild(noteDiv);
+});
+}
+
+function addNote() {
+const noteInput = document.getElementById('noteContent');
+const content = noteInput.value.trim();
+if (content === '') { return; }
+notes.push(content);
+noteInput.value = '';
+renderNotes();
+}
+
+function deleteNote(index) {
+notes.splice(index, 1);
+renderNotes();
+}
+
+function editNote(index) {
+const noteInput = document.getElementById('noteContent');
+noteInput.value = notes[index];
+deleteNote(index);
+}
+
+renderNotes();
+</script>
+</body>
+</html>

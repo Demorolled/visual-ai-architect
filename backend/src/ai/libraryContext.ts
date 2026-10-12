@@ -16,6 +16,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { semanticRetrieve } from './semanticRetrieval.js';
 import { ragRetrieveBibleLevels, buildBlueprintRequirements } from './ragIndex.js';
+import { denseEmbedQuery } from './denseEmbedding.js';
+import {
+  denseRetrieveSheets,
+  denseRetrieveBibleLevels,
+  denseBuildBlueprintRequirements,
+} from './denseRetrieval.js';
 
 // ─── Paths ────────────────────────────────────────────────────────────────
 
@@ -1082,6 +1088,10 @@ const LANGUAGE_TO_BIBLE_LEVELS: Record<string, string[]> = {
   java: ['31-mobile-cross-platform', '26-enterprise-systems', '04-web-apps', 'arch-adapter', 'arch-backpressure', 'arch-builder', 'col-avltree', 'col-capacity-set', 'col-chunker'],
   kotlin: ['31-mobile-cross-platform', 'mob-app-state', 'mob-battery', 'mob-biometric'],
   swift: ['31-mobile-cross-platform', '08-computer-graphics', 'mob-app-state', 'mob-battery', 'mob-biometric'],
+  dart: ['31-mobile-cross-platform', 'mob-app-state', 'mob-battery', 'mob-biometric'],
+  csharp: ['26-enterprise-systems', '04-web-apps', 'arch-adapter', 'arch-backpressure', 'arch-builder'],
+  php: ['04-web-apps', '22-browser-engineering', 'http-accept-parse', 'http-basic-auth', 'http-bearer-token'],
+  ruby: ['04-web-apps', 'gen-arg-parser', 'gen-camel-case', 'gen-doc-comment', 'str-case-converter', 'str-compact-whitespace', 'str-delimiter-join'],
 };
 
 // ─── Node type → library files ────────────────────────────────────────────
@@ -1108,6 +1118,11 @@ const LANGUAGE_TO_FILES: Record<string, string[]> = {
   kotlin: ['27-mobile-cross-platform.md'],
   swift: ['27-mobile-cross-platform.md', '13-desktop-application-architecture.md'],
   csharp: ['22-enterprise-systems-integration.md', '09-deployment-templates.md'],
+  c: ['16-systems-programming-guide.md', '21-iot-embedded-systems.md', '40-formal-methods-verification.md'],
+  cpp: ['16-systems-programming-guide.md', '35-computer-graphics-gpu.md', '12-game-development-patterns.md'],
+  java: ['22-enterprise-systems-integration.md', '27-mobile-cross-platform.md', '08-testing-patterns.md'],
+  php: ['14-web-application-architecture.md', '36-api-integration-platforms.md', '04-technology-mapping.md'],
+  ruby: ['14-web-application-architecture.md', '04-technology-mapping.md', '08-testing-patterns.md'],
 };
 
 // ─── App type keyword → library file mappings ─────────────────────────────
@@ -1491,7 +1506,17 @@ function getWikiOverview(maxChars: number = 700): string {
  * goal, node description, or any user-provided text, and it returns relevant
  * wiki + library + Bible snippets.
  */
-export function getLibraryContext(searchText?: string): string {
+/**
+ * Assemble the full reference block from pre-resolved relevance. Shared by the
+ * hashing path (getLibraryContext) and the dense path (getLibraryContextDense)
+ * so the injected prompt text is identical in shape regardless of ranker.
+ */
+function assembleLibraryContext(
+  searchText: string | undefined,
+  relevantLibFiles: string[],
+  relevantBibleLevels: string[],
+  blueprintReqs: string,
+): string {
   const libFiles = getLibraryCache();
   const bibleData = getBibleCache();
   const bibleFiles = bibleData.files;
@@ -1500,15 +1525,6 @@ export function getLibraryContext(searchText?: string): string {
   const hasBibleContent = bibleFiles.size > 0 || !!bibleData.masterIndex;
 
   if (!hasLibContent && !hasBibleContent) return '';
-
-  // Determine which library files and Bible levels are relevant
-  const relevantLibFiles = searchText
-    ? findRelevantFiles(searchText)
-    : Array.from(libFiles.keys()).slice(0, 3);
-
-  const relevantBibleLevels = searchText
-    ? findRelevantBibleLevels(searchText)
-    : ['01-foundations', '07-llm-guide'];
 
   const parts: string[] = [
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
@@ -1599,6 +1615,49 @@ export function getLibraryContext(searchText?: string): string {
   parts.push('Use the reference library and Bible guides above when generating code. Follow the patterns, rules, and best practices documented.\n');
 
   return parts.join('\n');
+}
+
+/**
+ * Reference context for a goal — hashing-trick retrieval (default path).
+ * Synchronous; the dense upgrade getLibraryContextDense() falls back to this.
+ */
+export function getLibraryContext(searchText?: string): string {
+  const libFiles = getLibraryCache();
+  const relevantLibFiles = searchText
+    ? findRelevantFiles(searchText)
+    : Array.from(libFiles.keys()).slice(0, 3);
+  const relevantBibleLevels = searchText
+    ? findRelevantBibleLevels(searchText)
+    : ['01-foundations', '07-llm-guide'];
+  const blueprintReqs = searchText ? buildBlueprintRequirements(searchText) : '';
+  return assembleLibraryContext(searchText, relevantLibFiles, relevantBibleLevels, blueprintReqs);
+}
+
+/**
+ * Reference context with DENSE (Ollama nomic-embed) retrieval — the model-based
+ * upgrade of the hashing-trick ranker. Per-piece fallback: anything the dense
+ * ranker can't answer (snapshot missing, Ollama down, nothing above the floor)
+ * falls back to the hashing path, so this is always at least as good as
+ * getLibraryContext() and never throws.
+ */
+export async function getLibraryContextDense(searchText?: string): Promise<string> {
+  if (!searchText) return getLibraryContext(searchText);
+  try {
+    const qv = await denseEmbedQuery(searchText);
+    if (!qv) return getLibraryContext(searchText);
+    const [denseFiles, denseLevels, denseBlueprint] = await Promise.all([
+      denseRetrieveSheets(qv, 6),
+      denseRetrieveBibleLevels(qv, 3),
+      denseBuildBlueprintRequirements(qv, searchText, 2),
+    ]);
+    const relevantLibFiles = denseFiles ?? findRelevantFiles(searchText);
+    const relevantBibleLevels = denseLevels ?? findRelevantBibleLevels(searchText);
+    const blueprintReqs = denseBlueprint ?? buildBlueprintRequirements(searchText);
+    return assembleLibraryContext(searchText, relevantLibFiles, relevantBibleLevels, blueprintReqs);
+  } catch (err) {
+    console.warn('[libraryContext] dense retrieval failed — falling back to hashing:', (err as Error).message);
+    return getLibraryContext(searchText);
+  }
 }
 
 /**

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hello World</title>
+<style>
+/* styles.css */
+
+/* Basic styling for the app */
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Hello, World!</h1>
+  <p>Welcome to the simple hello world web app.</p>
+</div>
+<script>
+// script.js
+
+// Function to display the hello world message
+function displayMessage() {
+  const message = 'Hello, World!';
+  const messageElement = document.createElement('p');
+  messageElement.textContent = message;
+  messageElement.style.color = '#22c55e';
+  document.body.appendChild(messageElement);
+}
+
+// Call the function when the app loads
+window.addEventListener('load', displayMessage);
+
+</script>
+</body>
+</html>

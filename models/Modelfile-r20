@@ -1,0 +1,20 @@
+# Modelfile-r20 — serve the VACA R20 14B student through Ollama.
+#
+#   ollama create vaca-r20-q4 -f models/Modelfile-r20
+#
+# Why: the self-play loop (training/selfplay) needs the student on an
+# OpenAI-compatible endpoint. dspark (:8000) serves that role but has to be
+# started by hand and holds the card while it runs; Ollama is already up on
+# 127.0.0.1:11434 and evicts models when VRAM is short, which is what lets the
+# Gemma judge and the 14B student share one 12 GB card sequentially across the
+# PLAY -> AUDIT stages.
+#
+# The GGUF carries its own `tokenizer.chat_template`, so no TEMPLATE block is
+# needed here — overriding it would only risk diverging from what the model was
+# trained with. num_ctx matches backend/llm-config.json's dspark entry (16384).
+
+FROM /home/homellmlab/Desktop/visual-ai-architect/models/Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf
+
+PARAMETER num_ctx 16384
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9

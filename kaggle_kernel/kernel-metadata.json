@@ -1,0 +1,10 @@
+{
+  "id": "stevenawoods/vaca-r23-qlora-combined-rag-14b-t4-x2-notebook",
+  "title": "VACA R23 QLoRA Combined RAG 14B T4 x2",
+  "code_file": "train_r23_kaggle.py",
+  "language": "python",
+  "kernel_type": "notebook",
+  "dataset_sources": ["stevenawoods/vaca-rag-training-all"],
+  "enable_gpu": true,
+  "enable_internet": true
+}

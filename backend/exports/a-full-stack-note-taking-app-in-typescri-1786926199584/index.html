@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note-Taking App</title>
+  <style>
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: #15152a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="row">
+      <label for="titleInput">Title</label>
+      <input id="titleInput" type="text" placeholder="Enter title" value="">
+      <button id="saveBtn" class="btn btn-primary" onclick="saveNote()">💾 Save</button>
+    </div>
+    <div class="grid" id="notesList">
+      <!-- Notes will be displayed here -->
+    </div>
+  </div>
+
+  <script>
+    const notesList = document.getElementById('notesList');
+    const titleInput = document.getElementById('titleInput');
+
+    function saveNote() {
+      const title = titleInput.value.trim();
+      if (title) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3 style="margin:0 0 8px">${title}</h3>
+          <button class="btn" onclick="removeNote(this)">✕ Delete</button>
+        `;
+        notesList.appendChild(card);
+        titleInput.value = '';
+      }
+    }
+
+    function removeNote(button) {
+      const card = button.parentElement;
+      notesList.removeChild(card);
+    }
+  </script>
+</body>
+</html>

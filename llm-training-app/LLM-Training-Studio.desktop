@@ -2,8 +2,15 @@
 Version=1.0
 Type=Application
 Name=LLM Training Studio
+GenericName=LLM training and dataset curation
 Comment=Standalone desktop app for LLM training and dataset curation
-Exec=bash -c "cd $(dirname %k) && bash start.sh"
+# Absolute paths on purpose: `%k` expands to the location of *this file*, so the
+# old `bash -c "cd $(dirname %k) && bash start.sh"` only worked while the icon sat
+# inside llm-training-app/. It breaks the moment the file is copied to ~/Desktop.
+Exec=/home/homellmlab/Desktop/visual-ai-architect/scripts/llm-training-studio.sh start
+Path=/home/homellmlab/Desktop/visual-ai-architect
 Icon=applications-science
-Terminal=true
-Categories=Development;Science;AI;
+Terminal=false
+Categories=Development;Science;ArtificialIntelligence;
+Keywords=llm;training;lora;qlora;dataset;studio;
+StartupNotify=false

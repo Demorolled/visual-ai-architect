@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note-Taking App</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .col { display: flex; flex-direction: column; gap: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .card { background: #15152a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; }
+    .card h3 { margin: 0 0 8px; }
+    .card p { margin: 0 0 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Notes</h1>
+    <div class="row">
+      <label for="noteInput">Add a note</label>
+      <input id="noteInput" type="text" placeholder="Enter note">
+      <button id="addBtn" class="btn btn-primary" onclick="addNote()">➕ Add</button>
+    </div>
+    <div class="grid" id="notesList"></div>
+  </div>
+
+  <script>
+    const notesList = document.getElementById('notesList');
+    const noteInput = document.getElementById('noteInput');
+
+    function addNote() {
+      const noteText = noteInput.value.trim();
+      if (noteText) {
+        const noteElement = document.createElement('div');
+        noteElement.className = 'card';
+        noteElement.innerHTML = `<h3>${noteText}</h3>`;
+        notesList.appendChild(noteElement);
+        noteInput.value = '';
+      }
+    }
+  </script>
+</body>
+</html>

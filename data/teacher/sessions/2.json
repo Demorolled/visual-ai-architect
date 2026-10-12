@@ -1,0 +1,326 @@
+{
+ "success": true,
+ "projectId": "684c902d-9016-4a43-8a5b-8e86d9956dae",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "chess_game_2",
+  "description": "Chess Game \u2014 Play vs AI. Difficulty",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "core_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "core_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "data_store",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "data_store",
+    "destination_module": "game_engine",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 6,
+  "web": 4,
+  "github": 0,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 GitHub - fah-ayon/3D-Chess-Game: A fully functional 3D chess game built ...\n    A fully functional 3D chess game built with Python and OpenGL. Features complete chess rules, interactive controls, and immersive 3D graphics with camera rotation. Includes piece selection highlightin\n  \u2022 GitHub - shelad3/3d-chess: A full open-source Godot engine Chess Game\n    A full open-source Godot engine Chess Game. Contribute to shelad3/3d-chess development by creating an account on GitHub.\n  \u2022 obs-studio (video): Stream and record easily\n  \u2022 mpv (video): Command line media player\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n  \u2022 Section 35: SESSION UPDATE \u2014 July 26, 2026: BATCH 3 FIXES \u2014 5 REMAINING ISSUES RESOLVED\n    35.1 OVERVIEW\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nAll 5 remaining open issues from section 30.6 were fixed:\n  1. chess-engine.html \u2014 Move history + undo + lastMove highlights + localStorage\n  2. paint-studio.html \u2014 Race condition in restoreFromData() \u2192 sequential loading\n  3. terminal-os.html \u2014 innerHTML += \u2192 createElem\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move "
+ },
+ "candidates": [
+  {
+   "app_type": "chess_game_2",
+   "score": 1
+  },
+  {
+   "app_type": "chess_game",
+   "score": 0.8416680670904015
+  },
+  {
+   "app_type": "shogi_japanese_chess",
+   "score": 0.8118802153517006
+  },
+  {
+   "app_type": "chess_engine",
+   "score": 0.6401294265928299
+  },
+  {
+   "app_type": "racing_game",
+   "score": 0.396155323336091
+  }
+ ],
+ "project": {
+  "id": "684c902d-9016-4a43-8a5b-8e86d9956dae",
+  "name": "a chess game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "chess_game_2 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "core_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "data_store"
+   },
+   {
+    "id": "mod_4",
+    "type": "logic",
+    "label": "game_engine"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 1,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 4,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "generated": [
+   "core_engine",
+   "ui_screens",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "matched": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "core-engine.ts",
+   "language": "typescript",
+   "code": "// core_engine.ts\n\n// Import required interfaces and types from other modules (these would be imported in real applications)\n\n// Main implementation of core_engine's functionality, adhering to the module contract and requirements.\nfunction sendRequestToUI(request: Request): Promise<void> {\n  console.log('Sending request', request);\n  // Placeholder for code that would send this request to the ui layer\n}\n\nfunction processResultFromUI(result: Result): void {\n  console.log('Processing result', result);\n  // Placeholder for code that would handle the result back from the ui layer\n}\n\n// Example main exported function\nexport async function handleRequest(request: Request): Promise<void> {\n  try {\n    await sendRequestToUI(request);\n    const result = processResultFromUI(request);\n    console.log('Result processed:', result);\n  } catch (error) {\n    console.error('Error handling request', error);\n  }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "core_engine",
+   "dependencies": [],
+   "exports": [],
+   "errors": [
+    "TS2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value. (line 6)",
+    "TS2304: Cannot find name 'Result'. (line 11)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "interface Request {\n  type: string;\n}\n\ninterface Result {\n  status: string;\n  message?: string;\n}\n\nfunction newGame() {\n  console.log('New game started');\n}\n\nfunction undoMove() {\n  console.log('Undoing last move');\n}\n\nfunction aiMove() {\n  console.log('AI making a move');\n}\n\nfunction moveHistory() {\n  console.log('Displaying move history');\n}\n\nfunction render(container: HTMLElement): void {\n  if (!container) return;\n  \n  // Create UI components based on the layout and white-listed patterns.\n  const buttons = ['New Game', 'Undo', 'AI Move', 'Move History'];\n  const display1 = document.createElement('div');\n  const display2 = document.createElement('div');\n\n  for (const button of buttons) {\n    const btn = document.createElement('button');\n    btn.textContent = button;\n    btn.className = 'btn';\n    btn.onclick = () => {\n      if (button === 'New Game') newGame();\n      else if (button === 'Undo') undoMove();\n      else if (button === 'AI Move') aiMove();\n      else if (button === 'Move History') moveHistory();\n    };\n    container.appendChild(btn);\n  }\n\n  container.appendChild(display1);\n  container.appendChild(display2);\n}\n\nexport { render };",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [],
+   "exports": [
+    "render"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "// input_handler.ts\n\nexport async function handleInput(input: string): Promise<void> {\n  try {\n    const result = processInput(input);\n    await storeState(result);\n    console.log('State updated:', result);\n  } catch (error) {\n    console.error('Error handling input', error);\n  }\n}\n\nfunction processInput(input: string): StateAndEvents {\n  // Implement the logic for processing user input\n  // Validate the input to ensure it conforms to the game's rules\n  // Return the processed data as a StateAndEvents object\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [],
+   "exports": [],
+   "errors": [
+    "TS2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value. (line 13)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "type StateAndEvents = {\n  // Define the structure of StateAndEvents here\n};\n\nclass DataStore {\n  constructor() {\n    // Initialize your data here if needed\n  }\n\n  async update(data: StateAndEvents): Promise<void> {\n    try {\n      await storeState(data);\n      console.log('State updated:', data);\n    } catch (error) {\n      console.error('Error updating state', error);\n    }\n  }\n\n  // Implement the logic for processing user input...\n}\n\nfunction storeState(stateAndEvents: StateAndEvents): Promise<void> {\n  try {\n    // Save stateAndEvents data to a durable storage\n    // For example, using JSON:\n    const jsonData = JSON.stringify(stateAndEvents);\n    fs.writeFileSync('state.json', jsonData);\n\n    return Promise.resolve();\n  } catch (error) {\n    console.error('Error storing state', error);\n    throw error;\n  }\n}\n\nfunction loadState(): StateAndEvents | undefined {\n  try {\n    // Load the last saved state from a durable storage\n    const jsonData = fs.readFileSync('state.json');\n    return JSON.parse(jsonData);\n  } catch (error) {\n    console.error('Error loading state', error);\n    return undefined;\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "data_store",
+   "dependencies": [],
+   "exports": [],
+   "errors": [
+    "TS2304: Cannot find name 'fs'. (line 27)",
+    "TS2304: Cannot find name 'fs'. (line 39)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "// game_engine.ts\n\nfunction gameEngine(initialState: StateAndEvents): Promise<void> {\n  let lastMove: string | null = localStorage.getItem('lastMove');\n  let turn = initialGameState.currentPlayer === 'Player' ? 'X' : 'O';\n\n  return new Promise((resolve, reject) => {\n    function update(state: StateAndEvents): void {\n      localStorage.setItem('state', JSON.stringify(state));\n      resolve();\n    }\n\n    function gameLoop(): void {\n      if (lastMove === null) {\n        console.log(`${turn}'s turn`);\n        const move = prompt(`${turn}, enter your move (e.g., A1B2)`).toUpperCase();\n        if (move === 'QUIT') {\n          localStorage.removeItem('lastMove');\n          localStorage.clear(); // Clear cookies/sessionStorage/other storage\n          return resolve();\n        }\n\n        try {\n          const newGameState = player.makeMove(state, move);\n          update(newGameState);\n          lastMove = move;\n\n          if (gameState.isGameOver()) {\n            console.log(`${turn} wins!`);\n            update({ status: 'Game Over' });\n            localStorage.removeItem('lastMove');\n            return resolve();\n          }\n\n          turn = turn === 'X' ? 'O' : 'X';\n        } catch (error) {\n          reject(error);\n        }\n      }\n\n      requestAnimationFrame(gameLoop);\n    }\n\n    gameLoop();\n  });\n}\n\n// Export the main functionality so other files can import it\nexport { gameEngine };",
+   "nodeId": "mod_4",
+   "nodeLabel": "game_engine",
+   "dependencies": [],
+   "exports": [
+    "gameEngine"
+   ],
+   "errors": [
+    "TS2552: Cannot find name 'initialGameState'. Did you mean 'initialState'? (line 5)",
+    "TS2304: Cannot find name 'player'. (line 24)",
+    "TS2304: Cannot find name 'state'. (line 24)",
+    "TS2552: Cannot find name 'gameState'. Did you mean 'newGameState'? (line 28)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a chess game</title>\n  <meta name=\"description\" content=\"a chess game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a chess game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-iweylL/ui-screens/ui-screens.ts\n  function newGame() {\n    console.log(\"New game started\");\n  }\n  function undoMove() {\n    console.log(\"Undoing last move\");\n  }\n  function aiMove() {\n    console.log(\"AI making a move\");\n  }\n  function moveHistory() {\n    console.log(\"Displaying move history\");\n  }\n  function render(container) {\n    if (!container) return;\n    const buttons = [\"New Game\", \"Undo\", \"AI Move\", \"Move History\"];\n    const display1 = document.createElement(\"div\");\n    const display2 = document.createElement(\"div\");\n    for (const button of buttons) {\n      const btn = document.createElement(\"button\");\n      btn.textContent = button;\n      btn.className = \"btn\";\n      btn.onclick = () => {\n        if (button === \"New Game\") newGame();\n        else if (button === \"Undo\") undoMove();\n        else if (button === \"AI Move\") aiMove();\n        else if (button === \"Move History\") moveHistory();\n      };\n      container.appendChild(btn);\n    }\n    container.appendChild(display1);\n    container.appendChild(display2);\n  }\n\n  // ../../../../../tmp/vaca-preview-iweylL/game-engine/game-engine.ts\n  function gameEngine(initialState) {\n    let lastMove = localStorage.getItem(\"lastMove\");\n    let turn = initialGameState.currentPlayer === \"Player\" ? \"X\" : \"O\";\n    return new Promise((resolve, reject) => {\n      function update(state2) {\n        localStorage.setItem(\"state\", JSON.stringify(state2));\n        resolve();\n      }\n      function gameLoop() {\n        if (lastMove === null) {\n          console.log(`${turn}'s turn`);\n          const move = prompt(`${turn}, enter your move (e.g., A1B2)`).toUpperCase();\n          if (move === \"QUIT\") {\n            localStorage.removeItem(\"lastMove\");\n            localStorage.clear();\n            return resolve();\n          }\n          try {\n            const newGameState = player.makeMove(state, move);\n            update(newGameState);\n            lastMove = move;\n            if (gameState.isGameOver()) {\n              console.log(`${turn} wins!`);\n              update({ status: \"Game Over\" });\n              localStorage.removeItem(\"lastMove\");\n              return resolve();\n            }\n            turn = turn === \"X\" ? \"O\" : \"X\";\n          } catch (error) {\n            reject(error);\n          }\n        }\n        requestAnimationFrame(gameLoop);\n      }\n      gameLoop();\n    });\n  }\n\n  // ../../../../../tmp/vaca-preview-iweylL/_preview_entry.ts\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof gameEngine === \"function\" && !/^class\\s/.test(String(gameEngine))) {\n      gameEngine(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling game_engine.gameEngine:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a chess game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a chess game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store",
+    "game_engine"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 12763,
+ "totalErrors": 9,
+ "validatedCount": 2,
+ "failedCount": 4,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "core-engine.ts",
+   "dependencies": [],
+   "exports": []
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [],
+   "exports": []
+  },
+  "mod_3": {
+   "entryFile": "data-store.ts",
+   "dependencies": [],
+   "exports": []
+  },
+  "mod_4": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "gameEngine"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store",
+    "game_engine"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 12763,
+  "totalErrors": 9,
+  "validated": 2,
+  "failed": 4,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 108712
+ }
+}

@@ -4,17 +4,17 @@
   </div>
 </div>
 <script>
-  function play() {
+function play() {
     const board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     const currentPlayer = 1;
     if (!isGameOver(board)) {
-      const move = isWinningMove(board, currentPlayer) ? getBestMove(board, currentPlayer) : getBestMove(board, -currentPlayer);
-      board = makeMove(board, currentPlayer, move);
-      console.log('Player', currentPlayer, 'moves to', move);
-      currentPlayer = -currentPlayer;
+        const move = isWinningMove(board, currentPlayer) ? getBestMove(board, currentPlayer) : getBestMove(board, -currentPlayer);
+        board = makeMove(board, currentPlayer, move);
+        console.log('Player', currentPlayer, 'moves to', move);
+        currentPlayer = -currentPlayer;
     }
-  }
-  function isGameOver(board: number[]): boolean {
+}
+function isGameOver(board) {
     return getGameState(board) !== 0;
-  }
+}
 </script>

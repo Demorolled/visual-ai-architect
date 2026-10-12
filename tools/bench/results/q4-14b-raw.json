@@ -1,0 +1,93 @@
+{
+  "tag": "q4-14b",
+  "a": "14B Q4",
+  "url_a": "http://127.0.0.1:8000",
+  "b": "7B R16",
+  "url_b": "http://127.0.0.1:8001",
+  "tests": [
+    {
+      "id": "ts_fibonacci",
+      "desc": "TypeScript function, compilable",
+      "prompt": "Write a complete TypeScript file that exports a function `fibonacci(n: number): number[]` returning the first n Fibonacci numbers (n >= 0). Handle edge cases. No imports, no comments explaining what to do \u2014 just the code.",
+      "a": {
+        "content": "export function fibonacci(n: number): number[] {\n  if (n < 0) throw new Error('n must be non-negative');\n  const out: number[] = [0];\n  if (n === 0) return out;\n  out.push(1);\n  for (let i = 2; i < n; i++) out.push(out[i - 1] + out[i - 2]);\n  return out;\n}",
+        "elapsed": 3.2,
+        "tokens": 90
+      },
+      "a_code": "export function fibonacci(n: number): number[] {\n  if (n < 0) throw new Error('n must be non-negative');\n  const out: number[] = [0];\n  if (n === 0) return out;\n  out.push(1);\n  for (let i = 2; i < n; i++) out.push(out[i - 1] + out[i - 2]);\n  return out;\n}",
+      "b": {
+        "error": "<urlopen error [Errno 111] Connection refused>"
+      }
+    },
+    {
+      "id": "ts_url_parser",
+      "desc": "TypeScript URL query parser with types",
+      "prompt": "Write a complete TypeScript file that exports a function `parseQuery(url: string): Record<string, string>` that parses the query string of a URL (handles ?, &, =, and decodes values). Include the type signature. No imports.",
+      "a": {
+        "content": "export function parseQuery(url: string): Record<string, string> {\n  const q = url.split('?')[1];\n  if (!q) return {};\n  return q.split('&').reduce<Record<string, string>>((acc, p) => {\n    const [k, v] = p.split('=');\n    if (k) acc[decodeURIComponent(k)] = decodeURIComponent(v ?? '');\n    return acc;\n  }, {});\n}",
+        "elapsed": 3.1,
+        "tokens": 88
+      },
+      "a_code": "export function parseQuery(url: string): Record<string, string> {\n  const q = url.split('?')[1];\n  if (!q) return {};\n  return q.split('&').reduce<Record<string, string>>((acc, p) => {\n    const [k, v] = p.split('=');\n    if (k) acc[decodeURIComponent(k)] = decodeURIComponent(v ?? '');\n    return acc;\n  }, {});\n}",
+      "b": {
+        "error": "<urlopen error [Errno 111] Connection refused>"
+      }
+    },
+    {
+      "id": "py_water_jug",
+      "desc": "Python water-jug solver (BFS)",
+      "prompt": "Write a Python function `water_jug(cap_a, cap_b, target)` that returns the shortest sequence of states solving the classic water jug puzzle using BFS, or None if impossible. Return a list of (a, b) tuples. Just the code.",
+      "a": {
+        "content": "from collections import deque\n\ndef water_jug(cap_a, cap_b, target):\n    if target > cap_a and target > cap_b:\n        return None\n    start = (0, 0)\n    queue = deque([start])\n    visited = {start}\n    parent = {start: None}\n    while queue:\n        a, b = queue.popleft()\n        if a == target or b == target or a + b == target:\n            path = [(a, b)]\n            while parent[path[-1]]:\n                path.append(parent[path[-1]])\n            return path[::-1]\n        for na, nb in [(cap_a, b), (a, cap_b), (0, b), (a, 0), (min(cap_a, a + b), max(0, b - (cap_a - a))), (max(0, a - (cap_b - b)), min(cap_b, a + b))]:\n            if (na, nb) not in visited:\n                visited.add((na, nb))\n                parent[(na, nb)] = (a, b)\n                queue.append((na, nb))\n    return None",
+        "elapsed": 8.1,
+        "tokens": 236
+      },
+      "a_code": "from collections import deque\n\ndef water_jug(cap_a, cap_b, target):\n    if target > cap_a and target > cap_b:\n        return None\n    start = (0, 0)\n    queue = deque([start])\n    visited = {start}\n    parent = {start: None}\n    while queue:\n        a, b = queue.popleft()\n        if a == target or b == target or a + b == target:\n            path = [(a, b)]\n            while parent[path[-1]]:\n                path.append(parent[path[-1]])\n            return path[::-1]\n        for na, nb in [(cap_a, b), (a, cap_b), (0, b), (a, 0), (min(cap_a, a + b), max(0, b - (cap_a - a))), (max(0, a - (cap_b - b)), min(cap_b, a + b))]:\n            if (na, nb) not in visited:\n                visited.add((na, nb))\n                parent[(na, nb)] = (a, b)\n                queue.append((na, nb))\n    return None",
+      "b": {
+        "error": "<urlopen error [Errno 111] Connection refused>"
+      }
+    },
+    {
+      "id": "logic_puzzle",
+      "desc": "Multi-step logic reasoning",
+      "prompt": "Solve this step by step: A, B, and C each have a different favorite color among red, blue, green. A does not like red. B does not like blue. The person who likes green is not B. What color does each person like? Show your reasoning briefly, then give the final answer as 'A: X, B: Y, C: Z'.",
+      "a": {
+        "content": "Let's analyze the clues one by one:\n1. A does not like red, so A must like either blue or green.\n2. B does not like blue, so B must like either red or green.\n3. The person who likes green is not B, so B cannot like green.\n\nFrom clue 3, B must like red. Since B likes red, A cannot like red (clue 1), so A must like green. This leaves C to like blue.\n\nFinal answer: A: green, B: red, C: blue",
+        "elapsed": 3.9,
+        "tokens": 112
+      },
+      "a_code": "Let's analyze the clues one by one:\n1. A does not like red, so A must like either blue or green.\n2. B does not like blue, so B must like either red or green.\n3. The person who likes green is not B, so B cannot like green.\n\nFrom clue 3, B must like red. Since B likes red, A cannot like red (clue 1), so A must like green. This leaves C to like blue.\n\nFinal answer: A: green, B: red, C: blue",
+      "b": {
+        "error": "<urlopen error [Errno 111] Connection refused>"
+      }
+    },
+    {
+      "id": "instruction_follow",
+      "desc": "Strict instruction adherence",
+      "prompt": "Respond with EXACTLY one line: the word 'COMPLIANT' followed by the number 42. Nothing else, no explanation.",
+      "a": {
+        "content": "COMPLIANT 42",
+        "elapsed": 0.3,
+        "tokens": 7
+      },
+      "a_code": "COMPLIANT 42",
+      "b": {
+        "error": "<urlopen error [Errno 111] Connection refused>"
+      }
+    },
+    {
+      "id": "module_contract",
+      "desc": "VACA-style module respecting a contract",
+      "prompt": "You are generating ONE module of a todo-list app: the module named `task_store`. The sibling module `data_store` sends it data via the contract `data_store -> task_store : data`. Implement task_store as a TypeScript module that exports exactly `addTask`, `listTasks`, and `deleteTask` using an in-memory array. Do NOT implement other modules. Just the code.",
+      "a": {
+        "content": "export function addTask(title: string) {\n  const tasks = [];\n  tasks.push({ id: Date.now(), title, completed: false });\n  return tasks;\n}\n\nexport function listTasks() {\n  const tasks = [];\n  return tasks;\n}\n\nexport function deleteTask(id: number) {\n  const tasks = [];\n  tasks = tasks.filter(t => t.id !== id);\n  return tasks;\n}",
+        "elapsed": 2.9,
+        "tokens": 81
+      },
+      "a_code": "export function addTask(title: string) {\n  const tasks = [];\n  tasks.push({ id: Date.now(), title, completed: false });\n  return tasks;\n}\n\nexport function listTasks() {\n  const tasks = [];\n  return tasks;\n}\n\nexport function deleteTask(id: number) {\n  const tasks = [];\n  tasks = tasks.filter(t => t.id !== id);\n  return tasks;\n}",
+      "b": {
+        "error": "<urlopen error [Errno 111] Connection refused>"
+      }
+    }
+  ]
+}

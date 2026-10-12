@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <style>
+        body {background:#0a132a;color:#fff;font-family:Arial,sans-serif}
+        #total {color:#39ff14;font-size:1.2rem;margin-bottom:10px}
+        #list {margin-bottom:10px}
+        input {padding:8px;border:none;border-radius:5px;width:240px;margin-right:10px}
+        button {padding:8px 16px;margin-right:10px}
+    </style>
+</head>
+<body>
+    <h1>Expense Tracker</h1>
+    <div id="total">Total: $<span id="totalValue">0.00</span></div>
+    <ul id="list"></ul>
+    <input type="text" id="description" placeholder="Description">
+    <input type="number" id="amount" step="0.01" placeholder="Amount">
+    <select id="category">
+        <option value="food">Food</option>
+        <option value="travel">Travel</option>
+        <option value="entertainment">Entertainment</option>
+        <option value="utilities">Utilities</option>
+        <option value="other">Other</option>
+    </select>
+    <button onclick="addExpense()">Add Expense</button>
+    <button onclick="clearList()">Clear List</button>
+    <script>
+        function addExpense() {
+            const description = document.getElementById('description').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const category = document.getElementById('category').value;
+            if (!description || isNaN(amount)) return;
+            const list = document.getElementById('list');
+            const totalValue = document.getElementById('totalValue');
+            let total = parseFloat(totalValue.textContent) || 0;
+            total += amount;
+            const li = document.createElement('li');
+            li.textContent = `${description} - $${amount.toFixed(2)} (${category})`;
+            list.appendChild(li);
+            totalValue.textContent = total.toFixed(2);
+            storeList(list.children);
+        }
+        function clearList() {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            document.getElementById('totalValue').textContent = '0.00';
+            localStorage.removeItem('expenses');
+        }
+        function loadList() {
+            const list = document.getElementById('list');
+            const totalValue = document.getElementById('totalValue');
+            const stored = JSON.parse(localStorage.getItem('expenses')) || [];
+            let total = 0;
+            for (const item of stored) {
+                const li = document.createElement('li');
+                li.textContent = `${item.description} - $${item.amount.toFixed(2)} (${item.category})`;
+                list.appendChild(li);
+                total += item.amount;
+            }
+            totalValue.textContent = total.toFixed(2);
+        }
+        function storeList(items) {
+            localStorage.setItem('expenses', JSON.stringify(Array.from(items)));}
+        window.onload = loadList;
+    </script>
+</body>
+</html>

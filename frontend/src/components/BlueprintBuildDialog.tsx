@@ -13,10 +13,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useProjectStore } from '../store/projectStore';
+import { useProjectStore, type BlueprintExportRequest } from '../store/projectStore';
 import { api } from '../api/client';
 import { LANGUAGE_OPTIONS, OSType } from '../types';
 import { broadcastMessage } from '../utils/terminalSync';
+import { exportBuild, openExportedFolder } from '../utils/exportBuild';
 import './BlueprintBuildDialog.css';
 
 const SOCKET_PATH = '/ws';
@@ -57,6 +58,18 @@ interface DriftReport {
   missing: string[];
   unexpected: string[];
   clean: boolean;
+}
+
+/** Behavioral smoke verdicts from the canvas path (load-and-click gate). */
+interface SmokeVerdictLite {
+  status: string;
+  detail?: string;
+  errors?: string[];
+}
+interface SmokeReport {
+  render: SmokeVerdictLite | null;
+  cli: SmokeVerdictLite | null;
+  anyFailed: boolean;
 }
 
 export default function BlueprintBuildDialog({ onClose, initialGoal, autoStart }: BlueprintBuildDialogProps) {
@@ -104,10 +117,21 @@ export default function BlueprintBuildDialog({ onClose, initialGoal, autoStart }
   const [mockup, setMockup] = useState<MockupResult | null>(null);
   const [mockupError, setMockupError] = useState('');
   const [drift, setDrift] = useState<DriftReport | null>(null);
+  const [smoke, setSmoke] = useState<SmokeReport | null>(null);
   // Project + node-id mapping for the drift-repair action (module → node).
   const [builtProjectId, setBuiltProjectId] = useState<string | null>(null);
   const [builtNodes, setBuiltNodes] = useState<Array<{ id: string; label: string }>>([]);
   const [regenerating, setRegenerating] = useState(false);
+
+  // ── Export request handed in by the chat ──
+  // Read in a state INITIALIZER, not an effect: the mount effect below calls
+  // clearBlueprintRequest(), which would wipe it before an effect could read
+  // it. When present, a successful build exports itself with no button clicks.
+  const [exportRequest] = useState<BlueprintExportRequest | null>(
+    () => useProjectStore.getState().blueprintRequestExport
+  );
+  const [exportStatus, setExportStatus] = useState('');
+  const [exportPath, setExportPath] = useState('');
   const [regenerateResults, setRegenerateResults] = useState<Array<{
     module: string;
     success: boolean;
@@ -283,6 +307,16 @@ export default function BlueprintBuildDialog({ onClose, initialGoal, autoStart }
         });
       }
 
+      // Behavioral smoke: did the assembled app actually load and respond?
+      // Surfaced so a build that compiles but does not RUN is visible here.
+      if (data?.smoke) {
+        setSmoke({
+          render: data.smoke.render ?? null,
+          cli: data.smoke.cli ?? null,
+          anyFailed: data.smoke.anyFailed === true,
+        });
+      }
+
       setResult({
         appType: data?.blueprint?.app_type || 'unknown',
         score: data?.matchScore ?? 0,
@@ -303,6 +337,50 @@ export default function BlueprintBuildDialog({ onClose, initialGoal, autoStart }
         text: `🧠 Built "${imported.name}" from description → blueprint "${data?.blueprint?.app_type || 'unknown'}" (score ${(data?.matchScore ?? 0).toFixed(2)}). ${files.length} file(s) generated. Loaded into canvas.`,
         timestamp: new Date().toISOString(),
       });
+
+      // ── Auto-export when the chat asked for it ──
+      // The user said "build X and export it to my desktop", so don't make them
+      // hunt for the Export button afterwards. The build cached its generation
+      // server-side, so this scaffold reuses that code instead of re-running
+      // the LLM for another 5+ minutes.
+      if (exportRequest) {
+        const appName = (exportRequest.folderName || imported.name || trimmed).slice(0, 60);
+        setExportStatus('📦 Exporting the build to disk...');
+        broadcastMessage({
+          role: 'ai',
+          text: `📦 Exporting "${appName}"…`,
+          timestamp: new Date().toISOString(),
+        });
+
+        const exp = await exportBuild({
+          projectId,
+          appName,
+          targetOS: full.targetOS || os,
+          outputDir: exportRequest.outputDir,
+          nodes,
+          edges,
+          trees: store.trees,
+        });
+
+        if (exp.success && exp.outputPath) {
+          const count = (exp.files || []).length;
+          setExportPath(exp.outputPath);
+          setExportStatus(`✅ Exported to ${exp.outputPath} (${count} files)${exp.warning ? ` — ⚠️ ${exp.warning}` : ''}`);
+          const opened = await openExportedFolder(exp.outputPath);
+          broadcastMessage({
+            role: 'ai',
+            text: `📦 **Exported ${appName}** → \`${exp.outputPath}\` (${count} files)${exp.warning ? `\n⚠️ ${exp.warning}` : ''}${opened ? '\n📂 Opened the folder.' : ''}`,
+            timestamp: new Date().toISOString(),
+          });
+        } else {
+          setExportStatus(`❌ Export failed: ${exp.error || 'unknown error'}`);
+          broadcastMessage({
+            role: 'ai',
+            text: `❌ Built "${appName}", but the export failed: ${exp.error || 'unknown error'}`,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }
     } catch (err: any) {
       console.error('[blueprint-dialog] Build failed:', err);
       const detail = err?.response?.data?.details || err?.message || String(err);
@@ -312,7 +390,7 @@ export default function BlueprintBuildDialog({ onClose, initialGoal, autoStart }
     } finally {
       setGenerating(false);
     }
-  }, [appType, fastMode, importProject, language, os, setGenerating, setProgress, updateNodeStatus]);
+  }, [appType, exportRequest, fastMode, importProject, language, os, setGenerating, setProgress, updateNodeStatus]);
 
   // ── Pre-build GUI mockup: show how the interface should look BEFORE
   // generating any code. Calls the deterministic /api/blueprint/mockup (no
@@ -692,6 +770,18 @@ export default function BlueprintBuildDialog({ onClose, initialGoal, autoStart }
                 )}
               </div>
 
+              {smoke && (
+                <div className={`bp-smoke bp-smoke-${smoke.anyFailed ? 'fail' : 'ok'}`}>
+                  <span className="bp-smoke-title">
+                    {smoke.anyFailed ? '⚠️ Behavioral smoke failed' : '✅ Behavioral smoke passed'}
+                  </span>
+                  <span className="bp-smoke-detail">
+                    render: {smoke.render?.status ?? 'n/a'}
+                    {smoke.cli && smoke.cli.status !== 'skipped' ? ` · cli: ${smoke.cli.status}` : ''}
+                  </span>
+                </div>
+              )}
+
               {drift && (
                 <div className={`bp-drift bp-drift-${drift.clean ? 'clean' : 'drift'}`}>
                   <div className="bp-drift-head">
@@ -758,6 +848,38 @@ export default function BlueprintBuildDialog({ onClose, initialGoal, autoStart }
                         </div>
                       )}
                     </>
+                  )}
+                </div>
+              )}
+
+              {/* Export was requested from the chat ("build X and export it to
+                  my desktop") — report where it landed, with a shortcut to
+                  open the folder. */}
+              {exportRequest && (
+                <div
+                  className="bp-drift"
+                  style={{
+                    marginTop: 12,
+                    borderColor: exportPath ? '#2e7d32' : exportStatus.startsWith('❌') ? '#c62828' : '#455a64',
+                  }}
+                >
+                  <div className="bp-drift-head">
+                    <span className="bp-drift-title">
+                      {exportPath ? '📦 Exported to disk' : '📦 Export'}
+                    </span>
+                  </div>
+                  <p className="bp-drift-note" style={{ wordBreak: 'break-all' }}>
+                    {exportStatus || 'Waiting for the build to finish…'}
+                  </p>
+                  {exportPath && (
+                    <div className="bp-drift-repair">
+                      <button
+                        className="bp-btn bp-btn-secondary"
+                        onClick={() => { void openExportedFolder(exportPath); }}
+                      >
+                        📂 Open Folder
+                      </button>
+                    </div>
                   )}
                 </div>
               )}

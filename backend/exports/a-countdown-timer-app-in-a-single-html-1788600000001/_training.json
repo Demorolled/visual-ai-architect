@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "request": "Build a countdown timer app in a single HTML file. The user sets minutes, presses start, and a large MM:SS display counts down every second. Pause and reset buttons work, and it stops at zero.",
+  "intent": {"goal": "countdown timer app in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Countdown timer HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "", "files": ["index.html"]
+}

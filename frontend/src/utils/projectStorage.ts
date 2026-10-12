@@ -1,5 +1,5 @@
 import { Node, Edge } from 'reactflow';
-import { OSType } from '../types';
+import { OSType, AppTree } from '../types';
 
 const USER_NAME_KEY = 'vaia-user-name';
 export const STORAGE_KEY = 'vaia-projects';
@@ -10,6 +10,12 @@ export interface SavedProject {
   targetOS: OSType;
   nodes: Node[];
   edges: Edge[];
+  /**
+   * Tree Mode: the app trees this project holds. Optional so projects saved
+   * before Tree Mode (and exported .json files from that era) still load — the
+   * store derives a single tree for them.
+   */
+  trees?: AppTree[];
   savedAt: string;
   version: number;
   /** Optional code review results (persisted so they survive page refreshes) */
@@ -49,6 +55,7 @@ export function saveProject(data: {
   targetOS: OSType;
   nodes: Node[];
   edges: Edge[];
+  trees?: AppTree[];
   codeReviewResult?: Record<string, any> | null;
 }): SavedProject {
   const store = getStore();

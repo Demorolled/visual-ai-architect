@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note-taking App</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0a0a14; color: #e0e0e0; padding: 20px; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .container { max-width: 500px; width: 100%; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .header h1 { font-size: 1.5rem; margin: 0; }
+    .header .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+    .btn-primary { background: #007bff; color: #fff; }
+    .btn-primary:hover { background: #0056b3; }
+    .note-list { margin-top: 12px; }
+    .note-item { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 8px; margin-bottom: 4px; }
+    .note-item .title { font-weight: bold; margin-bottom: 4px; }
+    .note-item .content { color: #aaa; font-size: 0.9rem; }
+    .note-item .actions { margin-top: 4px; }
+    .note-item .actions button { padding: 2px 6px; border: none; border-radius: 3px; margin-right: 4px; font-size: 0.7rem; }
+    .note-item .actions button:hover { background: rgba(255,255,255,0.1); }
+    .note-item .actions button.delete:hover { background: #f04747; color: #fff; }
+    .note-item .actions button.delete:hover svg { fill: #fff; }
+    .note-item .actions button.delete svg { fill: #f04747; }
+    .note-item .actions button.delete svg:hover { fill: #fff; }
+    .note-item .actions button.delete svg:hover path { fill: #fff; }
+    .note-item .actions button.delete svg:hover rect { fill: #fff; }
+    .note-item .actions button.delete svg:hover circle { fill: #fff; }
+    .note-item .actions button.delete svg:hover polygon { fill: #fff; }
+    .note-item .actions button.delete svg:hover polyline { fill: #fff; }
+    .note-item .actions button.delete svg:hover polyline { stroke: #fff; }
+    .note-item .actions button.delete svg:hover polyline { stroke-width: 2; }
+    .note-item .actions button.delete svg:hover polyline { stroke-linecap: round; }
+    .note-item .actions button.delete svg:hover polyline { stroke-linejoin: round; }
+    .note-item .actions button.delete svg:hover polyline { stroke-dasharray: 10, 2; }
+    .note-item .actions button.delete svg:hover polyline { stroke-dashoffset: 0; }
+    .note-item .actions button.delete svg:hover polyline { animation: dash 0.5s linear infinite; }
+    @keyframes dash { to { stroke-dashoffset: -2; } }
+    .note-item .actions button.delete svg:hover polyline { animation: dash 0.5s linear infinite; }
+    @keyframes dash { to { stroke-dashoffset: -2; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Note-taking App</h1>
+      <button class="btn btn-primary" onclick="addNote()">+</button>
+    </div>
+    <div class="note-list" id="noteList"></div>
+    <div class="add-note" id="addNoteForm">
+      <input type="text" id="noteTitle" placeholder="Enter title" onkeydown="(typeof if === 'function' ? if : () => {}) (event.key === 'Enter') addNote()" style="width:100%;padding:6px;border:1px solid #444;border-radius:4px;margin-bottom:4px;">
+      <textarea id="noteContent" placeholder="Enter content" rows="3" onkeydown="(typeof if === 'function' ? if : () => {}) (event.key === 'Enter' && event.shiftKey) addNote()" style="width:100%;padding:6px;border:1px solid #444;border-radius:4px;margin-bottom:8px;"></textarea>
+      <button class="btn btn-primary" onclick="addNote()">Add Note</button>
+    </div>
+  </div>
+  <script>
+    let notes = [];
+    const noteList = document.getElementById('noteList');
+    const noteTitle = document.getElementById('noteTitle');
+    const noteContent = document.getElementById('noteContent');
+    function addNote() {
+      const title = noteTitle.value.trim();
+      const content = noteContent.value.trim();
+      if (title && content) {
+        notes.push({ title, content });
+        renderNotes();
+        noteTitle.value = '';
+        noteContent.value = '';
+      }
+    }
+    function renderNotes() {
+      noteList.innerHTML = '';
+      notes.forEach((note, index) => {
+        const noteItem = document.createElement('div');
+        noteItem.className = 'note-item';
+        noteItem.innerHTML = `<div class="title">${note.title}</div><div class="content">${note.content}</div><div class="actions"><button class="delete" onclick="deleteNote(${index})">✕</button></div>`;
+        noteList.appendChild(noteItem);
+      });
+    }
+    function deleteNote(index) {
+      notes.splice(index, 1);
+      renderNotes();
+    }
+    renderNotes();
+  </script>
+</body>
+</html>

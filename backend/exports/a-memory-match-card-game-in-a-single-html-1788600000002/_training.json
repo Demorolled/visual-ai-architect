@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "request": "Build a memory match card game in a single HTML file. A 4x4 grid of cards is shuffled face-down. Clicking two cards flips them; if they match they stay face-up and the pair counter increments. Track moves, a timer, and show a win message when all pairs are found.",
+  "intent": {"goal": "memory match card game in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Memory match game HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "", "files": ["index.html"]
+}

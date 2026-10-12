@@ -1,0 +1,100 @@
+{
+  "tasks_file": "/home/homellmlab/Desktop/visual-ai-architect/corpora/vaca/tasks.txt",
+  "n_tasks": 3,
+  "role": "completion",
+  "n_applicable": 3,
+  "baseline": "incumbent",
+  "num_predict": 1200,
+  "num_ctx": 8192,
+  "summary": {
+    "incumbent": {
+      "tag": "vaca-r40-off-distill-adapter:latest",
+      "role": "completion",
+      "n_applicable": 3,
+      "passed": 3,
+      "parse_ok": 3,
+      "exports_ok": 3,
+      "pass_rate": 1.0,
+      "file_named": 0,
+      "non_trivial": 0,
+      "mean_exports_coverage": null,
+      "n_with_exports": 0,
+      "mean_sibling_coverage": null,
+      "n_with_siblings": 0,
+      "elapsed_s": 28.8
+    },
+    "vaca-r40-off-nogrpo-adapter_latest": {
+      "tag": "vaca-r40-off-nogrpo-adapter:latest",
+      "role": "completion",
+      "n_applicable": 3,
+      "passed": 0,
+      "parse_ok": 2,
+      "exports_ok": 1,
+      "pass_rate": 0.0,
+      "file_named": 0,
+      "non_trivial": 0,
+      "mean_exports_coverage": null,
+      "n_with_exports": 0,
+      "mean_sibling_coverage": null,
+      "n_with_siblings": 0,
+      "elapsed_s": 12.7
+    }
+  },
+  "per_task": {
+    "incumbent": {
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chees-game-1786611956524__src-canvas.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      }
+    },
+    "vaca-r40-off-nogrpo-adapter_latest": {
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "Game",
+          "GameLoop"
+        ],
+        "errors": []
+      },
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L4: Cannot use namespace 'Game' as a type.",
+          "TS2709 L7: Cannot use namespace 'Game' as a type."
+        ]
+      },
+      "3d-chees-game-1786611956524__src-canvas.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "createCanvas",
+          "render"
+        ],
+        "errors": []
+      }
+    }
+  }
+}

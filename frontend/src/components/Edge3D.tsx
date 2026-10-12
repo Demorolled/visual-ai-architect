@@ -10,6 +10,11 @@ interface Edge3DProps {
   target: string;
   /** Semantic metadata for user-described connections (Connect & Describe). */
   data?: any;
+  /**
+   * Just connected — draw an attention pulse so the user can SEE the new edge
+   * land on the canvas immediately after applying a connection.
+   */
+  highlighted?: boolean;
 }
 
 /**
@@ -21,11 +26,11 @@ interface Edge3DProps {
  *    user-described connections between two merged apps, so they must read as
  *    deliberate wiring, distinct from the ambient web.
  */
-function Edge3D({ source, target, data }: Edge3DProps) {
+function Edge3D({ source, target, data, highlighted = false }: Edge3DProps) {
   if (data?.semantic === true) {
-    return <SemanticCableEdge source={source} target={target} data={data} />;
+    return <SemanticCableEdge source={source} target={target} data={data} highlighted={highlighted} />;
   }
-  return <SpiderSilkEdge source={source} target={target} />;
+  return <SpiderSilkEdge source={source} target={target} highlighted={highlighted} />;
 }
 
 export default memo(Edge3D);
@@ -34,7 +39,7 @@ export default memo(Edge3D);
    Spider-silk edge — luminous strand spun by a spider jumping between nodes.
    Features a traveling spider particle, iridescent glow, and dew drops.
    ═══════════════════════════════════════════════════════════════════════════ */
-function SpiderSilkEdge({ source, target }: { source: string; target: string }) {
+function SpiderSilkEdge({ source, target, highlighted = false }: { source: string; target: string; highlighted?: boolean }) {
   const nodes = useProjectStore((s) => s.nodes);
   const sourcePos = nodes.find((n) => n.id === source)?.position;
   const targetPos = nodes.find((n) => n.id === target)?.position;
@@ -135,9 +140,15 @@ function SpiderSilkEdge({ source, target }: { source: string; target: string }) 
     // ── Silk glow pulse with iridescent shift ──
     if (mainRef.current) {
       const mat = mainRef.current.material as any;
-      mat.opacity = 0.4 + Math.sin(t * 0.5 + flowPhase) * 0.18;
-      const hueShift = Math.sin(t * 0.3 + flowPhase) * 0.05;
-      mat.color.setHSL(0.72 + hueShift, 0.7, 0.5);
+      if (highlighted) {
+        // Attention pulse: bright, fast throb so the fresh edge is unmissable.
+        mat.opacity = 0.8 + Math.sin(t * 4) * 0.2;
+        mat.color.setHSL(0.6, 0.9, 0.6);
+      } else {
+        mat.opacity = 0.4 + Math.sin(t * 0.5 + flowPhase) * 0.18;
+        const hueShift = Math.sin(t * 0.3 + flowPhase) * 0.05;
+        mat.color.setHSL(0.72 + hueShift, 0.7, 0.5);
+      }
     }
   });
 
@@ -250,12 +261,13 @@ function SpiderSilkEdge({ source, target }: { source: string; target: string }) 
     - an arrowhead near the target showing direction
     - a camera-facing label with the connection name + interpreted relation
    ═══════════════════════════════════════════════════════════════════════════ */
-function SemanticCableEdge({ source, target, data }: { source: string; target: string; data?: any }) {
+function SemanticCableEdge({ source, target, data, highlighted = false }: { source: string; target: string; data?: any; highlighted?: boolean }) {
   const nodes = useProjectStore((s) => s.nodes);
   const sourcePos = nodes.find((n) => n.id === source)?.position;
   const targetPos = nodes.find((n) => n.id === target)?.position;
 
   const glowRef = useRef<any>(null);
+  const pulseRef = useRef<any>(null);
   const labelGroupRef = useRef<any>(null);
   const flowRef = useRef<any>(null);
   const orbRefA = useRef<any>(null);
@@ -317,16 +329,28 @@ function SemanticCableEdge({ source, target, data }: { source: string; target: s
 
     // Data-flow orbs travelling source → target along the cable
     if (curve) {
-      orbA.current = (orbA.current + delta * 0.12) % 1;
-      orbB.current = (orbB.current + delta * 0.085) % 1;
+      const speed = highlighted ? 2.4 : 1;
+      orbA.current = (orbA.current + delta * 0.12 * speed) % 1;
+      orbB.current = (orbB.current + delta * 0.085 * speed) % 1;
       if (orbRefA.current) orbRefA.current.position.copy(curve.getPoint(orbA.current * 0.88));
       if (orbRefB.current) orbRefB.current.position.copy(curve.getPoint(orbB.current * 0.88));
     }
 
-    // Soft breathing glow on the outer tube
+    // Soft breathing glow on the outer tube — much stronger right after a
+    // connection is applied so the new edge is obvious on the canvas.
     if (glowRef.current) {
       const m = glowRef.current.material as any;
-      m.opacity = 0.1 + Math.sin(t * 1.3) * 0.045;
+      m.opacity = highlighted
+        ? 0.32 + Math.sin(t * 3) * 0.16
+        : 0.1 + Math.sin(t * 1.3) * 0.045;
+    }
+
+    // Expanding pulse ring at the cable apex as a "just connected" beacon.
+    if (pulseRef.current) {
+      const s = 1 + (Math.sin(t * 3) * 0.5 + 0.5) * 2.2;
+      pulseRef.current.scale.setScalar(s);
+      const m = pulseRef.current.material as any;
+      m.opacity = Math.max(0, 0.5 - (s - 1) * 0.22);
     }
   });
 
@@ -345,9 +369,17 @@ function SemanticCableEdge({ source, target, data }: { source: string; target: s
 
       {/* ── Core cable ── */}
       <mesh>
-        <tubeGeometry args={[curve, 24, 1.15, 8, false]} />
-        <meshBasicMaterial color="#34d399" transparent opacity={0.9} />
+        <tubeGeometry args={[curve, 24, highlighted ? 1.7 : 1.15, 8, false]} />
+        <meshBasicMaterial color={highlighted ? '#6ee7b7' : '#34d399'} transparent opacity={0.9} />
       </mesh>
+
+      {/* ── "Just connected" pulse beacon at the cable apex ── */}
+      {highlighted && (
+        <mesh ref={pulseRef} position={[apex.x, apex.y, apex.z]}>
+          <sphereGeometry args={[7, 16, 16]} />
+          <meshBasicMaterial color="#a7f3d0" transparent opacity={0.5} />
+        </mesh>
+      )}
 
       {/* ── Dashed flow overlay ── */}
       <line ref={flowRef}>

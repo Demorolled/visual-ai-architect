@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
-import { NodeData, CodeLanguage, LANGUAGE_OPTIONS, hasExtensionConflict, getLanguageExtension, extractLabelExtension } from '../types';
-import { useProjectStore } from '../store/projectStore';
+import { useCallback, useMemo, useState } from 'react';
+import { NodeData, CodeLanguage, LANGUAGE_OPTIONS, hasExtensionConflict, getLanguageExtension, extractLabelExtension, CROSS_TREE_PAYLOAD_OPTIONS } from '../types';
+import { useProjectStore, treeIdOfNode } from '../store/projectStore';
+import ConnectNodesDialog from './ConnectNodesDialog';
 
 const nodeColors: Record<string, string> = {
   master: '#f59e0b',
@@ -43,6 +44,19 @@ export default function NodeDetailOverlay({ nodeId, onClose }: NodeDetailOverlay
   const [debugLoading, setDebugLoading] = useState(false);
   const [aiResult, setAiResult] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+
+  // ── Tree Mode: share this node's data with another app tree ──
+  const trees = useProjectStore((s) => s.trees);
+  const edges = useProjectStore((s) => s.edges);
+  const removeEdge = useProjectStore((s) => s.removeEdge);
+  const [xtTarget, setXtTarget] = useState('');
+  const [xtPayload, setXtPayload] = useState(CROSS_TREE_PAYLOAD_OPTIONS[0].value);
+  const [xtDetail, setXtDetail] = useState('');
+  const [xtError, setXtError] = useState('');
+  const [xtDone, setXtDone] = useState('');
+  // ── Same-app semantic wiring (build mode): connect this node to another node
+  //    in the SAME app tree via the interpreted-edge dialog. ──
+  const [connectOpen, setConnectOpen] = useState(false);
 
   const node = nodes.find(n => n.id === nodeId);
 
@@ -137,6 +151,60 @@ export default function NodeDetailOverlay({ nodeId, onClose }: NodeDetailOverlay
     }
     setAiLoading(false);
   }, [nodeId]);
+
+  // ── Tree Mode derivations (before the early return — hooks above) ──
+  const myTreeId = useMemo(() => treeIdOfNode(node, trees), [node, trees]);
+  const myTree = trees.find((t) => t.id === myTreeId) || null;
+  const otherTreeNodes = useMemo(
+    () =>
+      nodes.filter(
+        (n) =>
+          n.type !== 'master' &&
+          n.type !== 'ui-functions' &&
+          treeIdOfNode(n, trees) !== myTreeId,
+      ),
+    [nodes, trees, myTreeId],
+  );
+  /** Code nodes in the SAME app tree as the selected node (incl. this one) —
+   *  the only valid endpoints for same-app Connect & Describe. */
+  const myTreeNodeIds = useMemo(
+    () =>
+      nodes
+        .filter((n) => n.type !== 'master' && treeIdOfNode(n, trees) === myTreeId)
+        .map((n) => n.id),
+    [nodes, trees, myTreeId],
+  );
+
+  /** Cross-tree connections this node is already part of, either direction. */
+  const crossTreeEdges = useMemo(
+    () =>
+      edges.filter(
+        (e) =>
+          (e.data as any)?.kind === 'cross-tree' &&
+          (e.source === nodeId || e.target === nodeId),
+      ),
+    [edges, nodeId],
+  );
+
+  const handleConnectTrees = useCallback(() => {
+    setXtError('');
+    setXtDone('');
+    if (!nodeId) return;
+    const res = useProjectStore.getState().connectTrees({
+      sourceNodeId: nodeId,
+      targetNodeId: xtTarget,
+      payloadType: xtPayload,
+      payloadDetail: xtDetail,
+    });
+    if (!res.ok) {
+      setXtError(res.error || 'Could not connect the two app trees.');
+      return;
+    }
+    const preset = CROSS_TREE_PAYLOAD_OPTIONS.find((o) => o.value === xtPayload);
+    setXtDone(`Connected — ${(preset?.label || 'data').toLowerCase()} will be shared with the other app.`);
+    setXtTarget('');
+    setXtDetail('');
+  }, [nodeId, xtTarget, xtPayload, xtDetail]);
 
   // Only render the overlay if a valid node is selected
   if (!node || node.type === 'master' || node.type === 'ui-functions') return null;
@@ -362,6 +430,204 @@ export default function NodeDetailOverlay({ nodeId, onClose }: NodeDetailOverlay
             {aiResult}
           </div>
         )}
+
+        {/* ── Connect to another node in THIS app (same-tree semantic wiring).
+               Available in build mode too — previously only Plan Mode could wire
+               two arbitrary nodes. The selected node is preselected as the
+               source; the backend interprets the description into a real edge. ── */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: 6,
+          paddingTop: 8, borderTop: '1px solid #2a2a4a',
+        }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            🔗 Connect to another node
+          </div>
+          <div style={{ fontSize: 10, color: '#64748b', lineHeight: 1.5 }}>
+            Choose a node in <strong style={{ color: '#94a3b8' }}>{myTree ? myTree.name : 'this app'}</strong> and describe what data flows between them.
+          </div>
+          <button
+            onClick={() => setConnectOpen(true)}
+            disabled={myTreeNodeIds.length < 2}
+            title={
+              myTreeNodeIds.length < 2
+                ? 'Add a second node to this app first — a connection needs two nodes'
+                : 'Pick a node and describe how they connect'
+            }
+            style={{
+              padding: '6px 10px', fontSize: 11, fontWeight: 600,
+              background: 'rgba(96,165,250,0.14)', color: '#93c5fd',
+              border: '1px solid #60a5fa',
+              cursor: myTreeNodeIds.length < 2 ? 'not-allowed' : 'pointer',
+              opacity: myTreeNodeIds.length < 2 ? 0.5 : 1,
+            }}
+          >
+            🔗 Connect this node to another…
+          </button>
+        </div>
+
+        {connectOpen && nodeId && (
+          <ConnectNodesDialog
+            mode="build"
+            initialSourceId={nodeId}
+            allowedNodeIds={myTreeNodeIds}
+            onClose={() => setConnectOpen(false)}
+          />
+        )}
+
+        {/* ── Tree Mode: share this node's data with another app tree ── */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: 6,
+          paddingTop: 8, borderTop: '1px solid #2a2a4a',
+        }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: '#4ade80', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            🔗 Share with another app
+          </div>
+          <div style={{ fontSize: 10, color: '#64748b', lineHeight: 1.5 }}>
+            {myTree ? <>This node is in <strong style={{ color: '#94a3b8' }}>{myTree.name}</strong>. </> : null}
+            Send data from this node to a node in the app tree beside it.
+          </div>
+
+          {trees.length < 2 ? (
+            <div style={{ fontSize: 10, color: '#fbbf24', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', padding: '6px 8px', lineHeight: 1.5 }}>
+              No second app tree yet — use <strong>＋ New app tree</strong> on the canvas, build the
+              other app, then come back here to connect them.
+            </div>
+          ) : (
+            <>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8' }}>Connect this node to…</span>
+                <select
+                  value={xtTarget}
+                  onChange={(e) => { setXtTarget(e.target.value); setXtError(''); setXtDone(''); }}
+                  style={{
+                    background: '#242438', border: '1px solid #3a3a5a',
+                    color: '#e2e8f0', padding: '4px 8px', fontSize: 11, cursor: 'pointer',
+                  }}
+                >
+                  <option value="">— pick a node in another app tree —</option>
+                  {trees.filter((t) => t.id !== myTreeId).map((t) => {
+                    const group = otherTreeNodes.filter((n) => treeIdOfNode(n, trees) === t.id);
+                    if (!group.length) return null;
+                    return (
+                      <optgroup key={t.id} label={t.name}>
+                        {group.map((n) => (
+                          <option key={n.id} value={n.id}>
+                            {n.data?.label || n.id} ({n.data?.type || n.type})
+                          </option>
+                        ))}
+                      </optgroup>
+                    );
+                  })}
+                </select>
+              </label>
+
+              {otherTreeNodes.length === 0 && (
+                <div style={{ fontSize: 10, color: '#64748b', lineHeight: 1.5 }}>
+                  The other app tree has no nodes yet — build it first, then wire it up here.
+                </div>
+              )}
+
+              <label style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8' }}>What data do you want to share?</span>
+                <select
+                  value={xtPayload}
+                  onChange={(e) => { setXtPayload(e.target.value); setXtError(''); setXtDone(''); }}
+                  style={{
+                    background: '#242438', border: '1px solid #3a3a5a',
+                    color: '#e2e8f0', padding: '4px 8px', fontSize: 11, cursor: 'pointer',
+                  }}
+                >
+                  {CROSS_TREE_PAYLOAD_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label} — {o.hint}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              {xtPayload === 'custom' && (
+                <textarea
+                  value={xtDetail}
+                  onChange={(e) => { setXtDetail(e.target.value); setXtError(''); setXtDone(''); }}
+                  placeholder="Describe the data you want to pass across (e.g. 'the active shopping cart')"
+                  rows={2}
+                  maxLength={300}
+                  style={{
+                    background: '#242438', border: '1px solid #3a3a5a',
+                    color: '#e2e8f0', padding: '6px 8px', fontSize: 11,
+                    fontFamily: 'inherit', resize: 'vertical',
+                  }}
+                />
+              )}
+
+              <button
+                onClick={handleConnectTrees}
+                disabled={!xtTarget}
+                title={xtTarget ? 'Create the cross-app connection' : 'Pick a node in the other app tree first'}
+                style={{
+                  padding: '6px 8px', fontSize: 11, fontWeight: 600,
+                  border: '1px solid #4ade80', background: 'rgba(74,222,128,0.12)',
+                  color: '#4ade80', cursor: xtTarget ? 'pointer' : 'not-allowed',
+                  opacity: xtTarget ? 1 : 0.45,
+                }}
+              >
+                🔗 Connect these app trees
+              </button>
+
+              {xtError && (
+                <div style={{ fontSize: 10, color: '#f87171', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.25)', padding: '6px 8px', lineHeight: 1.5 }}>
+                  ⚠️ {xtError}
+                </div>
+              )}
+              {xtDone && (
+                <div style={{ fontSize: 10, color: '#86efac', background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)', padding: '6px 8px', lineHeight: 1.5 }}>
+                  ✅ {xtDone}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Existing cross-tree connections for this node */}
+          {crossTreeEdges.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <span style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8' }}>Cross-app connections</span>
+              {crossTreeEdges.map((e) => {
+                const otherId = e.source === nodeId ? e.target : e.source;
+                const other = nodes.find((n) => n.id === otherId);
+                const d = e.data as any;
+                const outbound = e.source === nodeId;
+                const otherTree = trees.find((t) => t.id === (outbound ? d.targetTreeId : d.sourceTreeId));
+                return (
+                  <div key={e.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '5px 7px', fontSize: 10, lineHeight: 1.4,
+                    background: 'rgba(74,222,128,0.06)',
+                    border: '1px solid rgba(74,222,128,0.2)',
+                    color: '#86efac',
+                  }}>
+                    <span style={{ flexShrink: 0 }}>{outbound ? '➡' : '⬅'}</span>
+                    <span style={{ flex: 1 }}>
+                      <strong>{d.payloadLabel || d.label || 'data'}</strong>
+                      {' '}{outbound ? 'to' : 'from'} {other?.data?.label || otherId}
+                      {otherTree ? ` (${otherTree.name})` : ''}
+                      {d.payloadDetail ? <><br /><em style={{ color: '#64748b' }}>{d.payloadDetail}</em></> : null}
+                    </span>
+                    <button
+                      onClick={() => removeEdge(e.id)}
+                      title="Remove this cross-app connection"
+                      style={{
+                        background: 'transparent', border: 'none', color: '#f87171',
+                        cursor: 'pointer', fontSize: 12, padding: '0 2px', lineHeight: 1,
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {/* Generated code preview */}
         {data.generatedCode && (

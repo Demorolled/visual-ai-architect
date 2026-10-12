@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T18:20:00.000Z",
+  "request": "Build a sudoku game with solver in a single HTML file. A 9x9 grid with a backtracking generator that carves three difficulty levels (easy medium hard) while guaranteeing a unique solution, arrow-key navigation between cells, live conflict highlighting, a hint button that fills one empty cell from the solution, a check button that reports conflicts, a solve button that solves the puzzle, a running timer, and best-time persistence per difficulty in localStorage.",
+  "intent": {"goal": "sudoku game with solver in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Sudoku game HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "sudoku with backtracking generator and solver, unique-solution carving, conflict validation, hints, timer, localStorage best times",
+  "files": ["index.html"],
+  "tier": "extreme"
+}

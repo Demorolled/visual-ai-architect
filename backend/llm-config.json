@@ -1,42 +1,46 @@
 {
-  "dspark": {
-    "provider": "dspark",
-    "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
-    "baseUrl": "http://127.0.0.1:8000/v1",
-    "apiKey": "not-needed",
-    "nCtx": 16384
-  },
+  "_comment": "Dev LLM config — mirrors the ship-time config (Veronica resources/app/payload/backend/llm-config.json): pinned to ONE model, Qwen2.5 14B on local Ollama. The previous dspark-based config is preserved alongside as llm-config.json.bak-*.",
+  "provider": "ollama",
   "ollama": {
     "provider": "ollama",
-    "model": "vaca-r36:latest",
-    "baseUrl": "http://192.168.1.234:11434/v1",
+    "model": "vaca-r20-q4:latest",
+    "baseUrl": "http://127.0.0.1:11434/v1",
     "apiKey": "ollama",
     "nCtx": 16384
   },
   "primary": {
-    "provider": "dspark",
-    "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
-    "baseUrl": "http://127.0.0.1:8000/v1",
-    "apiKey": "not-needed"
+    "provider": "ollama",
+    "model": "vaca-r20-q4:latest",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "apiKey": "ollama",
+    "nCtx": 16384
   },
   "secondary": {
     "provider": "ollama",
-    "model": "qwen2.5:3b",
-    "baseUrl": "http://192.168.1.234:11434/v1",
-    "apiKey": "not-needed"
+    "model": "vaca-r20-q4:latest",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "apiKey": "ollama",
+    "nCtx": 16384
   },
   "fastChat": {
-    "provider": "dspark",
-    "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
-    "baseUrl": "http://127.0.0.1:8000/v1",
-    "apiKey": "not-needed",
+    "provider": "ollama",
+    "model": "vaca-r20-q4:latest",
+    "baseUrl": "http://127.0.0.1:11434/v1",
+    "apiKey": "ollama",
     "nCtx": 16384
   },
   "roles": {
     "reasoning": {
-      "baseUrl": "http://127.0.0.1:8000/v1",
-      "model": "Qwen2.5-Coder-14B-Instruct-Uncensored.R20.Q4_K_M.gguf",
-      "apiKey": "not-needed"
+      "provider": "ollama",
+      "model": "vaca-r20-q4:latest",
+      "baseUrl": "http://127.0.0.1:11434/v1",
+      "apiKey": "ollama"
+    },
+    "coding": {
+      "provider": "ollama",
+      "model": "vaca-r20-q4:latest",
+      "baseUrl": "http://127.0.0.1:11434/v1",
+      "apiKey": "ollama"
     }
   }
 }

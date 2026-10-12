@@ -176,6 +176,7 @@ export default function ExportDialog({ onClose, onExported }: ExportDialogProps)
           targetOS,
           nodes: codeNodes,
           edges,
+          trees: store.trees,
         });
         // Use per-file generation (FileGenerator) which creates isolated node files
         const genRes = await api.generateFiles(freshId);
@@ -257,6 +258,7 @@ export default function ExportDialog({ onClose, onExported }: ExportDialogProps)
         targetOS,
         nodes: codeNodes,
         edges,
+        trees: store.trees,
       });
       // Call the per-file scaffold endpoint with custom output path
       const scaffoldRes = await api.exportPerFileScaffold(freshId, {

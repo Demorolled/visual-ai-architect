@@ -1,0 +1,205 @@
+/* Minimal CSS for the note-taking app */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #0a0a14;
+  color: #e0e0e0;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+header h1 {
+  color: #00d9ff;
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+header p {
+  color: #666;
+  font-size: 0.8rem;
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+   background: #12121e;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.toolbar select {
+  background: #1a1a2e;
+  border: 1px solid #4a4a6a;
+  border-radius: 3px;
+  padding: 4px 8px;
+  color: #ccc;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.toolbar button {
+  background: #1a1a2e;
+  border: 1px solid #4a4a6a;
+  border-radius: 3px;
+  padding: 4px 10px;
+  color: #ccc;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.toolbar button:hover {
+  background: #2a2a4e;
+}
+.toolbar button.primary {
+  background: #00d9ff;
+  color: #0a0a14;
+  border-color: #00d9ff;
+}
+.toolbar button.primary:hover {
+  background: #00bcd9;
+}
+textarea {
+  width: 100%;
+  height: 300px;
+  padding: 12px;
+  background: #1a1a2e;
+  border: 1px solid #4a4a6a;
+  border-radius: 6px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  color: #e0e0e0;
+  resize: vertical;
+  outline: none;
+  line-height: 1.6;
+}
+textarea:focus {
+  border-color: #00d9ff;
+}
+#preview {
+  margin-top: 16px;
+  padding: 12px;
+  background: #12121e;
+  border: 1px solid #4a4a6a;
+  border-radius: 6px;
+  min-height: 200px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+#preview h1 { color: #00d9ff; }
+#preview h2 { color: #00d9ff; }
+#preview h3 { color: #00d9ff; }
+#preview strong { color: #00d9ff; }
+#preview code { background: #1a1a2e; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', Courier, monospace; font-size: 0.8rem; }
+#preview a { color: #00d9ff; text-decoration: none; }
+#preview a:hover { text-decoration: underline; }
+#preview pre { background: #1a1a2e; padding: 8px; border-radius: 3px; font-family: 'Courier New', Courier, monospace; font-size: 0.8rem; }
+#preview blockquote { border-left: 4px solid #00d9ff; padding-left: 12px; margin: 12px 0; color: #666; }
+#preview ol { padding-left: 20px; }
+#preview ul { padding-left: 20px; }
+#preview li { margin: 4px 0; }
+#preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+#preview th, #preview td {
+  padding: 6px 12px;
+  border: 1px solid #4a4a6a;
+}
+#preview th { background: #1a1a2e; color: #00d9ff; }
+#preview tr:nth-child(even) td { background: #161626; }
+#preview tr:hover td { background: #1a1a2e; }
+#preview .math-rendered {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #1a1a2e;
+  border: 1px solid #4a4a6a;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  color: #00d9ff;
+}
+#preview .math-rendered .math-frac {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+#preview .math-rendered .math-frac .math-num {
+  border-bottom: 1px solid #4a4a6a;
+  padding-bottom: 2px;
+}
+#preview .math-rendered .math-frac .math-den {
+  margin-top: 2px;
+}
+#preview .math-rendered .math-radical {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+#preview .math-rendered .math-radical:before {
+  content: '√';
+  font-size: 1rem;
+  color: #00d9ff;
+}
+#preview .math-rendered .math-radical .math-radicand {
+  border-bottom: 1px solid #4a4a6a;
+  padding-bottom: 2px;
+}
+#preview .math-rendered .math-subsup {
+  display: inline-block;
+  position: relative;
+  font-size: 0.8rem;
+}
+#preview .math-rendered .math-sub {
+  position: relative;
+  bottom: 2px;
+  font-size: 0.6rem;
+  color: #666;
+}
+#preview .math-rendered .math-sup {
+  position: relative;
+  top: 2px;
+  font-size: 0.6rem;
+  color: #666;
+}
+#preview .math-rendered .math-font {
+  font-family: 'Courier New', Courier, monospace;
+}
+#preview .math-rendered .math-bold {
+  font-weight: bold;
+}
+#preview .math-rendered .math-italic {
+  font-style: italic;
+}
+#preview .math-rendered .math-blue {
+  color: #00d9ff;
+}
+#preview .math-rendered .math-green {
+  color: #4ade80;
+}
+#preview .math-rendered .math-red {
+  color: #f87171;
+}
+#preview .math-rendered .math-pink {
+  color: #fbbf24;
+}
+#preview .math-rendered .math-purple {
+  color: #a78bfa;
+}
+#preview .math-rendered .math-orange {
+  color: #fb923c;
+}
+#preview .math-rendered .math-gray {
+  color: #666;
+}
+#preview .math-rendered .math-white {
+  color: #fff;
+}

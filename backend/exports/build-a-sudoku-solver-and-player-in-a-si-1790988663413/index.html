@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sudoku Player</title>
+<style>
+html, body {
+  height: 100%; width: 100%; padding: 0; margin: 0; font-family: Arial, sans-serif;
+}
+.app {
+  display: flex; flex-direction: column; align-items: center; place-content: center; height: 95vh;
+}
+.grid {
+  display: grid; grid-template-columns: repeat(9, 40px); gap: 2px;
+}
+.cell { width: 40px; height: 40px; background-color: #1e1e2e; color: #fff; text-align: center; line-height: 40px; }
+.btn {
+  padding: 8px 16px; border: none; border-radius: 4px; gap: 8px;
+}
+.btn-primary { background-color: #0d6efd; color: white }
+</style>
+</head>
+<body><div class="app" id="app"><div id="gameBoard" class="grid"></div><button id="playBtn" class="btn btn-primary" onclick="(typeof startGame === 'function' ? startGame : () => {}) ()">▶ Play</button></div><script>
+function init() {
+    // Sudoku game initialization logic
+    console.log('Sudoku game initialized');
+}
+function render() {
+    // Sudoku game rendering logic
+    console.log('Rendering Sudoku game');
+}
+</script></body>
+</html>

@@ -1,0 +1,1561 @@
+[2026-08-29 16:54:21] 👀 R28 Kaggle monitor started — kernel: stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 16:54:21]    Live view (browser): https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 16:54:21] poll #1 — status: KernelWorkerStatus.RUNNING (monitor elapsed 0m)
+[2026-08-29 16:54:22]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 16:55:22] poll #2 — status: KernelWorkerStatus.RUNNING (monitor elapsed 1m)
+[2026-08-29 16:55:22]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 16:56:23] poll #3 — status: KernelWorkerStatus.RUNNING (monitor elapsed 2m)
+[2026-08-29 16:56:23]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 16:57:24] poll #4 — status: KernelWorkerStatus.ERROR (monitor elapsed 3m)
+[2026-08-29 16:57:24] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 16:57:24] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 16:57:24]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 16:57:25]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 16:58:25] poll #5 — status: KernelWorkerStatus.ERROR (monitor elapsed 4m)
+[2026-08-29 16:58:25] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 16:58:26] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 16:58:26]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 16:58:26]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 16:59:26] poll #6 — status: KernelWorkerStatus.ERROR (monitor elapsed 5m)
+[2026-08-29 16:59:26] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 16:59:27] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 16:59:27]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 16:59:27]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:00:27] poll #7 — status: KernelWorkerStatus.ERROR (monitor elapsed 6m)
+[2026-08-29 17:00:27] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:00:28] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:00:28]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:00:28]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:01:28] poll #8 — status: KernelWorkerStatus.ERROR (monitor elapsed 7m)
+[2026-08-29 17:01:28] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:01:29] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:01:29]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:01:29]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:02:29] poll #9 — status: KernelWorkerStatus.ERROR (monitor elapsed 8m)
+[2026-08-29 17:02:29] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:02:30] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:02:30]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:02:30]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:03:30] poll #10 — status: KernelWorkerStatus.ERROR (monitor elapsed 9m)
+[2026-08-29 17:03:30] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:03:31] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:03:31]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:03:31]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:04:32] poll #11 — status: KernelWorkerStatus.ERROR (monitor elapsed 10m)
+[2026-08-29 17:04:32] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:04:32] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:04:32]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:04:32]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:05:33] poll #12 — status: KernelWorkerStatus.ERROR (monitor elapsed 11m)
+[2026-08-29 17:05:33] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:05:33] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:05:33]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:05:33]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:06:34] poll #13 — status: KernelWorkerStatus.ERROR (monitor elapsed 12m)
+[2026-08-29 17:06:34] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:06:34] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:06:34]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:06:34]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:07:35] poll #14 — status: KernelWorkerStatus.ERROR (monitor elapsed 13m)
+[2026-08-29 17:07:35] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:07:35] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:07:35]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:07:35]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:08:36] poll #15 — status: KernelWorkerStatus.ERROR (monitor elapsed 14m)
+[2026-08-29 17:08:36] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:08:37] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:08:37]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:08:37]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:09:37] poll #16 — status: KernelWorkerStatus.ERROR (monitor elapsed 15m)
+[2026-08-29 17:09:37] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:09:38] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:09:38]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:09:38]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:10:39] poll #17 — status: KernelWorkerStatus.ERROR (monitor elapsed 16m)
+[2026-08-29 17:10:39] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:10:39] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:10:39]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:10:39]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:11:40] poll #18 — status: KernelWorkerStatus.ERROR (monitor elapsed 17m)
+[2026-08-29 17:11:40] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:11:40] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:11:40]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:11:40]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:12:41] poll #19 — status: KernelWorkerStatus.ERROR (monitor elapsed 18m)
+[2026-08-29 17:12:41] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:12:41] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:12:41]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:12:41]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:13:42] poll #20 — status: KernelWorkerStatus.ERROR (monitor elapsed 19m)
+[2026-08-29 17:13:42] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:13:42] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:13:42]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:13:42]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:14:43] poll #21 — status: KernelWorkerStatus.ERROR (monitor elapsed 20m)
+[2026-08-29 17:14:43] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:14:43] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:14:43]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:14:43]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:15:44] poll #22 — status: KernelWorkerStatus.ERROR (monitor elapsed 21m)
+[2026-08-29 17:15:44] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:15:44] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:15:44]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:15:44]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:16:45] poll #23 — status: KernelWorkerStatus.ERROR (monitor elapsed 22m)
+[2026-08-29 17:16:45] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:16:46] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:16:46]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:16:46]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:17:46] poll #24 — status: KernelWorkerStatus.ERROR (monitor elapsed 23m)
+[2026-08-29 17:17:46] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:17:47] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:17:47]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:17:47]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:18:47] poll #25 — status: KernelWorkerStatus.ERROR (monitor elapsed 24m)
+[2026-08-29 17:18:47] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:18:48] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:18:48]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:18:48]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:19:48] poll #26 — status: KernelWorkerStatus.ERROR (monitor elapsed 25m)
+[2026-08-29 17:19:48] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:19:49] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:19:49]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:19:49]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:20:49] poll #27 — status: KernelWorkerStatus.ERROR (monitor elapsed 26m)
+[2026-08-29 17:20:49] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:20:50] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:20:50]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:20:50]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:21:50] poll #28 — status: KernelWorkerStatus.ERROR (monitor elapsed 27m)
+[2026-08-29 17:21:50] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:21:51] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:21:51]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:21:51]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:22:51] poll #29 — status: KernelWorkerStatus.ERROR (monitor elapsed 28m)
+[2026-08-29 17:22:51] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:22:52] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:22:52]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:22:52]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:23:53] poll #30 — status: KernelWorkerStatus.ERROR (monitor elapsed 29m)
+[2026-08-29 17:23:53] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:23:53] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:23:53]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:23:53]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:24:54] poll #31 — status: KernelWorkerStatus.ERROR (monitor elapsed 30m)
+[2026-08-29 17:24:54] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:24:54] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:24:54]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:24:54]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:25:55] poll #32 — status: KernelWorkerStatus.ERROR (monitor elapsed 31m)
+[2026-08-29 17:25:55] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:25:55] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:25:55]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:25:55]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:26:56] poll #33 — status: KernelWorkerStatus.ERROR (monitor elapsed 32m)
+[2026-08-29 17:26:56] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:26:56] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:26:56]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:26:57]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:27:57] poll #34 — status: KernelWorkerStatus.ERROR (monitor elapsed 33m)
+[2026-08-29 17:27:57] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:27:58] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:27:58]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:27:58]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:28:58] poll #35 — status: KernelWorkerStatus.ERROR (monitor elapsed 34m)
+[2026-08-29 17:28:58] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:28:59] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:28:59]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:28:59]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:29:59] poll #36 — status: KernelWorkerStatus.ERROR (monitor elapsed 35m)
+[2026-08-29 17:29:59] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:30:00] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:30:00]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:30:00]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:31:00] poll #37 — status: KernelWorkerStatus.ERROR (monitor elapsed 36m)
+[2026-08-29 17:31:00] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:31:01] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:31:01]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:31:01]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:32:02] poll #38 — status: KernelWorkerStatus.ERROR (monitor elapsed 37m)
+[2026-08-29 17:32:02] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:32:02] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:32:02]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:32:02]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:33:03] poll #39 — status: KernelWorkerStatus.ERROR (monitor elapsed 38m)
+[2026-08-29 17:33:03] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:33:04] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:33:04]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:33:04]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:34:04] poll #40 — status: KernelWorkerStatus.ERROR (monitor elapsed 39m)
+[2026-08-29 17:34:04] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:34:05] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:34:05]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:34:05]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:35:05] poll #41 — status: KernelWorkerStatus.ERROR (monitor elapsed 40m)
+[2026-08-29 17:35:05] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:35:06] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:35:06]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:35:06]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:36:07] poll #42 — status: KernelWorkerStatus.ERROR (monitor elapsed 41m)
+[2026-08-29 17:36:07] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:36:07] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:36:07]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:36:07]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:37:08] poll #43 — status: KernelWorkerStatus.ERROR (monitor elapsed 42m)
+[2026-08-29 17:37:08] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:37:08] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:37:08]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:37:08]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:38:09] poll #44 — status: KernelWorkerStatus.ERROR (monitor elapsed 43m)
+[2026-08-29 17:38:09] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:38:10] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:38:10]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:38:10]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:39:10] poll #45 — status: KernelWorkerStatus.ERROR (monitor elapsed 44m)
+[2026-08-29 17:39:10] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:39:11] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:39:11]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:39:11]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:40:11] poll #46 — status: KernelWorkerStatus.ERROR (monitor elapsed 45m)
+[2026-08-29 17:40:11] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:40:12] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:40:12]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:40:12]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:41:12] poll #47 — status: KernelWorkerStatus.ERROR (monitor elapsed 46m)
+[2026-08-29 17:41:12] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:41:13] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:41:13]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:41:13]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:42:13] poll #48 — status: KernelWorkerStatus.ERROR (monitor elapsed 47m)
+[2026-08-29 17:42:13] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:42:14] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:42:14]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:42:14]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:43:15] poll #49 — status: KernelWorkerStatus.ERROR (monitor elapsed 48m)
+[2026-08-29 17:43:15] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:43:15] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:43:15]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:43:15]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:44:16] poll #50 — status: KernelWorkerStatus.ERROR (monitor elapsed 49m)
+[2026-08-29 17:44:16] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:44:17] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:44:17]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:44:17]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:45:17] poll #51 — status: KernelWorkerStatus.ERROR (monitor elapsed 50m)
+[2026-08-29 17:45:17] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:45:18] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:45:18]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:45:18]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:46:18] poll #52 — status: KernelWorkerStatus.ERROR (monitor elapsed 51m)
+[2026-08-29 17:46:18] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:46:19] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:46:19]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:46:19]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:47:19] poll #53 — status: KernelWorkerStatus.ERROR (monitor elapsed 52m)
+[2026-08-29 17:47:19] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:47:20] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:47:20]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:47:20]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:48:20] poll #54 — status: KernelWorkerStatus.ERROR (monitor elapsed 53m)
+[2026-08-29 17:48:20] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:48:21] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:48:21]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:48:21]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:49:22] poll #55 — status: KernelWorkerStatus.ERROR (monitor elapsed 55m)
+[2026-08-29 17:49:22] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:49:22] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:49:22]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:49:22]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:50:25] poll #56 — status: KernelWorkerStatus.ERROR (monitor elapsed 56m)
+[2026-08-29 17:50:25] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:50:26] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:50:26]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:50:26]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:51:26] poll #57 — status: KernelWorkerStatus.ERROR (monitor elapsed 57m)
+[2026-08-29 17:51:26] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:51:27] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:51:27]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:51:27]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:52:28] poll #58 — status: KernelWorkerStatus.ERROR (monitor elapsed 58m)
+[2026-08-29 17:52:28] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:52:28] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:52:28]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:52:28]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:53:29] poll #59 — status: KernelWorkerStatus.ERROR (monitor elapsed 59m)
+[2026-08-29 17:53:29] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:53:30] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:53:30]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:53:30]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:54:31] poll #60 — status: KernelWorkerStatus.ERROR (monitor elapsed 60m)
+[2026-08-29 17:54:31] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:54:31] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:54:32]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:54:32]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:55:32] poll #61 — status: KernelWorkerStatus.ERROR (monitor elapsed 61m)
+[2026-08-29 17:55:32] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:55:33] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:55:33]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:55:33]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:56:34] poll #62 — status: KernelWorkerStatus.ERROR (monitor elapsed 62m)
+[2026-08-29 17:56:34] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:56:35] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:56:35]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:56:35]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:57:35] poll #63 — status: KernelWorkerStatus.ERROR (monitor elapsed 63m)
+[2026-08-29 17:57:35] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:57:36] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:57:36]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:57:36]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:58:37] poll #64 — status: KernelWorkerStatus.ERROR (monitor elapsed 64m)
+[2026-08-29 17:58:37] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:58:38] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:58:38]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:58:38]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 17:59:38] poll #65 — status: KernelWorkerStatus.ERROR (monitor elapsed 65m)
+[2026-08-29 17:59:38] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 17:59:39] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 17:59:39]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 17:59:39]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:00:39] poll #66 — status: KernelWorkerStatus.ERROR (monitor elapsed 66m)
+[2026-08-29 18:00:39] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:00:40] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:00:40]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:00:40]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:01:40] poll #67 — status: KernelWorkerStatus.ERROR (monitor elapsed 67m)
+[2026-08-29 18:01:40] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:01:41] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:01:41]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:01:41]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:02:41] poll #68 — status: KernelWorkerStatus.ERROR (monitor elapsed 68m)
+[2026-08-29 18:02:41] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:02:42] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:02:42]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:02:42]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:03:42] poll #69 — status: KernelWorkerStatus.ERROR (monitor elapsed 69m)
+[2026-08-29 18:03:42] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:03:43] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:03:43]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:03:43]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:04:44] poll #70 — status: KernelWorkerStatus.ERROR (monitor elapsed 70m)
+[2026-08-29 18:04:44] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:04:44] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:04:44]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:04:44]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:05:45] poll #71 — status: KernelWorkerStatus.ERROR (monitor elapsed 71m)
+[2026-08-29 18:05:45] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:05:45] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:05:45]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:05:45]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:06:46] poll #72 — status: KernelWorkerStatus.ERROR (monitor elapsed 72m)
+[2026-08-29 18:06:46] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:06:46] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:06:46]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:06:46]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:07:47] poll #73 — status: KernelWorkerStatus.ERROR (monitor elapsed 73m)
+[2026-08-29 18:07:47] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:07:47] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:07:47]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:07:47]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:08:48] poll #74 — status: KernelWorkerStatus.ERROR (monitor elapsed 74m)
+[2026-08-29 18:08:48] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:08:48] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:08:48]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:08:48]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:09:49] poll #75 — status: KernelWorkerStatus.ERROR (monitor elapsed 75m)
+[2026-08-29 18:09:49] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:09:49] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:09:50]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:09:50]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:10:50] poll #76 — status: KernelWorkerStatus.ERROR (monitor elapsed 76m)
+[2026-08-29 18:10:50] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:10:51] 📊 {'ts': '2026-08-29T20:52:11Z', 'status': 'loading_model'}
+[2026-08-29 18:10:51]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:10:51]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:11:51] poll #77 — status: KernelWorkerStatus.RUNNING (monitor elapsed 77m)
+[2026-08-29 18:11:51]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:12:52] poll #78 — status: KernelWorkerStatus.RUNNING (monitor elapsed 78m)
+[2026-08-29 18:12:52]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:13:52] poll #79 — status: KernelWorkerStatus.RUNNING (monitor elapsed 79m)
+[2026-08-29 18:13:53]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:14:53] poll #80 — status: KernelWorkerStatus.RUNNING (monitor elapsed 80m)
+[2026-08-29 18:14:54]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:15:54] poll #81 — status: KernelWorkerStatus.RUNNING (monitor elapsed 81m)
+[2026-08-29 18:15:54]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:16:55] poll #82 — status: KernelWorkerStatus.ERROR (monitor elapsed 82m)
+[2026-08-29 18:16:55] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:16:56] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:16:56]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:16:56]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:17:56] poll #83 — status: KernelWorkerStatus.ERROR (monitor elapsed 83m)
+[2026-08-29 18:17:56] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:17:57] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:17:57]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:17:57]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:18:57] poll #84 — status: KernelWorkerStatus.ERROR (monitor elapsed 84m)
+[2026-08-29 18:18:57] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:18:58] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:18:58]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:18:58]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:19:59] poll #85 — status: KernelWorkerStatus.ERROR (monitor elapsed 85m)
+[2026-08-29 18:19:59] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:19:59] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:19:59]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:19:59]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:21:00] poll #86 — status: KernelWorkerStatus.ERROR (monitor elapsed 86m)
+[2026-08-29 18:21:00] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:21:00] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:21:00]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:21:00]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:22:01] poll #87 — status: KernelWorkerStatus.ERROR (monitor elapsed 87m)
+[2026-08-29 18:22:01] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:22:01] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:22:01]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:22:01]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:23:02] poll #88 — status: KernelWorkerStatus.ERROR (monitor elapsed 88m)
+[2026-08-29 18:23:02] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:23:02] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:23:02]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:23:02]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:24:03] poll #89 — status: KernelWorkerStatus.ERROR (monitor elapsed 89m)
+[2026-08-29 18:24:03] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:24:04] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:24:04]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:24:04]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:25:04] poll #90 — status: KernelWorkerStatus.ERROR (monitor elapsed 90m)
+[2026-08-29 18:25:04] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:25:05] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:25:05]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:25:05]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:26:05] poll #91 — status: KernelWorkerStatus.ERROR (monitor elapsed 91m)
+[2026-08-29 18:26:05] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:26:06] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:26:06]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:26:06]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:27:06] poll #92 — status: KernelWorkerStatus.ERROR (monitor elapsed 92m)
+[2026-08-29 18:27:06] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:27:07] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:27:07]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:27:07]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:28:07] poll #93 — status: KernelWorkerStatus.ERROR (monitor elapsed 93m)
+[2026-08-29 18:28:07] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:28:07] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:28:07]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:28:07]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:29:08] poll #94 — status: KernelWorkerStatus.ERROR (monitor elapsed 94m)
+[2026-08-29 18:29:08] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:29:09] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:29:09]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:29:09]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:30:09] poll #95 — status: KernelWorkerStatus.ERROR (monitor elapsed 95m)
+[2026-08-29 18:30:09] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:30:10] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:30:10]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:30:10]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:31:10] poll #96 — status: KernelWorkerStatus.ERROR (monitor elapsed 96m)
+[2026-08-29 18:31:10] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:31:11] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:31:11]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:31:11]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:32:11] poll #97 — status: KernelWorkerStatus.ERROR (monitor elapsed 97m)
+[2026-08-29 18:32:11] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:32:12] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:32:12]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:32:12]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:33:12] poll #98 — status: KernelWorkerStatus.ERROR (monitor elapsed 98m)
+[2026-08-29 18:33:12] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:33:13] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:33:13]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:33:13]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:34:13] poll #99 — status: KernelWorkerStatus.ERROR (monitor elapsed 99m)
+[2026-08-29 18:34:13] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:34:14] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:34:14]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:34:14]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:35:14] poll #100 — status: KernelWorkerStatus.ERROR (monitor elapsed 100m)
+[2026-08-29 18:35:14] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:35:15] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:35:15]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:35:15]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:36:15] poll #101 — status: KernelWorkerStatus.ERROR (monitor elapsed 101m)
+[2026-08-29 18:36:15] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:36:16] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:36:16]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:36:16]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:37:16] poll #102 — status: KernelWorkerStatus.ERROR (monitor elapsed 102m)
+[2026-08-29 18:37:16] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:37:17] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:37:17]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:37:17]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:38:17] poll #103 — status: KernelWorkerStatus.ERROR (monitor elapsed 103m)
+[2026-08-29 18:38:17] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:38:18] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:38:18]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:38:18]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:39:19] poll #104 — status: KernelWorkerStatus.ERROR (monitor elapsed 104m)
+[2026-08-29 18:39:19] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:39:19] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:39:19]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:39:19]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:40:20] poll #105 — status: KernelWorkerStatus.ERROR (monitor elapsed 105m)
+[2026-08-29 18:40:20] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:40:20] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:40:20]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:40:20]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:41:21] poll #106 — status: KernelWorkerStatus.ERROR (monitor elapsed 107m)
+[2026-08-29 18:41:21] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:41:21] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:41:21]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:41:21]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:42:22] poll #107 — status: KernelWorkerStatus.ERROR (monitor elapsed 108m)
+[2026-08-29 18:42:22] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:42:22] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:42:22]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:42:22]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:43:23] poll #108 — status: KernelWorkerStatus.ERROR (monitor elapsed 109m)
+[2026-08-29 18:43:23] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:43:23] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:43:23]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:43:23]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:44:24] poll #109 — status: KernelWorkerStatus.ERROR (monitor elapsed 110m)
+[2026-08-29 18:44:24] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:44:24] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:44:24]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:44:24]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:45:25] poll #110 — status: KernelWorkerStatus.ERROR (monitor elapsed 111m)
+[2026-08-29 18:45:25] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:45:25] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:45:25]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:45:25]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:46:26] poll #111 — status: KernelWorkerStatus.ERROR (monitor elapsed 112m)
+[2026-08-29 18:46:26] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:46:27] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:46:27]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:46:27]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:47:27] poll #112 — status: KernelWorkerStatus.ERROR (monitor elapsed 113m)
+[2026-08-29 18:47:27] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:47:28] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:47:28]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:47:28]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:48:28] poll #113 — status: KernelWorkerStatus.ERROR (monitor elapsed 114m)
+[2026-08-29 18:48:28] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:48:28] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:48:28]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:48:28]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:49:29] poll #114 — status: KernelWorkerStatus.ERROR (monitor elapsed 115m)
+[2026-08-29 18:49:29] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:49:30] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:49:30]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:49:30]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:50:30] poll #115 — status: KernelWorkerStatus.ERROR (monitor elapsed 116m)
+[2026-08-29 18:50:30] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:50:31] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:50:31]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:50:31]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:51:31] poll #116 — status: KernelWorkerStatus.ERROR (monitor elapsed 117m)
+[2026-08-29 18:51:31] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:51:32] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:51:32]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:51:32]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:52:32] poll #117 — status: KernelWorkerStatus.ERROR (monitor elapsed 118m)
+[2026-08-29 18:52:32] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:52:33] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:52:33]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:52:33]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:53:33] poll #118 — status: KernelWorkerStatus.ERROR (monitor elapsed 119m)
+[2026-08-29 18:53:33] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:53:34] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:53:34]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:53:34]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:54:34] poll #119 — status: KernelWorkerStatus.ERROR (monitor elapsed 120m)
+[2026-08-29 18:54:34] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:54:35] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:54:35]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:54:35]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:55:35] poll #120 — status: KernelWorkerStatus.ERROR (monitor elapsed 121m)
+[2026-08-29 18:55:35] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:55:36] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:55:36]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:55:36]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:56:36] poll #121 — status: KernelWorkerStatus.ERROR (monitor elapsed 122m)
+[2026-08-29 18:56:36] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:56:37] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:56:37]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:56:37]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:57:37] poll #122 — status: KernelWorkerStatus.ERROR (monitor elapsed 123m)
+[2026-08-29 18:57:37] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:57:38] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:57:38]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:57:38]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:58:38] poll #123 — status: KernelWorkerStatus.ERROR (monitor elapsed 124m)
+[2026-08-29 18:58:38] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:58:39] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:58:39]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:58:39]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 18:59:39] poll #124 — status: KernelWorkerStatus.ERROR (monitor elapsed 125m)
+[2026-08-29 18:59:39] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 18:59:40] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 18:59:40]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 18:59:40]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:00:40] poll #125 — status: KernelWorkerStatus.ERROR (monitor elapsed 126m)
+[2026-08-29 19:00:40] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:00:41] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:00:41]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:00:41]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:01:41] poll #126 — status: KernelWorkerStatus.ERROR (monitor elapsed 127m)
+[2026-08-29 19:01:41] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:01:42] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:01:42]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:01:42]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:02:42] poll #127 — status: KernelWorkerStatus.ERROR (monitor elapsed 128m)
+[2026-08-29 19:02:42] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:02:43] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:02:43]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:02:43]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:03:43] poll #128 — status: KernelWorkerStatus.ERROR (monitor elapsed 129m)
+[2026-08-29 19:03:43] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:03:44] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:03:44]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:03:44]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:04:44] poll #129 — status: KernelWorkerStatus.ERROR (monitor elapsed 130m)
+[2026-08-29 19:04:44] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:04:45] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:04:45]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:04:45]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:05:45] poll #130 — status: KernelWorkerStatus.ERROR (monitor elapsed 131m)
+[2026-08-29 19:05:45] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:05:46] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:05:46]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:05:46]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:06:46] poll #131 — status: KernelWorkerStatus.ERROR (monitor elapsed 132m)
+[2026-08-29 19:06:46] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:06:47] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:06:47]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:06:47]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:07:48] poll #132 — status: KernelWorkerStatus.ERROR (monitor elapsed 133m)
+[2026-08-29 19:07:48] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:07:48] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:07:48]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:07:48]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:08:49] poll #133 — status: KernelWorkerStatus.ERROR (monitor elapsed 134m)
+[2026-08-29 19:08:49] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:08:50] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:08:50]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:08:50]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:09:50] poll #134 — status: KernelWorkerStatus.ERROR (monitor elapsed 135m)
+[2026-08-29 19:09:50] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:09:51] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:09:51]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:09:51]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:10:51] poll #135 — status: KernelWorkerStatus.ERROR (monitor elapsed 136m)
+[2026-08-29 19:10:51] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:10:52] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:10:52]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:10:52]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:11:52] poll #136 — status: KernelWorkerStatus.ERROR (monitor elapsed 137m)
+[2026-08-29 19:11:52] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:11:53] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:11:53]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:11:53]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:12:53] poll #137 — status: KernelWorkerStatus.ERROR (monitor elapsed 138m)
+[2026-08-29 19:12:53] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:12:54] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:12:54]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:12:54]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:13:54] poll #138 — status: KernelWorkerStatus.ERROR (monitor elapsed 139m)
+[2026-08-29 19:13:54] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:13:55] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:13:55]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:13:55]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:14:55] poll #139 — status: KernelWorkerStatus.ERROR (monitor elapsed 140m)
+[2026-08-29 19:14:55] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:14:56] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:14:56]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:14:56]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:15:56] poll #140 — status: KernelWorkerStatus.ERROR (monitor elapsed 141m)
+[2026-08-29 19:15:56] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:15:57] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:15:57]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:15:57]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:16:57] poll #141 — status: KernelWorkerStatus.ERROR (monitor elapsed 142m)
+[2026-08-29 19:16:57] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:16:58] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:16:58]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:16:58]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:17:58] poll #142 — status: KernelWorkerStatus.ERROR (monitor elapsed 143m)
+[2026-08-29 19:17:58] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:17:59] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:17:59]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:17:59]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:18:59] poll #143 — status: KernelWorkerStatus.ERROR (monitor elapsed 144m)
+[2026-08-29 19:18:59] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:19:00] 📊 {'ts': '2026-08-29T22:11:50Z', 'status': 'loading_model'}
+[2026-08-29 19:19:00]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:19:00]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:20:00] poll #144 — status: KernelWorkerStatus.RUNNING (monitor elapsed 145m)
+[2026-08-29 19:20:00]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:21:01] poll #145 — status: KernelWorkerStatus.RUNNING (monitor elapsed 146m)
+[2026-08-29 19:21:01]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:22:02] poll #146 — status: KernelWorkerStatus.RUNNING (monitor elapsed 147m)
+[2026-08-29 19:22:02]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:23:02] poll #147 — status: KernelWorkerStatus.RUNNING (monitor elapsed 148m)
+[2026-08-29 19:23:03]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:24:03] poll #148 — status: KernelWorkerStatus.RUNNING (monitor elapsed 149m)
+[2026-08-29 19:24:04]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:25:04] poll #149 — status: KernelWorkerStatus.RUNNING (monitor elapsed 150m)
+[2026-08-29 19:25:04]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:26:05] poll #150 — status: KernelWorkerStatus.ERROR (monitor elapsed 151m)
+[2026-08-29 19:26:05] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:26:06] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:26:06]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:26:06]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:27:06] poll #151 — status: KernelWorkerStatus.ERROR (monitor elapsed 152m)
+[2026-08-29 19:27:06] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:27:07] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:27:07]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:27:07]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:28:07] poll #152 — status: KernelWorkerStatus.ERROR (monitor elapsed 153m)
+[2026-08-29 19:28:07] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:28:08] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:28:08]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:28:08]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:29:08] poll #153 — status: KernelWorkerStatus.ERROR (monitor elapsed 154m)
+[2026-08-29 19:29:08] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:29:09] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:29:09]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:29:09]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:30:09] poll #154 — status: KernelWorkerStatus.ERROR (monitor elapsed 155m)
+[2026-08-29 19:30:09] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:30:10] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:30:10]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:30:10]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:31:10] poll #155 — status: KernelWorkerStatus.ERROR (monitor elapsed 156m)
+[2026-08-29 19:31:10] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:31:11] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:31:11]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:31:11]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:32:11] poll #156 — status: KernelWorkerStatus.ERROR (monitor elapsed 157m)
+[2026-08-29 19:32:11] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:32:12] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:32:12]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:32:12]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:33:12] poll #157 — status: KernelWorkerStatus.ERROR (monitor elapsed 158m)
+[2026-08-29 19:33:12] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:33:13] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:33:13]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:33:13]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:34:13] poll #158 — status: KernelWorkerStatus.ERROR (monitor elapsed 159m)
+[2026-08-29 19:34:13] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:34:14] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:34:14]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:34:14]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:35:14] poll #159 — status: KernelWorkerStatus.ERROR (monitor elapsed 160m)
+[2026-08-29 19:35:14] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:35:15] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:35:15]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:35:15]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:36:15] poll #160 — status: KernelWorkerStatus.ERROR (monitor elapsed 161m)
+[2026-08-29 19:36:15] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:36:16] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:36:16]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:36:16]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:37:16] poll #161 — status: KernelWorkerStatus.ERROR (monitor elapsed 162m)
+[2026-08-29 19:37:16] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:37:17] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:37:17]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:37:17]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:38:17] poll #162 — status: KernelWorkerStatus.ERROR (monitor elapsed 163m)
+[2026-08-29 19:38:17] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:38:18] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:38:18]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:38:18]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:39:18] poll #163 — status: KernelWorkerStatus.ERROR (monitor elapsed 164m)
+[2026-08-29 19:39:18] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:39:19] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:39:19]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:39:19]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:40:19] poll #164 — status: KernelWorkerStatus.ERROR (monitor elapsed 165m)
+[2026-08-29 19:40:19] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:40:20] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:40:20]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:40:20]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:41:20] poll #165 — status: KernelWorkerStatus.ERROR (monitor elapsed 166m)
+[2026-08-29 19:41:20] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:41:21] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:41:21]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:41:21]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:42:21] poll #166 — status: KernelWorkerStatus.ERROR (monitor elapsed 168m)
+[2026-08-29 19:42:21] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:42:22] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:42:22]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:42:22]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:43:22] poll #167 — status: KernelWorkerStatus.ERROR (monitor elapsed 169m)
+[2026-08-29 19:43:22] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:43:23] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:43:23]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:43:23]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:44:23] poll #168 — status: KernelWorkerStatus.ERROR (monitor elapsed 170m)
+[2026-08-29 19:44:23] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:44:24] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:44:24]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:44:24]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:45:24] poll #169 — status: KernelWorkerStatus.ERROR (monitor elapsed 171m)
+[2026-08-29 19:45:24] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:45:25] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:45:25]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:45:25]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:46:25] poll #170 — status: KernelWorkerStatus.ERROR (monitor elapsed 172m)
+[2026-08-29 19:46:25] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:46:26] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:46:26]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:46:26]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:47:26] poll #171 — status: KernelWorkerStatus.ERROR (monitor elapsed 173m)
+[2026-08-29 19:47:26] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:47:27] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:47:27]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:47:27]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:48:27] poll #172 — status: KernelWorkerStatus.ERROR (monitor elapsed 174m)
+[2026-08-29 19:48:27] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:48:28] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:48:28]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:48:28]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:49:28] poll #173 — status: KernelWorkerStatus.ERROR (monitor elapsed 175m)
+[2026-08-29 19:49:28] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:49:29] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:49:29]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:49:29]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:50:29] poll #174 — status: KernelWorkerStatus.ERROR (monitor elapsed 176m)
+[2026-08-29 19:50:29] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:50:30] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:50:30]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:50:30]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:51:30] poll #175 — status: KernelWorkerStatus.ERROR (monitor elapsed 177m)
+[2026-08-29 19:51:30] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:51:31] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:51:31]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:51:31]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:52:31] poll #176 — status: KernelWorkerStatus.ERROR (monitor elapsed 178m)
+[2026-08-29 19:52:31] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:52:32] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:52:32]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:52:32]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:53:32] poll #177 — status: KernelWorkerStatus.ERROR (monitor elapsed 179m)
+[2026-08-29 19:53:32] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:53:33] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:53:33]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:53:33]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:54:33] poll #178 — status: KernelWorkerStatus.ERROR (monitor elapsed 180m)
+[2026-08-29 19:54:33] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:54:34] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:54:34]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:54:34]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:55:34] poll #179 — status: KernelWorkerStatus.ERROR (monitor elapsed 181m)
+[2026-08-29 19:55:34] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:55:35] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:55:35]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:55:35]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:56:35] poll #180 — status: KernelWorkerStatus.ERROR (monitor elapsed 182m)
+[2026-08-29 19:56:35] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:56:36] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:56:36]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:56:36]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:57:36] poll #181 — status: KernelWorkerStatus.ERROR (monitor elapsed 183m)
+[2026-08-29 19:57:36] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:57:37] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:57:37]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:57:37]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:58:37] poll #182 — status: KernelWorkerStatus.ERROR (monitor elapsed 184m)
+[2026-08-29 19:58:37] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:58:38] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:58:38]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:58:38]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 19:59:38] poll #183 — status: KernelWorkerStatus.ERROR (monitor elapsed 185m)
+[2026-08-29 19:59:38] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 19:59:39] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 19:59:39]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 19:59:39]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:00:39] poll #184 — status: KernelWorkerStatus.ERROR (monitor elapsed 186m)
+[2026-08-29 20:00:39] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:00:40] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:00:40]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:00:40]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:01:40] poll #185 — status: KernelWorkerStatus.ERROR (monitor elapsed 187m)
+[2026-08-29 20:01:40] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:01:41] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:01:41]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:01:41]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:02:41] poll #186 — status: KernelWorkerStatus.ERROR (monitor elapsed 188m)
+[2026-08-29 20:02:41] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:02:42] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:02:42]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:02:42]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:03:42] poll #187 — status: KernelWorkerStatus.ERROR (monitor elapsed 189m)
+[2026-08-29 20:03:42] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:03:43] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:03:43]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:03:43]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:04:43] poll #188 — status: KernelWorkerStatus.ERROR (monitor elapsed 190m)
+[2026-08-29 20:04:43] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:04:44] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:04:44]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:04:44]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:05:44] poll #189 — status: KernelWorkerStatus.ERROR (monitor elapsed 191m)
+[2026-08-29 20:05:44] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:05:45] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:05:45]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:05:45]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:06:45] poll #190 — status: KernelWorkerStatus.ERROR (monitor elapsed 192m)
+[2026-08-29 20:06:45] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:06:46] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:06:46]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:06:46]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:07:46] poll #191 — status: KernelWorkerStatus.ERROR (monitor elapsed 193m)
+[2026-08-29 20:07:46] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:07:47] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:07:47]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:07:47]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:08:47] poll #192 — status: KernelWorkerStatus.ERROR (monitor elapsed 194m)
+[2026-08-29 20:08:47] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:08:48] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:08:48]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:08:48]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:09:48] poll #193 — status: KernelWorkerStatus.ERROR (monitor elapsed 195m)
+[2026-08-29 20:09:48] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:09:49] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:09:49]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:09:49]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:10:49] poll #194 — status: KernelWorkerStatus.ERROR (monitor elapsed 196m)
+[2026-08-29 20:10:49] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:10:50] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:10:50]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:10:50]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:11:50] poll #195 — status: KernelWorkerStatus.ERROR (monitor elapsed 197m)
+[2026-08-29 20:11:50] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:11:51] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:11:51]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:11:51]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:12:51] poll #196 — status: KernelWorkerStatus.ERROR (monitor elapsed 198m)
+[2026-08-29 20:12:51] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:12:52] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:12:52]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:12:52]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:13:52] poll #197 — status: KernelWorkerStatus.ERROR (monitor elapsed 199m)
+[2026-08-29 20:13:52] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:13:53] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:13:53]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:13:53]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:14:53] poll #198 — status: KernelWorkerStatus.ERROR (monitor elapsed 200m)
+[2026-08-29 20:14:53] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:14:54] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:14:54]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:14:54]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:15:54] poll #199 — status: KernelWorkerStatus.ERROR (monitor elapsed 201m)
+[2026-08-29 20:15:54] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:15:55] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:15:55]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:15:55]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:16:55] poll #200 — status: KernelWorkerStatus.ERROR (monitor elapsed 202m)
+[2026-08-29 20:16:55] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:16:56] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:16:56]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:16:56]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:17:56] poll #201 — status: KernelWorkerStatus.ERROR (monitor elapsed 203m)
+[2026-08-29 20:17:56] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:17:57] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:17:57]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:17:57]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:18:57] poll #202 — status: KernelWorkerStatus.ERROR (monitor elapsed 204m)
+[2026-08-29 20:18:57] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:18:58] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:18:58]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:18:58]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:19:58] poll #203 — status: KernelWorkerStatus.ERROR (monitor elapsed 205m)
+[2026-08-29 20:19:58] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:19:59] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:19:59]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:19:59]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:21:00] poll #204 — status: KernelWorkerStatus.ERROR (monitor elapsed 206m)
+[2026-08-29 20:21:00] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:21:00] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:21:00]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:21:00]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:22:01] poll #205 — status: KernelWorkerStatus.ERROR (monitor elapsed 207m)
+[2026-08-29 20:22:01] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:22:01] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:22:01]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:22:01]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:23:02] poll #206 — status: KernelWorkerStatus.ERROR (monitor elapsed 208m)
+[2026-08-29 20:23:02] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:23:02] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:23:02]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:23:02]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:24:03] poll #207 — status: KernelWorkerStatus.ERROR (monitor elapsed 209m)
+[2026-08-29 20:24:03] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:24:03] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:24:03]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:24:03]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:25:04] poll #208 — status: KernelWorkerStatus.ERROR (monitor elapsed 210m)
+[2026-08-29 20:25:04] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:25:04] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:25:04]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:25:04]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:26:05] poll #209 — status: KernelWorkerStatus.ERROR (monitor elapsed 211m)
+[2026-08-29 20:26:05] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:26:05] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:26:05]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:26:05]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:27:06] poll #210 — status: KernelWorkerStatus.ERROR (monitor elapsed 212m)
+[2026-08-29 20:27:06] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:27:06] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:27:06]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:27:06]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:28:07] poll #211 — status: KernelWorkerStatus.ERROR (monitor elapsed 213m)
+[2026-08-29 20:28:07] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:28:07] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:28:07]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:28:07]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:29:08] poll #212 — status: KernelWorkerStatus.ERROR (monitor elapsed 214m)
+[2026-08-29 20:29:08] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:29:08] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:29:08]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:29:08]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:30:09] poll #213 — status: KernelWorkerStatus.ERROR (monitor elapsed 215m)
+[2026-08-29 20:30:09] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:30:09] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:30:09]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:30:09]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:31:10] poll #214 — status: KernelWorkerStatus.ERROR (monitor elapsed 216m)
+[2026-08-29 20:31:10] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:31:10] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:31:10]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:31:10]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:32:11] poll #215 — status: KernelWorkerStatus.ERROR (monitor elapsed 217m)
+[2026-08-29 20:32:11] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:32:11] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:32:11]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:32:11]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:33:12] poll #216 — status: KernelWorkerStatus.ERROR (monitor elapsed 218m)
+[2026-08-29 20:33:12] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:33:12] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:33:12]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:33:12]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:34:13] poll #217 — status: KernelWorkerStatus.ERROR (monitor elapsed 219m)
+[2026-08-29 20:34:13] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:34:13] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:34:13]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:34:13]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:35:14] poll #218 — status: KernelWorkerStatus.ERROR (monitor elapsed 220m)
+[2026-08-29 20:35:14] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:35:14] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:35:14]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:35:14]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:36:15] poll #219 — status: KernelWorkerStatus.ERROR (monitor elapsed 221m)
+[2026-08-29 20:36:15] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:36:15] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:36:15]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:36:15]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:37:16] poll #220 — status: KernelWorkerStatus.ERROR (monitor elapsed 222m)
+[2026-08-29 20:37:16] ⚠️ Kernel KernelWorkerStatus.ERROR (may flip to RUNNING when a new run is committed) — snapshotting…
+[2026-08-29 20:37:16] 📊 {'ts': '2026-08-29T23:20:22Z', 'status': 'loading_model'}
+[2026-08-29 20:37:16]   output snapshot → /home/llmlab/Desktop/visual-ai-architect/training/cloud/kaggle-r28-output
+[2026-08-29 20:37:16]    Live view: https://www.kaggle.com/code/stevenawoods/vaca-qlora-round28-missed-corpus-14b
+[2026-08-29 20:38:17] poll #221 — status: UNKNOWN (monitor elapsed 223m)
+[2026-08-29 20:39:17] poll #222 — status: UNKNOWN (monitor elapsed 224m)
+[2026-08-29 20:40:18] poll #223 — status: UNKNOWN (monitor elapsed 225m)
+[2026-08-29 20:41:19] poll #224 — status: UNKNOWN (monitor elapsed 226m)
+[2026-08-29 20:42:19] poll #225 — status: UNKNOWN (monitor elapsed 227m)
+[2026-08-29 20:43:20] poll #226 — status: UNKNOWN (monitor elapsed 228m)
+[2026-08-29 20:44:21] poll #227 — status: UNKNOWN (monitor elapsed 230m)
+[2026-08-29 20:45:21] poll #228 — status: UNKNOWN (monitor elapsed 231m)
+[2026-08-29 20:46:22] poll #229 — status: UNKNOWN (monitor elapsed 232m)
+[2026-08-29 20:47:22] poll #230 — status: UNKNOWN (monitor elapsed 233m)
+[2026-08-29 20:48:23] poll #231 — status: UNKNOWN (monitor elapsed 234m)
+[2026-08-29 20:49:24] poll #232 — status: UNKNOWN (monitor elapsed 235m)
+[2026-08-29 20:50:24] poll #233 — status: UNKNOWN (monitor elapsed 236m)
+[2026-08-29 20:51:25] poll #234 — status: UNKNOWN (monitor elapsed 237m)
+[2026-08-29 20:52:26] poll #235 — status: UNKNOWN (monitor elapsed 238m)
+[2026-08-29 20:53:26] poll #236 — status: UNKNOWN (monitor elapsed 239m)
+[2026-08-29 20:54:27] poll #237 — status: UNKNOWN (monitor elapsed 240m)
+[2026-08-29 20:55:27] poll #238 — status: UNKNOWN (monitor elapsed 241m)
+[2026-08-29 20:56:28] poll #239 — status: UNKNOWN (monitor elapsed 242m)
+[2026-08-29 20:57:29] poll #240 — status: UNKNOWN (monitor elapsed 243m)
+[2026-08-29 20:58:29] poll #241 — status: UNKNOWN (monitor elapsed 244m)
+[2026-08-29 20:59:30] poll #242 — status: UNKNOWN (monitor elapsed 245m)
+[2026-08-29 21:00:31] poll #243 — status: UNKNOWN (monitor elapsed 246m)
+[2026-08-29 21:01:31] poll #244 — status: UNKNOWN (monitor elapsed 247m)
+[2026-08-29 21:02:32] poll #245 — status: UNKNOWN (monitor elapsed 248m)
+[2026-08-29 21:03:32] poll #246 — status: UNKNOWN (monitor elapsed 249m)
+[2026-08-29 21:04:33] poll #247 — status: UNKNOWN (monitor elapsed 250m)
+[2026-08-29 21:05:34] poll #248 — status: UNKNOWN (monitor elapsed 251m)
+[2026-08-29 21:06:34] poll #249 — status: UNKNOWN (monitor elapsed 252m)
+[2026-08-29 21:07:35] poll #250 — status: UNKNOWN (monitor elapsed 253m)
+[2026-08-29 21:08:36] poll #251 — status: UNKNOWN (monitor elapsed 254m)
+[2026-08-29 21:09:36] poll #252 — status: UNKNOWN (monitor elapsed 255m)
+[2026-08-29 21:10:37] poll #253 — status: UNKNOWN (monitor elapsed 256m)
+[2026-08-29 21:11:37] poll #254 — status: UNKNOWN (monitor elapsed 257m)
+[2026-08-29 21:12:38] poll #255 — status: UNKNOWN (monitor elapsed 258m)
+[2026-08-29 21:13:39] poll #256 — status: UNKNOWN (monitor elapsed 259m)
+[2026-08-29 21:14:39] poll #257 — status: UNKNOWN (monitor elapsed 260m)
+[2026-08-29 21:15:40] poll #258 — status: UNKNOWN (monitor elapsed 261m)
+[2026-08-29 21:16:41] poll #259 — status: UNKNOWN (monitor elapsed 262m)
+[2026-08-29 21:17:41] poll #260 — status: UNKNOWN (monitor elapsed 263m)
+[2026-08-29 21:18:42] poll #261 — status: UNKNOWN (monitor elapsed 264m)
+[2026-08-29 21:19:42] poll #262 — status: UNKNOWN (monitor elapsed 265m)
+[2026-08-29 21:20:43] poll #263 — status: UNKNOWN (monitor elapsed 266m)
+[2026-08-29 21:21:44] poll #264 — status: UNKNOWN (monitor elapsed 267m)
+[2026-08-29 21:22:44] poll #265 — status: UNKNOWN (monitor elapsed 268m)
+[2026-08-29 21:23:45] poll #266 — status: UNKNOWN (monitor elapsed 269m)
+[2026-08-29 21:24:45] poll #267 — status: UNKNOWN (monitor elapsed 270m)
+[2026-08-29 21:25:46] poll #268 — status: UNKNOWN (monitor elapsed 271m)
+[2026-08-29 21:26:47] poll #269 — status: UNKNOWN (monitor elapsed 272m)
+[2026-08-29 21:27:47] poll #270 — status: UNKNOWN (monitor elapsed 273m)
+[2026-08-29 21:28:48] poll #271 — status: UNKNOWN (monitor elapsed 274m)
+[2026-08-29 21:29:49] poll #272 — status: UNKNOWN (monitor elapsed 275m)
+[2026-08-29 21:30:49] poll #273 — status: UNKNOWN (monitor elapsed 276m)
+[2026-08-29 21:31:50] poll #274 — status: UNKNOWN (monitor elapsed 277m)
+[2026-08-29 21:32:50] poll #275 — status: UNKNOWN (monitor elapsed 278m)
+[2026-08-29 21:33:51] poll #276 — status: UNKNOWN (monitor elapsed 279m)
+[2026-08-29 21:34:52] poll #277 — status: UNKNOWN (monitor elapsed 280m)
+[2026-08-29 21:35:52] poll #278 — status: UNKNOWN (monitor elapsed 281m)
+[2026-08-29 21:36:53] poll #279 — status: UNKNOWN (monitor elapsed 282m)
+[2026-08-29 21:37:53] poll #280 — status: UNKNOWN (monitor elapsed 283m)
+[2026-08-29 21:38:54] poll #281 — status: UNKNOWN (monitor elapsed 284m)
+[2026-08-29 21:39:55] poll #282 — status: UNKNOWN (monitor elapsed 285m)
+[2026-08-29 21:40:55] poll #283 — status: UNKNOWN (monitor elapsed 286m)
+[2026-08-29 21:41:56] poll #284 — status: UNKNOWN (monitor elapsed 287m)
+[2026-08-29 21:42:57] poll #285 — status: UNKNOWN (monitor elapsed 288m)
+[2026-08-29 21:43:57] poll #286 — status: UNKNOWN (monitor elapsed 289m)
+[2026-08-29 21:44:58] poll #287 — status: UNKNOWN (monitor elapsed 290m)
+[2026-08-29 21:45:58] poll #288 — status: UNKNOWN (monitor elapsed 291m)
+[2026-08-29 21:46:59] poll #289 — status: UNKNOWN (monitor elapsed 292m)
+[2026-08-29 21:48:00] poll #290 — status: UNKNOWN (monitor elapsed 293m)
+[2026-08-29 21:49:00] poll #291 — status: UNKNOWN (monitor elapsed 294m)
+[2026-08-29 21:50:01] poll #292 — status: UNKNOWN (monitor elapsed 295m)
+[2026-08-29 21:51:02] poll #293 — status: UNKNOWN (monitor elapsed 296m)
+[2026-08-29 21:52:02] poll #294 — status: UNKNOWN (monitor elapsed 297m)
+[2026-08-29 21:53:03] poll #295 — status: UNKNOWN (monitor elapsed 298m)
+[2026-08-29 21:54:03] poll #296 — status: UNKNOWN (monitor elapsed 299m)
+[2026-08-29 21:55:04] poll #297 — status: UNKNOWN (monitor elapsed 300m)
+[2026-08-29 21:56:05] poll #298 — status: UNKNOWN (monitor elapsed 301m)
+[2026-08-29 21:57:05] poll #299 — status: UNKNOWN (monitor elapsed 302m)
+[2026-08-29 21:58:06] poll #300 — status: UNKNOWN (monitor elapsed 303m)
+[2026-08-29 21:59:07] poll #301 — status: UNKNOWN (monitor elapsed 304m)
+[2026-08-29 22:00:08] poll #302 — status: UNKNOWN (monitor elapsed 305m)
+[2026-08-29 22:01:09] poll #303 — status: UNKNOWN (monitor elapsed 306m)
+[2026-08-29 22:02:10] poll #304 — status: UNKNOWN (monitor elapsed 307m)
+[2026-08-29 22:03:10] poll #305 — status: UNKNOWN (monitor elapsed 308m)
+[2026-08-29 22:04:11] poll #306 — status: UNKNOWN (monitor elapsed 309m)
+[2026-08-29 22:05:12] poll #307 — status: UNKNOWN (monitor elapsed 310m)
+[2026-08-29 22:06:13] poll #308 — status: UNKNOWN (monitor elapsed 311m)
+[2026-08-29 22:07:14] poll #309 — status: UNKNOWN (monitor elapsed 312m)
+[2026-08-29 22:08:15] poll #310 — status: UNKNOWN (monitor elapsed 313m)
+[2026-08-29 22:09:15] poll #311 — status: UNKNOWN (monitor elapsed 314m)
+[2026-08-29 22:10:16] poll #312 — status: UNKNOWN (monitor elapsed 315m)
+[2026-08-29 22:11:17] poll #313 — status: UNKNOWN (monitor elapsed 316m)
+[2026-08-29 22:12:18] poll #314 — status: UNKNOWN (monitor elapsed 317m)
+[2026-08-29 22:13:19] poll #315 — status: UNKNOWN (monitor elapsed 318m)
+[2026-08-29 22:14:20] poll #316 — status: UNKNOWN (monitor elapsed 319m)
+[2026-08-29 22:15:21] poll #317 — status: UNKNOWN (monitor elapsed 321m)
+[2026-08-29 22:16:22] poll #318 — status: UNKNOWN (monitor elapsed 322m)
+[2026-08-29 22:17:23] poll #319 — status: UNKNOWN (monitor elapsed 323m)
+[2026-08-29 22:18:24] poll #320 — status: UNKNOWN (monitor elapsed 324m)
+[2026-08-29 22:19:25] poll #321 — status: UNKNOWN (monitor elapsed 325m)
+[2026-08-29 22:20:26] poll #322 — status: UNKNOWN (monitor elapsed 326m)
+[2026-08-29 22:21:27] poll #323 — status: UNKNOWN (monitor elapsed 327m)
+[2026-08-29 22:22:28] poll #324 — status: UNKNOWN (monitor elapsed 328m)
+[2026-08-29 22:23:30] poll #325 — status: UNKNOWN (monitor elapsed 329m)
+[2026-08-29 22:24:31] poll #326 — status: UNKNOWN (monitor elapsed 330m)
+[2026-08-29 22:25:32] poll #327 — status: UNKNOWN (monitor elapsed 331m)
+[2026-08-29 22:26:33] poll #328 — status: UNKNOWN (monitor elapsed 332m)
+[2026-08-29 22:27:34] poll #329 — status: UNKNOWN (monitor elapsed 333m)
+[2026-08-29 22:28:34] poll #330 — status: UNKNOWN (monitor elapsed 334m)
+[2026-08-29 22:29:35] poll #331 — status: UNKNOWN (monitor elapsed 335m)
+[2026-08-29 22:30:36] poll #332 — status: UNKNOWN (monitor elapsed 336m)
+[2026-08-29 22:31:37] poll #333 — status: UNKNOWN (monitor elapsed 337m)
+[2026-08-29 22:32:38] poll #334 — status: UNKNOWN (monitor elapsed 338m)
+[2026-08-29 22:33:38] poll #335 — status: UNKNOWN (monitor elapsed 339m)
+[2026-08-29 22:34:39] poll #336 — status: UNKNOWN (monitor elapsed 340m)
+[2026-08-29 22:35:40] poll #337 — status: UNKNOWN (monitor elapsed 341m)
+[2026-08-29 22:36:41] poll #338 — status: UNKNOWN (monitor elapsed 342m)
+[2026-08-29 22:37:41] poll #339 — status: UNKNOWN (monitor elapsed 343m)
+[2026-08-29 22:38:42] poll #340 — status: UNKNOWN (monitor elapsed 344m)
+[2026-08-29 22:39:43] poll #341 — status: UNKNOWN (monitor elapsed 345m)
+[2026-08-29 22:40:44] poll #342 — status: UNKNOWN (monitor elapsed 346m)
+[2026-08-29 22:41:45] poll #343 — status: UNKNOWN (monitor elapsed 347m)
+[2026-08-29 22:42:45] poll #344 — status: UNKNOWN (monitor elapsed 348m)
+[2026-08-29 22:43:46] poll #345 — status: UNKNOWN (monitor elapsed 349m)
+[2026-08-29 22:44:47] poll #346 — status: UNKNOWN (monitor elapsed 350m)
+[2026-08-29 22:45:48] poll #347 — status: UNKNOWN (monitor elapsed 351m)
+[2026-08-29 22:46:49] poll #348 — status: UNKNOWN (monitor elapsed 352m)
+[2026-08-29 22:47:50] poll #349 — status: UNKNOWN (monitor elapsed 353m)
+[2026-08-29 22:48:51] poll #350 — status: UNKNOWN (monitor elapsed 354m)
+[2026-08-29 22:49:52] poll #351 — status: UNKNOWN (monitor elapsed 355m)
+[2026-08-29 22:50:53] poll #352 — status: UNKNOWN (monitor elapsed 356m)
+[2026-08-29 22:51:53] poll #353 — status: UNKNOWN (monitor elapsed 357m)
+[2026-08-29 22:52:54] poll #354 — status: UNKNOWN (monitor elapsed 358m)
+[2026-08-29 22:53:55] poll #355 — status: UNKNOWN (monitor elapsed 359m)
+[2026-08-29 22:54:56] poll #356 — status: UNKNOWN (monitor elapsed 360m)
+[2026-08-29 22:55:57] poll #357 — status: UNKNOWN (monitor elapsed 361m)
+[2026-08-29 22:56:58] poll #358 — status: UNKNOWN (monitor elapsed 362m)
+[2026-08-29 22:57:59] poll #359 — status: UNKNOWN (monitor elapsed 363m)
+[2026-08-29 22:59:00] poll #360 — status: UNKNOWN (monitor elapsed 364m)
+[2026-08-29 23:00:01] poll #361 — status: UNKNOWN (monitor elapsed 365m)
+[2026-08-29 23:01:01] poll #362 — status: UNKNOWN (monitor elapsed 366m)
+[2026-08-29 23:02:02] poll #363 — status: UNKNOWN (monitor elapsed 367m)
+[2026-08-29 23:03:03] poll #364 — status: UNKNOWN (monitor elapsed 368m)
+[2026-08-29 23:04:03] poll #365 — status: UNKNOWN (monitor elapsed 369m)
+[2026-08-29 23:05:04] poll #366 — status: UNKNOWN (monitor elapsed 370m)
+[2026-08-29 23:06:04] poll #367 — status: UNKNOWN (monitor elapsed 371m)
+[2026-08-29 23:07:05] poll #368 — status: UNKNOWN (monitor elapsed 372m)
+[2026-08-29 23:08:06] poll #369 — status: UNKNOWN (monitor elapsed 373m)
+[2026-08-29 23:09:06] poll #370 — status: UNKNOWN (monitor elapsed 374m)
+[2026-08-29 23:10:07] poll #371 — status: UNKNOWN (monitor elapsed 375m)
+[2026-08-29 23:11:08] poll #372 — status: UNKNOWN (monitor elapsed 376m)
+[2026-08-29 23:12:08] poll #373 — status: UNKNOWN (monitor elapsed 377m)
+[2026-08-29 23:13:09] poll #374 — status: UNKNOWN (monitor elapsed 378m)
+[2026-08-29 23:14:10] poll #375 — status: UNKNOWN (monitor elapsed 379m)
+[2026-08-29 23:15:11] poll #376 — status: UNKNOWN (monitor elapsed 380m)
+[2026-08-29 23:16:11] poll #377 — status: UNKNOWN (monitor elapsed 381m)
+[2026-08-29 23:17:12] poll #378 — status: UNKNOWN (monitor elapsed 382m)
+[2026-08-29 23:18:13] poll #379 — status: UNKNOWN (monitor elapsed 383m)
+[2026-08-29 23:19:14] poll #380 — status: UNKNOWN (monitor elapsed 384m)
+[2026-08-29 23:20:15] poll #381 — status: UNKNOWN (monitor elapsed 385m)
+[2026-08-29 23:21:16] poll #382 — status: UNKNOWN (monitor elapsed 386m)
+[2026-08-29 23:22:17] poll #383 — status: UNKNOWN (monitor elapsed 387m)
+[2026-08-29 23:23:17] poll #384 — status: UNKNOWN (monitor elapsed 388m)
+[2026-08-29 23:24:18] poll #385 — status: UNKNOWN (monitor elapsed 389m)
+[2026-08-29 23:25:19] poll #386 — status: UNKNOWN (monitor elapsed 390m)
+[2026-08-29 23:26:20] poll #387 — status: UNKNOWN (monitor elapsed 391m)
+[2026-08-29 23:27:21] poll #388 — status: UNKNOWN (monitor elapsed 393m)
+[2026-08-29 23:28:22] poll #389 — status: UNKNOWN (monitor elapsed 394m)
+[2026-08-29 23:29:22] poll #390 — status: UNKNOWN (monitor elapsed 395m)
+[2026-08-29 23:30:23] poll #391 — status: UNKNOWN (monitor elapsed 396m)
+[2026-08-29 23:31:24] poll #392 — status: UNKNOWN (monitor elapsed 397m)
+[2026-08-29 23:32:24] poll #393 — status: UNKNOWN (monitor elapsed 398m)
+[2026-08-29 23:33:25] poll #394 — status: UNKNOWN (monitor elapsed 399m)
+[2026-08-29 23:34:26] poll #395 — status: UNKNOWN (monitor elapsed 400m)
+[2026-08-29 23:35:27] poll #396 — status: UNKNOWN (monitor elapsed 401m)
+[2026-08-29 23:36:28] poll #397 — status: UNKNOWN (monitor elapsed 402m)
+[2026-08-29 23:37:29] poll #398 — status: UNKNOWN (monitor elapsed 403m)
+[2026-08-29 23:38:30] poll #399 — status: UNKNOWN (monitor elapsed 404m)
+[2026-08-29 23:39:31] poll #400 — status: UNKNOWN (monitor elapsed 405m)
+[2026-08-29 23:40:32] poll #401 — status: UNKNOWN (monitor elapsed 406m)
+[2026-08-29 23:41:33] poll #402 — status: UNKNOWN (monitor elapsed 407m)
+[2026-08-29 23:42:34] poll #403 — status: UNKNOWN (monitor elapsed 408m)
+[2026-08-29 23:43:35] poll #404 — status: UNKNOWN (monitor elapsed 409m)
+[2026-08-29 23:44:36] poll #405 — status: UNKNOWN (monitor elapsed 410m)
+[2026-08-29 23:45:37] poll #406 — status: UNKNOWN (monitor elapsed 411m)
+[2026-08-29 23:46:38] poll #407 — status: UNKNOWN (monitor elapsed 412m)
+[2026-08-29 23:47:39] poll #408 — status: UNKNOWN (monitor elapsed 413m)
+[2026-08-29 23:48:40] poll #409 — status: UNKNOWN (monitor elapsed 414m)
+[2026-08-29 23:49:40] poll #410 — status: UNKNOWN (monitor elapsed 415m)
+[2026-08-29 23:50:41] poll #411 — status: UNKNOWN (monitor elapsed 416m)
+[2026-08-29 23:51:42] poll #412 — status: UNKNOWN (monitor elapsed 417m)
+[2026-08-29 23:52:43] poll #413 — status: UNKNOWN (monitor elapsed 418m)
+[2026-08-29 23:53:44] poll #414 — status: UNKNOWN (monitor elapsed 419m)
+[2026-08-29 23:54:45] poll #415 — status: UNKNOWN (monitor elapsed 420m)
+[2026-08-29 23:55:46] poll #416 — status: UNKNOWN (monitor elapsed 421m)
+[2026-08-29 23:56:47] poll #417 — status: UNKNOWN (monitor elapsed 422m)
+[2026-08-29 23:57:48] poll #418 — status: UNKNOWN (monitor elapsed 423m)
+[2026-08-29 23:58:49] poll #419 — status: UNKNOWN (monitor elapsed 424m)
+[2026-08-29 23:59:49] poll #420 — status: UNKNOWN (monitor elapsed 425m)
+[2026-08-30 00:00:50] poll #421 — status: UNKNOWN (monitor elapsed 426m)
+[2026-08-30 00:01:51] poll #422 — status: UNKNOWN (monitor elapsed 427m)
+[2026-08-30 00:02:51] poll #423 — status: UNKNOWN (monitor elapsed 428m)
+[2026-08-30 00:03:52] poll #424 — status: UNKNOWN (monitor elapsed 429m)
+[2026-08-30 00:04:52] poll #425 — status: UNKNOWN (monitor elapsed 430m)
+[2026-08-30 00:05:53] poll #426 — status: UNKNOWN (monitor elapsed 431m)
+[2026-08-30 00:06:54] poll #427 — status: UNKNOWN (monitor elapsed 432m)
+[2026-08-30 00:07:54] poll #428 — status: UNKNOWN (monitor elapsed 433m)
+[2026-08-30 00:08:55] poll #429 — status: UNKNOWN (monitor elapsed 434m)
+[2026-08-30 00:09:55] poll #430 — status: UNKNOWN (monitor elapsed 435m)
+[2026-08-30 00:10:56] poll #431 — status: UNKNOWN (monitor elapsed 436m)
+[2026-08-30 00:11:57] poll #432 — status: UNKNOWN (monitor elapsed 437m)
+[2026-08-30 00:12:57] poll #433 — status: UNKNOWN (monitor elapsed 438m)
+[2026-08-30 00:13:58] poll #434 — status: UNKNOWN (monitor elapsed 439m)
+[2026-08-30 00:14:59] poll #435 — status: UNKNOWN (monitor elapsed 440m)
+[2026-08-30 00:15:59] poll #436 — status: UNKNOWN (monitor elapsed 441m)
+[2026-08-30 00:17:00] poll #437 — status: UNKNOWN (monitor elapsed 442m)
+[2026-08-30 00:18:00] poll #438 — status: UNKNOWN (monitor elapsed 443m)
+[2026-08-30 00:19:01] poll #439 — status: UNKNOWN (monitor elapsed 444m)
+[2026-08-30 00:20:02] poll #440 — status: UNKNOWN (monitor elapsed 445m)
+[2026-08-30 00:21:02] poll #441 — status: UNKNOWN (monitor elapsed 446m)
+[2026-08-30 00:22:03] poll #442 — status: UNKNOWN (monitor elapsed 447m)
+[2026-08-30 00:23:03] poll #443 — status: UNKNOWN (monitor elapsed 448m)
+[2026-08-30 00:24:04] poll #444 — status: UNKNOWN (monitor elapsed 449m)
+[2026-08-30 00:25:05] poll #445 — status: UNKNOWN (monitor elapsed 450m)
+[2026-08-30 00:26:05] poll #446 — status: UNKNOWN (monitor elapsed 451m)
+[2026-08-30 00:27:06] poll #447 — status: UNKNOWN (monitor elapsed 452m)
+[2026-08-30 00:28:07] poll #448 — status: UNKNOWN (monitor elapsed 453m)
+[2026-08-30 00:29:07] poll #449 — status: UNKNOWN (monitor elapsed 454m)
+[2026-08-30 00:30:08] poll #450 — status: UNKNOWN (monitor elapsed 455m)
+[2026-08-30 00:31:08] poll #451 — status: UNKNOWN (monitor elapsed 456m)
+[2026-08-30 00:32:09] poll #452 — status: UNKNOWN (monitor elapsed 457m)
+[2026-08-30 00:33:10] poll #453 — status: UNKNOWN (monitor elapsed 458m)
+[2026-08-30 00:34:10] poll #454 — status: UNKNOWN (monitor elapsed 459m)
+[2026-08-30 00:35:11] poll #455 — status: UNKNOWN (monitor elapsed 460m)
+[2026-08-30 00:36:11] poll #456 — status: UNKNOWN (monitor elapsed 461m)
+[2026-08-30 00:37:12] poll #457 — status: UNKNOWN (monitor elapsed 462m)
+[2026-08-30 00:38:13] poll #458 — status: UNKNOWN (monitor elapsed 463m)
+[2026-08-30 00:39:13] poll #459 — status: UNKNOWN (monitor elapsed 464m)
+[2026-08-30 00:40:14] poll #460 — status: UNKNOWN (monitor elapsed 465m)
+[2026-08-30 00:41:15] poll #461 — status: UNKNOWN (monitor elapsed 466m)
+[2026-08-30 00:42:15] poll #462 — status: UNKNOWN (monitor elapsed 467m)
+[2026-08-30 00:43:16] poll #463 — status: UNKNOWN (monitor elapsed 468m)
+[2026-08-30 00:44:17] poll #464 — status: UNKNOWN (monitor elapsed 469m)
+[2026-08-30 00:45:17] poll #465 — status: UNKNOWN (monitor elapsed 470m)
+[2026-08-30 00:46:18] poll #466 — status: UNKNOWN (monitor elapsed 471m)
+[2026-08-30 00:47:18] poll #467 — status: UNKNOWN (monitor elapsed 472m)
+[2026-08-30 00:48:19] poll #468 — status: UNKNOWN (monitor elapsed 473m)
+[2026-08-30 00:49:20] poll #469 — status: UNKNOWN (monitor elapsed 474m)
+[2026-08-30 00:50:20] poll #470 — status: UNKNOWN (monitor elapsed 475m)
+[2026-08-30 00:51:21] poll #471 — status: UNKNOWN (monitor elapsed 477m)
+[2026-08-30 00:52:22] poll #472 — status: UNKNOWN (monitor elapsed 478m)
+[2026-08-30 00:53:22] poll #473 — status: UNKNOWN (monitor elapsed 479m)
+[2026-08-30 00:54:23] poll #474 — status: UNKNOWN (monitor elapsed 480m)
+[2026-08-30 00:55:23] poll #475 — status: UNKNOWN (monitor elapsed 481m)
+[2026-08-30 00:56:24] poll #476 — status: UNKNOWN (monitor elapsed 482m)
+[2026-08-30 00:57:24] poll #477 — status: UNKNOWN (monitor elapsed 483m)
+[2026-08-30 00:58:25] poll #478 — status: UNKNOWN (monitor elapsed 484m)
+[2026-08-30 00:59:26] poll #479 — status: UNKNOWN (monitor elapsed 485m)
+[2026-08-30 01:00:26] poll #480 — status: UNKNOWN (monitor elapsed 486m)
+[2026-08-30 01:01:27] poll #481 — status: UNKNOWN (monitor elapsed 487m)
+[2026-08-30 01:02:28] poll #482 — status: UNKNOWN (monitor elapsed 488m)
+[2026-08-30 01:03:28] poll #483 — status: UNKNOWN (monitor elapsed 489m)
+[2026-08-30 01:04:29] poll #484 — status: UNKNOWN (monitor elapsed 490m)
+[2026-08-30 01:05:30] poll #485 — status: UNKNOWN (monitor elapsed 491m)
+[2026-08-30 01:06:30] poll #486 — status: UNKNOWN (monitor elapsed 492m)
+[2026-08-30 01:07:31] poll #487 — status: UNKNOWN (monitor elapsed 493m)
+[2026-08-30 01:08:31] poll #488 — status: UNKNOWN (monitor elapsed 494m)
+[2026-08-30 01:09:32] poll #489 — status: UNKNOWN (monitor elapsed 495m)
+[2026-08-30 01:10:33] poll #490 — status: UNKNOWN (monitor elapsed 496m)
+[2026-08-30 01:11:33] poll #491 — status: UNKNOWN (monitor elapsed 497m)
+[2026-08-30 01:12:34] poll #492 — status: UNKNOWN (monitor elapsed 498m)
+[2026-08-30 01:13:35] poll #493 — status: UNKNOWN (monitor elapsed 499m)
+[2026-08-30 01:14:35] poll #494 — status: UNKNOWN (monitor elapsed 500m)
+[2026-08-30 01:15:36] poll #495 — status: UNKNOWN (monitor elapsed 501m)
+[2026-08-30 01:16:36] poll #496 — status: UNKNOWN (monitor elapsed 502m)
+[2026-08-30 01:17:37] poll #497 — status: UNKNOWN (monitor elapsed 503m)
+[2026-08-30 01:18:38] poll #498 — status: UNKNOWN (monitor elapsed 504m)
+[2026-08-30 01:19:38] poll #499 — status: UNKNOWN (monitor elapsed 505m)
+[2026-08-30 01:20:39] poll #500 — status: UNKNOWN (monitor elapsed 506m)
+[2026-08-30 01:21:39] poll #501 — status: UNKNOWN (monitor elapsed 507m)
+[2026-08-30 01:22:40] poll #502 — status: UNKNOWN (monitor elapsed 508m)
+[2026-08-30 01:23:41] poll #503 — status: UNKNOWN (monitor elapsed 509m)
+[2026-08-30 01:24:41] poll #504 — status: UNKNOWN (monitor elapsed 510m)
+[2026-08-30 01:25:42] poll #505 — status: UNKNOWN (monitor elapsed 511m)
+[2026-08-30 01:26:43] poll #506 — status: UNKNOWN (monitor elapsed 512m)
+[2026-08-30 01:27:43] poll #507 — status: UNKNOWN (monitor elapsed 513m)
+[2026-08-30 01:28:44] poll #508 — status: UNKNOWN (monitor elapsed 514m)
+[2026-08-30 01:29:44] poll #509 — status: UNKNOWN (monitor elapsed 515m)
+[2026-08-30 01:30:45] poll #510 — status: UNKNOWN (monitor elapsed 516m)
+[2026-08-30 01:31:46] poll #511 — status: UNKNOWN (monitor elapsed 517m)
+[2026-08-30 01:32:46] poll #512 — status: UNKNOWN (monitor elapsed 518m)
+[2026-08-30 01:33:47] poll #513 — status: UNKNOWN (monitor elapsed 519m)
+[2026-08-30 01:34:47] poll #514 — status: UNKNOWN (monitor elapsed 520m)
+[2026-08-30 01:35:48] poll #515 — status: UNKNOWN (monitor elapsed 521m)
+[2026-08-30 01:36:49] poll #516 — status: UNKNOWN (monitor elapsed 522m)
+[2026-08-30 01:37:49] poll #517 — status: UNKNOWN (monitor elapsed 523m)
+[2026-08-30 01:38:50] poll #518 — status: UNKNOWN (monitor elapsed 524m)
+[2026-08-30 01:39:51] poll #519 — status: UNKNOWN (monitor elapsed 525m)
+[2026-08-30 01:40:51] poll #520 — status: UNKNOWN (monitor elapsed 526m)
+[2026-08-30 01:41:52] poll #521 — status: UNKNOWN (monitor elapsed 527m)
+[2026-08-30 01:42:53] poll #522 — status: UNKNOWN (monitor elapsed 528m)
+[2026-08-30 01:43:53] poll #523 — status: UNKNOWN (monitor elapsed 529m)
+[2026-08-30 01:44:54] poll #524 — status: UNKNOWN (monitor elapsed 530m)
+[2026-08-30 01:45:54] poll #525 — status: UNKNOWN (monitor elapsed 531m)
+[2026-08-30 01:46:55] poll #526 — status: UNKNOWN (monitor elapsed 532m)
+[2026-08-30 01:47:56] poll #527 — status: UNKNOWN (monitor elapsed 533m)
+[2026-08-30 01:48:56] poll #528 — status: UNKNOWN (monitor elapsed 534m)
+[2026-08-30 01:49:57] poll #529 — status: UNKNOWN (monitor elapsed 535m)
+[2026-08-30 01:50:58] poll #530 — status: UNKNOWN (monitor elapsed 536m)
+[2026-08-30 01:51:58] poll #531 — status: UNKNOWN (monitor elapsed 537m)
+[2026-08-30 01:52:59] poll #532 — status: UNKNOWN (monitor elapsed 538m)
+[2026-08-30 01:53:59] poll #533 — status: UNKNOWN (monitor elapsed 539m)
+[2026-08-30 01:55:00] poll #534 — status: UNKNOWN (monitor elapsed 540m)
+[2026-08-30 01:56:01] poll #535 — status: UNKNOWN (monitor elapsed 541m)
+[2026-08-30 01:57:01] poll #536 — status: UNKNOWN (monitor elapsed 542m)
+[2026-08-30 01:58:02] poll #537 — status: UNKNOWN (monitor elapsed 543m)
+[2026-08-30 01:59:03] poll #538 — status: UNKNOWN (monitor elapsed 544m)
+[2026-08-30 02:00:03] poll #539 — status: UNKNOWN (monitor elapsed 545m)
+[2026-08-30 02:01:04] poll #540 — status: UNKNOWN (monitor elapsed 546m)
+[2026-08-30 02:02:04] poll #541 — status: UNKNOWN (monitor elapsed 547m)
+[2026-08-30 02:03:05] poll #542 — status: UNKNOWN (monitor elapsed 548m)
+[2026-08-30 02:04:06] poll #543 — status: UNKNOWN (monitor elapsed 549m)
+[2026-08-30 02:05:06] poll #544 — status: UNKNOWN (monitor elapsed 550m)
+[2026-08-30 02:06:07] poll #545 — status: UNKNOWN (monitor elapsed 551m)
+[2026-08-30 02:07:08] poll #546 — status: UNKNOWN (monitor elapsed 552m)
+[2026-08-30 02:08:08] poll #547 — status: UNKNOWN (monitor elapsed 553m)
+[2026-08-30 02:09:09] poll #548 — status: UNKNOWN (monitor elapsed 554m)
+[2026-08-30 02:10:10] poll #549 — status: UNKNOWN (monitor elapsed 555m)
+[2026-08-30 02:11:10] poll #550 — status: UNKNOWN (monitor elapsed 556m)
+[2026-08-30 02:12:11] poll #551 — status: UNKNOWN (monitor elapsed 557m)
+[2026-08-30 02:13:12] poll #552 — status: UNKNOWN (monitor elapsed 558m)
+[2026-08-30 02:14:12] poll #553 — status: UNKNOWN (monitor elapsed 559m)
+[2026-08-30 02:15:13] poll #554 — status: UNKNOWN (monitor elapsed 560m)
+[2026-08-30 02:16:13] poll #555 — status: UNKNOWN (monitor elapsed 561m)
+[2026-08-30 02:17:14] poll #556 — status: UNKNOWN (monitor elapsed 562m)
+[2026-08-30 02:18:15] poll #557 — status: UNKNOWN (monitor elapsed 563m)
+[2026-08-30 02:19:15] poll #558 — status: UNKNOWN (monitor elapsed 564m)
+[2026-08-30 02:20:16] poll #559 — status: UNKNOWN (monitor elapsed 565m)
+[2026-08-30 02:21:17] poll #560 — status: UNKNOWN (monitor elapsed 566m)
+[2026-08-30 02:22:17] poll #561 — status: UNKNOWN (monitor elapsed 567m)
+[2026-08-30 02:23:18] poll #562 — status: UNKNOWN (monitor elapsed 568m)
+[2026-08-30 02:24:19] poll #563 — status: UNKNOWN (monitor elapsed 569m)
+[2026-08-30 02:25:19] poll #564 — status: UNKNOWN (monitor elapsed 570m)
+[2026-08-30 02:26:20] poll #565 — status: UNKNOWN (monitor elapsed 571m)
+[2026-08-30 02:27:20] poll #566 — status: UNKNOWN (monitor elapsed 572m)
+[2026-08-30 02:28:21] poll #567 — status: UNKNOWN (monitor elapsed 574m)
+[2026-08-30 02:29:22] poll #568 — status: UNKNOWN (monitor elapsed 575m)
+[2026-08-30 02:30:22] poll #569 — status: UNKNOWN (monitor elapsed 576m)
+[2026-08-30 02:31:23] poll #570 — status: UNKNOWN (monitor elapsed 577m)
+[2026-08-30 02:32:24] poll #571 — status: UNKNOWN (monitor elapsed 578m)
+[2026-08-30 02:33:24] poll #572 — status: UNKNOWN (monitor elapsed 579m)
+[2026-08-30 02:34:25] poll #573 — status: UNKNOWN (monitor elapsed 580m)
+[2026-08-30 02:35:25] poll #574 — status: UNKNOWN (monitor elapsed 581m)
+[2026-08-30 02:36:26] poll #575 — status: UNKNOWN (monitor elapsed 582m)
+[2026-08-30 02:37:27] poll #576 — status: UNKNOWN (monitor elapsed 583m)
+[2026-08-30 02:38:27] poll #577 — status: UNKNOWN (monitor elapsed 584m)
+[2026-08-30 02:39:28] poll #578 — status: UNKNOWN (monitor elapsed 585m)
+[2026-08-30 02:40:29] poll #579 — status: UNKNOWN (monitor elapsed 586m)
+[2026-08-30 02:41:29] poll #580 — status: UNKNOWN (monitor elapsed 587m)
+[2026-08-30 02:42:30] poll #581 — status: UNKNOWN (monitor elapsed 588m)
+[2026-08-30 02:43:30] poll #582 — status: UNKNOWN (monitor elapsed 589m)
+[2026-08-30 02:44:31] poll #583 — status: UNKNOWN (monitor elapsed 590m)
+[2026-08-30 02:45:32] poll #584 — status: UNKNOWN (monitor elapsed 591m)
+[2026-08-30 02:46:32] poll #585 — status: UNKNOWN (monitor elapsed 592m)
+[2026-08-30 02:47:33] poll #586 — status: UNKNOWN (monitor elapsed 593m)
+[2026-08-30 02:48:34] poll #587 — status: UNKNOWN (monitor elapsed 594m)
+[2026-08-30 02:49:34] poll #588 — status: UNKNOWN (monitor elapsed 595m)
+[2026-08-30 02:50:35] poll #589 — status: UNKNOWN (monitor elapsed 596m)
+[2026-08-30 02:51:35] poll #590 — status: UNKNOWN (monitor elapsed 597m)
+[2026-08-30 02:52:36] poll #591 — status: UNKNOWN (monitor elapsed 598m)
+[2026-08-30 02:53:37] poll #592 — status: UNKNOWN (monitor elapsed 599m)
+[2026-08-30 02:54:37] poll #593 — status: UNKNOWN (monitor elapsed 600m)
+[2026-08-30 02:55:38] poll #594 — status: UNKNOWN (monitor elapsed 601m)
+[2026-08-30 02:56:39] poll #595 — status: UNKNOWN (monitor elapsed 602m)
+[2026-08-30 02:57:39] poll #596 — status: UNKNOWN (monitor elapsed 603m)
+[2026-08-30 02:58:40] poll #597 — status: UNKNOWN (monitor elapsed 604m)
+[2026-08-30 02:59:40] poll #598 — status: UNKNOWN (monitor elapsed 605m)
+[2026-08-30 03:00:41] poll #599 — status: UNKNOWN (monitor elapsed 606m)
+[2026-08-30 03:01:42] poll #600 — status: UNKNOWN (monitor elapsed 607m)
+[2026-08-30 03:02:42] poll #601 — status: UNKNOWN (monitor elapsed 608m)
+[2026-08-30 03:03:43] poll #602 — status: UNKNOWN (monitor elapsed 609m)
+[2026-08-30 03:04:44] poll #603 — status: UNKNOWN (monitor elapsed 610m)
+[2026-08-30 03:05:44] poll #604 — status: UNKNOWN (monitor elapsed 611m)
+[2026-08-30 03:06:45] poll #605 — status: UNKNOWN (monitor elapsed 612m)
+[2026-08-30 03:07:45] poll #606 — status: UNKNOWN (monitor elapsed 613m)
+[2026-08-30 03:08:46] poll #607 — status: UNKNOWN (monitor elapsed 614m)
+[2026-08-30 03:09:47] poll #608 — status: UNKNOWN (monitor elapsed 615m)
+[2026-08-30 03:10:47] poll #609 — status: UNKNOWN (monitor elapsed 616m)
+[2026-08-30 03:11:48] poll #610 — status: UNKNOWN (monitor elapsed 617m)
+[2026-08-30 03:12:49] poll #611 — status: UNKNOWN (monitor elapsed 618m)
+[2026-08-30 03:13:49] poll #612 — status: UNKNOWN (monitor elapsed 619m)
+[2026-08-30 03:14:50] poll #613 — status: UNKNOWN (monitor elapsed 620m)
+[2026-08-30 03:15:50] poll #614 — status: UNKNOWN (monitor elapsed 621m)
+[2026-08-30 03:16:51] poll #615 — status: UNKNOWN (monitor elapsed 622m)
+[2026-08-30 03:17:52] poll #616 — status: UNKNOWN (monitor elapsed 623m)
+[2026-08-30 03:18:52] poll #617 — status: UNKNOWN (monitor elapsed 624m)
+[2026-08-30 03:19:53] poll #618 — status: UNKNOWN (monitor elapsed 625m)
+[2026-08-30 03:20:53] poll #619 — status: UNKNOWN (monitor elapsed 626m)
+[2026-08-30 03:21:54] poll #620 — status: UNKNOWN (monitor elapsed 627m)
+[2026-08-30 03:22:55] poll #621 — status: UNKNOWN (monitor elapsed 628m)
+[2026-08-30 03:23:55] poll #622 — status: UNKNOWN (monitor elapsed 629m)
+[2026-08-30 03:24:56] poll #623 — status: UNKNOWN (monitor elapsed 630m)
+[2026-08-30 03:25:57] poll #624 — status: UNKNOWN (monitor elapsed 631m)
+[2026-08-30 03:26:57] poll #625 — status: UNKNOWN (monitor elapsed 632m)
+[2026-08-30 03:27:58] poll #626 — status: UNKNOWN (monitor elapsed 633m)
+[2026-08-30 03:28:59] poll #627 — status: UNKNOWN (monitor elapsed 634m)
+[2026-08-30 03:29:59] poll #628 — status: UNKNOWN (monitor elapsed 635m)
+[2026-08-30 03:31:00] poll #629 — status: UNKNOWN (monitor elapsed 636m)
+[2026-08-30 03:32:00] poll #630 — status: UNKNOWN (monitor elapsed 637m)
+[2026-08-30 03:33:01] poll #631 — status: UNKNOWN (monitor elapsed 638m)
+[2026-08-30 03:34:02] poll #632 — status: UNKNOWN (monitor elapsed 639m)
+[2026-08-30 03:35:02] poll #633 — status: UNKNOWN (monitor elapsed 640m)
+[2026-08-30 03:36:03] poll #634 — status: UNKNOWN (monitor elapsed 641m)
+[2026-08-30 03:37:03] poll #635 — status: UNKNOWN (monitor elapsed 642m)
+[2026-08-30 03:38:04] poll #636 — status: UNKNOWN (monitor elapsed 643m)
+[2026-08-30 03:39:05] poll #637 — status: UNKNOWN (monitor elapsed 644m)
+[2026-08-30 03:40:05] poll #638 — status: UNKNOWN (monitor elapsed 645m)
+[2026-08-30 03:41:06] poll #639 — status: UNKNOWN (monitor elapsed 646m)
+[2026-08-30 03:42:06] poll #640 — status: UNKNOWN (monitor elapsed 647m)
+[2026-08-30 03:43:07] poll #641 — status: UNKNOWN (monitor elapsed 648m)
+[2026-08-30 03:44:08] poll #642 — status: UNKNOWN (monitor elapsed 649m)
+[2026-08-30 03:45:08] poll #643 — status: UNKNOWN (monitor elapsed 650m)
+[2026-08-30 03:46:09] poll #644 — status: UNKNOWN (monitor elapsed 651m)
+[2026-08-30 03:47:10] poll #645 — status: UNKNOWN (monitor elapsed 652m)
+[2026-08-30 03:48:10] poll #646 — status: UNKNOWN (monitor elapsed 653m)
+[2026-08-30 03:49:11] poll #647 — status: UNKNOWN (monitor elapsed 654m)
+[2026-08-30 03:50:11] poll #648 — status: UNKNOWN (monitor elapsed 655m)
+[2026-08-30 03:51:12] poll #649 — status: UNKNOWN (monitor elapsed 656m)
+[2026-08-30 03:52:13] poll #650 — status: UNKNOWN (monitor elapsed 657m)
+[2026-08-30 03:53:13] poll #651 — status: UNKNOWN (monitor elapsed 658m)
+[2026-08-30 03:54:14] poll #652 — status: UNKNOWN (monitor elapsed 659m)
+[2026-08-30 03:55:15] poll #653 — status: UNKNOWN (monitor elapsed 660m)
+[2026-08-30 03:56:15] poll #654 — status: UNKNOWN (monitor elapsed 661m)
+[2026-08-30 03:57:16] poll #655 — status: UNKNOWN (monitor elapsed 662m)
+[2026-08-30 03:58:16] poll #656 — status: UNKNOWN (monitor elapsed 663m)
+[2026-08-30 03:59:17] poll #657 — status: UNKNOWN (monitor elapsed 664m)
+[2026-08-30 04:00:18] poll #658 — status: UNKNOWN (monitor elapsed 665m)
+[2026-08-30 04:01:18] poll #659 — status: UNKNOWN (monitor elapsed 666m)
+[2026-08-30 04:02:19] poll #660 — status: UNKNOWN (monitor elapsed 667m)
+[2026-08-30 04:03:20] poll #661 — status: UNKNOWN (monitor elapsed 668m)
+[2026-08-30 04:04:20] poll #662 — status: UNKNOWN (monitor elapsed 669m)
+[2026-08-30 04:05:21] poll #663 — status: UNKNOWN (monitor elapsed 671m)
+[2026-08-30 04:06:22] poll #664 — status: UNKNOWN (monitor elapsed 672m)
+[2026-08-30 04:07:22] poll #665 — status: UNKNOWN (monitor elapsed 673m)
+[2026-08-30 04:08:23] poll #666 — status: UNKNOWN (monitor elapsed 674m)
+[2026-08-30 04:09:23] poll #667 — status: UNKNOWN (monitor elapsed 675m)
+[2026-08-30 04:10:24] poll #668 — status: UNKNOWN (monitor elapsed 676m)
+[2026-08-30 04:11:25] poll #669 — status: UNKNOWN (monitor elapsed 677m)
+[2026-08-30 04:12:25] poll #670 — status: UNKNOWN (monitor elapsed 678m)
+[2026-08-30 04:13:26] poll #671 — status: UNKNOWN (monitor elapsed 679m)
+[2026-08-30 04:14:26] poll #672 — status: UNKNOWN (monitor elapsed 680m)
+[2026-08-30 04:15:27] poll #673 — status: UNKNOWN (monitor elapsed 681m)
+[2026-08-30 04:16:28] poll #674 — status: UNKNOWN (monitor elapsed 682m)
+[2026-08-30 04:17:28] poll #675 — status: UNKNOWN (monitor elapsed 683m)
+[2026-08-30 04:18:29] poll #676 — status: UNKNOWN (monitor elapsed 684m)
+[2026-08-30 04:19:29] poll #677 — status: UNKNOWN (monitor elapsed 685m)
+[2026-08-30 04:20:30] poll #678 — status: UNKNOWN (monitor elapsed 686m)
+[2026-08-30 04:21:31] poll #679 — status: UNKNOWN (monitor elapsed 687m)
+[2026-08-30 04:22:31] poll #680 — status: UNKNOWN (monitor elapsed 688m)
+[2026-08-30 04:23:32] poll #681 — status: UNKNOWN (monitor elapsed 689m)
+[2026-08-30 04:24:33] poll #682 — status: UNKNOWN (monitor elapsed 690m)
+[2026-08-30 04:25:33] poll #683 — status: UNKNOWN (monitor elapsed 691m)
+[2026-08-30 04:26:34] poll #684 — status: UNKNOWN (monitor elapsed 692m)
+[2026-08-30 04:27:34] poll #685 — status: UNKNOWN (monitor elapsed 693m)
+[2026-08-30 04:28:35] poll #686 — status: UNKNOWN (monitor elapsed 694m)
+[2026-08-30 04:29:36] poll #687 — status: UNKNOWN (monitor elapsed 695m)
+[2026-08-30 04:30:36] poll #688 — status: UNKNOWN (monitor elapsed 696m)
+[2026-08-30 04:31:37] poll #689 — status: UNKNOWN (monitor elapsed 697m)
+[2026-08-30 04:32:38] poll #690 — status: UNKNOWN (monitor elapsed 698m)
+[2026-08-30 04:33:38] poll #691 — status: UNKNOWN (monitor elapsed 699m)
+[2026-08-30 04:34:39] poll #692 — status: UNKNOWN (monitor elapsed 700m)
+[2026-08-30 04:35:40] poll #693 — status: UNKNOWN (monitor elapsed 701m)
+[2026-08-30 04:36:40] poll #694 — status: UNKNOWN (monitor elapsed 702m)
+[2026-08-30 04:37:41] poll #695 — status: UNKNOWN (monitor elapsed 703m)
+[2026-08-30 04:38:41] poll #696 — status: UNKNOWN (monitor elapsed 704m)
+[2026-08-30 04:39:42] poll #697 — status: UNKNOWN (monitor elapsed 705m)
+[2026-08-30 04:40:43] poll #698 — status: UNKNOWN (monitor elapsed 706m)
+[2026-08-30 04:41:43] poll #699 — status: UNKNOWN (monitor elapsed 707m)
+[2026-08-30 04:42:44] poll #700 — status: UNKNOWN (monitor elapsed 708m)
+[2026-08-30 04:43:44] poll #701 — status: UNKNOWN (monitor elapsed 709m)
+[2026-08-30 04:44:45] poll #702 — status: UNKNOWN (monitor elapsed 710m)
+[2026-08-30 04:45:46] poll #703 — status: UNKNOWN (monitor elapsed 711m)
+[2026-08-30 04:46:46] poll #704 — status: UNKNOWN (monitor elapsed 712m)
+[2026-08-30 04:47:47] poll #705 — status: UNKNOWN (monitor elapsed 713m)
+[2026-08-30 04:48:47] poll #706 — status: UNKNOWN (monitor elapsed 714m)
+[2026-08-30 04:49:48] poll #707 — status: UNKNOWN (monitor elapsed 715m)
+[2026-08-30 04:50:49] poll #708 — status: UNKNOWN (monitor elapsed 716m)
+[2026-08-30 04:51:49] poll #709 — status: UNKNOWN (monitor elapsed 717m)
+[2026-08-30 04:52:50] poll #710 — status: UNKNOWN (monitor elapsed 718m)
+[2026-08-30 04:53:51] poll #711 — status: UNKNOWN (monitor elapsed 719m)
+[2026-08-30 04:54:51] poll #712 — status: UNKNOWN (monitor elapsed 720m)
+[2026-08-30 04:55:52] poll #713 — status: UNKNOWN (monitor elapsed 721m)
+[2026-08-30 04:56:53] poll #714 — status: UNKNOWN (monitor elapsed 722m)
+[2026-08-30 04:57:53] poll #715 — status: UNKNOWN (monitor elapsed 723m)
+[2026-08-30 04:58:54] poll #716 — status: UNKNOWN (monitor elapsed 724m)
+[2026-08-30 04:59:54] poll #717 — status: UNKNOWN (monitor elapsed 725m)
+[2026-08-30 05:00:55] poll #718 — status: UNKNOWN (monitor elapsed 726m)
+[2026-08-30 05:01:56] poll #719 — status: UNKNOWN (monitor elapsed 727m)
+[2026-08-30 05:02:56] poll #720 — status: UNKNOWN (monitor elapsed 728m)
+[2026-08-30 05:03:57] timed out after 12h — last status: UNKNOWN

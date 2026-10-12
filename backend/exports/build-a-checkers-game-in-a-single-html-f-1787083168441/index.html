@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkers Game</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: #f0f0f0;
+    font-family: Arial, sans-serif;
+  }
+  #gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  #board {
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+  .cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .cell.red {
+    background: #b22222;
+  }
+  .cell.black {
+    background: #000000;
+  }
+  .cell.highlight {
+    background: #ffcccb;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <h1>Checkers Game</h1>
+  <div id="board"></div>
+  <button id="restartBtn">Restart Game</button>
+</div>
+<script>
+  const board = document.getElementById('board');
+  const restartBtn = document.getElementById('restartBtn');
+  const boardSize = 8;
+  let currentPlayer = 'red';
+  let selectedPiece = null;
+  let selectedCell = null;
+
+  const checkers = {
+    red: [],
+    black: []
+  };
+
+  function initBoard() {
+    for (let row = 0; row < boardSize; row++) {
+      for (let col = 0; col < boardSize; col++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        if ((row + col) % 2 === 0) {
+          cell.classList.add(currentPlayer === 'red' ? 'red' : 'black');
+          checkers[currentPlayer].push({ row, col });
+        } else {
+          cell.classList.

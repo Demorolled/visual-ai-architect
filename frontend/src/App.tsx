@@ -4,6 +4,8 @@ import { NodeType, WizardStep } from './types';
 import { useProjectStore } from './store/projectStore';
 import { useRoadmapSync } from './hooks/useRoadmapSync';
 import { useAutoSave } from './hooks/useAutoSave';
+import { usePlanAutosave } from './hooks/usePlanAutosave';
+import { usePlanCoworker } from './hooks/usePlanCoworker';
 import { useIsMobile } from './hooks/useIsMobile';
 import { api } from './api/client';
 import { checkBackendConnection } from './utils/apiUrl';
@@ -19,6 +21,7 @@ import CodeOutputPanel from './components/CodeOutputPanel';
 import ProjectManager from './components/ProjectManager';
 import AutoSavePanel from './components/AutoSavePanel';
 import ErrorBoundary from './components/ErrorBoundary';
+import ToastHost from './components/ToastHost';
 import EQIndicator from './components/EQIndicator';
 import VeronicaLLMIndicator from './components/VeronicaLLMIndicator';
 import ContextStatusBar from './components/ContextStatusBar';
@@ -102,6 +105,10 @@ function ConnectionIndicator() {
 function App() {
   useRoadmapSync();
   useAutoSave();
+  // Big Plan Mode: keeps the design saved to data/plans/<project>/ every 5
+  // minutes, and creates it as soon as the master node is placed.
+  usePlanAutosave();
+  usePlanCoworker();
   useTheme();
   useToolManifest();
   const isMobile = useIsMobile();
@@ -424,7 +431,12 @@ function App() {
       const createRes = await api.createProject({ name: projectName, targetOS });
       const serverProjectId = createRes.data.id;
       localStorage.setItem('current-project-id', serverProjectId);
-      await api.updateProject(serverProjectId, { nodes: codeNodes, edges });
+      await api.updateProject(serverProjectId, {
+        nodes: codeNodes,
+        edges,
+        // Tree Mode: the server needs the app trees to build each one separately.
+        trees: useProjectStore.getState().trees,
+      });
 
       broadcastMessage({ role: 'ai', text: `🧠 Reasoning LLM planning ${codeNodes.length} nodes...`, timestamp: new Date().toISOString() });
 
@@ -704,7 +716,17 @@ Connections: ${edges.length}`;
             onBuild={handleBuild}
             onExport={handleExport}
             onClear={handleClear}
-            onPlan={() => setPlanOpen(true)}
+            onPlan={() => {
+              // Plan Mode is the canvas-first flow now. The button used to open
+              // the notepad modal (data/plans/<name>.txt), which nothing ever
+              // read back. It now toggles the mode: the palette offers the seed
+              // node, drops open the type/language window, and the co-pilot
+              // reads the resulting graph. getState() keeps this handler free of
+              // stale-closure risk inside the memoised header.
+              const next = !useProjectStore.getState().planMode;
+              useProjectStore.getState().setPlanMode(next);
+              if (next) setPlanOpen(false);
+            }}
             onBlueprint={() => setBlueprintDialogOpen(true)}
           />
         </div>
@@ -1168,6 +1190,8 @@ Connections: ${edges.length}`;
           </button>
         </div>
       )}
+      {/* ── Global transient toast (see utils/toast.ts) ── */}
+      <ToastHost />
     </div>
     </ErrorBoundary>
   );

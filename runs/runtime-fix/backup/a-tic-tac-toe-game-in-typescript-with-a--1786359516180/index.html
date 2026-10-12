@@ -1,0 +1,20 @@
+<div class='app' style='max-width:960px;margin:0 auto;padding:24px'>
+  <div class='row' style='display:flex;gap:10px;align-items:center'>
+    <button id='playBtn' class='btn' onclick='play()'>▶ Play</button>
+  </div>
+</div>
+<script>
+  function play() {
+    const board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const currentPlayer = 1;
+    if (!isGameOver(board)) {
+      const move = isWinningMove(board, currentPlayer) ? getBestMove(board, currentPlayer) : getBestMove(board, -currentPlayer);
+      board = makeMove(board, currentPlayer, move);
+      console.log('Player', currentPlayer, 'moves to', move);
+      currentPlayer = -currentPlayer;
+    }
+  }
+  function isGameOver(board: number[]): boolean {
+    return getGameState(board) !== 0;
+  }
+</script>

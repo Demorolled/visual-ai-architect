@@ -1,0 +1,549 @@
+{
+  "probed_at": "2026-10-11T22:37:49-0400",
+  "ollama": "http://127.0.0.1:11434",
+  "task": "Write a {lang} program that reads all of stdin, splits it into whitespace-separated words, and prints exactly one line:\nwords=<count> distinct=<distinct-count>\nSingle file, standard library only, no explanation \u2014 output the file contents only.",
+  "sample_input": "the quick brown fox the fox\n",
+  "expected": "words=6 distinct=4",
+  "build_rev": "8064ce623bfb2ef00406b9cded0de93ebf8c1925",
+  "availability": {
+    "typescript": {
+      "available": true,
+      "binary": "/home/homellmlab/Desktop/visual-ai-architect/node_modules/.bin/tsc",
+      "install": "npm install (typescript in node_modules)"
+    },
+    "javascript": {
+      "available": true,
+      "binary": "node",
+      "install": "sudo apt-get install -y nodejs"
+    },
+    "python": {
+      "available": true,
+      "binary": "python3",
+      "install": "sudo apt-get install -y python3"
+    },
+    "go": {
+      "available": true,
+      "binary": "go",
+      "install": "sudo apt-get install -y golang-go"
+    },
+    "rust": {
+      "available": false,
+      "binary": null,
+      "install": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
+    },
+    "java": {
+      "available": true,
+      "binary": "javac",
+      "install": "sudo apt-get install -y openjdk-17-jdk-headless"
+    },
+    "csharp": {
+      "available": false,
+      "binary": null,
+      "install": "sudo apt-get install -y dotnet-sdk-8.0"
+    },
+    "swift": {
+      "available": true,
+      "binary": "swiftc",
+      "install": "https://www.swift.org/install/linux/"
+    },
+    "kotlin": {
+      "available": true,
+      "binary": "kotlinc",
+      "install": "sudo snap install kotlin --classic"
+    },
+    "php": {
+      "available": true,
+      "binary": "php",
+      "install": "sudo apt-get install -y php-cli"
+    },
+    "ruby": {
+      "available": true,
+      "binary": "ruby",
+      "install": "sudo apt-get install -y ruby-full"
+    },
+    "c": {
+      "available": true,
+      "binary": "gcc",
+      "install": "sudo apt-get install -y build-essential"
+    },
+    "cpp": {
+      "available": true,
+      "binary": "g++",
+      "install": "sudo apt-get install -y build-essential"
+    }
+  },
+  "results": [
+    {
+      "language": "typescript",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "KNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 20.6,
+      "eval_count": 70,
+      "code": "import { stdin } from 'process';\n\nlet input = '';\nstdin.on('data', chunk => input += chunk.toString());\nstdin.on('end', () => {\n  const words = input.trim().split(/\\s+/);\n  const distinctWords = new Set(words);\n  console.log(`words=${words.length} distinct=${distinctWords.size}`);\n});"
+    },
+    {
+      "language": "javascript",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "PARTIAL",
+      "fenced": false,
+      "contract_problems": [
+        "uses require() in an ES module (.mjs)"
+      ],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": false,
+      "got": "Node.js v24.18.0",
+      "expected": "words=6 distinct=4",
+      "seconds": 3.2,
+      "eval_count": 90,
+      "code": "const rl = require('readline').createInterface({ input: process.stdin, output: process.stdout });\nlet buffer = '';\nrl.on('line', (line) => { buffer += line + '\\n'; });\nrl.on('close', () => {\n  const words = buffer.trim().split(/\\s+/);\n  const distinctWords = new Set(words).size;\n  console.log(`words=${words.length} distinct=${distinctWords}`);\n});"
+    },
+    {
+      "language": "python",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "KNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.6,
+      "eval_count": 72,
+      "code": "import sys\n\ndef count_words_and_distinct():\n    input_data = sys.stdin.read()\n    words = input_data.split()\n    word_count = len(words)\n    distinct_word_count = len(set(words))\n    print(f\"words={word_count} distinct={distinct_word_count}\")\n\nif __name__ == \"__main__\":\n    count_words_and_distinct()"
+    },
+    {
+      "language": "go",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "KNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 5.1,
+      "eval_count": 131,
+      "code": "package main\n\nimport (\n\t\"bufio\"\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc main() {\n\tscanner := bufio.NewScanner(os.Stdin)\n\tvar words []string\n\twordSet := make(map[string]struct{})\n\n\tfor scanner.Scan() {\n\t\tline := strings.TrimSpace(scanner.Text())\n\t\tif line == \"\" {\n\t\t\tcontinue\n\t\t}\n\t\tfields := strings.Fields(line)\n\t\tfor _, word := range fields {\n\t\t\twords = append(words, word)\n\t\t\twordSet[word] = struct{}{}\n\t\t}\n\t}\n\n\tfmt.Printf(\"words=%d distinct=%d\\n\", len(words), len(wordSet))\n}"
+    },
+    {
+      "language": "rust",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "UNVERIFIABLE",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": false,
+      "gate_clean": false,
+      "gate_output": "toolchain not installed (rust)",
+      "ran": false,
+      "got": "toolchain not installed (rust)",
+      "expected": "words=6 distinct=4",
+      "seconds": 4.1,
+      "eval_count": 111,
+      "code": "use std::collections::HashSet;\nuse std::io::{self, BufRead};\n\nfn main() {\n    let stdin = io::stdin();\n    let mut words = HashSet::new();\n    let mut total_words = 0;\n\n    for line in stdin.lock().lines() {\n        if let Ok(line) = line {\n            for word in line.split_whitespace() {\n                words.insert(word.to_string());\n                total_words += 1;\n            }\n        }\n    }\n\n    println!(\"words={} distinct={}\", total_words, words.len());\n}"
+    },
+    {
+      "language": "java",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "UNKNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": false,
+      "gate_output": "WordSummary.java:4: error: class Main is public, should be declared in a file named Main.java\npublic class Main {\n       ^\n1 error\n",
+      "ran": false,
+      "got": "1 error",
+      "expected": "words=6 distinct=4",
+      "seconds": 4.7,
+      "eval_count": 132,
+      "code": "import java.util.*;\nimport java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\n        Set<String> distinctWords = new HashSet<>();\n        int wordCount = 0;\n        \n        String line;\n        while ((line = br.readLine()) != null) {\n            for (String word : line.trim().split(\"\\\\s+\")) {\n                if (!word.isEmpty()) {\n                    wordCount++;\n                    distinctWords.add(word);\n                }\n            }\n        }\n        \n        System.out.println(\"words=\" + wordCount + \" distinct=\" + distinctWords.size());\n    }\n}"
+    },
+    {
+      "language": "csharp",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "UNVERIFIABLE",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": false,
+      "gate_clean": false,
+      "gate_output": "toolchain not installed (csharp)",
+      "ran": false,
+      "got": "toolchain not installed (csharp)",
+      "expected": "words=6 distinct=4",
+      "seconds": 4.0,
+      "eval_count": 114,
+      "code": "using System;\nusing System.Collections.Generic;\nusing System.Linq;\n\nclass Program {\n    static void Main(string[] args) {\n        var input = new List<string>();\n        string line;\n        while ((line = Console.ReadLine()) != null) {\n            input.Add(line);\n        }\n        var words = input.SelectMany(l => l.Split(new char[] { ' ', '\\t', '\\n' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();\n        var distinctWords = words.Distinct().Count();\n        Console.WriteLine($\"words={words.Length} distinct={distinctWords}\");\n    }\n}"
+    },
+    {
+      "language": "swift",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "UNKNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": false,
+      "gate_output": "main.swift:4:37: error: type 'String.Element' (aka 'Character') has no member 'whitespaces'\n2 | \n3 | let input = readLine(strippingNewline: true) ?? \"\"\n4 | let words = input.split(separator: .whitespaces)\n  |                                     `- error: type 'String.Element' (aka 'Character') has no member 'whitespaces'\n5 | let wordCount = words.count\n6 | let distinctWords = Set(words).count\n",
+      "ran": false,
+      "got": "6 | let distinctWords = Set(words).count",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.6,
+      "eval_count": 61,
+      "code": "import Foundation\n\nlet input = readLine(strippingNewline: true) ?? \"\"\nlet words = input.split(separator: .whitespaces)\nlet wordCount = words.count\nlet distinctWords = Set(words).count\n\nprint(\"words=\\(wordCount) distinct=\\(distinctWords)\")"
+    },
+    {
+      "language": "kotlin",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "COMPILES",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": false,
+      "got": "kotlin is compile-verified only on this machine (no `kotlin` launcher)",
+      "expected": "words=6 distinct=4",
+      "seconds": 3.3,
+      "eval_count": 82,
+      "code": "import java.util.Scanner\n\nfun main(args: Array<String>) {\n    val scanner = Scanner(System.`in`)\n    val input = scanner.useDelimiter(\"\\\\A\").next()\n    scanner.close()\n\n    val words = input.split(\"\\\\s+\".toRegex()).filter { it.isNotEmpty() }\n    val distinctWords = words.toSet().size\n\n    println(\"words=${words.size} distinct=$distinctWords\")\n}"
+    },
+    {
+      "language": "php",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "KNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "No syntax errors detected in word_summary.php\n",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.9,
+      "eval_count": 79,
+      "code": "<?php\n$input = '';\nwhile (($line = fgets(STDIN)) !== false) {\n    $input .= $line;\n}\n$words = preg_split('/\\s+/', trim($input));\n$wordCount = count($words);\n$distinctWords = array_unique($words);\n$distinctCount = count($distinctWords);\necho \"words=$wordCount distinct=$distinctCount\\n\";"
+    },
+    {
+      "language": "ruby",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "KNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "Syntax OK\n",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 1.1,
+      "eval_count": 25,
+      "code": "words = STDIN.read.split(/\\s+/)\nputs \"words=#{words.size} distinct=#{words.uniq.size}\""
+    },
+    {
+      "language": "cpp",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "KNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 4.5,
+      "eval_count": 126,
+      "code": "#include <iostream>\n#include <sstream>\n#include <unordered_set>\n\nint main() {\n    std::string line;\n    std::stringstream ss;\n    while (std::getline(std::cin, line)) {\n        ss << line << ' ';\n    }\n    std::string word;\n    int words = 0;\n    std::unordered_set<std::string> distinct_words;\n    while (ss >> word) {\n        ++words;\n        distinct_words.insert(word);\n    }\n    std::cout << \"words=\" << words << \" distinct=\" << distinct_words.size() << '\\n';\n    return 0;\n}"
+    },
+    {
+      "language": "c",
+      "model": "vaca-r20-q4:latest",
+      "verdict": "UNKNOWN",
+      "fenced": false,
+      "contract_problems": [],
+      "style_warnings": [],
+      "gate_available": true,
+      "gate_clean": false,
+      "gate_output": "word_summary.c: In function \u2018main\u2019:\nword_summary.c:24:13: error: unknown type name \u2018bool\u2019\n   24 |             bool found = false;\n      |             ^~~~\nword_summary.c:4:1: note: \u2018bool\u2019 is defined in header \u2018<stdbool.h>\u2019; this is probably fixable by adding \u2018#include <stdbool.h>\u2019\n    3 | #include <string.h>\n  +++ |+#include <stdbool.h>\n    4 | \nword_summary.c:24:26: error: \u2018false\u2019 undeclared (first use in this function)\n   24 |             bool found = false;\n      |                          ^~~~~\nword_summary.c:24:26: note: \u2018false\u2019 is defined in header \u2018<stdbool.h>\u2019; this is probably fixable by adding \u2018#include <stdbool.h>\u2019\nword_summary.c:24:26: note: each undeclared identifier is reported only once for each function it appears in\nword_summary.c:27:29: error: \u2018true\u2019 undeclared (first use in this function)\n   27 |                     found = true;\n      |                             ^~~~\nword_summary.c:27:29: note: \u2018true\u2019 is defined in header \u2018<stdbool.h>\u2019; this is probably fixable by adding \u2018#include <stdbool.h>\u2019\n",
+      "ran": false,
+      "got": "word_summary.c:24:26: error: \u2018false\u2019 undeclared (fir",
+      "expected": "words=6 distinct=4",
+      "seconds": 11.9,
+      "eval_count": 355,
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n#define MAX_LINE 4096\n\nint main(void) {\n    char line[MAX_LINE];\n    int words = 0;\n    int distinct_words = 0;\n    char *word;\n    char *buffer;\n    size_t buffer_size = 1024;\n    buffer = (char *)malloc(buffer_size);\n    if (!buffer) return 1;\n\n    while (fgets(line, sizeof(line), stdin)) {\n        word = strtok(line, \" \\t\\n\");\n        while (word) {\n            words++;\n            // Check for distinct words\n            char *p = buffer;\n            size_t len = strlen(word);\n            bool found = false;\n            while (*p != '\\0') {\n                if (strncmp(p, word, len) == 0 && (p[len] == '\\0' || p[len] == ' ')) {\n                    found = true;\n                    break;\n                }\n                while (*p != '\\0') p++;\n                p++; // Skip the space\n            }\n            if (!found) {\n                if ((size_t)(p - buffer + len + 1) > buffer_size) {\n                    buffer_size *= 2;\n                    char *new_buffer = (char *)realloc(buffer, buffer_size);\n                    if (!new_buffer) return 1;\n                    buffer = new_buffer;\n                }\n                memcpy(p, word, len);\n                p += len;\n                *p++ = ' ';\n                distinct_words++;\n            }\n            word = strtok(NULL, \" \\t\\n\");\n        }\n    }\n\n    printf(\"words=%d distinct=%d\\n\", words, distinct_words);\n\n    free(buffer);\n    return 0;\n}"
+    },
+    {
+      "language": "typescript",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "KNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 20.5,
+      "eval_count": 121,
+      "code": "import { createInterface } from 'readline';\n\nfunction main() {\n    const rl = createInterface({\n        input: process.stdin,\n        output: process.stdout,\n        terminal: false\n    });\n\n    let data = '';\n\n    rl.on('line', (line) => {\n        data += line + ' ';\n    });\n\n    rl.on('close', () => {\n        const words = data.trim().split(/\\s+/);\n        const distinctWords = new Set(words).size;\n        console.log(`words=${words.length} distinct=${distinctWords}`);\n    });\n}\n\nmain();"
+    },
+    {
+      "language": "javascript",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "PARTIAL",
+      "fenced": true,
+      "contract_problems": [
+        "uses require() in an ES module (.mjs)"
+      ],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": false,
+      "got": "Node.js v24.18.0",
+      "expected": "words=6 distinct=4",
+      "seconds": 4.1,
+      "eval_count": 117,
+      "code": "const readline = require('readline');\n\nfunction countWordsAndDistinct() {\n  const rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout,\n    terminal: false\n  });\n\n  let words = [];\n  rl.on('line', (line) => {\n    words = words.concat(line.split(/\\s+/));\n  });\n\n  rl.on('close', () => {\n    const distinctWords = new Set(words);\n    console.log(`words=${words.length} distinct=${distinctWords.size}`);\n  });\n}\n\ncountWordsAndDistinct();"
+    },
+    {
+      "language": "python",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "KNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.3,
+      "eval_count": 62,
+      "code": "import sys\n\ndef main():\n    input_data = sys.stdin.read()\n    words = input_data.split()\n    distinct_words = set(words)\n    \n    print(f\"words={len(words)} distinct={len(distinct_words)}\")\n\nif __name__ == \"__main__\":\n    main()"
+    },
+    {
+      "language": "go",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "KNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 6.0,
+      "eval_count": 156,
+      "code": "package main\n\nimport (\n\t\"bufio\"\n\t\"fmt\"\n\t\"os\"\n\t\"strings\"\n)\n\nfunc main() {\n\tscanner := bufio.NewScanner(os.Stdin)\n\tvar words []string\n\twordSet := make(map[string]struct{})\n\n\tfor scanner.Scan() {\n\t\tline := scanner.Text()\n\t\tfields := strings.Fields(line)\n\t\twords = append(words, fields...)\n\t\tfor _, word := range fields {\n\t\t\twordSet[word] = struct{}{}\n\t\t}\n\t}\n\n\tif err := scanner.Err(); err != nil {\n\t\tfmt.Fprintf(os.Stderr, \"Error reading input: %v\\n\", err)\n\t\tos.Exit(1)\n\t}\n\n\tfmt.Printf(\"words=%d distinct=%d\\n\", len(words), len(wordSet))\n}"
+    },
+    {
+      "language": "rust",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "UNVERIFIABLE",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": false,
+      "gate_clean": false,
+      "gate_output": "toolchain not installed (rust)",
+      "ran": false,
+      "got": "toolchain not installed (rust)",
+      "expected": "words=6 distinct=4",
+      "seconds": 3.8,
+      "eval_count": 102,
+      "code": "use std::collections::HashSet;\nuse std::io::{self, Read};\n\nfn main() {\n    let mut input = String::new();\n    io::stdin().read_to_string(&mut input).expect(\"Failed to read stdin\");\n\n    let words: Vec<&str> = input.split_whitespace().collect();\n    let distinct_words: HashSet<&str> = words.iter().cloned().collect();\n\n    println!(\"words={} distinct={}\", words.len(), distinct_words.len());\n}"
+    },
+    {
+      "language": "java",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "UNKNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": false,
+      "gate_output": "WordSummary.java:4: error: class Main is public, should be declared in a file named Main.java\npublic class Main {\n       ^\n1 error\n",
+      "ran": false,
+      "got": "1 error",
+      "expected": "words=6 distinct=4",
+      "seconds": 3.8,
+      "eval_count": 104,
+      "code": "import java.util.Scanner;\nimport java.util.HashSet;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        HashSet<String> distinctWords = new HashSet<>();\n        int wordCount = 0;\n\n        while (scanner.hasNext()) {\n            String word = scanner.next();\n            distinctWords.add(word);\n            wordCount++;\n        }\n\n        System.out.println(\"words=\" + wordCount + \" distinct=\" + distinctWords.size());\n    }\n}"
+    },
+    {
+      "language": "csharp",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "UNVERIFIABLE",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": false,
+      "gate_clean": false,
+      "gate_output": "toolchain not installed (csharp)",
+      "ran": false,
+      "got": "toolchain not installed (csharp)",
+      "expected": "words=6 distinct=4",
+      "seconds": 3.6,
+      "eval_count": 101,
+      "code": "using System;\nusing System.Collections.Generic;\nusing System.Linq;\n\nclass Program {\n    static void Main(string[] args) {\n        string input = Console.In.ReadToEnd();\n        string[] words = input.Split(new char[] { ' ', '\\t', '\\n', '\\r' }, StringSplitOptions.RemoveEmptyEntries);\n        int wordCount = words.Length;\n        int distinctCount = words.Distinct().Count();\n        Console.WriteLine($\"words={wordCount} distinct={distinctCount}\");\n    }\n}"
+    },
+    {
+      "language": "swift",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "UNKNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": false,
+      "gate_output": "main.swift:4:37: error: type 'String.Element' (aka 'Character') has no member 'whitespaces'\n2 | \n3 | let input = readLine(strippingNewline: true) ?? \"\"\n4 | let words = input.split(separator: .whitespaces)\n  |                                     `- error: type 'String.Element' (aka 'Character') has no member 'whitespaces'\n5 | let wordCount = words.count\n6 | let distinctWords = Set(words).count\n",
+      "ran": false,
+      "got": "6 | let distinctWords = Set(words).count",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.7,
+      "eval_count": 65,
+      "code": "import Foundation\n\nlet input = readLine(strippingNewline: true) ?? \"\"\nlet words = input.split(separator: .whitespaces)\nlet wordCount = words.count\nlet distinctWords = Set(words).count\n\nprint(\"words=\\(wordCount) distinct=\\(distinctWords)\")"
+    },
+    {
+      "language": "kotlin",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "COMPILES",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": false,
+      "got": "kotlin is compile-verified only on this machine (no `kotlin` launcher)",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.3,
+      "eval_count": 52,
+      "code": "fun main() {\n    val input = readln()\n    val words = input.split(\"\\\\s+\".toRegex()).filter { it.isNotEmpty() }\n    println(\"words=${words.size} distinct=${words.toSet().size}\")\n}"
+    },
+    {
+      "language": "php",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "KNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "No syntax errors detected in word_summary.php\n",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.5,
+      "eval_count": 66,
+      "code": "<?php\n$input = trim(fgets(STDIN));\n$words = preg_split('/\\s+/', $input, -1, PREG_SPLIT_NO_EMPTY);\n$distinctWords = count(array_unique($words));\n\necho \"words=\" . count($words) . \" distinct=\" . $distinctWords;"
+    },
+    {
+      "language": "ruby",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "KNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "Syntax OK\n",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 2.0,
+      "eval_count": 53,
+      "code": "if __FILE__ == $0\n  input = $stdin.read\n  words = input.split(/\\s+/)\n  distinct_count = words.uniq.size\n  puts \"words=#{words.size} distinct=#{distinct_count}\"\nend"
+    },
+    {
+      "language": "cpp",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "KNOWN",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4",
+      "seconds": 4.4,
+      "eval_count": 123,
+      "code": "#include <iostream>\n#include <sstream>\n#include <unordered_set>\n\nint main() {\n    std::string input;\n    std::getline(std::cin, input);\n\n    std::istringstream stream(input);\n    std::string word;\n    int word_count = 0;\n    std::unordered_set<std::string> distinct_words;\n\n    while (stream >> word) {\n        ++word_count;\n        distinct_words.insert(word);\n    }\n\n    std::cout << \"words=\" << word_count << \" distinct=\" << distinct_words.size() << std::endl;\n\n    return 0;\n}"
+    },
+    {
+      "language": "c",
+      "model": "qwen2.5-coder:14b",
+      "verdict": "PARTIAL",
+      "fenced": true,
+      "contract_problems": [],
+      "style_warnings": [
+        "wrapped the file in a markdown fence"
+      ],
+      "gate_available": true,
+      "gate_clean": true,
+      "gate_output": "",
+      "ran": true,
+      "got": "words=6 distinct=6",
+      "expected": "words=6 distinct=4",
+      "seconds": 6.7,
+      "eval_count": 195,
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdbool.h>\n\n#define MAX_LINE_LENGTH 4096\n\nint main(void) {\n    char line[MAX_LINE_LENGTH];\n    int word_count = 0;\n    int distinct_count = 0;\n    bool seen_words[1024] = {false};\n    char *words[1024];\n\n    while (fgets(line, MAX_LINE_LENGTH, stdin)) {\n        char *token = strtok(line, \" \\t\\n\\r\");\n        while (token) {\n            if (!seen_words[word_count]) {\n                words[word_count] = token;\n                distinct_count++;\n                seen_words[word_count] = true;\n            }\n            word_count++;\n            token = strtok(NULL, \" \\t\\n\\r\");\n        }\n    }\n\n    printf(\"words=%d distinct=%d\\n\", word_count, distinct_count);\n\n    return 0;\n}"
+    }
+  ]
+}

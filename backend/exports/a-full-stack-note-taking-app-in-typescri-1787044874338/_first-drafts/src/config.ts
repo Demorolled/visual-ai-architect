@@ -1,0 +1,1 @@
+export const PORT = 3000; export const DATABASE_URL = 'data.db';

@@ -7,21 +7,21 @@ import { spawn, execSync, execFileSync, ChildProcess } from 'child_process';
 import { existsSync, readFileSync, writeFileSync, mkdirSync, unlinkSync, readdirSync, renameSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { networkInterfaces } from 'os';
-import { projectRoutes } from './routes/projects';
-import { generationRoutes } from './routes/generation';
-import { ttsRoutes } from './routes/tts';
-import { configRoutes } from './routes/config';
-import { reasoningRoutes } from './routes/reasoning';
-import { emotionRoutes } from './routes/emotion';
+import { projectRoutes } from './routes/projects.js';
+import { generationRoutes } from './routes/generation.js';
+import { ttsRoutes } from './routes/tts.js';
+import { configRoutes } from './routes/config.js';
+import { reasoningRoutes } from './routes/reasoning.js';
+import { emotionRoutes } from './routes/emotion.js';
 import { AITranslator } from './ai/translator.js';
 import { analyzeEmotion, getDetailedEmotionContext } from './ai/emotionEngine.js';
-import { trainingRoutes } from './routes/training';
-import { exportRoutes } from './routes/export';
-import { userRoutes } from './routes/user';
-import knowledgeRoutes from './routes/knowledge';
-import neuralRoutes from './routes/neural';
-import searchRoutes from "./routes/search";
-import blueprintRoutes from "./routes/blueprint";
+import { trainingRoutes } from './routes/training.js';
+import { exportRoutes } from './routes/export.js';
+import { userRoutes } from './routes/user.js';
+import knowledgeRoutes from './routes/knowledge.js';
+import neuralRoutes from './routes/neural.js';
+import searchRoutes from "./routes/search.js";
+import blueprintRoutes from "./routes/blueprint.js";
 import architectRoutes from './routes/architect.js';
 import { desktopRoutes } from './routes/desktop.js';
 import { toolRoutes } from './routes/tools.js';
@@ -59,6 +59,9 @@ import { todoRoutes } from './routes/todo.js';
 import { reviewRoutes } from './routes/review.js';
 import { sandboxRoutes } from './routes/sandbox.js';
 import { codePlannerRoutes } from './routes/codePlanner.js';
+import { experimentRoutes } from './routes/experiments.js';
+import { idleMonitor, shouldCountRequestAsActivity } from './services/idleMonitor.js';
+import { microExperimenter } from './services/microExperimenterService.js';
 import { buildLadderRoutes } from './routes/buildLadder.js';
 import { uiPreferenceRoutes } from './routes/uiPreference.js';
 import { fastPreviewPreferenceRoutes } from './routes/fastPreviewPreference.js';
@@ -67,6 +70,7 @@ import { benchmarkRoutes } from './routes/benchmark.js';
 import { sitePreviewRoutes } from './routes/sitePreview.js';
 import { getSoulPromptModifier } from './services/soulService.js';
 import { ttsSpeaker } from './services/ttsSpeakerService.js';
+import { getIO } from './socket/socketManager.js';
 import { cleanLLMResponse } from './utils/responseCleaner.js';
 import { HEALTH_RSS_CRITICAL_MB, shouldLogHealth } from './utils/healthLog.js';
 
@@ -175,14 +179,51 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 
+// ─── Idle-activity tracking ───────────────────────────────────────────────
+// Every non-health / non-static request counts as user activity, so the idle
+// micro-app experimenter knows when the app is truly unused (>1 min of no
+// activity = idle). The WebSocket hook below adds socket-level signals.
+app.use((req, _res, next) => {
+  if (shouldCountRequestAsActivity(req.method, req.path)) idleMonitor.noteActivity(`http:${req.method}`);
+  next();
+});
+
 // Health check — /health (legacy) and /api/health both report server + LLM status
-const LLM_BASE_URL = process.env.DSPARK_PORT
-  ? `http://127.0.0.1:${process.env.DSPARK_PORT}`
-  : 'http://127.0.0.1:8000';
+//
+// The probe must target the provider the backend ACTUALLY talks to, read from
+// backend/llm-config.json — not a hardcoded DSpark port. With DSpark retired the
+// old constant pinned the probe to :8000 forever, so /api/health kept reporting
+// `llm.up:false` with `error: fetch failed` while Ollama was answering every real
+// request (a false alarm that hid whether the LLM was genuinely down). Falls back
+// to the legacy DSpark default when the config is unreadable.
+function configuredLlmBaseUrl(): string {
+  try {
+    // index.ts lives in backend/src, so `..` is backend/ — where llm-config.json
+    // actually sits (same file translator.ts resolves to).
+    const cfgPath = resolve(import.meta.dirname!, '..', 'llm-config.json');
+    const cfg = JSON.parse(readFileSync(cfgPath, 'utf-8'));
+    const entry = cfg?.dspark || cfg?.ollama || cfg?.primary;
+    const baseUrl = String(entry?.baseUrl || '').replace(/\/+$/, '').replace(/\/v1$/, '');
+    if (baseUrl) return baseUrl;
+  } catch {
+    // fall through to the legacy DSpark default
+  }
+  return process.env.DSPARK_PORT
+    ? `http://127.0.0.1:${process.env.DSPARK_PORT}`
+    : 'http://127.0.0.1:8000';
+}
+
+const LLM_BASE_URL = configuredLlmBaseUrl();
 
 async function llmHealth(): Promise<{ up: boolean; model?: string; error?: string }> {
   try {
-    const res = await fetch(`${LLM_BASE_URL}/v1/models`, { signal: AbortSignal.timeout(2000) });
+    // 10s, not 2s: dspark generation now runs in a worker thread so /v1/models
+    // stays responsive mid-generation, but a busy server can still take >2s on
+    // a cold request. The old 2s window made /api/health report `llm: up:false`
+    // while the model was actually serving (void-raider build failure, error
+    // #4). A down server still fails instantly (connection refused), so this
+    // only delays the response when the LLM is genuinely hung.
+    const res = await fetch(`${LLM_BASE_URL}/v1/models`, { signal: AbortSignal.timeout(10_000) });
     if (!res.ok) return { up: false, error: `HTTP ${res.status}` };
     const body: any = await res.json();
     return { up: true, model: body?.data?.[0]?.id ?? 'unknown' };
@@ -272,6 +313,7 @@ app.use('/api/benchmark', benchmarkRoutes);
 app.use('/api/wiki', wikiRoutes);
 app.use('/api/todo', todoRoutes);
 app.use('/api/build-ladder', buildLadderRoutes);
+app.use('/api/experiments', experimentRoutes);
 
 // Emotion-aware reasoning + tool execution endpoint
 const emotionTranslator = new AITranslator();
@@ -699,7 +741,7 @@ for (const [category, tools] of Object.entries(registry.grouped)) {
 
 // ─── Ollama connection check ──
 async function checkOllama(): Promise<void> {
-  const healthUrl = 'http://127.0.0.1:11434/api/tags';
+  const healthUrl = process.env.OLLAMA_BASE_URL ? process.env.OLLAMA_BASE_URL.replace('/v1', '') + '/api/tags' : 'http://192.168.1.234:11434/api/tags';
   const isAlive = await fetch(healthUrl).then(r => r.ok).catch(() => false);
   if (isAlive) {
     console.log('[Ollama] Ollama server detected on port 11434');
@@ -709,8 +751,9 @@ async function checkOllama(): Promise<void> {
 }
 
 // ─── DSpark autostart ────────────────────────────────────────────────────────
-// Automatically start the DSpark speculative-decoding server when the backend
-// boots, so the preferred LLM endpoint (port 8000) is ready without manual steps.
+// Automatically start the DSpark GGUF server (OpenAI-compatible, port 8000)
+// when the backend boots, so the preferred LLM endpoint is ready without
+// manual steps.
 //   - Disable with:  DSPARK_AUTOSTART=0
 //   - Override port / draft mode via DSPARK_PORT and DSPARK_DRAFT_MODE (passed through)
 //   - If a DSpark server is already running, it is adopted (not restarted, and not
@@ -781,7 +824,26 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 const httpServer = http.createServer(app);
 initializeSocketServer(httpServer);
 
-httpServer.listen(PORT, '0.0.0.0', () => {
+// ─── Feed the idle monitor from the WebSocket layer ─────────────────────
+// Socket connect / any client message / disconnect are the strongest signals
+// that a (possibly inactive-looking) human is at the app. Messages count as
+// activity; even pure presence pauses the idle clock for the connection.
+{
+  const io = getIO();
+  if (io) {
+    io.on('connection', (socket) => {
+      idleMonitor.noteActivity('socket-connect');
+      socket.onAny(() => idleMonitor.noteActivity('socket-activity'));
+      socket.on('disconnect', () => idleMonitor.noteActivity('socket-disconnect'));
+    });
+  }
+}
+
+// BIND_HOST lets the server bind to a single interface (e.g. the Tailscale IP)
+// instead of every interface. Default stays '0.0.0.0' so existing setups are
+// unaffected; set BIND_HOST to keep the unauthenticated command endpoints off
+// the LAN while still reachable over the tailnet.
+httpServer.listen(PORT, process.env.BIND_HOST || '0.0.0.0', () => {
   console.log(`\n╔══════════════════════════════════════════════════════════╗`);
   console.log(`║              Backend Server is Running               ║`);
   console.log(`╚══════════════════════════════════════════════════════════╝`);
@@ -806,6 +868,9 @@ httpServer.listen(PORT, '0.0.0.0', () => {
 
   // ─── Start auto-learning service ──
   autoLearnService.start();
+
+  // ─── Start idle micro-app experimenter (inactive unless enabled) ──
+  microExperimenter.start();
   const autoLearnDisabled = process.env.AUTO_LEARN_DISABLED === 'true' || process.env.AUTO_LEARN_DISABLED === '1';
   console.log(autoLearnDisabled
     ? '[AutoLearn] Pattern capture DISABLED (AUTO_LEARN_DISABLED=true) — poisoning loop quarantined'
@@ -841,7 +906,7 @@ httpServer.listen(PORT, '0.0.0.0', () => {
   // ─── Check Ollama connection ──
   checkOllama();
 
-  // ─── Autostart DSpark speculative-decoding server ──
+  // ─── Autostart DSpark GGUF server (OpenAI-compatible) ──
   ensureDSparkServer();
 
   process.on('SIGTERM', cleanup);

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Player</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .player { width: 380px; background: #14141f; border: 1px solid #2a2a3a; border-radius: 14px;
+            padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+  h2 { margin: 0 0 4px 0; color: #00d9ff; font-size: 20px; }
+  .artist { color: #888; font-size: 12px; margin-bottom: 14px; }
+  .visualizer { display: flex; align-items: flex-end; gap: 3px; height: 56px; margin: 12px 0; }
+  .visualizer i { flex: 1; background: #00d9ff; border-radius: 2px; opacity: .25;
+                  transition: height .12s ease; }
+  input[type=range] { width: 100%; accent-color: #00d9ff; }
+  .times { display: flex; justify-content: space-between; font-size: 11px; color: #888; }
+  .controls { display: flex; justify-content: center; gap: 14px; margin: 14px 0; align-items: center; }
+  .controls button { background: #2a2a3a; color: #e6e6e6; border: none; border-radius: 50%;
+                     width: 44px; height: 44px; font-size: 18px; cursor: pointer; }
+  .controls button.main { background: #00d9ff; color: #04141a; width: 56px; height: 56px; font-size: 22px; }
+  .volrow { display: flex; gap: 10px; align-items: center; font-size: 12px; color: #888; }
+  ul { list-style: none; padding: 0; margin: 12px 0 0 0; max-height: 170px; overflow: auto; }
+  li { display: flex; justify-content: space-between; padding: 7px 10px; border-radius: 8px;
+       cursor: pointer; font-size: 13px; }
+  li.active { background: #0d2416; color: #3ddc84; }
+  li:hover { background: #1c1c2a; }
+  .dim { color: #777; font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="player">
+  <h2 id="title">Track 1</h2>
+  <div class="artist" id="artist">Synth Orchestra</div>
+  <div class="visualizer" id="viz"></div>
+  <input type="range" id="seek" min="0" max="100" value="0">
+  <div class="times"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+  <div class="controls">
+    <button id="prevBtn">⏮</button>
+    <button id="playBtn" class="main">▶</button>
+    <button id="nextBtn">⏭</button>
+  </div>
+  <div class="controls">
+    <button id="shuffleBtn" title="shuffle">🔀</button>
+    <button id="repeatBtn" title="repeat">🔁</button>
+    <div class="volrow">🔊<input type="range" id="vol" min="0" max="100" value="70"></div>
+  </div>
+  <ul id="playlist"></ul>
+  <div class="dim" id="modeLbl">shuffle on</div>
+</div>
+<script>
+  const TRACKS = [
+    { name: 'Neon Skyline', key: 0, notes: [60,64,67,72,67,64,62,60,64,67,71,67] },
+    { name: 'Midnight Drive', key: 2, notes: [57,60,64,67,64,60,59,57,60,63,67,63] },
+    { name: 'Solar Winds', key: 4, notes: [62,65,69,74,69,65,64,62,65,68,72,68] },
+    { name: 'Deep Current', key: 7, notes: [55,59,62,67,62,59,58,55,59,62,66,62] }
+  ];
+  let order = TRACKS.map((_, i) => i);
+  try {
+    const saved = JSON.parse(localStorage.getItem('mp-order'));
+    if (Array.isArray(saved) && saved.length === TRACKS.length) order = saved;
+  } catch (e) { /* corrupt saved order — fall back to default */ }
+  let idx = 0;
+  let playing = false;
+  let shuffle = localStorage.getItem('mp-shuffle') !== '0';
+  let repeat = localStorage.getItem('mp-repeat') === '1';
+  let volume = parseInt(localStorage.getItem('mp-vol') || '70', 10);
+  let ctx = null;
+  let master = null;
+  let osc = null;
+  let gain = null;
+  let step = 0;
+  let timerId = null;
+  let dur = 0;
+  let elapsed = 0;
+
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function saveOrder() {
+    try { localStorage.setItem('mp-order', JSON.stringify(order)); } catch (e) {}
+  }
+
+  function audio() {
+    if (ctx) return ctx;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = volume / 100;
+    master.connect(ctx.destination);
+    for (let i = 0; i < 24; i++) {
+      const bar = document.createElement('i');
+      document.getElementById('viz').appendChild(bar);
+    }
+    return ctx;
+  }
+
+  function noteFreq(midi) {
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
+
+  function scheduleStep() {
+    if (!ctx || !playing) return;
+    const track = TRACKS[order[idx]];
+    const t = ctx.currentTime;
+    osc = ctx.createOscillator();
+    gain = ctx.createGain();
+    const f = noteFreq(track.notes[step % track.notes.length] + track.key);
+    osc.type = 'triangle';
+    osc.frequency.value = f;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.6, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    osc.connect(gain);
+    gain.connect(master);
+    osc.start(t);
+    osc.stop(t + 0.55);
+    step += 1;
+    const frac = (step % track.notes.length) / track.notes.length;
+    dur = track.notes.length * 0.5;
+    elapsed = elapsedBase() + frac * dur;
+    renderBars(track.notes[step % track.notes.length], f);
+    updateTimes();
+  }
+
+  function elapsedBase() {
+    return Math.floor(step / trackLen(TRACKS[order[idx]])) * dur;
+  }
+
+  function trackLen(track) {
+    return track.notes.length;
+  }
+
+  function tickTimer() {
+    if (!playing) return;
+    if (step % trackLen(TRACKS[order[idx]]) === 0 && step > 0) {
+      // measure boundary reached
+      if (repeat) {
+        // pause the sequence loop — we re-schedule from note 0
+      }
+    }
+    scheduleStep();
+  }
+
+  function start() {
+    const c = audio();
+    if (c.state === 'suspended') c.resume();
+    playing = true;
+    document.getElementById('playBtn').textContent = '⏸';
+    if (timerId !== null) clearInterval(timerId);
+    timerId = setInterval(tickTimer, 500);
+    scheduleStep();
+  }
+
+  function pause() {
+    playing = false;
+    document.getElementById('playBtn').textContent = '▶';
+    if (timerId !== null) { clearInterval(timerId); timerId = null; }
+    if (osc) { try { osc.stop(); } catch (e) {} }
+  }
+
+  function playPause() {
+    if (playing) pause(); else start();
+  }
+
+  function selectTrack(i) {
+    idx = i;
+    step = 0;
+    elapsed = 0;
+    const t = TRACKS[order[i]];
+    document.getElementById('title').textContent = t.name;
+    document.getElementById('artist').textContent = 'Synth Orchestra · track ' + (i + 1);
+    highlightPlaylist();
+    if (playing) { if (timerId !== null) clearInterval(timerId); timerId = setInterval(tickTimer, 500); scheduleStep(); }
+  }
+
+  function nextTrack(manual) {
+    let i = idx;
+    if (shuffle && manual) {
+      i = Math.floor(Math.random() * order.length);
+      if (i === idx && order.length > 1) i = (i + 1) % order.length;
+    } else {
+      i = (idx + 1) % order.length;
+    }
+    selectTrack(i);
+  }
+
+  function prevTrack() {
+    if (elapsed > 3) { step = 0; elapsed = 0; updateTimes(); return; }
+    selectTrack((idx - 1 + order.length) % order.length);
+  }
+
+  function toggleShuffle() {
+    shuffle = !shuffle;
+    localStorage.setItem('mp-shuffle', shuffle ? '1' : '0');
+    document.getElementById('modeLbl').textContent = shuffle ? 'shuffle on' : 'shuffle off';
+  }
+
+  function toggleRepeat() {
+    repeat = !repeat;
+    localStorage.setItem('mp-repeat', repeat ? '1' : '0');
+  }
+
+  function setVolume(v) {
+    volume = v;
+    localStorage.setItem('mp-vol', String(v));
+    if (master) master.gain.value = volume / 100;
+  }
+
+  function renderBars(note, freq) {
+    const bars = document.querySelectorAll('#viz i');
+    const base = 12 + (note % 12) * 3;
+    bars.forEach((bar, i) => {
+      const h = base + Math.abs(Math.sin((freq / 60) + i * 0.8)) * 34;
+      bar.style.height = h + 'px';
+      bar.style.opacity = 0.25 + (i === step % 24 ? 0.75 : 0);
+    });
+  }
+
+  function updateTimes() {
+    document.getElementById('cur').textContent = formatTime(elapsed);
+    document.getElementById('dur').textContent = formatTime(dur);
+    const seek = document.getElementById('seek');
+    if (dur > 0) seek.value = Math.floor(100 * elapsed / dur);
+  }
+
+  function seekTo(frac) {
+    if (dur <= 0) return;
+    step = 0;
+    elapsed = frac * dur;
+    updateTimes();
+  }
+
+  function highlightPlaylist() {
+    const items = document.querySelectorAll('#playlist li');
+    items.forEach((li, i) => {
+      li.classList.toggle('active', i === idx);
+    });
+  }
+
+  function buildPlaylist() {
+    const ul = document.getElementById('playlist');
+    ul.innerHTML = '';
+    order.forEach((trackIdx, i) => {
+      const li = document.createElement('li');
+      li.textContent = TRACKS[trackIdx].name;
+      li.addEventListener('click', () => selectTrack(i));
+      ul.appendChild(li);
+    });
+    highlightPlaylist();
+  }
+
+  document.getElementById('playBtn').addEventListener('click', playPause);
+  document.getElementById('nextBtn').addEventListener('click', () => nextTrack(true));
+  document.getElementById('prevBtn').addEventListener('click', prevTrack);
+  document.getElementById('shuffleBtn').addEventListener('click', () => { toggleShuffle(); updateShuffleUi(); });
+  document.getElementById('repeatBtn').addEventListener('click', toggleRepeat);
+  document.getElementById('vol').value = volume;
+  document.getElementById('vol').addEventListener('input', (e) => setVolume(parseInt(e.target.value, 10)));
+  document.getElementById('seek').addEventListener('input', (e) => seekTo(parseInt(e.target.value, 10) / 100));
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); playPause(); }
+    if (e.code === 'ArrowRight') nextTrack(true);
+    if (e.code === 'ArrowLeft') prevTrack();
+  });
+
+  function updateShuffleUi() {
+    document.getElementById('modeLbl').textContent = shuffle ? 'shuffle on' : 'shuffle off';
+  }
+
+  buildPlaylist();
+  updateShuffleUi();
+  selectTrack(0);
+</script>
+</body>
+</html>

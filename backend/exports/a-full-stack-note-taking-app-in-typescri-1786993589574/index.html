@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note Taking App</title>
+<style>
+body { font-family: Arial, sans-serif; background: #0a0a14; color: #d4d4d4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+.app { max-width: 960px; margin: 0 auto; padding: 24px; }
+.card { background: #15152a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-family: inherit; transition: 0.2s; }
+.btn-primary { background: #00d9ff; color: #0a0a14; }
+.btn-primary:hover { background: #00bfff; }
+.btn-secondary { background: #3b82f6; color: #ffffff; }
+.btn-secondary:hover { background: #2563eb; }
+.btn-danger { background: #f87171; color: #ffffff; }
+.btn-danger:hover { background: #ef4444; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1 style="color: #ffffff; margin-bottom: 20px">Note Taking App</h1>
+  
+  <div class="row" style="margin-bottom: 20px">
+    <input id="titleInput" type="text" placeholder="Enter title" style="flex: 1; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; background: #1a1a2e; color: #d4d4d4; font-size: 14px;" oninput="onTitleChange(this.value)">
+    <button class="btn btn-primary" onclick="addNote()" style="margin-left: 10px">➕ Add Note</button>
+  </div>
+  
+  <div id="notesList" class="grid" style="margin-bottom: 20px"></div>
+  
+  <div id="statusMsg" role="status" style="padding: 8px 12px; border-radius: 8px; margin-top: 10px; display: none"></div>
+  
+  <div style="display: flex; gap: 12px; margin-bottom: 20px">
+    <button class="btn btn-secondary" onclick="loadNotes()">🔄 Reload Notes</button>
+    <button class="btn btn-danger" onclick="clearNotes()">✕ Clear Notes</button>
+  </div>
+</div>
+
+<script>
+// Mock database for demonstration
+let notes = [];
+let currentTitle = '';
+
+// Load initial notes
+loadNotes();
+
+function loadNotes() {
+  notes = [
+    { id: 1, title: 'Meeting Notes', content: 'Discussed project timeline and milestones.' },
+    { id: 2, title: 'Shopping List', content: 'Milk, eggs, bread, cheese, butter.' },
+    { id: 3, title: 'Task List', content: 'Finish design, code review, deployment.' }
+  ];
+  renderNotes();
+}
+
+function addNote() {
+  const title = currentTitle.trim();
+  if (!title) { return; }
+  const newNote = { id: Date.now(), title, content: '' };
+  notes.push(newNote);
+  renderNotes();
+  currentTitle = '';
+  document.getElementById('titleInput').value = '';
+}
+
+function onTitleChange(value) {
+  currentTitle = value;
+}
+
+function renderNotes() {
+  const notesList = document.getElementById('notesList');
+  notesList.innerHTML = '';
+  if (notes.length === 0) {
+    const emptyMsg = document.createElement('div');
+    emptyMsg.className = 'card';
+    emptyMsg.textContent = 'No notes yet. Add one above!';
+    notesList.appendChild(emptyMsg);
+    return;
+  }
+  notes.forEach(note => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<h3>${note.title}</h3><p>${note.content}</p>`;
+    notesList.appendChild(card);
+  });
+}
+
+function clearNotes() {
+  notes = [];
+  renderNotes();
+}
+</script>
+</body>
+</html>

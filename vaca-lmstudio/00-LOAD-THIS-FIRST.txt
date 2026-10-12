@@ -1,0 +1,11 @@
+HOW TO LOAD VACA INTO AN LM STUDIO CHAT
+========================================
+1. Open LM Studio and start a chat (qwen2.5-coder-14b-uncensored is loaded, 32K context).
+2. Click the paperclip (attach) icon in the chat input, or drag these files in.
+3. Best combo for one chat (fits in 32K):
+     - 01-VACA-CURRENT-STATE.md   (where the project stands)
+     - 03-VACA-PLANS.md           (plans + suggestions)
+     - 04-VACA-KNOWLEDGE.md       (knowledge base JSON)
+4. Then attach 02-VACA-HISTORY.md when digging into the change log,
+   or 05-VACA-FILE-INDEX.md when you need the project layout.
+5. Ask things like: "Based on these docs, what's the next step for VACA?"

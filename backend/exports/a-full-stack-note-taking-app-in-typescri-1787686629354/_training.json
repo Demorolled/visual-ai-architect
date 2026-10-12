@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-25T19:40:03.184Z",
+  "request": "a full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+  "intent": {
+    "goal": "full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+    "targetUser": "deployment",
+    "coreFeatures": [
+      "note-taking"
+    ],
+    "uiStyle": "",
+    "language": "typescript"
+  },
+  "questions": [
+    {
+      "key": "api",
+      "question": "What API endpoints do you want?",
+      "options": [
+        "RESTful",
+        "GraphQL"
+      ]
+    },
+    {
+      "key": "storage",
+      "question": "How should notes be stored?",
+      "options": [
+        "JSON file",
+        "SQLite database"
+      ]
+    },
+    {
+      "key": "interface",
+      "question": "What kind of interface do you want?",
+      "options": [
+        "Terminal (CLI)",
+        "Web app",
+        "Desktop app"
+      ]
+    }
+  ],
+  "answers": {
+    "api": "RESTful",
+    "storage": "JSON file",
+    "interface": "Terminal (CLI)"
+  },
+  "planFiles": [
+    {
+      "path": "src/app.ts",
+      "summary": "Entry point: initializes the Express server",
+      "language": "typescript",
+      "exports": [
+        "createApp"
+      ]
+    },
+    {
+      "path": "src/routes.ts",
+      "summary": "Routes for the note-taking API",
+      "language": "typescript",
+      "exports": [
+        "notesRouter"
+      ]
+    },
+    {
+      "path": "src/notes.ts",
+      "summary": "Note-taking core logic: create, retrieve, update, delete",
+      "language": "typescript",
+      "exports": [
+        "createNote",
+        "getNotes",
+        "getNoteById",
+        "updateNote",
+        "deleteNote"
+      ]
+    },
+    {
+      "path": "src/store.ts",
+      "summary": "In-memory note store",
+      "language": "typescript",
+      "exports": [
+        "loadNotes",
+        "saveNotes"
+      ]
+    },
+    {
+      "path": "src/types.ts",
+      "summary": "Type definitions for notes",
+      "language": "typescript",
+      "exports": [
+        "Note",
+        "CreateNotePayload"
+      ]
+    },
+    {
+      "path": "src/utils.ts",
+      "summary": "Utility functions",
+      "language": "typescript",
+      "exports": [
+        "generateId",
+        "validateNote"
+      ]
+    },
+    {
+      "path": "src/tests/app.test.ts",
+      "summary": "Unit tests for the Express app",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "src/tests/notes.test.ts",
+      "summary": "Unit tests for the note-taking core logic",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "Dockerfile",
+      "summary": "Dockerfile for building the note-taking app image",
+      "language": "docker",
+      "exports": []
+    },
+    {
+      "path": "package.json",
+      "summary": "Node.js project configuration",
+      "language": "json",
+      "exports": []
+    },
+    {
+      "path": "index.html",
+      "summary": "React frontend entry point",
+      "language": "html",
+      "exports": []
+    },
+    {
+      "path": "src/frontend/App.tsx",
+      "summary": "React frontend: displays notes and allows interaction with the API",
+      "language": "typescript",
+      "exports": [
+        "App"
+      ]
+    },
+    {
+      "path": "src/frontend/api.ts",
+      "summary": "React frontend: API client for the note-taking app",
+      "language": "typescript",
+      "exports": [
+        "fetchNotes",
+        "createNote",
+        "deleteNote"
+      ]
+    }
+  ],
+  "mode": "chunked",
+  "repairRounds": 6,
+  "tscErrors": 1,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nVACA-MASTER-KNOWLEDGE.md parts: Part A — What the Wiki Covers (modelVeronice.txt, sections 1–35), Part B — The DSpark LLM Serving Pipeline (NOT in the wiki), Part C — The Fine-Tuning Pipeline (QLoRA 4-bit) (NOT in the wiki), Part D — Campaign 50 & the Corrected Code-Generation Contract (NOT in the wiki), Part E — Benchmark, Deploy & Recovery (NOT in the w\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node (typescript).\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-pa\n…(truncated)",
+  "files": [
+    "src/notes.ts",
+    "src/routes.ts",
+    "src/types.ts",
+    "src/utils.ts",
+    "src/tests/app.test.ts",
+    "src/tests/notes.test.ts",
+    "Dockerfile",
+    "package.json",
+    "index.html",
+    "src/frontend/App.tsx",
+    "src/frontend/api.ts"
+  ]
+}

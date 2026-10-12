@@ -47,7 +47,7 @@ export interface OcrReviewOptions {
 // tool calls (the agentic ocr loop requires them). The qwen2.5-coder builds
 // only emit tool-shaped text, so they cannot complete a scan.
 const DEFAULT_MODEL = 'gpt-oss:20b';
-const DEFAULT_BASE_URL = 'http://127.0.0.1:11434/v1';
+const DEFAULT_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://192.168.1.234:11434/v1';
 const DEFAULT_PROVIDER = 'vaca-local';
 const DEFAULT_TIMEOUT_MIN = 10;
 // Keep the overall cap modest so a misconfigured model fails fast and the

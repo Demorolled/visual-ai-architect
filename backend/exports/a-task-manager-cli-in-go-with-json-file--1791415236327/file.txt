@@ -1,0 +1,33 @@
+package tasks
+
+import (
+  "encoding/json"
+  "os"
+)
+
+// Config defines the configuration for the Task struct.
+type Config struct {
+  StoragePath string `json:"storage_path"`
+}
+
+// Task represents a task in the system and provides methods to manipulate its state.
+type Task struct {
+  ID     int    `json:"id"`
+  Title  string `json:"title"`
+  Done   bool   `json:"done"`
+}
+
+func (t *Task) Save(config Config) error {
+  // Open the file for writing, creating it if necessary
+  f, err := os.Create(config.StoragePath)
+  if err != nil {
+    return err
+  }
+  defer f.Close()
+
+  // Write the tasks to the storage in JSON format
+  encoder := json.NewEncoder(f)
+  encoder.SetIndent("", " ")
+  fmt.Fprintf(f)
+
+}

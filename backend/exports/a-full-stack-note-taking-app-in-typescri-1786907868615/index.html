@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Taking App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .note {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .note-form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Note Taking App</h1>
+        <div id="noteForm" class="note-form">
+            <input type="text" id="noteInput" placeholder="Enter a note" />
+            <button id="addNote">Add Note</button>
+        </div>
+        <div id="noteList"></div>
+    </div>
+
+    <script>
+        const noteForm = document.getElementById('noteForm');
+        const noteInput = document.getElementById('noteInput');
+        const addNoteButton = document.getElementById('addNote');
+        const noteList = document.getElementById('noteList');
+
+        let notes = [];
+
+        function renderNotes() {
+            noteList.innerHTML = '';
+            notes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note';
+                noteElement.textContent = note;
+                noteList.appendChild(noteElement);
+            });
+        }
+
+        addNoteButton.addEventListener('click', () => {
+            const noteText = noteInput.value.trim();
+            if (noteText) {
+                notes.push(noteText);
+                noteInput.value = '';
+                renderNotes();
+            }
+        });
+    </script>
+</body>
+</html>

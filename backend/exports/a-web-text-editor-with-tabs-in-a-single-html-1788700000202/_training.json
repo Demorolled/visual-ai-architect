@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:30:00.000Z",
+  "request": "Build a web text editor in a single HTML file. It manages multiple document tabs that can be created, switched, and closed, every keystroke updates the character and line counts, Ctrl-S and Ctrl-F shortcuts work, a find panel supports forward and backward search with a highlighted selection, single and replace-all substitute with an escaped search term, all documents autosave to localStorage after typing pauses, and a status bar shows the active document name and byte totals.",
+  "intent": {
+    "goal": "build a web text editor in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Nano Web Editor HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a web text editor in a single HTML file. It manages multiple document tabs that can be created, switched, and closed, every keystroke updates the character and line counts, Ctrl-S and Ctrl-F shortcuts work, a find panel supports forward and backward search with a highlighted selection, single and replace-all substitute with an escaped search term, all documents autosave to localStorage after typing pauses, and a status bar shows the active document name and byte totals.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

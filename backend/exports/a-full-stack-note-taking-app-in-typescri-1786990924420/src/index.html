@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Taking App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0a0a14;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .input-group {
+      margin-bottom: 10px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 4px;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    .input-group button {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    .input-group button:hover {
+      background: #0056b3;
+    }
+    .notes-list {
+      margin-top: 10px;
+    }
+    .notes-list li {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 4px;
+      list-style: none;
+    }
+    .notes-list li:nth-child(odd) {
+      background: #12121e;
+    }
+    .notes-list li .note-content {
+      margin: 4px 0;
+    }
+    .notes-list li .note-delete {
+      float: right;
+      background: none;
+      border: none;
+      color: #f00;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Note Taking App</h1>
+    <div class="input-group">
+      <input id="titleInput" type="text" placeholder="Enter note title">
+      <input id="contentInput" type="text" placeholder="Enter note content">
+      <button onclick="addNote()">Add Note</button>
+    </div>
+    <ul id="notesList" class="notes-list"></ul>
+  </div>
+
+  <script>
+    let notes = [];
+
+    function addNote() {
+      const title = document.getElementById('titleInput').value.trim();
+      const content = document.getElementById('contentInput').value.trim();
+      if (!title || !content) return;
+      notes.push({ title, content, id: Date.now() });
+      renderNotes();
+      document.getElementById('titleInput').value = '';
+      document.getElementById('contentInput').value = '';
+    }
+
+    function renderNotes() {
+      const list = document.getElementById('notesList');
+      list.innerHTML = '';
+      notes.forEach(note => {
+        const li = document.createElement('li');
+        li.innerHTML = `<div class="note-content">${note.title}</div><div class="note-content">${note.content}</div><button class="note-delete" onclick="deleteNote(${note.id})">✕</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(note => note.id !== id);
+      renderNotes();
+    }
+  </script>
+</body>
+</html>

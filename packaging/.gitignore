@@ -1,0 +1,21 @@
+# Packaging build inputs/outputs — generated, never commit.
+#
+# These are large (payload/ ~95 MB, unpacked app dirs ~300 MB each, installers
+# ~130 MB each). Everything here is reproducible with:
+#   bash packaging/linux/build.sh
+#   bash packaging/windows/build.sh
+
+electron/payload/
+electron/node_modules/
+electron/build/__pycache__/
+
+linux/linux-unpacked/
+linux/AppImage/
+linux/*.AppImage
+linux/*.deb
+linux/builder-debug.yml
+
+windows/win-unpacked/
+windows/*.exe
+windows/*.exe.blockmap
+windows/builder-debug.yml

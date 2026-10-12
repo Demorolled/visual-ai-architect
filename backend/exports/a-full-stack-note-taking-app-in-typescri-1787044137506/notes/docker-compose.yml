@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  notes:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./notes:/app/notes
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - notes
+  notes:
+    image: node:16
+    command: node index.js
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"

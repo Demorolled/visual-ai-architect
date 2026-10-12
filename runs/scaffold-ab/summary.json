@@ -1,0 +1,53 @@
+{
+  "baseline (this session)": {
+    "n": 197,
+    "passed": 147,
+    "parse_ok": 173,
+    "pass_rate": 0.7462
+  },
+  "trimmed scaffold (this session)": {
+    "n": 197,
+    "passed": 140,
+    "parse_ok": 158,
+    "pass_rate": 0.7107
+  },
+  "FULL scaffold (as recorded, shim)": {
+    "n": 197,
+    "passed": 102,
+    "parse_ok": 108,
+    "pass_rate": 0.5178
+  },
+  "FULL scaffold (re-scored)": {
+    "n": 197,
+    "passed": 131,
+    "parse_ok": 137,
+    "pass_rate": 0.665
+  },
+  "baseline (prior session, re-scored)": {
+    "n": 197,
+    "passed": 149,
+    "parse_ok": 174,
+    "pass_rate": 0.7563
+  },
+  "nogrpo (prior session, re-scored)": {
+    "n": 197,
+    "passed": 114,
+    "parse_ok": 169,
+    "pass_rate": 0.5787
+  },
+  "APP MODE gold ceiling (compiles in context)": {
+    "n": 197,
+    "passed": 137,
+    "pass_rate": 0.6954
+  },
+  "APP MODE baseline (no scaffold)": {
+    "n": 197,
+    "passed": 131,
+    "pass_rate": 0.665
+  },
+  "APP MODE trimmed scaffold": {
+    "n": 197,
+    "passed": 113,
+    "pass_rate": 0.5736
+  }
+}

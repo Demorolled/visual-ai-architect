@@ -1,0 +1,223 @@
+{
+ "success": true,
+ "projectId": "f75eef9c-2772-45f1-a431-6c2c633876e7",
+ "matchedBy": "semantic",
+ "matchScore": 0.7279644730092274,
+ "blueprint": {
+  "app_type": "task_management_app",
+  "description": "Task Management App \u2014 A web app to manage personal tasks with create, read, update, delete, and filter by status",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Data Storage",
+    "destination_module": "User Interface",
+    "data_passed": "requests"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 23 task-scheduler Open-Source Projects - LibHunt\n    Which are the best open-source task-scheduler projects? This list will help you: celery, incubator-dolphinscheduler, machinery, dramatiq, dagu, concurrencpp, and go-quartz.\n  \u2022 14 Best Free and Open Source CLI Command Schedulers\n    The software utility cron also known as cron job is a time-based job scheduler in Unix-like computer operating systems. Users who set up and maintain software environments use cron to schedule jobs (c\n  \u2022 \u2b506 cfHxqA/BotNix-Client: BotNix client app \u2013 a modular framework for robust process automation, task scheduling, and workflow-driven integrations.\n  \u2022 \u2b505 tornikegomareli/claude-scheduler: Native macOS app that runs headless Claude Code tasks on a launchd schedule hooks, token tracking, and an agent-friendly CLI\n  \u2022 focalboard (project-management): Open source project management\n  \u2022 affine.pro (project-management): Merged workspace for productivity\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 1,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 22: JARVIS 55 \u2014 CORE MODULES\n    22.1 Engine (src/core/engine.ts)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n- Central orchestrator for chat, tool execution, and learning\n- Builds system prompt with emotion context + skills context\n- Restores conversation history from SQLite on init\n- Auto-learns by saving datasheets from each interaction\n-\n  \u2022 Section 5: BACKEND APPLICATION\n    5.1 PACKAGE DETAILS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nRuntime:    Node.js (ESM - type:module)\nRunner:     tsx (dev), tsc \u2192 node (prod)\nFramework:  Express 4.18.2\nAI SDK:     OpenAI SDK 6.37.0\nWebSocket:  socket.io 4.8.3\nPort:       3001\nTesting:    Vitest 4.1.8\nTypeScript: 5.3.3, target ES2022, strict mode\n\n5.2 \n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "task_management_app",
+   "score": 0.7279644730092274
+  },
+  {
+   "app_type": "todo_app",
+   "score": 0.6827791628198607
+  },
+  {
+   "app_type": "workflow_scheduler",
+   "score": 0.5466571461940076
+  },
+  {
+   "app_type": "kanban-ts",
+   "score": 0.5326960238104674
+  },
+  {
+   "app_type": "instruction_scheduler",
+   "score": 0.5084857703500655
+  }
+ ],
+ "project": {
+  "id": "f75eef9c-2772-45f1-a431-6c2c633876e7",
+  "name": "a task scheduler cli app",
+  "targetOS": "linux",
+  "nodeCount": 3,
+  "edgeCount": 1,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "task_management_app blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "database",
+    "label": "Data Storage"
+   },
+   {
+    "id": "mod_1",
+    "type": "ui",
+    "label": "User Interface"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 1,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 1,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "generated": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "matched": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "data-storage.ts",
+   "language": "typescript",
+   "code": "export interface Task {\n  id: number;\n  title: string;\n  description: string;\n  priority: 'high' | 'medium' | 'low';\n  status: 'todo' | 'in-progress' | 'done';\n  createdAt: Date;\n  updatedAt: Date;\n}\n\nexport interface FilterOptions {\n  status?: 'todo' | 'in-progress' | 'done';\n  priority?: 'high' | 'medium' | 'low';\n}\n\nexport function addTask(title: string, description: string, priority: 'high' | 'medium' | 'low'): number {\n  const tasks: Task[] = [];\n  const id = tasks.length + 1;\n  tasks.push({ id, title, description, priority, status: 'todo', createdAt: new Date(), updatedAt: new Date() });\n  return id;\n}\n\nexport function getTasks(filter: FilterOptions): Task[] {\n  const tasks: Task[] = [];\n  return tasks.filter(task => {\n    if (filter.status && task.status !== filter.status) return false;\n    if (filter.priority && task.priority !== filter.priority) return false;\n    return true;\n  });\n}\n\nexport function updateTask(id: number, title: string, description: string, priority: 'high' | 'medium' | 'low', status: 'todo' | 'in-progress' | 'done'): boolean {\n  const tasks: Task[] = [];\n  const task = tasks.find(t => t.id === id);\n  if (task) {\n    task.title = title;\n    task.description = description;\n    task.priority = priority;\n    task.status = status;\n    task.updatedAt = new Date();\n    return true;\n  }\n  return false;\n}\n\nexport function deleteTask(id: number): boolean {\n  const tasks: Task[] = [];\n  const index = tasks.findIndex(t => t.id === id);\n  if (index !== -1) {\n    tasks.splice(index, 1);\n    return true;\n  }\n  return false;\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Data Storage",
+   "dependencies": [],
+   "exports": [
+    "Task",
+    "FilterOptions",
+    "addTask",
+    "getTasks",
+    "updateTask",
+    "deleteTask"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "user-interface.ts",
+   "language": "typescript",
+   "code": "import { Task, FilterOptions, addTask, getTasks, updateTask, deleteTask } from '../data-storage/data-storage.ts';\n\nexport function render(container: HTMLElement) {\n  const taskList = document.createElement('div');\n  taskList.id = 'task-list';\n  taskList.style.cssText = 'background-color: #2a3c5a; padding: 16px; overflow-y: auto;';\n  container.appendChild(taskList);\n\n  const taskDetails = document.createElement('div');\n  taskDetails.id = 'task-details';\n  taskDetails.style.cssText = 'background-color: #15152a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;margin-top:16px';\n  container.appendChild(taskDetails);\n\n  const newTaskBtn = document.createElement('button');\n  newTaskBtn.textContent = 'Add Task';\n  newTaskBtn.style.cssText = 'font-family: inherit; background-color: #0a162a; color: white; padding: 8px 16px; border-radius: 4px; margin-bottom: 8px';\n  newTaskBtn.onclick = () => addTask();\n  taskList.appendChild(newTaskBtn);\n\n  const taskFilter = document.createElement('div');\n  taskFilter.style.cssText = 'display:flex;gap:8px;justify-content:flex-end';\n  taskList.appendChild(taskFilter);\n\n  const filterBtn = document.createElement('button');\n  filterBtn.textContent = 'All';\n  filterBtn.style.cssText = 'font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer';\n  filterBtn.onclick = () => filterTasks('all');\n  filterBtn.dataset.filter = 'all';\n  taskFilter.appendChild(filterBtn);\n\n  const filterBtnTodo = document.createElement('button');\n  filterBtnTodo.textContent = 'Todo';\n  filterBtnTodo.style.cssText = 'font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer';\n  filterBtnTodo.onclick = () => filterTasks('todo');\n  filterBtnTodo.dataset.filter = 'todo';\n  taskFilter.appendChild(filterBtnTodo);\n\n  const filterBtnInProgress = document.createElement('button');\n  filterBtnInProgress.textContent = 'In Progress';\n  filterBtnInProgress.style.cssText = 'font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer';\n  filterBtnInProgress.onclick = () => filterTasks('in-progress');\n  filterBtnInProgress.dataset.filter = 'in-progress';\n  taskFilter.appendChild(filterBtnInProgress);\n\n  const filterBtnDone = document.createElement('button');\n  filterBtnDone.textContent = 'Done';\n  filterBtnDone.style.cssText = 'font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer';\n  filterBtnDone.onclick = () => filterTasks('done');\n  filterBtnDone.dataset.filter = 'done';\n  taskFilter.appendChild(filterBtnDone);\n\n  const taskInput = document.createElement('input');\n  taskInput.type = 'text';\n  taskInput.placeholder = 'Task title';\n  taskInput.style.cssText = 'width:100%;padding:8px;background-color:#1a2332;border:1px solid #4a5a75;color:#e0e0e0;font-size:14px';\n  taskInput.oninput = () => { const val = taskInput.value; if (val === '') { taskInput.style.border = '1px solid #4a5a75'; return; } taskInput.style.border = '1px solid #0a162a'; };\n  taskList.appendChild(taskInput);\n\n  const taskPriority = document.createElement('select');\n  taskPriority.style.cssText = 'width:100%;padding:8px;background-color:#1a2332;border:1px solid #4a5a75;color:#e0e0e0;font-size:14px';\n  taskPriority.onchange = () => { const val = taskPriority.value; if (val === '') { taskPriority.style.border = '1px solid #4a5a75'; return; } taskPriority.style.border = '1px solid #0a162a'; };\n  taskPriority.innerHTML = '<option value=\"high\">High</option><option value=\"medium\">Medium</option><option value=\"low\">Low</option>';\n  taskList.appendChild(taskPriority);\n\n  const addTaskBtn = document.createElement('button');\n  addTaskBtn.textContent = 'Add';\n  addTaskBtn.style.cssText = 'font-family: inherit; background-color: #0a162a; color: white; padding: 8px 16px; border-radius: 4px; margin-top: 8px';\n  addTaskBtn.onclick = () => addTask();\n  taskList.appendChild(addTaskBtn);\n\n  const taskTable = document.createElement('table');\n  taskTable.style.cssText = 'width:100%;border-collapse:collapse';\n  taskTable.innerHTML = '<thead><tr><th>Title</th><th>Priority</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody>';\n  taskDetails.appendChild(taskTable);\n\n  const taskActions = document.createElement('div');\n  taskActions.style.cssText = 'display:flex;gap:8px;justify-content:flex-end';\n  taskActions.innerHTML = '<button class=\"btn btn-primary\" onclick=\"editTask()\">Edit</button><button class=\"btn btn-danger\" onclick=\"deleteTask()\">Delete</button>';\n  taskDetails.appendChild(taskActions);\n\n  const taskDetailsDisplay = document.createElement('div');\n  taskDetailsDisplay.id = 'task-details-display';\n  taskDetailsDisplay.style.cssText = 'background-color: #15152a; color: white; padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 16px';\n  taskDetails.appendChild(taskDetailsDisplay);\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "User Interface",
+   "dependencies": [
+    "Data Storage"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2554: Expected 3 arguments, but got 0. (line 17)",
+    "TS2304: Cannot find name 'filterTasks'. (line 27)",
+    "TS2304: Cannot find name 'filterTasks'. (line 34)",
+    "TS2304: Cannot find name 'filterTasks'. (line 41)",
+    "TS2304: Cannot find name 'filterTasks'. (line 48)",
+    "TS2554: Expected 3 arguments, but got 0. (line 68)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a task scheduler cli app</title>\n  <meta name=\"description\" content=\"a task scheduler cli app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a task scheduler cli app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-Zm84wP/data-storage/data-storage.ts\n  function addTask(title, description, priority) {\n    const tasks = [];\n    const id = tasks.length + 1;\n    tasks.push({ id, title, description, priority, status: \"todo\", createdAt: /* @__PURE__ */ new Date(), updatedAt: /* @__PURE__ */ new Date() });\n    return id;\n  }\n\n  // ../../../../../tmp/vaca-preview-Zm84wP/user-interface/user-interface.ts\n  function render(container) {\n    const taskList = document.createElement(\"div\");\n    taskList.id = \"task-list\";\n    taskList.style.cssText = \"background-color: #2a3c5a; padding: 16px; overflow-y: auto;\";\n    container.appendChild(taskList);\n    const taskDetails = document.createElement(\"div\");\n    taskDetails.id = \"task-details\";\n    taskDetails.style.cssText = \"background-color: #15152a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;margin-top:16px\";\n    container.appendChild(taskDetails);\n    const newTaskBtn = document.createElement(\"button\");\n    newTaskBtn.textContent = \"Add Task\";\n    newTaskBtn.style.cssText = \"font-family: inherit; background-color: #0a162a; color: white; padding: 8px 16px; border-radius: 4px; margin-bottom: 8px\";\n    newTaskBtn.onclick = () => addTask();\n    taskList.appendChild(newTaskBtn);\n    const taskFilter = document.createElement(\"div\");\n    taskFilter.style.cssText = \"display:flex;gap:8px;justify-content:flex-end\";\n    taskList.appendChild(taskFilter);\n    const filterBtn = document.createElement(\"button\");\n    filterBtn.textContent = \"All\";\n    filterBtn.style.cssText = \"font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer\";\n    filterBtn.onclick = () => filterTasks(\"all\");\n    filterBtn.dataset.filter = \"all\";\n    taskFilter.appendChild(filterBtn);\n    const filterBtnTodo = document.createElement(\"button\");\n    filterBtnTodo.textContent = \"Todo\";\n    filterBtnTodo.style.cssText = \"font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer\";\n    filterBtnTodo.onclick = () => filterTasks(\"todo\");\n    filterBtnTodo.dataset.filter = \"todo\";\n    taskFilter.appendChild(filterBtnTodo);\n    const filterBtnInProgress = document.createElement(\"button\");\n    filterBtnInProgress.textContent = \"In Progress\";\n    filterBtnInProgress.style.cssText = \"font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer\";\n    filterBtnInProgress.onclick = () => filterTasks(\"in-progress\");\n    filterBtnInProgress.dataset.filter = \"in-progress\";\n    taskFilter.appendChild(filterBtnInProgress);\n    const filterBtnDone = document.createElement(\"button\");\n    filterBtnDone.textContent = \"Done\";\n    filterBtnDone.style.cssText = \"font-family: inherit; background-color: #0a162a; color: white; padding: 4px 12px; border-radius: 4px; cursor:pointer\";\n    filterBtnDone.onclick = () => filterTasks(\"done\");\n    filterBtnDone.dataset.filter = \"done\";\n    taskFilter.appendChild(filterBtnDone);\n    const taskInput = document.createElement(\"input\");\n    taskInput.type = \"text\";\n    taskInput.placeholder = \"Task title\";\n    taskInput.style.cssText = \"width:100%;padding:8px;background-color:#1a2332;border:1px solid #4a5a75;color:#e0e0e0;font-size:14px\";\n    taskInput.oninput = () => {\n      const val = taskInput.value;\n      if (val === \"\") {\n        taskInput.style.border = \"1px solid #4a5a75\";\n        return;\n      }\n      taskInput.style.border = \"1px solid #0a162a\";\n    };\n    taskList.appendChild(taskInput);\n    const taskPriority = document.createElement(\"select\");\n    taskPriority.style.cssText = \"width:100%;padding:8px;background-color:#1a2332;border:1px solid #4a5a75;color:#e0e0e0;font-size:14px\";\n    taskPriority.onchange = () => {\n      const val = taskPriority.value;\n      if (val === \"\") {\n        taskPriority.style.border = \"1px solid #4a5a75\";\n        return;\n      }\n      taskPriority.style.border = \"1px solid #0a162a\";\n    };\n    taskPriority.innerHTML = '<option value=\"high\">High</option><option value=\"medium\">Medium</option><option value=\"low\">Low</option>';\n    taskList.appendChild(taskPriority);\n    const addTaskBtn = document.createElement(\"button\");\n    addTaskBtn.textContent = \"Add\";\n    addTaskBtn.style.cssText = \"font-family: inherit; background-color: #0a162a; color: white; padding: 8px 16px; border-radius: 4px; margin-top: 8px\";\n    addTaskBtn.onclick = () => addTask();\n    taskList.appendChild(addTaskBtn);\n    const taskTable = document.createElement(\"table\");\n    taskTable.style.cssText = \"width:100%;border-collapse:collapse\";\n    taskTable.innerHTML = \"<thead><tr><th>Title</th><th>Priority</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody>\";\n    taskDetails.appendChild(taskTable);\n    const taskActions = document.createElement(\"div\");\n    taskActions.style.cssText = \"display:flex;gap:8px;justify-content:flex-end\";\n    taskActions.innerHTML = '<button class=\"btn btn-primary\" onclick=\"editTask()\">Edit</button><button class=\"btn btn-danger\" onclick=\"deleteTask()\">Delete</button>';\n    taskDetails.appendChild(taskActions);\n    const taskDetailsDisplay = document.createElement(\"div\");\n    taskDetailsDisplay.id = \"task-details-display\";\n    taskDetailsDisplay.style.cssText = \"background-color: #15152a; color: white; padding: 16px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 16px\";\n    taskDetails.appendChild(taskDetailsDisplay);\n  }\n\n  // ../../../../../tmp/vaca-preview-Zm84wP/_preview_entry.ts\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-storage.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Data_Storage.Task:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"user-interface.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling User_Interface.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (2) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 2 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a task scheduler cli app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a task scheduler cli app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Data Storage",
+    "User Interface"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 17359,
+ "totalErrors": 6,
+ "validatedCount": 2,
+ "failedCount": 1,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "data-storage.ts",
+   "dependencies": [],
+   "exports": [
+    "Task",
+    "FilterOptions",
+    "addTask",
+    "getTasks",
+    "updateTask",
+    "deleteTask"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "user-interface.ts",
+   "dependencies": [
+    "Data Storage"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Data Storage",
+    "User Interface"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 3,
+  "totalChars": 17359,
+  "totalErrors": 6,
+  "validated": 2,
+  "failed": 1,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 222629
+ }
+}

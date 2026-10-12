@@ -1,0 +1,358 @@
+{
+ "success": true,
+ "projectId": "9a837efa-cba6-4c55-b4f9-101897c05af8",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "sudoku_solver_3",
+  "description": "Sudoku Solver. \ud83e\udde9 Sudoku Solver",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "core_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "core_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "data_store",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "data_store",
+    "destination_module": "game_engine",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 23 sudoku-solver Open-Source Projects | LibHunt\n    Which are the best open-source sudoku-solver projects? This list will help you: tdoku, super-sudoku, sudoku, Sudoku-Solver, grilops, neuro-symbolic-sudoku-solver, and sudoku-solver.\n  \u2022 Top 23 sudoku Open-Source Projects | LibHunt\n    Which are the best open-source sudoku projects? This list will help you: dotnet-console-games, sudoku, LibreSudoku, typescript-sudoku, nbsdgames, tdoku, and Hodoku.\n  \u2022 \u2b50324 Haoest/SudokuResolv: Sudoku solver with OCR capability on iOS (edit: developed for iOS 4 before ARC, some memory reference changes may be required to get the app to make a\n  \u2022 \u2b5052 darusc/Android-Sudoku-Solver-OCR: Android app for solving sudoku puzzles.\n  \u2022 gitea (developer-tools): Accelerate DevOps with Gitea\n  \u2022 neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 0,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 31: SESSION UPDATE \u2014 July 26, 2026: BATCH 4 \u2014 13 REASONING/LOGIC APPS\n    31.1 REASONING ENGINE APPS (13 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nThese apps focus on algorithmic reasoning, logic simulation, and\ncomputational thinking. All include localStorage persistence and\nuse safe innerHTML patterns (escapeHTML where user input is present).\n\nCategory: Search & Backt\n  \u2022 Section 4: FRONTEND APPLICATION\n    4.1 PACKAGE DETAILS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFramework:  React 18.2.0\nBuild Tool: Vite 8.x\nLanguage:   TypeScript 5.3.3\nState:      Zustand 4.4.7\n3D:         Three.js 0.184.0, @react-three/fiber 8.18.0, @react-three/drei 9.122.0\nFlow:       ReactFlow 11.10.1\nHTTP:       Axios 1.6.2\nPWA:        vite-plug"
+ },
+ "candidates": [
+  {
+   "app_type": "sudoku_solver_3",
+   "score": 1
+  },
+  {
+   "app_type": "sudoku_solver",
+   "score": 1
+  },
+  {
+   "app_type": "sudoku_solver_2",
+   "score": 1
+  },
+  {
+   "app_type": "sudoku_game_2",
+   "score": 0.5434026373984382
+  },
+  {
+   "app_type": "maze_solver",
+   "score": 0.5410401799752176
+  }
+ ],
+ "project": {
+  "id": "9a837efa-cba6-4c55-b4f9-101897c05af8",
+  "name": "a sudoku solver app",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "sudoku_solver_3 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "core_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "data_store"
+   },
+   {
+    "id": "mod_4",
+    "type": "logic",
+    "label": "game_engine"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 4,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 1,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "generated": [
+   "core_engine",
+   "ui_screens",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "matched": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "game_engine"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "core-engine.ts",
+   "language": "typescript",
+   "code": "export function solveSudoku(board: number[][]): boolean {\n    const findEmptySquare = (board: number[][]): [number, number] => {\n        for (let i = 0; i < 9; i++) {\n            for (let j = 0; j < 9; j++) {\n                if (board[i][j] === 0) {\n                    return [i, j];\n                }\n            }\n        }\n        return [0, 0];\n    };\n\n    const validNumber = (value: number, row: number, col: number, board: number[][]): boolean => {\n        for (let k = 0; k < 9; k++) {\n            if (board[row][k] === value || board[k][col] === value) {\n                return false;\n            }\n        }\n\n        const startX = Math.floor(row / 3) * 3, startY = Math.floor(col / 3) * 3;\n        for (let i = 0; i < 3 && i + startX < 9; i++) {\n            for (let j = 0; j < 3 && j + startY < 9; j++) {\n                if (board[startX + i][startY + j] === value) {\n                    return false;\n                }\n            }\n        }\n\n        return true;\n    };\n\n    const backtrack = (board: number[][]): boolean => {\n        const [row, col] = findEmptySquare(board);\n        if (!row || !col) {\n            return true;\n        }\n\n        for (let value = 1; value <= 9; value++) {\n            if (validNumber(value, row, col, board)) {\n                board[row][col] = value;\n                if (backtrack(board)) {\n                    return true;\n                }\n                board[row][col] = 0;\n            }\n        }\n        return false;\n    };\n\n    clearBoard(board);\n    backtrack(board);\n\n    return true;\n}\n\nexport function clearBoard(board: number[][]): void {\n    for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n            board[i][j] = 0;\n        }\n    }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "core_engine",
+   "dependencies": [],
+   "exports": [
+    "solveSudoku",
+    "clearBoard"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { solveSudoku, clearBoard } from '../core-engine/core-engine.ts';\n\nexport function render(container: HTMLElement): void {\n    container.innerHTML = `\n        <div class=\"sudoku-board\" id=\"sudokuBoard\"></div>\n        <div class=\"puzzle-input\">\n            <input type=\"file\" id=\"puzzleFile\" accept=\".csv,.txt\" multiple>\n            <textarea id=\"puzzleText\" placeholder=\"Enter Sudoku puzzle here\"></textarea>\n            <button id=\"loadPuzzle\">Load Puzzle</button>\n            <div class=\"step-counters\">\n                <div class=\"step-counter\" id=\"stepCounter\">Steps: 0</div>\n                <div class=\"step-counter\" id=\"stepCounter2\">Backtracks: 0</div>\n            </div>\n        </div>\n    `;\n\n    const boardContainer = document.getElementById('sudokuBoard') as HTMLDivElement;\n    const fileInput = document.createElement('input');\n    fileInput.type = 'file';\n    fileInput.accept = '.csv,.txt';\n    fileInput.multiple = true;\n    fileInput.id = 'puzzleFile';\n    fileInput.addEventListener('change', handleFileInput);\n    boardContainer.appendChild(fileInput);\n\n    const textArea = document.createElement('textarea');\n    textArea.id = 'puzzleText';\n    textArea.placeholder = 'Enter Sudoku puzzle here';\n    textArea.addEventListener('input', handleTextInput);\n    boardContainer.appendChild(textArea);\n\n    const loadButton = document.createElement('button');\n    loadButton.id = 'loadPuzzle';\n    loadButton.textContent = 'Load Puzzle';\n    loadButton.addEventListener('click', handleLoadPuzzle);\n    boardContainer.appendChild(loadButton);\n\n    const stepCounters = document.querySelectorAll('.step-counter');\n    stepCounters.forEach((counter) => {\n        counter.textContent = 'Steps: 0';\n    });\n\n    function handleFileInput(event: Event): void {\n        const files = (event.target as HTMLInputElement).files;\n        if (!files) return;\n        const csv = new Blob([files[0].text], { type: 'text/csv' });\n        const board = parseCSV(csv);\n        renderBoard(board);\n    }\n\n    function handleTextInput(event: Event): void {\n        const text = (event.target as HTMLTextAreaElement).value;\n        const board = parseText(text);\n        renderBoard(board);\n    }\n\n    function handleLoadPuzzle(event: Event): void {\n        const fileInput = document.getElementById('puzzleFile') as HTMLInputElement;\n        if (!fileInput.files) return;\n        const file = fileInput.files[0];\n        if (file.type !== 'text/csv' && file.type !== 'text/plain') {\n            alert('Please select a CSV or text file.');\n            return;\n        }\n        const reader = new FileReader();\n        reader.onload = () => {\n            const csv = reader.result as string;\n            const board = parseCSV(csv);\n            renderBoard(board);\n        };\n        reader.readAsText(file);\n    }\n\n    function parseCSV(csv: string): number[][] {\n        const rows = csv.split('\\n');\n        const board = Array(9).fill(undefined).map(() => Array(9).fill(0));\n        for (let i = 0; i < 9; i++) {\n            for (let j = 0; j < 9; j++) {\n                const value = parseInt(rows[i][j], 10);\n                if (!isNaN(value)) {\n                    board[i][j] = value;\n                }\n            }\n        }\n        return board;\n    }\n\n    function parseText(text: string): number[][] {\n        const lines = text.split('\\n');\n        const board = Array(9).fill(undefined).map(() => Array(9).fill(0));\n        for (let i = 0; i < 9; i++) {\n            const line = lines[i];\n            if (line) {\n                for (let j = 0; j < 9; j++) {\n                    const value = parseInt(line[j], 10);\n                    if (!isNaN(value)) {\n                        board[i][j] = value;\n                    }\n                }\n            }\n        }\n        return board;\n    }\n\n    function renderBoard(board: number[][]): void {\n        const boardContainer = document.getElementById('sudokuBoard') as HTMLDivElement;\n        boardContainer.innerHTML = '';\n        for (let i = 0; i < 9; i++) {\n            for (let j = 0; j < 9; j++) {\n                const cell = document.createElement('div');\n                cell.className = 'sudoku-cell';\n                cell.textContent = board[i][j] + '';\n                cell.addEventListener('click', () => {\n                    const value = prompt('Enter number (1-9):');\n                    if (value) {\n                        const num = parseInt(value, 10);\n                        if (!isNaN(num) && num >= 1 && num <= 9) {\n                            board[i][j] = num;\n                        }\n                    }\n                });\n                boardContainer.appendChild(cell);\n            }\n        }\n    }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2322: Type '() => Promise<string>' is not assignable to type 'BlobPart'. (line 46)",
+    "TS2345: Argument of type 'Blob' is not assignable to parameter of type 'string'. (line 47)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { solveSudoku, clearBoard } from '../core-engine/core-engine.ts';\n\nexport function handleInput(board: number[][]): boolean {\n    const solveSudoku = (b: number[][]) => {\n        const findEmpty = (b: number[][]) => b.find((row, i) => row.find((_, j) => !b[i][j])) || [0, 0];\n        const validNum = (v: number, r: number, c: number, b: number[][]) => {\n            for (let k = 0; k < 9; k++) if (b[r][k] === v || b[k][c] === v) return false;\n            const s = 3, startR = Math.floor(r / s) * s, startC = Math.floor(c / s) * s;\n            for (let ir = 0; ir < s; ir++) for (let ic = 0; ic < s; ic++) if (b[startR + ir][startC + ic] === v) return false;\n            return true;\n        };\n        const backtrack = (b: number[][]) => {\n            const [row, col] = findEmpty(b);\n            if (!row) return true;\n            for (let v = 1; v <= 9; v++) if (validNum(v, row, col, b)) {\n                b[row][col] = v;\n                if (backtrack(b)) return true;\n                b[row][col] = 0;\n            }\n            return false;\n        };\n        return backtrack(b);\n    };\n    return solveSudoku(board);\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "import { handleInput } from '../input-handler/input-handler.ts';\n\nexport function saveBoard(board: number[][]): void {\n    const serialized = JSON.stringify(board);\n    localStorage.setItem('sudoku-board', serialized);\n    sessionStorage.setItem('sudoku-board', serialized);\n}\n\nexport function loadBoard(): number[][] {\n    const saved = localStorage.getItem('sudoku-board');\n    if (saved) return JSON.parse(saved);\n    const session = sessionStorage.getItem('sudoku-board');\n    if (session) return JSON.parse(session);\n    return Array.from({ length: 9 }, () => Array(9).fill(0));\n}\n\nexport function isValid(board: number[][], row: number, col: number, num: number): boolean {\n    for (let i = 0; i < 9; i++) {\n        if (board[row][i] === num) return false;\n        if (board[i][col] === num) return false;\n    }\n    const startRow = row - row % 3, startCol = col - col % 3;\n    for (let i = startRow; i < startRow + 3; i++) {\n        for (let j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] === num) return false;\n        }\n    }\n    return true;\n}\n\nexport function solveSudoku(board: number[][]): boolean {\n    const findEmpty = (b: number[][]) => b.find((row, i) => row.find((_, j) => !b[i][j])) || [0, 0];\n    const backtrack = (b: number[][]) => {\n        const [row, col] = findEmpty(b);\n        if (!row) return true;\n        for (let v = 1; v <= 9; v++) {\n            if (isValid(b, row, col, v)) {\n                b[row][col] = v;\n                if (backtrack(b)) return true;\n                b[row][col] = 0;\n            }\n        }\n        return false;\n    };\n    return backtrack(board);\n}\n\nexport function clearBoard(board: number[][]): void {\n    for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n            board[i][j] = 0;\n        }\n    }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "data_store",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "saveBoard",
+    "loadBoard",
+    "isValid",
+    "solveSudoku",
+    "clearBoard"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "import { saveBoard, loadBoard } from '../data-store/data-store.ts';\n\nexport function solveSudoku(board: number[][]): boolean {\n    const findEmpty = (b: number[][]) => b.find((row, i) => row.find((_, j) => !b[i][j])) || [0, 0];\n    const backtrack = (b: number[][]) => {\n        const [row, col] = findEmpty(b);\n        if (!row) return true;\n        for (let v = 1; v <= 9; v++) {\n            if (isValid(b, row, col, v)) {\n                b[row][col] = v;\n                if (backtrack(b)) return true;\n                b[row][col] = 0;\n            }\n        }\n        return false;\n    };\n    return backtrack(board);\n}\n\nexport function isValid(board: number[][], row: number, col: number, num: number): boolean {\n    for (let i = 0; i < 9; i++) {\n        if (board[row][i] === num) return false;\n        if (board[i][col] === num) return false;\n    }\n    const startRow = row - row % 3, startCol = col - col % 3;\n    for (let i = startRow; i < startRow + 3; i++) {\n        for (let j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] === num) return false;\n        }\n    }\n    return true;\n}\n\nexport function clearBoard(board: number[][]): void {\n    for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n            board[i][j] = 0;\n        }\n    }\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "game_engine",
+   "dependencies": [
+    "data_store"
+   ],
+   "exports": [
+    "solveSudoku",
+    "isValid",
+    "clearBoard"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a sudoku solver app</title>\n  <meta name=\"description\" content=\"a sudoku solver app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a sudoku solver app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-02Dfee/core-engine/core-engine.ts\n  function solveSudoku(board) {\n    const findEmptySquare = (board2) => {\n      for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n          if (board2[i][j] === 0) {\n            return [i, j];\n          }\n        }\n      }\n      return [0, 0];\n    };\n    const validNumber = (value, row, col, board2) => {\n      for (let k = 0; k < 9; k++) {\n        if (board2[row][k] === value || board2[k][col] === value) {\n          return false;\n        }\n      }\n      const startX = Math.floor(row / 3) * 3, startY = Math.floor(col / 3) * 3;\n      for (let i = 0; i < 3 && i + startX < 9; i++) {\n        for (let j = 0; j < 3 && j + startY < 9; j++) {\n          if (board2[startX + i][startY + j] === value) {\n            return false;\n          }\n        }\n      }\n      return true;\n    };\n    const backtrack = (board2) => {\n      const [row, col] = findEmptySquare(board2);\n      if (!row || !col) {\n        return true;\n      }\n      for (let value = 1; value <= 9; value++) {\n        if (validNumber(value, row, col, board2)) {\n          board2[row][col] = value;\n          if (backtrack(board2)) {\n            return true;\n          }\n          board2[row][col] = 0;\n        }\n      }\n      return false;\n    };\n    clearBoard(board);\n    backtrack(board);\n    return true;\n  }\n  function clearBoard(board) {\n    for (let i = 0; i < 9; i++) {\n      for (let j = 0; j < 9; j++) {\n        board[i][j] = 0;\n      }\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-02Dfee/ui-screens/ui-screens.ts\n  function render(container) {\n    container.innerHTML = `\n        <div class=\"sudoku-board\" id=\"sudokuBoard\"></div>\n        <div class=\"puzzle-input\">\n            <input type=\"file\" id=\"puzzleFile\" accept=\".csv,.txt\" multiple>\n            <textarea id=\"puzzleText\" placeholder=\"Enter Sudoku puzzle here\"></textarea>\n            <button id=\"loadPuzzle\">Load Puzzle</button>\n            <div class=\"step-counters\">\n                <div class=\"step-counter\" id=\"stepCounter\">Steps: 0</div>\n                <div class=\"step-counter\" id=\"stepCounter2\">Backtracks: 0</div>\n            </div>\n        </div>\n    `;\n    const boardContainer = document.getElementById(\"sudokuBoard\");\n    const fileInput = document.createElement(\"input\");\n    fileInput.type = \"file\";\n    fileInput.accept = \".csv,.txt\";\n    fileInput.multiple = true;\n    fileInput.id = \"puzzleFile\";\n    fileInput.addEventListener(\"change\", handleFileInput);\n    boardContainer.appendChild(fileInput);\n    const textArea = document.createElement(\"textarea\");\n    textArea.id = \"puzzleText\";\n    textArea.placeholder = \"Enter Sudoku puzzle here\";\n    textArea.addEventListener(\"input\", handleTextInput);\n    boardContainer.appendChild(textArea);\n    const loadButton = document.createElement(\"button\");\n    loadButton.id = \"loadPuzzle\";\n    loadButton.textContent = \"Load Puzzle\";\n    loadButton.addEventListener(\"click\", handleLoadPuzzle);\n    boardContainer.appendChild(loadButton);\n    const stepCounters = document.querySelectorAll(\".step-counter\");\n    stepCounters.forEach((counter) => {\n      counter.textContent = \"Steps: 0\";\n    });\n    function handleFileInput(event) {\n      const files = event.target.files;\n      if (!files) return;\n      const csv = new Blob([files[0].text], { type: \"text/csv\" });\n      const board = parseCSV(csv);\n      renderBoard(board);\n    }\n    function handleTextInput(event) {\n      const text = event.target.value;\n      const board = parseText(text);\n      renderBoard(board);\n    }\n    function handleLoadPuzzle(event) {\n      const fileInput2 = document.getElementById(\"puzzleFile\");\n      if (!fileInput2.files) return;\n      const file = fileInput2.files[0];\n      if (file.type !== \"text/csv\" && file.type !== \"text/plain\") {\n        alert(\"Please select a CSV or text file.\");\n        return;\n      }\n      const reader = new FileReader();\n      reader.onload = () => {\n        const csv = reader.result;\n        const board = parseCSV(csv);\n        renderBoard(board);\n      };\n      reader.readAsText(file);\n    }\n    function parseCSV(csv) {\n      const rows = csv.split(\"\\n\");\n      const board = Array(9).fill(void 0).map(() => Array(9).fill(0));\n      for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n          const value = parseInt(rows[i][j], 10);\n          if (!isNaN(value)) {\n            board[i][j] = value;\n          }\n        }\n      }\n      return board;\n    }\n    function parseText(text) {\n      const lines = text.split(\"\\n\");\n      const board = Array(9).fill(void 0).map(() => Array(9).fill(0));\n      for (let i = 0; i < 9; i++) {\n        const line = lines[i];\n        if (line) {\n          for (let j = 0; j < 9; j++) {\n            const value = parseInt(line[j], 10);\n            if (!isNaN(value)) {\n              board[i][j] = value;\n            }\n          }\n        }\n      }\n      return board;\n    }\n    function renderBoard(board) {\n      const boardContainer2 = document.getElementById(\"sudokuBoard\");\n      boardContainer2.innerHTML = \"\";\n      for (let i = 0; i < 9; i++) {\n        for (let j = 0; j < 9; j++) {\n          const cell = document.createElement(\"div\");\n          cell.className = \"sudoku-cell\";\n          cell.textContent = board[i][j] + \"\";\n          cell.addEventListener(\"click\", () => {\n            const value = prompt(\"Enter number (1-9):\");\n            if (value) {\n              const num = parseInt(value, 10);\n              if (!isNaN(num) && num >= 1 && num <= 9) {\n                board[i][j] = num;\n              }\n            }\n          });\n          boardContainer2.appendChild(cell);\n        }\n      }\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-02Dfee/input-handler/input-handler.ts\n  function handleInput(board) {\n    const solveSudoku3 = (b) => {\n      const findEmpty = (b2) => b2.find((row, i) => row.find((_, j) => !b2[i][j])) || [0, 0];\n      const validNum = (v, r, c, b2) => {\n        for (let k = 0; k < 9; k++) if (b2[r][k] === v || b2[k][c] === v) return false;\n        const s = 3, startR = Math.floor(r / s) * s, startC = Math.floor(c / s) * s;\n        for (let ir = 0; ir < s; ir++) for (let ic = 0; ic < s; ic++) if (b2[startR + ir][startC + ic] === v) return false;\n        return true;\n      };\n      const backtrack = (b2) => {\n        const [row, col] = findEmpty(b2);\n        if (!row) return true;\n        for (let v = 1; v <= 9; v++) if (validNum(v, row, col, b2)) {\n          b2[row][col] = v;\n          if (backtrack(b2)) return true;\n          b2[row][col] = 0;\n        }\n        return false;\n      };\n      return backtrack(b);\n    };\n    return solveSudoku3(board);\n  }\n\n  // ../../../../../tmp/vaca-preview-02Dfee/data-store/data-store.ts\n  function saveBoard(board) {\n    const serialized = JSON.stringify(board);\n    localStorage.setItem(\"sudoku-board\", serialized);\n    sessionStorage.setItem(\"sudoku-board\", serialized);\n  }\n\n  // ../../../../../tmp/vaca-preview-02Dfee/game-engine/game-engine.ts\n  function solveSudoku2(board) {\n    const findEmpty = (b) => b.find((row, i) => row.find((_, j) => !b[i][j])) || [0, 0];\n    const backtrack = (b) => {\n      const [row, col] = findEmpty(b);\n      if (!row) return true;\n      for (let v = 1; v <= 9; v++) {\n        if (isValid(b, row, col, v)) {\n          b[row][col] = v;\n          if (backtrack(b)) return true;\n          b[row][col] = 0;\n        }\n      }\n      return false;\n    };\n    return backtrack(board);\n  }\n  function isValid(board, row, col, num) {\n    for (let i = 0; i < 9; i++) {\n      if (board[row][i] === num) return false;\n      if (board[i][col] === num) return false;\n    }\n    const startRow = row - row % 3, startCol = col - col % 3;\n    for (let i = startRow; i < startRow + 3; i++) {\n      for (let j = startCol; j < startCol + 3; j++) {\n        if (board[i][j] === num) return false;\n      }\n    }\n    return true;\n  }\n\n  // ../../../../../tmp/vaca-preview-02Dfee/_preview_entry.ts\n  try {\n    if (typeof solveSudoku === \"function\" && !/^class\\s/.test(String(solveSudoku))) {\n      solveSudoku(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"core-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling core_engine.solveSudoku:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof handleInput === \"function\" && !/^class\\s/.test(String(handleInput))) {\n      handleInput(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"input-handler.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling input_handler.handleInput:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof saveBoard === \"function\" && !/^class\\s/.test(String(saveBoard))) {\n      saveBoard(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling data_store.saveBoard:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof solveSudoku2 === \"function\" && !/^class\\s/.test(String(solveSudoku2))) {\n      solveSudoku2(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling game_engine.solveSudoku:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a sudoku solver app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a sudoku solver app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store",
+    "game_engine"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 24992,
+ "totalErrors": 2,
+ "validatedCount": 5,
+ "failedCount": 1,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "core-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "solveSudoku",
+    "clearBoard"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "data-store.ts",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "saveBoard",
+    "loadBoard",
+    "isValid",
+    "solveSudoku",
+    "clearBoard"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [
+    "data_store"
+   ],
+   "exports": [
+    "solveSudoku",
+    "isValid",
+    "clearBoard"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store",
+    "game_engine"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 2,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 24992,
+  "totalErrors": 2,
+  "validated": 5,
+  "failed": 1,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 147277
+ }
+}

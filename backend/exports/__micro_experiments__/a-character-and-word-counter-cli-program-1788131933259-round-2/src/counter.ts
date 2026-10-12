@@ -1,0 +1,1 @@
+export function countCharactersAndWords(text: string): { characters: number, words: number } { return { characters: text.length, words: text.split(/\s+/).filter(Boolean).length }; }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0;url=./write-code">
+<title>Expense Tracker</title>
+<style>
+body {font-family:Arial,sans-serif;max-width:600px;margin:auto;}
+input {width:140px;padding:5px;}button {padding:5px 10px;margin:5px 0;}ul {list-style:none;}li {margin:5px 0;}</style>
+</head>
+<body>
+<h2>Expense Tracker</h2>
+<label for="category">Category:</label><input id="category" type="text">
+<label for="amount">Amount:</label><input id="amount" type="number" step="0.01" min="0">
+<button id="addBtn">Add Expense</button>
+<p>Total: $<span id="total">0.00</span></p>
+<ul id="expensesList"></ul>
+<script>
+const totalDisplay = document.getElementById('total');
+const expensesList = document.getElementById('expensesList');
+let expenses = [];
+function updateTotal() {
+totalDisplay.textContent = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2);
+}
+function save() {localStorage.setItem('expenses', JSON.stringify(expenses));}
+function load() {const stored = localStorage.getItem('expenses');
+  if (stored) expenses = JSON.parse(stored);
+  updateTotal();
+}
+document.getElementById('addBtn').addEventListener('click', () => {
+const category = document.getElementById('category').value.trim();
+  const amount = parseFloat(document.getElementById('amount').value);
+  if (!category || isNaN(amount)) return;
+  expenses.push({ category, amount });
+  save();
+  updateTotal();
+});
+window.onload = load;
+</script>
+</body>
+</html>

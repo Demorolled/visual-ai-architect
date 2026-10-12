@@ -4,6 +4,7 @@ import {
   suggestForNode,
 } from "../blueprint/suggester.js";
 import { getSearchService } from "../search/webSearch.js";
+import { researchDesign, formatResearchContext, type DesignResearchResult } from "../search/designResearch.js";
 import {
   getBlueprintByType,
   matchBlueprint,
@@ -12,10 +13,12 @@ import {
   type BlueprintMatch,
 } from "../blueprint/bible.js";
 import { projects } from "../db/projects.js";
-import { FileGenerator, type GenerationProgressCallback } from "../layers/fileGenerator.js";
+import { FileGenerator, projectGraphSignature, type GenerationProgressCallback } from "../layers/fileGenerator.js";
 import { broadcastGenerationProgress } from "../socket/socketManager.js";
 import { captureVerifiedGeneration, type CaptureResult } from "../training/verifiedGenerationCapture.js";
 import { buildGuiMockupHtml, renderGuiMockupToPng, compareModulesToFiles } from "../blueprint/mockup.js";
+import { gatherInternalKnowledge, type InternalKnowledgeResult } from "../knowledge/internalKnowledge.js";
+import { learningEngine } from "../knowledge/learningEngine.js";
 
 const router = Router();
 const fileGenerator = new FileGenerator();
@@ -240,6 +243,52 @@ router.post("/build", async (req: Request, res: Response) => {
     }
     const { matched, matchedBy, candidates } = resolved as { matched: BlueprintMatch; matchedBy: "explicit" | "semantic" | "fallback"; candidates?: BlueprintMatch[] };
 
+    // ── Step 0: design research — actually search the web for the design ──
+    // The build used to skip research entirely (canned plan, no references),
+    // which is why "search the internet for the design" produced boilerplate.
+    // Run web + GitHub + open-source research for the goal and fuse a compact
+    // context into the master node's blueprintContext so EVERY module prompt
+    // carries the references. Non-fatal: a slow/hanging search (or a flaky
+    // network) must never block the build, so race it against a 15s timeout.
+    let research: DesignResearchResult | null = null;
+    try {
+      const searchText = purpose ? `${goal.trim()} ${purpose}` : goal.trim();
+      broadcastGenerationProgress({ batch: 0, totalBatches: 1, batchSize: 1, generatingNodes: [], percent: 2, phase: "researching" });
+      research = await Promise.race([
+        researchDesign(searchText, getSearchService(), 2),
+        new Promise<null>((_, reject) =>
+          setTimeout(() => reject(new Error("Design research timed out after 15s")), 15000)
+        ),
+      ]) as DesignResearchResult | null;
+      if (research && research.totalReferences > 0) {
+        console.log(`[blueprint] Injected ${research.totalReferences} design references for "${goal.trim().substring(0, 50)}..." (web: ${research.webResults.length}, github: ${research.githubResults.length}, alt: ${research.altResults.totalFound})`);
+      } else {
+        research = null;
+        console.log(`[blueprint] Design research returned no references for "${goal.trim().substring(0, 50)}..." — building without research (non-fatal)`);
+      }
+    } catch (err: any) {
+      research = null;
+      console.warn('[blueprint] Design research skipped (non-fatal):', err.message);
+    }
+
+    // ── Step 0b: internal knowledge — consult VACA's OWN wiki + patterns ──
+    // Same fix family as research: the build used to generate with no access
+    // to what VACA already knows. Query the knowledge store (patterns from
+    // past builds) and token-match wiki sections for the goal, then fuse the
+    // compact block into the master's blueprintContext so every module prompt
+    // carries it. Non-fatal: internal knowledge is an enhancement, never a
+    // build blocker.
+    let internalKnowledge: InternalKnowledgeResult | null = null;
+    try {
+      internalKnowledge = gatherInternalKnowledge(`${goal.trim()} ${purpose || ''}`.trim(), { language });
+      if (internalKnowledge.context) {
+        console.log(`[blueprint] Injected internal knowledge for "${goal.trim().substring(0, 50)}..." (patterns: ${internalKnowledge.patternCount}, wiki sections: ${internalKnowledge.wikiSectionCount})`);
+      }
+    } catch (err: any) {
+      internalKnowledge = null;
+      console.warn('[blueprint] Internal knowledge skipped (non-fatal):', err.message);
+    }
+
     // ── Translate blueprint → VACA project ──
     const project = blueprintToProject(matched.blueprint, {
       goal: goal.trim(),
@@ -247,6 +296,8 @@ router.post("/build", async (req: Request, res: Response) => {
       targetOS,
       language,
       scale,
+      researchContext: research ? formatResearchContext(research) : undefined,
+      internalKnowledgeContext: internalKnowledge?.context || undefined,
     });
     projects.create(project);
 
@@ -272,6 +323,22 @@ router.post("/build", async (req: Request, res: Response) => {
     // regeneration of this project via the normal canvas path captures normally.
     const master = project.nodes.find(n => n.type === 'master');
     if (master?.data?.skipVerifiedCapture) delete master.data.skipVerifiedCapture;
+
+    // ── Cache this build's generation so a follow-up EXPORT reuses it ──
+    // /api/export/:projectId/per-file-scaffold only reuses a cached result
+    // whose graph signature still matches. This route never populated that
+    // cache, so "build, then export" ran the ENTIRE LLM generation twice —
+    // 5-7 minutes of duplicate work on the 14B for code that had just been
+    // produced (and, because the generation is stochastic, the exported code
+    // could even differ from what the user reviewed). The signature is
+    // computed here, AFTER the master-node flag above is cleared, so it is
+    // identical to the one the export route computes from the same project.
+    projects.setGenerationCache(project.id, {
+      sig: projectGraphSignature(project),
+      result: generation,
+      at: Date.now(),
+    });
+    console.log(`[blueprint] Cached generation for export reuse (${generation.files.length} files, tsClean=${generation.tsCompileClean})`);
 
     // ── Close the learning loop (the doc's Step 5): capture VERIFIED
     // blueprint-driven files into training/dataset/verified-generations.jsonl,
@@ -302,6 +369,22 @@ router.post("/build", async (req: Request, res: Response) => {
       }
     }
 
+    // ── Close the knowledge-store learning loop for blueprint builds ──
+    // FileGenerator skips its generic learning while skipVerifiedCapture is
+    // set, so this route performs the same verified-gated learning itself
+    // (tsc-clean blueprint builds now teach the pattern store). Same gate as
+    // the training capture: broken output never enters the store.
+    if (skipValidation !== true && generation.tsCompileClean) {
+      try {
+        const entries = learningEngine.learnFromGeneratedFiles(project, generation.files);
+        if (entries.length > 0) {
+          console.log(`[blueprint] Learned ${entries.length} pattern(s) from blueprint build '${matched.blueprint.app_type}'`);
+        }
+      } catch (err) {
+        console.warn('[blueprint] Knowledge-store learning failed (non-fatal):', err);
+      }
+    }
+
     const blueprintOut = {
       app_type: matched.blueprint.app_type,
       description: matched.blueprint.description,
@@ -323,6 +406,28 @@ router.post("/build", async (req: Request, res: Response) => {
       matchedBy,
       matchScore: matched.score,
       blueprint: blueprintOut,
+      research: research ? {
+        searched: true,
+        totalReferences: research.totalReferences,
+        web: research.webResults.length,
+        github: research.githubResults.length,
+        openSourceAlt: research.altResults.totalFound,
+        context: formatResearchContext(research),
+      } : {
+        searched: false,
+        reason: 'No design references found within the 15s research window',
+      },
+      internalKnowledge: internalKnowledge?.context
+        ? {
+            searched: true,
+            patterns: internalKnowledge.patternCount,
+            wikiSections: internalKnowledge.wikiSectionCount,
+            context: internalKnowledge.context,
+          }
+        : {
+            searched: false,
+            reason: 'No matching internal patterns or wiki sections',
+          },
       candidates: (candidates || []).map(c => ({ app_type: c.blueprint.app_type, score: c.score })),
       project: {
         id: project.id,
@@ -336,6 +441,15 @@ router.post("/build", async (req: Request, res: Response) => {
       verifiedCapture,
       drift,
       ...generation,
+      // Behavioral smoke verdicts (the canvas path's load-and-click gate).
+      // Surfaced so the UI can show WHY a build was or wasn't trusted; null when
+      // the gate was skipped (fast preview builds) or could not run.
+      smoke: {
+        render: generation.renderSmoke ?? null,
+        cli: generation.cliSmoke ?? null,
+        anyFailed:
+          generation.renderSmoke?.status === 'failed' || generation.cliSmoke?.status === 'failed',
+      },
       summary: {
         totalFiles: generation.files.length,
         totalChars: generation.totalChars,

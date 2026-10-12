@@ -1,0 +1,358 @@
+{
+ "success": true,
+ "projectId": "28f1daff-de3c-4282-8911-1b3e5c014d8f",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "memory_card_game",
+  "description": "Classic memory matching card game with themes \u2014 an interactive game tool with a visual interface.",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "game_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "game_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "score_store",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "score_store",
+    "destination_module": "canvas_ui",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 7 memory-game Open-Source Projects | LibHunt\n    Which are the best open-source memory-game projects? This list will help you: memory-cards, dekadico, discord-memory-game, symon, memory-game, Memory-Game, and memory.\n  \u2022 card-matching-game \u00b7 GitHub Topics \u00b7 GitHub\n    NeuroNinja is an interactive memory card game that challenges your focus and reflexes through fun and competitive gameplay modes. With responsive design, smooth animations, and immersive sound effects\n  \u2022 \u2b5070 mmenavas/memory-game: A card matching game built on HTML5, CSS3 and Javascript (no frameworks used).\n  \u2022 \u2b5029 KHvic/Match-Pairs-Memory-Game-With-Animation: A memory matching card game made with Unity\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n  \u2022 Section 28: SESSION UPDATE \u2014 July 26, 2026: SYSTEM IMPROVEMENTS\n    28.1 12 NEW APPS CREATED (projects/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTier 1 \u2014 Simple:\n  memory-game.html       (9.9 KB) \u2014 Card flipping memory game\n  quote-generator.html   (12 KB)  \u2014 Random quote generator with categories\n\nTier 2 \u2014 Medium:\n  pomodoro-timer.html    (8 KB)   \u2014 Work/break timer\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 system_info \u2014 monitoring tool\n    Get system information (OS, CPU cores, memory usage, uptime)\n    Code: // Tool: system_info\n// Category: monitoring\n// Risk: readonly\n// Get system information (OS, CPU cores, memory usage, uptime)\n  \u2022 design_search \u2014 design tool\n    Search the design library for existing designs matching a query or tags\n    Code: // Tool: design_search\n// Category: design\n// Risk: readonly\n// Search the design library for existing designs matching a query or tags\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam"
+ },
+ "candidates": [
+  {
+   "app_type": "memory_card_game",
+   "score": 1
+  },
+  {
+   "app_type": "memory_card_game_2",
+   "score": 1
+  },
+  {
+   "app_type": "memory_game",
+   "score": 1
+  },
+  {
+   "app_type": "memory_match",
+   "score": 1
+  },
+  {
+   "app_type": "simon_says_2",
+   "score": 0.9433056753620948
+  }
+ ],
+ "project": {
+  "id": "28f1daff-de3c-4282-8911-1b3e5c014d8f",
+  "name": "a memory card matching game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "memory_card_game blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "game_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "score_store"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "canvas_ui"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 0,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 5,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "generated": [
+   "game_engine",
+   "ui_screens",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "matched": [
+   "ui_screens",
+   "game_engine",
+   "input_handler",
+   "score_store",
+   "canvas_ui"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "export class GameBoard {\n  private cards: Card[];\n  private matchedCards: Card[];\n  private flippedCards: Card[];\n  private moves: number;\n  private timer: number;\n  private isRunning: boolean;\n\n  constructor() {\n    this.cards = [];\n    this.matchedCards = [];\n    this.flippedCards = [];\n    this.moves = 0;\n    this.timer = 0;\n    this.isRunning = false;\n  }\n\n  public initGame(): void {\n    this.cards = [];\n    this.matchedCards = [];\n    this.flippedCards = [];\n    this.moves = 0;\n    this.timer = 0;\n    this.isRunning = true;\n\n    const cardValues = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F'];\n    const shuffled = shuffleArray(cardValues);\n    for (let i = 0; i < shuffled.length; i++) {\n      this.cards.push(new Card(shuffled[i], false));\n    }\n  }\n\n  public getCards(): Card[] { return this.cards; }\n  public getMatchedCards(): Card[] { return this.matchedCards; }\n  public getFlippedCards(): Card[] { return this.flippedCards; }\n  public getMoves(): number { return this.moves; }\n  public getTimer(): number { return this.timer; }\n  public getIsRunning(): boolean { return this.isRunning; }\n\n  public flipCard(card: Card): void {\n    if (!this.isRunning) return;\n    if (this.flippedCards.length >= 2) return;\n\n    this.flippedCards.push(card);\n    card.flipped = true;\n    this.moves++;\n    this.updateTimer();\n\n    if (this.flippedCards.length === 2) {\n      const [card1, card2] = this.flippedCards;\n      if (card1.value === card2.value) {\n        this.matchedCards.push(card1, card2);\n        this.flippedCards = [];\n        card1.flipped = false;\n        card2.flipped = false;\n      } else {\n        setTimeout(() => {\n          card1.flipped = false;\n          card2.flipped = false;\n          this.flippedCards = [];\n        }, 500);\n      }\n    }\n  }\n\n  private updateTimer(): void {\n    this.timer = Date.now() / 1000;\n  }\n\n  private render(): void {\n    const board = document.getElementById('board') as HTMLDivElement;\n    board.innerHTML = '';\n    for (let i = 0; i < this.cards.length; i++) {\n      const card = this.cards[i];\n      const cardEl = document.createElement('div');\n      cardEl.className = 'card';\n      cardEl.dataset.index = i.toString();\n      cardEl.innerHTML = `<div class=\"card-face\" style=\"background-image:url(${card.flipped ? card.image : 'cards/back.png'})\">${card.flipped ? card.value : ''}</div>`;\n      cardEl.onclick = () => this.flipCard(card);\n      board.appendChild(cardEl);\n    }\n  }\n\n  public startGame(): void {\n    this.initGame();\n    this.render();\n  }\n\n  public resetGame(): void {\n    this.isRunning = false;\n    this.cards = [];\n    this.matchedCards = [];\n    this.flippedCards = [];\n    this.moves = 0;\n    this.timer = 0;\n    this.render();\n  }\n\n  public isGameOver(): boolean {\n    return this.cards.every(card => card.flipped);\n  }\n\n  public getScore(): number {\n    return this.moves * 10;\n  }\n\n  public getProgress(): number {\n    const totalVisibleCards = this.cards.filter(card => card.flipped).length;\n    return totalVisibleCards / this.cards.length * 100;\n  }\n}\n\nexport class Card {\n  constructor(public value: string, public flipped: boolean) {\n    this.flipped = flipped;\n    this.image = `cards/${value}.png`;\n  }\n\n  public flipped: boolean;\n  public image: string;\n}\n\nfunction shuffleArray(arr: any[]): any[] {\n  for (let i = arr.length - 1; i > 0; i--) {\n    const j = Math.floor(Math.random() * (i + 1));\n    [arr[i], arr[j]] = [arr[j], arr[i]];\n  }\n  return arr;\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "game_engine",
+   "dependencies": [],
+   "exports": [
+    "GameBoard",
+    "Card"
+   ],
+   "errors": [
+    "TS2300: Duplicate identifier 'flipped'. (line 119)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { GameBoard, Card } from '../game-engine/game-engine.ts';\n\nexport class UiScreens {\n  private gameBoard: GameBoard;\n  private scoreDisplay: HTMLSpanElement;\n  private timerDisplay: HTMLSpanElement;\n  private movesDisplay: HTMLSpanElement;\n  private gameOverPanel: HTMLDivElement;\n\n  constructor() {\n    this.gameBoard = new GameBoard();\n    this.scoreDisplay = document.createElement('span');\n    this.timerDisplay = document.createElement('span');\n    this.movesDisplay = document.createElement('span');\n    this.gameOverPanel = document.createElement('div');\n  }\n\n  public initUI() {\n    this.render();\n    this.setupEventListeners();\n  }\n\n  public render() {\n    this.scoreDisplay.textContent = `Score: ${this.gameBoard.getScore()}`;\n    this.timerDisplay.textContent = `Time: ${this.gameBoard.getTimer()}`;\n    this.movesDisplay.textContent = `Moves: ${this.gameBoard.getMoves()}`;\n    this.gameOverPanel.innerHTML = '';\n    if (this.gameBoard.isGameOver()) {\n      this.gameOverPanel.innerHTML = `\n        <h2>\ud83c\udf89 You matched all the cards!</h2>\n        <p>Score: ${this.gameBoard.getScore()}</p>\n        <button onclick=\"resetGame()\">Play Again</button>\n      `;\n      this.gameBoard.resetGame();\n    } else {\n      this.gameBoard.getCards().forEach((card) => {\n        const cardEl = document.createElement('div');\n        cardEl.className = 'card';\n        cardEl.dataset.index = card.index.toString();\n        cardEl.innerHTML = `<div class=\"card-face\" style=\"background-image:url(${card.flipped ? card.image : 'cards/back.png'})\">${card.flipped ? card.value : ''}</div>`;\n        cardEl.onclick = () => this.flipCard(card);\n        this.gameBoard.getCards().push(cardEl);\n      });\n    }\n  }\n\n  public setupEventListeners() {\n    this.gameBoard.getCards().forEach((card) => {\n      card.addEventListener('click', () => this.flipCard(card));\n    });\n  }\n\n  public flipCard(card: Card) {\n    this.gameBoard.flipCard(card);\n    this.render();\n  }\n\n  public setupGameOverPanel() {\n    this.gameOverPanel.innerHTML = `\n      <h2>Game Over</h2>\n      <p>Score: ${this.gameBoard.getScore()}</p>\n      <p>Time: ${this.gameBoard.getTimer()}</p>\n      <p>Moves: ${this.gameBoard.getMoves()}</p>\n      <button onclick=\"resetGame()\">Play Again</button>\n    `;\n    this.gameBoard.getCards().push(this.gameOverPanel);\n  }\n\n  public resetGame() {\n    this.gameBoard.resetGame();\n    this.render();\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "UiScreens"
+   ],
+   "errors": [
+    "TS2339: Property 'index' does not exist on type 'Card'. (line 39)",
+    "TS2345: Argument of type 'HTMLDivElement' is not assignable to parameter of type 'Card'. (line 42)",
+    "TS2339: Property 'addEventListener' does not exist on type 'Card'. (line 49)",
+    "TS2345: Argument of type 'HTMLDivElement' is not assignable to parameter of type 'Card'. (line 66)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { GameBoard, Card } from '../game-engine/game-engine.ts';\n\nexport class InputHandler {\n  private gameBoard: GameBoard;\n  private scoreStore: ScoreStore;\n\n  constructor(gameBoard: GameBoard, scoreStore: ScoreStore) {\n    this.gameBoard = gameBoard;\n    this.scoreStore = scoreStore;\n  }\n\n  handleCardFlip(card: Card) {\n    this.gameBoard.flipCard(card);\n    this.updateScore();\n    this.checkForMatch();\n  }\n\n  updateScore() {\n    const moves = this.gameBoard.getMoves();\n    const score = this.scoreStore.getScore();\n    this.scoreStore.updateScore(moves, score);\n  }\n\n  checkForMatch() {\n    const isMatch = this.gameBoard.getMatchedCards().length > 0;\n    if (isMatch) {\n      this.scoreStore.incrementMatch();\n      this.gameBoard.resetFlipped();\n    }\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "InputHandler"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'ScoreStore'. (line 5)",
+    "TS2304: Cannot find name 'ScoreStore'. (line 7)",
+    "TS2339: Property 'resetFlipped' does not exist on type 'GameBoard'. (line 28)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "score-store.ts",
+   "language": "typescript",
+   "code": "import { InputHandler } from '../input-handler/input-handler.ts';\n\nexport class ScoreStore {\n  private storage: Storage;\n\n  constructor() {\n    this.storage = new Storage();\n  }\n\n  async loadScoreData() {\n    const data = await this.storage.get({ key: 'score_data' });\n    return data ? JSON.parse(data.value ?? '{}') : {};\n  }\n\n  async saveScoreData(scoreData: any) {\n    return await this.storage.set({\n      key: 'score_data',\n      value: JSON.stringify(scoreData, null, 2),\n    });\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "score_store",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "ScoreStore"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m30\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../input-handler/input-handler.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import { InputHandler } from '../input-handler/input-handler.ts';\n\u001b[7m \u001b[0m \u001b[91m                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "canvas-ui.ts",
+   "language": "typescript",
+   "code": "import { ScoreStore } from '../score-store/score-store.ts';\n\nexport class CanvasUI {\n  private storage: Storage;\n\n  constructor() {\n    this.storage = new Storage();\n  }\n\n  async loadScoreData(): Promise<any> {\n    const data = await this.storage.get({ key: 'score_data' });\n    return data ? JSON.parse(data.value ?? '{}') : {};\n  }\n\n  async saveScoreData(scoreData: any) {\n    return await this.storage.set({\n      key: 'score_data',\n      value: JSON.stringify(scoreData, null, 2),\n    });\n  }\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "canvas_ui",
+   "dependencies": [
+    "score_store"
+   ],
+   "exports": [
+    "CanvasUI"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m28\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../score-store/score-store.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import { ScoreStore } from '../score-store/score-store.ts';\n\u001b[7m \u001b[0m \u001b[91m                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a memory card matching game</title>\n  <meta name=\"description\" content=\"a memory card matching game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a memory card matching game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-zykcUn/game-engine/game-engine.ts\n  var GameBoard = class {\n    constructor() {\n      __publicField(this, \"cards\");\n      __publicField(this, \"matchedCards\");\n      __publicField(this, \"flippedCards\");\n      __publicField(this, \"moves\");\n      __publicField(this, \"timer\");\n      __publicField(this, \"isRunning\");\n      this.cards = [];\n      this.matchedCards = [];\n      this.flippedCards = [];\n      this.moves = 0;\n      this.timer = 0;\n      this.isRunning = false;\n    }\n    initGame() {\n      this.cards = [];\n      this.matchedCards = [];\n      this.flippedCards = [];\n      this.moves = 0;\n      this.timer = 0;\n      this.isRunning = true;\n      const cardValues = [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\", \"D\", \"D\", \"E\", \"E\", \"F\", \"F\"];\n      const shuffled = shuffleArray(cardValues);\n      for (let i = 0; i < shuffled.length; i++) {\n        this.cards.push(new Card(shuffled[i], false));\n      }\n    }\n    getCards() {\n      return this.cards;\n    }\n    getMatchedCards() {\n      return this.matchedCards;\n    }\n    getFlippedCards() {\n      return this.flippedCards;\n    }\n    getMoves() {\n      return this.moves;\n    }\n    getTimer() {\n      return this.timer;\n    }\n    getIsRunning() {\n      return this.isRunning;\n    }\n    flipCard(card) {\n      if (!this.isRunning) return;\n      if (this.flippedCards.length >= 2) return;\n      this.flippedCards.push(card);\n      card.flipped = true;\n      this.moves++;\n      this.updateTimer();\n      if (this.flippedCards.length === 2) {\n        const [card1, card2] = this.flippedCards;\n        if (card1.value === card2.value) {\n          this.matchedCards.push(card1, card2);\n          this.flippedCards = [];\n          card1.flipped = false;\n          card2.flipped = false;\n        } else {\n          setTimeout(() => {\n            card1.flipped = false;\n            card2.flipped = false;\n            this.flippedCards = [];\n          }, 500);\n        }\n      }\n    }\n    updateTimer() {\n      this.timer = Date.now() / 1e3;\n    }\n    render() {\n      const board = document.getElementById(\"board\");\n      board.innerHTML = \"\";\n      for (let i = 0; i < this.cards.length; i++) {\n        const card = this.cards[i];\n        const cardEl = document.createElement(\"div\");\n        cardEl.className = \"card\";\n        cardEl.dataset.index = i.toString();\n        cardEl.innerHTML = `<div class=\"card-face\" style=\"background-image:url(${card.flipped ? card.image : \"cards/back.png\"})\">${card.flipped ? card.value : \"\"}</div>`;\n        cardEl.onclick = () => this.flipCard(card);\n        board.appendChild(cardEl);\n      }\n    }\n    startGame() {\n      this.initGame();\n      this.render();\n    }\n    resetGame() {\n      this.isRunning = false;\n      this.cards = [];\n      this.matchedCards = [];\n      this.flippedCards = [];\n      this.moves = 0;\n      this.timer = 0;\n      this.render();\n    }\n    isGameOver() {\n      return this.cards.every((card) => card.flipped);\n    }\n    getScore() {\n      return this.moves * 10;\n    }\n    getProgress() {\n      const totalVisibleCards = this.cards.filter((card) => card.flipped).length;\n      return totalVisibleCards / this.cards.length * 100;\n    }\n  };\n  var Card = class {\n    constructor(value, flipped) {\n      __publicField(this, \"value\", value);\n      __publicField(this, \"flipped\", flipped);\n      __publicField(this, \"flipped\");\n      __publicField(this, \"image\");\n      this.flipped = flipped;\n      this.image = `cards/${value}.png`;\n    }\n  };\n  function shuffleArray(arr) {\n    for (let i = arr.length - 1; i > 0; i--) {\n      const j = Math.floor(Math.random() * (i + 1));\n      [arr[i], arr[j]] = [arr[j], arr[i]];\n    }\n    return arr;\n  }\n\n  // ../../../../../tmp/vaca-preview-zykcUn/ui-screens/ui-screens.ts\n  var UiScreens = class {\n    constructor() {\n      __publicField(this, \"gameBoard\");\n      __publicField(this, \"scoreDisplay\");\n      __publicField(this, \"timerDisplay\");\n      __publicField(this, \"movesDisplay\");\n      __publicField(this, \"gameOverPanel\");\n      this.gameBoard = new GameBoard();\n      this.scoreDisplay = document.createElement(\"span\");\n      this.timerDisplay = document.createElement(\"span\");\n      this.movesDisplay = document.createElement(\"span\");\n      this.gameOverPanel = document.createElement(\"div\");\n    }\n    initUI() {\n      this.render();\n      this.setupEventListeners();\n    }\n    render() {\n      this.scoreDisplay.textContent = `Score: ${this.gameBoard.getScore()}`;\n      this.timerDisplay.textContent = `Time: ${this.gameBoard.getTimer()}`;\n      this.movesDisplay.textContent = `Moves: ${this.gameBoard.getMoves()}`;\n      this.gameOverPanel.innerHTML = \"\";\n      if (this.gameBoard.isGameOver()) {\n        this.gameOverPanel.innerHTML = `\n        <h2>\\u{1F389} You matched all the cards!</h2>\n        <p>Score: ${this.gameBoard.getScore()}</p>\n        <button onclick=\"resetGame()\">Play Again</button>\n      `;\n        this.gameBoard.resetGame();\n      } else {\n        this.gameBoard.getCards().forEach((card) => {\n          const cardEl = document.createElement(\"div\");\n          cardEl.className = \"card\";\n          cardEl.dataset.index = card.index.toString();\n          cardEl.innerHTML = `<div class=\"card-face\" style=\"background-image:url(${card.flipped ? card.image : \"cards/back.png\"})\">${card.flipped ? card.value : \"\"}</div>`;\n          cardEl.onclick = () => this.flipCard(card);\n          this.gameBoard.getCards().push(cardEl);\n        });\n      }\n    }\n    setupEventListeners() {\n      this.gameBoard.getCards().forEach((card) => {\n        card.addEventListener(\"click\", () => this.flipCard(card));\n      });\n    }\n    flipCard(card) {\n      this.gameBoard.flipCard(card);\n      this.render();\n    }\n    setupGameOverPanel() {\n      this.gameOverPanel.innerHTML = `\n      <h2>Game Over</h2>\n      <p>Score: ${this.gameBoard.getScore()}</p>\n      <p>Time: ${this.gameBoard.getTimer()}</p>\n      <p>Moves: ${this.gameBoard.getMoves()}</p>\n      <button onclick=\"resetGame()\">Play Again</button>\n    `;\n      this.gameBoard.getCards().push(this.gameOverPanel);\n    }\n    resetGame() {\n      this.gameBoard.resetGame();\n      this.render();\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-zykcUn/input-handler/input-handler.ts\n  var InputHandler = class {\n    constructor(gameBoard, scoreStore) {\n      __publicField(this, \"gameBoard\");\n      __publicField(this, \"scoreStore\");\n      this.gameBoard = gameBoard;\n      this.scoreStore = scoreStore;\n    }\n    handleCardFlip(card) {\n      this.gameBoard.flipCard(card);\n      this.updateScore();\n      this.checkForMatch();\n    }\n    updateScore() {\n      const moves = this.gameBoard.getMoves();\n      const score = this.scoreStore.getScore();\n      this.scoreStore.updateScore(moves, score);\n    }\n    checkForMatch() {\n      const isMatch = this.gameBoard.getMatchedCards().length > 0;\n      if (isMatch) {\n        this.scoreStore.incrementMatch();\n        this.gameBoard.resetFlipped();\n      }\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-zykcUn/score-store/score-store.ts\n  var ScoreStore = class {\n    constructor() {\n      __publicField(this, \"storage\");\n      this.storage = new Storage();\n    }\n    async loadScoreData() {\n      var _a;\n      const data = await this.storage.get({ key: \"score_data\" });\n      return data ? JSON.parse((_a = data.value) != null ? _a : \"{}\") : {};\n    }\n    async saveScoreData(scoreData) {\n      return await this.storage.set({\n        key: \"score_data\",\n        value: JSON.stringify(scoreData, null, 2)\n      });\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-zykcUn/canvas-ui/canvas-ui.ts\n  var CanvasUI = class {\n    constructor() {\n      __publicField(this, \"storage\");\n      this.storage = new Storage();\n    }\n    async loadScoreData() {\n      var _a;\n      const data = await this.storage.get({ key: \"score_data\" });\n      return data ? JSON.parse((_a = data.value) != null ? _a : \"{}\") : {};\n    }\n    async saveScoreData(scoreData) {\n      return await this.storage.set({\n        key: \"score_data\",\n        value: JSON.stringify(scoreData, null, 2)\n      });\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-zykcUn/_preview_entry.ts\n  try {\n    if (typeof GameBoard === \"function\" && !/^class\\s/.test(String(GameBoard))) {\n      GameBoard(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling game_engine.GameBoard:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof UiScreens === \"function\" && !/^class\\s/.test(String(UiScreens))) {\n      UiScreens(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.UiScreens:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof InputHandler === \"function\" && !/^class\\s/.test(String(InputHandler))) {\n      InputHandler(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"input-handler.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling input_handler.InputHandler:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof ScoreStore === \"function\" && !/^class\\s/.test(String(ScoreStore))) {\n      ScoreStore(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"score-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling score_store.ScoreStore:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof CanvasUI === \"function\" && !/^class\\s/.test(String(CanvasUI))) {\n      CanvasUI(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"canvas-ui.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling canvas_ui.CanvasUI:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a memory card matching game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a memory card matching game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "game_engine",
+    "ui_screens",
+    "input_handler",
+    "score_store",
+    "canvas_ui"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 22554,
+ "totalErrors": 10,
+ "validatedCount": 1,
+ "failedCount": 5,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "GameBoard",
+    "Card"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "UiScreens"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "game_engine"
+   ],
+   "exports": [
+    "InputHandler"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "score-store.ts",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "ScoreStore"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "canvas-ui.ts",
+   "dependencies": [
+    "score_store"
+   ],
+   "exports": [
+    "CanvasUI"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "game_engine",
+    "ui_screens",
+    "input_handler",
+    "score_store",
+    "canvas_ui"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 22554,
+  "totalErrors": 10,
+  "validated": 1,
+  "failed": 5,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 148251
+ }
+}

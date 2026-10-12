@@ -1,35 +1,36 @@
 import React from 'react';
-import { NodeType } from '../types';
-import { useProjectStore } from '../store/projectStore';
+import { NodeType, NODE_TYPE_OPTIONS } from '../types';
+import { useProjectStore, isRootNode } from '../store/projectStore';
 
 interface NodePaletteProps {
   onDragStart: (event: React.DragEvent, nodeType: NodeType) => void;
 }
 
-const nodeTypes: { type: NodeType; label: string; icon: string; description: string }[] = [
-  { type: 'input', label: 'Input', icon: '⬅', description: 'Data entry point' },
-  { type: 'output', label: 'Output', icon: '➡', description: 'Result display' },
-  { type: 'logic', label: 'Logic', icon: '⚙', description: 'Processing/conditions' },
-  { type: 'api', label: 'API', icon: '🌐', description: 'External service call' },
-  { type: 'database', label: 'Database', icon: '📦', description: 'Data storage' },
-  { type: 'ui', label: 'UI', icon: '🖥', description: 'User interface element' },
-  { type: 'ui-functions', label: 'UI Functions', icon: '🎛', description: 'Generates button/control list for the UI canvas' },
-  { type: 'gui-layout', label: 'GUI Layout', icon: '⛭', description: 'Imported GUI widget layout' },
-];
+// The type registry now lives in types.ts (NODE_TYPE_OPTIONS) so the palette and
+// the per-node setup window list the same types from one place.
+const nodeTypes = NODE_TYPE_OPTIONS;
 
 export default function NodePalette({ onDragStart }: NodePaletteProps) {
-  const { nodes, selectedNode, setSelectedNode, deleteNode } = useProjectStore();
+  const { nodes, selectedNode, setSelectedNode, deleteNode, planMode, planSeedId } = useProjectStore();
+
+  // Plan Mode starts with exactly ONE node. Until it is placed there is nothing
+  // to choose between, so the palette offers the seed instead of the type list —
+  // the type is picked in the window that opens on drop.
+  const needsSeed = planMode && !planSeedId;
 
   const handleDeleteSelected = () => {
-    if (!selectedNode || selectedNode === 'master-node') return;
+    // Roots are protected here on purpose: deleting one must go through the
+    // tree bar, which also deregisters the tree. Deleting the node alone would
+    // leave an AppTree pointing at a root that is gone.
+    if (!selectedNode || isRootNode(nodes.find((n) => n.id === selectedNode))) return;
     deleteNode(selectedNode);
     setSelectedNode(null);
   };
 
   const handleClearAll = () => {
-    const nonMaster = nodes.filter((n) => n.id !== 'master-node');
+    const nonMaster = nodes.filter((n) => !isRootNode(n));
     if (nonMaster.length === 0) return;
-    if (confirm('Clear all nodes from the canvas? The blueprint node will be kept.')) {
+    if (confirm('Clear all nodes from the canvas? The app tree roots will be kept.')) {
       nonMaster.forEach((n) => deleteNode(n.id));
       setSelectedNode(null);
     }
@@ -37,24 +38,43 @@ export default function NodePalette({ onDragStart }: NodePaletteProps) {
 
   return (
     <div className="node-palette">
-      <h3>Nodes</h3>
-      <p className="palette-hint">Drag nodes to the canvas</p>
+      <h3>{planMode ? 'Plan' : 'Nodes'}</h3>
+      <p className="palette-hint">
+        {needsSeed
+          ? 'Drag the starting node into the canvas to begin'
+          : 'Drag nodes to the canvas'}
+      </p>
 
       <div className="node-list">
-        {nodeTypes.map((node) => (
+        {needsSeed ? (
           <div
-            key={node.type}
-            className="node-item"
+            className="node-item node-seed-item"
             draggable
-            onDragStart={(e) => { onDragStart(e, node.type); } }
+            onDragStart={(e) => { onDragStart(e, 'logic'); }}
+            title="Your starting node — you choose its type and language when it lands"
           >
-            <span className="node-item-icon">{node.icon}</span>
+            <span className="node-item-icon">◉</span>
             <div className="node-item-info">
-              <span className="node-item-label">{node.label}</span>
-              <span className="node-item-desc">{node.description}</span>
+              <span className="node-item-label">Starting node</span>
+              <span className="node-item-desc">Drag in, then describe what you want to build</span>
             </div>
           </div>
-        ))}
+        ) : (
+          nodeTypes.map((node) => (
+            <div
+              key={node.type}
+              className="node-item"
+              draggable
+              onDragStart={(e) => { onDragStart(e, node.type); } }
+            >
+              <span className="node-item-icon">{node.icon}</span>
+              <div className="node-item-info">
+                <span className="node-item-label">{node.label}</span>
+                <span className="node-item-desc">{node.description}</span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="palette-divider" />
@@ -70,12 +90,16 @@ export default function NodePalette({ onDragStart }: NodePaletteProps) {
             nodes.map((n) => (
               <div
                 key={n.id}
-                className={`placed-node-item ${selectedNode === n.id ? 'selected' : ''}`}
+                className={`placed-node-item ${selectedNode === n.id ? 'selected' : ''} ${
+                  planSeedId === n.id ? 'plan-seed' : ''
+                }`}
                 onClick={() => setSelectedNode(n.id === selectedNode ? null : n.id)}
               >
                 <span className="placed-node-type">{n.data?.type || '?'}</span>
-                <span className="placed-node-label">{n.data?.label || n.id}</span>
-                {n.id !== 'master-node' && (
+                <span className="placed-node-label">
+                  {planSeedId === n.id ? '◉ ' : ''}{n.data?.label || n.id}
+                </span>
+                {!isRootNode(n) && (
                   <button
                     className="placed-node-delete"
                     onClick={(e) => {

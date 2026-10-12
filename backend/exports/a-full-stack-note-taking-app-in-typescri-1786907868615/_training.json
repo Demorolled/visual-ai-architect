@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-16T19:20:04.703Z",
+  "request": "a full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+  "intent": {
+    "goal": "full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+    "targetUser": "deployment",
+    "coreFeatures": [
+      "note-taking"
+    ],
+    "uiStyle": "",
+    "language": "typescript"
+  },
+  "questions": [
+    {
+      "key": "storage",
+      "question": "How should notes be stored?",
+      "options": [
+        "In-memory",
+        "JSON file",
+        "SQLite database"
+      ]
+    }
+  ],
+  "answers": {
+    "storage": "In-memory"
+  },
+  "planFiles": [
+    {
+      "path": "src/app.ts",
+      "summary": "Entry point for the Express server.",
+      "language": "typescript",
+      "exports": [
+        "app"
+      ]
+    },
+    {
+      "path": "src/routes/notes.ts",
+      "summary": "Routes for note-taking operations.",
+      "language": "typescript",
+      "exports": [
+        "notesRouter"
+      ]
+    },
+    {
+      "path": "src/services/notes.ts",
+      "summary": "Business logic for note-taking operations.",
+      "language": "typescript",
+      "exports": [
+        "getAllNotes",
+        "addNote",
+        "updateNote",
+        "deleteNote"
+      ]
+    },
+    {
+      "path": "src/data/notes.ts",
+      "summary": "Data models and initial data for notes.",
+      "language": "typescript",
+      "exports": [
+        "Note"
+      ]
+    },
+    {
+      "path": "client/src/index.tsx",
+      "summary": "Entry point for the React frontend.",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "client/src/App.tsx",
+      "summary": "Main React component for the note-taking app.",
+      "language": "typescript",
+      "exports": [
+        "App"
+      ]
+    },
+    {
+      "path": "client/src/components/NoteList.tsx",
+      "summary": "Component to display the list of notes.",
+      "language": "typescript",
+      "exports": [
+        "NoteList"
+      ]
+    },
+    {
+      "path": "client/src/components/NoteForm.tsx",
+      "summary": "Component for adding and editing notes.",
+      "language": "typescript",
+      "exports": [
+        "NoteForm"
+      ]
+    },
+    {
+      "path": "client/src/hooks/useNotes.ts",
+      "summary": "Custom hook to fetch and manage notes data.",
+      "language": "typescript",
+      "exports": [
+        "useNotes"
+      ]
+    },
+    {
+      "path": "index.html",
+      "summary": "Single self-contained GUI page (HTML + CSS + JS inline, no build step) that renders the complete app interface and wires it to the logic. This is what makes the app viewable in the browser preview — build the full UI here. STRICT RULES: (1) do NOT reference external files — no <script src=\"...\">, no <link href=\"...\">, no CSS or JS files; the preview iframe cannot load external files, so inline ALL CSS in a <style> tag and ALL JavaScript in a <script> tag directly in this file; (2) plain browser JavaScript only — no React, no TypeScript, no imports, no JSX, no build step; (3) include working inline code that actually renders the interface so the page is never blank.",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "chunked",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nmodelVeronice.txt sections: 1. PROJECT OVERVIEW, 2. RUNNING SERVICES (as of scan time), 3. RUNTIME TOOLS, 4. FRONTEND APPLICATION, 5. BACKEND APPLICATION, 6. LLM CONFIGURATION, 7. INSTALLED OLLAMA MODELS, 8. LOCAL GGUF MODELS, 9. DATA & KNOWLEDGE STORES, 10. TRAINING SYSTEM, 11. SYSTEM MONITOR DAEMON, 12. GENERATED PROJECTS (projects/), 13. PROFILE & USER\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node (typescript).\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-pa\n…(truncated)",
+  "files": [
+    "src/app.ts",
+    "src/data/notes.ts",
+    "src/services/notes.ts",
+    "src/routes/notes.ts",
+    "client/src/App.tsx",
+    "client/src/index.tsx",
+    "client/src/components/NoteList.tsx",
+    "client/src/components/NoteForm.tsx",
+    "client/src/hooks/useNotes.ts",
+    "index.html"
+  ]
+}

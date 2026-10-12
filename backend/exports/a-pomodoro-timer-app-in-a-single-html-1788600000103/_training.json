@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "tier": "medium",
+  "request": "Build a pomodoro timer app in a single HTML file. Cycles between 25-minute focus sessions and 5-minute breaks, shows a circular countdown, tracks completed pomodoros, and has start/pause/reset.",
+  "intent": {
+    "goal": "build a pomodoro timer app in a single html file",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "App HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "",
+  "files": [
+    "index.html"
+  ]
+}

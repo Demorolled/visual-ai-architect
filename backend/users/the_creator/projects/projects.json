@@ -326,5 +326,130 @@
     ],
     "savedAt": "2026-08-13T22:46:52.353Z",
     "version": 2
+  },
+  {
+    "id": "proj_1786747075020",
+    "name": "classic game",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master",
+        "type": "master",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "data": {
+          "label": "memory_card_game_2 blueprint",
+          "description": "classic game",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "classic game",
+          "appPurpose": "Classic memory matching card game with themes — Interactive memory card game with real-time visualization and analysis",
+          "selectedOS": "linux",
+          "scale": "medium",
+          "blueprintContext": "APP TYPE: memory_card_game_2\nAPP DESCRIPTION: Classic memory matching card game with themes — Interactive memory card game with real-time visualization and analysis\nTARGET STACK: frontend=React, backend=Node.js Express, database=SQLite\nSOURCE LANGUAGE: typescript\n\nARCHITECTURE CHECKLIST (the whole app is exactly these modules, each implemented in its own file):\n  - Game Controller\n  - Game Engine\n  - Game State\n  - AI Opponent\n  - Render View\n\nWIRING GRAPH (data contracts between sibling modules — use these names verbatim so files connect):\n  - Game Controller → Game Engine : requests\n  - Game Engine → Game State : results\n  - Game State → AI Opponent : state_and_events\n  - AI Opponent → Render View : data\n\nRULE: You are generating ONE module of this app. Implement exactly the module named in THIS FILE'S MODULE below.\nDo NOT implement other checklist modules — they are separate files. Do NOT invent new modules."
+        }
+      },
+      {
+        "id": "mod_0",
+        "type": "input",
+        "position": {
+          "x": 60,
+          "y": 120
+        },
+        "data": {
+          "label": "Game Controller",
+          "description": "Module \"Game Controller\" of a memory_card_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: Game Controller → Game Engine (requests).",
+          "status": "pending",
+          "language": "typescript",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_1",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "label": "Game Engine",
+          "description": "Module \"Game Engine\" of a memory_card_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: Game Controller → Game Engine (requests); Game Engine → Game State (results).",
+          "status": "pending",
+          "language": "typescript",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_2",
+        "type": "logic",
+        "position": {
+          "x": 700,
+          "y": 120
+        },
+        "data": {
+          "label": "Game State",
+          "description": "Module \"Game State\" of a memory_card_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: Game Engine → Game State (results); Game State → AI Opponent (state_and_events).",
+          "status": "pending",
+          "language": "typescript",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_3",
+        "type": "logic",
+        "position": {
+          "x": 60,
+          "y": 340
+        },
+        "data": {
+          "label": "AI Opponent",
+          "description": "Module \"AI Opponent\" of a memory_card_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: Game State → AI Opponent (state_and_events); AI Opponent → Render View (data).",
+          "status": "pending",
+          "language": "typescript",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_4",
+        "type": "ui",
+        "position": {
+          "x": 380,
+          "y": 340
+        },
+        "data": {
+          "label": "Render View",
+          "description": "Module \"Render View\" of a memory_card_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: AI Opponent → Render View (data).",
+          "status": "pending",
+          "language": "typescript",
+          "selectedOS": "linux"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0",
+        "source": "mod_0",
+        "target": "mod_1"
+      },
+      {
+        "id": "edge_1",
+        "source": "mod_1",
+        "target": "mod_2"
+      },
+      {
+        "id": "edge_2",
+        "source": "mod_2",
+        "target": "mod_3"
+      },
+      {
+        "id": "edge_3",
+        "source": "mod_3",
+        "target": "mod_4"
+      }
+    ],
+    "savedAt": "2026-08-14T22:37:55.020Z",
+    "version": 1
   }
 ]

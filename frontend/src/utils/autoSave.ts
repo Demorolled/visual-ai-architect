@@ -1,9 +1,14 @@
 import { Node, Edge } from 'reactflow';
-import { OSType } from '../types';
+import { OSType, AppTree } from '../types';
 
 export interface AutoSaveSnapshot {
   nodes: Node[];
   edges: Edge[];
+  /**
+   * Tree Mode: the project's app trees. Optional so autosaves captured before
+   * Tree Mode existed still restore (the store re-derives a single tree).
+   */
+  trees?: AppTree[];
   targetOS: OSType;
   projectName: string;
 }
@@ -38,7 +43,10 @@ function snapshotsEqual(a: AutoSaveSnapshot, b: AutoSaveSnapshot): boolean {
   return a.projectName === b.projectName
     && a.targetOS === b.targetOS
     && JSON.stringify(a.nodes) === JSON.stringify(b.nodes)
-    && JSON.stringify(a.edges) === JSON.stringify(b.edges);
+    && JSON.stringify(a.edges) === JSON.stringify(b.edges)
+    // Tree edits (add/rename/delete) change no node or edge on their own, so
+    // without this an added tree would look like "no change" and never save.
+    && JSON.stringify(a.trees) === JSON.stringify(b.trees);
 }
 
 export function performAutoSave(

@@ -1,27 +1,47 @@
 /**
- * ConnectNodesDialog — "Connect & Describe" for merged apps.
+ * ConnectNodesDialog — "Connect & Describe".
  *
- * After a structural merge dumps Project B beside Project A, this dialog lets
- * the user:
- *   1. PICK a source node from the dropped app (Project B)
- *   2. PICK a target node from the existing app (Project A)
- *   3. DESCRIBE how they want it to connect in plain language
- *   4. Have the LLM interpret that description into a SEMANTIC edge
+ * Two modes, one mechanism:
+ *   • `mode="merge"` (default) — after a structural merge dumps Project B
+ *     beside Project A, source comes from B and target from A.
+ *   • `mode="plan"` — Big Plan Mode's manual wiring link: ANY node can be the
+ *     source or the target, because the user is describing their own
+ *     architecture rather than plugging one app into another.
+ *
+ * Either way the user:
+ *   1. PICKS a source node
+ *   2. PICKS a target node
+ *   3. DESCRIBES how they want it to connect in plain language
+ *   4. Gets that description interpreted into a SEMANTIC edge
  *      (label / relation / codeHint) — POST /api/merge/connect
- *   5. Apply the edge to the canvas — it becomes a real dependency in codegen
+ *   5. Applies the edge to the canvas — it becomes a real dependency in codegen
  *      (edge source → target = target depends on source) AND the interpreted
  *      wiring is injected into the generation prompts of both files.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useProjectStore } from '../store/projectStore';
 import { api } from '../api/client';
+import { showToast } from '../utils/toast';
 import './ConnectNodesDialog.css';
 
 interface ConnectNodesDialogProps {
   onClose: () => void;
   /** Merged ids of the nodes that came from the dropped project B. */
-  bNodeIds: string[];
+  bNodeIds?: string[];
+  /**
+   * `merge` (default) — wire dropped app B into app A.
+   * `plan`             — Big Plan Mode manual wiring (any node).
+   * `build`            — build-mode same-app wiring: pickers restricted to
+   *                      `allowedNodeIds`, source pre-selected.
+   */
+  mode?: 'merge' | 'plan' | 'build';
+  /** Pre-select this node as the source (build mode: the node the user selected). */
+  initialSourceId?: string;
+  /** Pre-select this node as the target (canvas two-node selection flow). */
+  initialTargetId?: string;
+  /** build mode: restrict both pickers to these node ids (the same app tree). */
+  allowedNodeIds?: string[];
 }
 
 interface InterpretedEdge {
@@ -46,10 +66,10 @@ const EXAMPLES = [
   'Data Store loads the saved profile that the Settings UI displays',
 ];
 
-export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDialogProps) {
-  const { nodes, edges, projectName, targetOS, addEdge, removeEdge } = useProjectStore();
-  const [sourceId, setSourceId] = useState('');
-  const [targetId, setTargetId] = useState('');
+export default function ConnectNodesDialog({ onClose, bNodeIds = [], mode = 'merge', initialSourceId, initialTargetId, allowedNodeIds }: ConnectNodesDialogProps) {
+  const { nodes, edges, projectName, targetOS, addEdge, removeEdge, highlightEdge } = useProjectStore();
+  const [sourceId, setSourceId] = useState(initialSourceId || '');
+  const [targetId, setTargetId] = useState(initialTargetId || '');
   const [description, setDescription] = useState('');
   const [interpreting, setInterpreting] = useState(false);
   const [result, setResult] = useState<InterpretedEdge | null>(null);
@@ -57,9 +77,36 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
   const [error, setError] = useState('');
   const [exampleIdx, setExampleIdx] = useState(0);
 
+  // After a connection is applied the canvas ALREADY re-renders the new edge
+  // automatically (SceneContent subscribes to the store's edges). These timers
+  // just make that change unmissable: briefly highlight the fresh edge and
+  // close this dialog so the user is looking at the canvas when it lands.
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearHighlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isPlan = mode === 'plan';
+  const isBuild = mode === 'build';
+  // `master-node` is the app's own blueprint node (not part of the user's
+  // design), but a plan's master node is a normal node with a real type, so in
+  // plan mode it stays selectable like any other.
   const codeNodes = useMemo(() => nodes.filter(n => n.type !== 'master'), [nodes]);
-  const sourceNodes = useMemo(() => codeNodes.filter(n => bNodeIds.includes(n.id)), [codeNodes, bNodeIds]);
-  const targetNodes = useMemo(() => codeNodes.filter(n => !bNodeIds.includes(n.id)), [codeNodes, bNodeIds]);
+  // Build mode scopes both pickers to the selected node's app tree.
+  const allowed = useMemo(() => (allowedNodeIds ? new Set(allowedNodeIds) : null), [allowedNodeIds]);
+  const scopedNodes = useMemo(
+    () => (allowed ? codeNodes.filter(n => allowed.has(n.id)) : codeNodes),
+    [codeNodes, allowed]
+  );
+  const sourceNodes = useMemo(
+    () => (isPlan ? codeNodes : isBuild ? scopedNodes : codeNodes.filter(n => bNodeIds.includes(n.id))),
+    [codeNodes, bNodeIds, isPlan, isBuild, scopedNodes]
+  );
+  const targetNodes = useMemo(
+    // A node can never connect to itself — drop the chosen source from the
+    // target list (plan + build) so the picker can't offer an impossible pair.
+    () => (isPlan ? codeNodes : isBuild ? scopedNodes : codeNodes.filter(n => !bNodeIds.includes(n.id)))
+      .filter(n => n.id !== sourceId),
+    [codeNodes, bNodeIds, isPlan, isBuild, scopedNodes, sourceId]
+  );
 
   const nodeLabel = useCallback((id: string) => codeNodes.find(n => n.id === id)?.data?.label || id, [codeNodes]);
 
@@ -109,9 +156,27 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
     if (existing) removeEdge(existing.id);
     addEdge(result);
     setApplied(true);
-  }, [result, addEdge, removeEdge]);
+
+    // Name the two nodes in a brief toast so the connection is unmistakable
+    // even after the dialog closes and the highlight fades.
+    showToast(`🔗 Connected “${nodeLabel(result.source)}” → “${nodeLabel(result.target)}”`);
+
+    // Emphasise the new edge and reveal the canvas so the change is visible.
+    highlightEdge(result.id);
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => onClose(), 2000);
+    if (clearHighlightTimerRef.current) clearTimeout(clearHighlightTimerRef.current);
+    clearHighlightTimerRef.current = setTimeout(() => highlightEdge(null), 5000);
+  }, [result, addEdge, removeEdge, highlightEdge, onClose, nodeLabel]);
+
+  // Cancel the pending auto-close when the user takes over (Connect another /
+  // Done / backdrop). The highlight-clear timer is intentionally left running.
+  useEffect(() => () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+  }, []);
 
   const reset = useCallback(() => {
+    if (closeTimerRef.current) { clearTimeout(closeTimerRef.current); closeTimerRef.current = null; }
     setSourceId('');
     setTargetId('');
     setDescription('');
@@ -122,6 +187,7 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
 
   const handleClose = useCallback(() => {
     if (interpreting) return;
+    if (closeTimerRef.current) { clearTimeout(closeTimerRef.current); closeTimerRef.current = null; }
     onClose();
   }, [interpreting, onClose]);
 
@@ -140,7 +206,11 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
           <button className="merge-close-btn" onClick={handleClose} title="Close">✕</button>
         </div>
         <div className="merge-subtitle">
-          Wire the dropped app into the existing one: pick where to plug in, then describe how the two should connect. The app interprets it into a real code-level wiring.
+          {isPlan
+            ? 'Wire two nodes in your plan: pick what runs first, pick what depends on it, then describe the relationship in your own words. Nothing is built — this records the wiring in the plan.'
+            : isBuild
+              ? 'Connect this node to another node in the same app: pick which one provides the data and which one receives it, then describe what flows between them. The app interprets it into a real code-level wiring.'
+              : 'Wire the dropped app into the existing one: pick where to plug in, then describe how the two should connect. The app interprets it into a real code-level wiring.'}
         </div>
 
         {/* Body */}
@@ -148,11 +218,15 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
           {/* Source → Target pickers */}
           <div className="connect-pair">
             <div className="connect-side">
-              <div className="connect-side-label">⬅ From (dropped app B)</div>
+              <div className="connect-side-label">{isPlan ? '⬅ From (runs first)' : isBuild ? '⬅ From (provides the data)' : '⬅ From (dropped app B)'}</div>
               <select
                 className="merge-select"
                 value={sourceId}
-                onChange={e => { setSourceId(e.target.value); setResult(null); setApplied(false); }}
+                onChange={e => {
+                  setSourceId(e.target.value);
+                  if (e.target.value === targetId) setTargetId('');
+                  setResult(null); setApplied(false);
+                }}
               >
                 <option value="">— pick a node —</option>
                 {sourceNodes.map(n => (
@@ -164,7 +238,7 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
             </div>
             <div className="connect-arrow">➜</div>
             <div className="connect-side">
-              <div className="connect-side-label">➡ Into (existing app A)</div>
+              <div className="connect-side-label">{isPlan ? '➡ Into (depends on it)' : isBuild ? '➡ Into (receives the data)' : '➡ Into (existing app A)'}</div>
               <select
                 className="merge-select"
                 value={targetId}
@@ -239,14 +313,20 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
                 </div>
               )}
               <div className="connect-result-note">
-                Applying this adds a real dependency — <em>{target}</em> will import from <em>{source}</em> — and feeds this wiring into code generation for both files.
+                Applying this adds a real edge — <em>{target}</em> depends on <em>{source}</em> — and saves that wiring into your plan.{!isPlan && ' It also feeds the wiring into code generation for both files.'}
               </div>
             </div>
           )}
 
           {applied && (
             <div className="merge-applied">
-              ✅ Semantic connection applied to the canvas — <strong>{source} → {target}</strong> ("{result?.label}"). Click <strong>Save</strong> to keep it, then <strong>Generate</strong> to build the merged app.
+              {isPlan ? (
+                <>✅ Wiring recorded — <strong>{source} → {target}</strong> ("{result?.label}"). Your plan is autosaved every 5 minutes; nothing is generated while you plan.</>
+              ) : isBuild ? (
+                <>✅ Connection applied — <strong>{source} → {target}</strong> ("{result?.label}"). It just landed on the canvas, highlighted. Closing so you can see it — click <strong>Save</strong>, then <strong>Generate</strong> so both files are built with this wiring.</>
+              ) : (
+                <>✅ Semantic connection applied to the canvas — <strong>{source} → {target}</strong> ("{result?.label}"). Click <strong>Save</strong> to keep it, then <strong>Generate</strong> to build the merged app.</>
+              )}
             </div>
           )}
 
@@ -256,7 +336,11 @@ export default function ConnectNodesDialog({ onClose, bNodeIds }: ConnectNodesDi
         {/* Footer */}
         <div className="merge-footer">
           <span className="merge-footer-hint">
-            Edge direction: <em>target depends on source</em> — {sourceNodes.length} nodes from B, {targetNodes.length} from A.
+            {isPlan
+              ? <>Edge direction: <em>target depends on source</em> — {codeNodes.length} node{codeNodes.length === 1 ? '' : 's'} in this plan.</>
+              : isBuild
+                ? <>Edge direction: <em>target depends on source</em> — {scopedNodes.length} node{scopedNodes.length === 1 ? '' : 's'} in this app.</>
+                : <>Edge direction: <em>target depends on source</em> — {sourceNodes.length} nodes from B, {targetNodes.length} from A.</>}
           </span>
           <div className="merge-footer-actions">
             {applied ? (

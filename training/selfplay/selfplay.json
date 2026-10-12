@@ -1,0 +1,44 @@
+{
+  "endpoints": {
+    "student_url": "http://127.0.0.1:11434/v1",
+    "student_model": "vaca-r20-q4",
+    "judge_url": "http://127.0.0.1:11434/v1",
+    "judge_model": "gemma4:12b",
+    "embed_url": "http://192.168.1.234:11434"
+  },
+  "paths": {
+    "exports_dir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports",
+    "work_dir": "/home/homellmlab/Desktop/visual-ai-architect/training/selfplay/work",
+    "corpus_dir": "/home/homellmlab/Desktop/visual-ai-architect/training/selfplay/corpus",
+    "models_dir": "/home/homellmlab/Desktop/visual-ai-architect/training/selfplay/models",
+    "train_python": "/home/homellmlab/Desktop/visual-ai-architect/llm-training-app/.venv/bin/python",
+    "puzzle_trainer": "/home/homellmlab/Desktop/visual-ai-architect/scripts/puzzle_trainer.py",
+    "retention_jsonl": "/home/homellmlab/Desktop/visual-ai-architect/kaggle_upload/train.jsonl"
+  },
+  "round": {
+    "play_rounds": 40,
+    "nodes_per_puzzle": 5,
+    "tuneup_pct": 0.5,
+    "flow": "full",
+    "no_rag": false,
+    "judge_sample": 25,
+    "judge_required": false,
+    "base_model": "BlossomsAI/Qwen2.5-Coder-14B-Instruct-Uncensored",
+    "max_seq_length": 1024,
+    "epochs": 2,
+    "learning_rate": 5e-05,
+    "batch_size": 1,
+    "grad_accum": 4,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "n_gpu_layers_cap_gb": 10.5,
+    "retention_mix": 0.15,
+    "val_frac": 0.05,
+    "export_cmd": "",
+    "redeploy_cmd": "",
+    "promote_cmd": "python3 scripts/promote-adapter.py --apply",
+    "max_rounds": 1
+  },
+  "start_round": 1
+}

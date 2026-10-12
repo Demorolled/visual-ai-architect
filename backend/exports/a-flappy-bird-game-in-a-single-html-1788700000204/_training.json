@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:30:00.000Z",
+  "request": "Build a flappy bird game in a single HTML file. A bird falls with gravity and flaps with space or a click, pipes spawn at random gap positions on a timer that speeds up as the score rises, passing a pipe scores a point, hitting a pipe or the ground ends the game showing final and best scores, the best score persists in localStorage, and a restart resets the world.",
+  "intent": {
+    "goal": "build a flappy bird game in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Flappy Bird HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a flappy bird game in a single HTML file. A bird falls with gravity and flaps with space or a click, pipes spawn at random gap positions on a timer that speeds up as the score rises, passing a pipe scores a point, hitting a pipe or the ground ends the game showing final and best scores, the best score persists in localStorage, and a restart resets the world.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

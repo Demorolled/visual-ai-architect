@@ -1,0 +1,1 @@
+{"instruction": "What is the VACA backend route mount `/api/fast-preview-preference` bound to?", "input": "", "output": "`/api/fast-preview-preference` is served by `fastPreviewPreferenceRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}

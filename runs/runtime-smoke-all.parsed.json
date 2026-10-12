@@ -1,0 +1,1079 @@
+[
+ {
+  "name": "1-level-first-person-shooter-game-move-a-1786301591657",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-2048-puzzle-game-in-a-single-html-1788700000102",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-3d-chess-game-in-a-single-html-file-wi-1786373881077",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 pageerror: Cannot use import statement outside a module; pageerror: Unexpected token 'export'; pageerror: Unexpected token 'export'; pageerror: Unexpected token 'export'",
+   "\u274c clicks-dont-crash \u2014 1 clicks produced 1 error(s): pageerror: play is not defined"
+  ],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-3d-chess-game-in-a-single-html-file-wi-1786374111512",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-breakout-game-app-in-a-single-html-1788600000106",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-canvas-paint-app-in-a-single-html-1788700000104",
+  "status": "PASS",
+  "fails": [],
+  "click": 8,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-chess-game-with-legal-moves-in-a-single-html-1788700000101",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-countdown-timer-app-in-a-single-html-1788600000001",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-drum-machine-sequencer-in-a-single-html-1788700000203",
+  "status": "PASS",
+  "fails": [],
+  "click": 7,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-flappy-bird-game-in-a-single-html-1788700000204",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786356120852",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 2,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786356370922",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786890266536",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 console.error: Access to fetch at 'file:///notes' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.; console.error: Failed to load resource: net::ERR_FAILED; console.error: Error fetching notes: TypeError: Failed to fetch"
+  ],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786890984902",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 console.error: Access to fetch at 'file:///notes' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.; console.error: Failed to load resource: net::ERR_FAILED"
+  ],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786896484419",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786897701361",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786898204964",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786898795070",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 console.error: Access to fetch at 'file:///notes' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.; console.error: Failed to load resource: net::ERR_FAILED; pageerror: Failed to fetch"
+  ],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786906927842",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786907414891",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786907623673",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786907868615",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786908038933",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786908261632",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786924894561",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786925409480",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786925714974",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786925927926",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 console.error: Access to fetch at 'file:///notes' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.; console.error: Failed to load resource: net::ERR_FAILED; console.error: Error fetching notes: TypeError: Failed to fetch"
+  ],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786926199584",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786926471424",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786960008755",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786961607585",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786991416638",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786992053826",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786992245826",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786993152454",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 2,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1786993589574",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787011839360",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787013450703",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787013645353",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787014007010",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787043509899",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787044137506",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787044511277",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787044874338",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787049381458",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787520924048",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787686629354",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND; console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND"
+  ],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-full-stack-note-taking-app-in-typescri-1787740976664",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-hangman-game-app-in-a-single-html-1788600000102",
+  "status": "PASS",
+  "fails": [],
+  "click": 27,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-kanban-task-board-app-in-a-single-html-1788600000005",
+  "status": "PASS",
+  "fails": [],
+  "click": 7,
+  "typed": 3,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-maze-generator-solver-in-a-single-html-1788700000200",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-media-player-app-in-a-single-html-1788700000000",
+  "status": "PASS",
+  "fails": [],
+  "click": 5,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-memory-match-card-game-in-a-single-html-1788600000002",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-minesweeper-game-in-a-single-html-1788700000103",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-platformer-game-in-a-single-html-1788700000001",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-pomodoro-timer-app-in-a-single-html-1788600000103",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-quiz-app-with-score-tracking-in-a-single-html-1788600000108",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-simple-counter-app-in-a-single-html-1788600000000",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-simple-hello-world-web-app-in-a-single-1788180701282",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 1 clicks produced 4 error(s): console.error: Failed to load resource: net::ERR_CERT_DATE_INVALID; console.error: Error fetching quote: TypeError: Failed to fetch"
+  ],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-simple-media-player-as-a-single-file-b-1788128193824",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND",
+   "\u274c clicks-dont-crash \u2014 2 clicks produced 3 error(s): pageerror: Cannot set properties of null (setting 'textContent'); pageerror: The element has no supported sources.; pageerror: Cannot set properties of null (setting 'textContent')"
+  ],
+  "click": 2,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-simple-stopwatch-app-as-a-single-file--1788131167827",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-small-quiz-app-with-hardcoded-question-1788133202544",
+  "status": "FAIL",
+  "fails": [
+   "\u274c timeout-or-crash \u2014 page.evaluate: Execution context was destroyed, most likely because of a navigation."
+  ],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-snake-game-in-a-single-html-1788600000003",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-spreadsheet-app-in-a-single-html-1788700000100",
+  "status": "PASS",
+  "fails": [],
+  "click": 4,
+  "typed": 10,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-sudoku-solver-game-in-a-single-html-1788700000002",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 pageerror: Cannot read properties of undefined (reading 'slice')",
+   "\u274c clicks-dont-crash \u2014 4 clicks produced 4 error(s): pageerror: Cannot read properties of undefined (reading 'slice'); pageerror: Cannot read properties of null (reading '0'); pageerror: Cannot read properties of null (reading 'map')"
+  ],
+  "click": 4,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-temperature-converter-between-celsius--1788130457250",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 1 clicks produced 1 error(s): pageerror: clearInputs is not defined"
+  ],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-text-adventure-game-app-in-typescript--1787000604729",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tic-tac-toe-game-app-in-typescript-two-1786988951520",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 1 clicks produced 1 error(s): pageerror: restartGame is not defined"
+  ],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-tic-tac-toe-game-app-in-typescript-two-1786998209590",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786357584176",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786359516180",
+  "status": "FAIL",
+  "fails": [
+   "\u274c loads-without-errors \u2014 pageerror: Unexpected token ':'",
+   "\u274c clicks-dont-crash \u2014 1 clicks produced 1 error(s): pageerror: play is not defined"
+  ],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786359845935",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786360058323",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 3 clicks produced 1 error(s): pageerror: Game is not defined"
+  ],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786360347970",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786360967129",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786361527799",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 1 clicks produced 1 error(s): pageerror: Assignment to constant variable."
+  ],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786362105481",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 2 clicks produced 2 error(s): pageerror: checkWinner is not defined; pageerror: checkWinner is not defined"
+  ],
+  "click": 2,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "a-tic-tac-toe-game-in-typescript-with-a--1786362606779",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tip-calculator-app-in-a-single-html-1788600000100",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-todo-list-app-in-a-single-html-file-1786561051380",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-tower-defense-game-in-a-single-html-1788700000105",
+  "status": "PASS",
+  "fails": [],
+  "click": 4,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-turn-based-rpg-battle-game-in-a-single-html-1788700000201",
+  "status": "PASS",
+  "fails": [],
+  "click": 3,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-typing-speed-test-app-in-a-single-html-1788600000101",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-weather-dashboard-app-in-a-single-html-1788600000004",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-web-text-editor-with-tabs-in-a-single-html-1788700000202",
+  "status": "PASS",
+  "fails": [],
+  "click": 4,
+  "typed": 2,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "a-wordle-clone-app-in-a-single-html-1788600000105",
+  "status": "PASS",
+  "fails": [],
+  "click": 29,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "an-asteroids-game-in-a-single-html-1788700000205",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "an-expense-tracker-app-in-a-single-html-1788600000104",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "an-image-gallery-app-with-lightbox-in-a-single-html-1788600000107",
+  "status": "PASS",
+  "fails": [],
+  "click": 4,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-checkers-game-in-a-single-html-f-1787080858898",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-checkers-game-in-a-single-html-f-1787082726469",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-checkers-game-in-a-single-html-f-1787083168441",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-checkers-game-in-a-single-html-f-1787084413241",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-checkers-game-in-a-single-html-f-1787162968970",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-checkers-game-in-a-single-html-f-1787163203933",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 2 clicks produced 2 error(s): pageerror: undoMove is not defined; pageerror: redoMove is not defined"
+  ],
+  "click": 2,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "build-a-habit-tracker-web-app-in-a-singl-1786562029230",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-simple-hello-world-web-app-1787169874127",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-simple-hello-world-web-app-1787170952525",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-simple-hello-world-web-app-1787171099255",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-small-calculator-web-app-in-a-si-1786561617682",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-tic-tac-toe-game-in-a-single-htm-1787077894134",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-tic-tac-toe-game-in-a-single-htm-1787078238504",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "build-a-todo-list-app-in-a-single-html-f-1786561227765",
+  "status": "FAIL",
+  "fails": [
+   "\u274c timeout-or-crash \u2014 page.evaluate: Execution context was destroyed, most likely because of a navigation."
+  ],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "build-a-todo-list-app-in-a-single-html-f-1786561311348",
+  "status": "PASS",
+  "fails": [],
+  "click": 1,
+  "typed": 1,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "calculator-fixed-1786823763982",
+  "status": "PASS",
+  "fails": [],
+  "click": 15,
+  "typed": 0,
+  "dom": 11,
+  "cerr": "none"
+ },
+ {
+  "name": "calculator-ui-fixed-1786824611412",
+  "status": "PASS",
+  "fails": [],
+  "click": 17,
+  "typed": 0,
+  "dom": 13,
+  "cerr": "none"
+ },
+ {
+  "name": "checkers-3d-ai-1786821176602",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 0,
+  "dom": 1,
+  "cerr": "none"
+ },
+ {
+  "name": "me-a-app-reads-a-persons-writing-paper-n-1787699296023",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "password-generator-fixed-1786822075993",
+  "status": "PASS",
+  "fails": [],
+  "click": 2,
+  "typed": 0,
+  "dom": 1,
+  "cerr": "none"
+ },
+ {
+  "name": "simple-check-game-works-best-1787264829060",
+  "status": "FAIL",
+  "fails": [
+   "\u274c clicks-dont-crash \u2014 1 clicks produced 1 error(s): pageerror: pieces.push is not a function"
+  ],
+  "click": 1,
+  "typed": 0,
+  "dom": 0,
+  "cerr": ""
+ },
+ {
+  "name": "stopwatch-fixed-1786824174407",
+  "status": "PASS",
+  "fails": [],
+  "click": 4,
+  "typed": 0,
+  "dom": 1,
+  "cerr": "none"
+ },
+ {
+  "name": "void-raider-classic-arcade-space-shooter-1786751833405",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "void-raider-ts-1786754094000",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ },
+ {
+  "name": "void-raider-wave-ai-1786753088483",
+  "status": "PASS",
+  "fails": [],
+  "click": 0,
+  "typed": 0,
+  "dom": 0,
+  "cerr": "none"
+ }
+]

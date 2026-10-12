@@ -1,0 +1,124 @@
+/* PlanCoworkerPanel — questions against the nodes they are about.
+   Bottom-left so it cannot collide with the plan bar (bottom-right) or the
+   rework bar (bottom-centre). */
+
+.plan-coworker {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 60;
+  width: 340px;
+  max-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  overflow-y: auto;
+  background: rgba(15, 15, 26, 0.94);
+  border: 1px solid rgba(147, 197, 253, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.5);
+}
+
+.plan-coworker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.plan-coworker-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #bfdbfe;
+}
+
+.plan-coworker-collapse {
+  background: transparent;
+  border: none;
+  color: #93c5fd;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 2px;
+}
+
+.plan-coworker-hint {
+  font-size: 10px;
+  color: #8b93a7;
+  line-height: 1.35;
+}
+
+.plan-coworker-question {
+  padding: 8px;
+  background: rgba(96, 165, 250, 0.07);
+  border-left: 2px solid rgba(96, 165, 250, 0.55);
+  border-radius: 4px;
+}
+
+.plan-coworker-target {
+  font-size: 10px;
+  font-weight: 600;
+  color: #93c5fd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-coworker-text {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #e5e7eb;
+  line-height: 1.4;
+}
+
+.plan-coworker-answer {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.plan-coworker-input {
+  width: 100%;
+  resize: vertical;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  color: #e5e7eb;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+.plan-coworker-input:focus {
+  outline: none;
+  border-color: rgba(96, 165, 250, 0.7);
+}
+
+.plan-coworker-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.plan-coworker-btn {
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #60a5fa;
+  color: #0f0f1a;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.plan-coworker-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.plan-coworker-btn-ghost {
+  background: transparent;
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+}

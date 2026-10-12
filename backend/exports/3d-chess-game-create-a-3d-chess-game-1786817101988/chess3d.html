@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Chess Game</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #1a1a2e;
+      font-family: 'Arial', sans-serif;
+    }
+    canvas {
+      border: 1px solid #fff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 800;
+    canvas.height = 600;
+
+    const board = [];
+    for (let i = 0; i < 8; i++) {
+      board[i] = new Array(8).fill(null);
+    }
+
+    const pieces = {
+      'K': { color: 'white', value: 100 },
+      'Q': { color: 'white', value: 9 },
+      'R': { color: 'white', value: 5 },
+      'B': { color: 'white', value: 3 },
+      'N': { color: 'white', value: 3 },
+      'P': { color: 'white', value: 1 },
+      'k': { color: 'black', value: 100 },
+      'q': { color: 'black', value: 9 },
+      'r': { color: 'black', value: 5 },
+      'b': { color: 'black', value: 3 },
+      'n': { color: 'black', value: 3 },
+      'p': { color: 'black', value: 1 }
+    };
+
+    let turn = 'white';
+    let selected = null;
+    let moves = [];
+
+    function init() {
+      const pieces = ['K', 'Q', 'R', 'R', 'B', 'N', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'k', 'q', 'r', 'r', 'b', 'n', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'];
+      let index = 0;
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+          if (i === 0 || i === 7) {
+            board[i][j] = pieces[index++];
+          } else if (i === 1 || i === 6) {
+            board[i][j] = 'P';
+          } else {
+            board[i][j] = null;
+          }
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+          ctx.fillStyle = (i + j) % 2 === 0 ? '#555' : '#777';
+          ctx.fillRect(i * 100, j * 100, 100, 100);
+          if (board[i][j]) {
+            ctx.fillStyle = '#fff';
+            ctx.fillText(board[i][j], i * 100 + 50, j * 100 + 50);
+          }
+        }
+      }
+    }
+
+    function handleClick(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const col = Math.floor(x / 100);
+      const row = Math.floor(y / 100);
+      if (board[row][col]) {
+        if (selected) {
+          if (selected[0] === row && selected[1] === col) {
+            selected = null;
+          } else {
+            if (moves.some(m => m[0] === row && m[1] === col)) {
+              board[row][col] = board[selected[0]][selected[1]];
+              board[selected[0]][selected[1]] = null;
+              turn = turn === 'white' ? 'black' : 'white';
+              selected = null;
+              moves = [];
+            }
+          }
+        } else {
+          selected = [row, col];
+          moves = getMoves(board, row, col);
+        }
+      }
+    }
+
+    function getMoves(board, row, col) {
+      const piece = board[row][col];
+      if (!piece) return [];
+      const moves = [];
+      if (piece === 'K' || piece === 'k') {
+        for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+            const r = row + i;
+            const c = col + j;
+            if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === null) {
+              moves.push([r, c]);
+            }
+          }
+        }
+      } else if (piece === 'Q' || piece === 'q') {
+        for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+            let r = row + i;
+            let c = col + j;
+            while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === null) {
+              moves.push([r, c]);
+              r += i;
+              c += j;
+            }
+          }
+        }
+      } else if (piece === 'R' || piece === 'r') {
+        for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+            let r = row + i;
+            let c = col + j;
+            while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === null) {
+              moves.push([r, c]);
+              r += i;
+              c += j;
+            }
+          }
+        }
+      } else if (piece === 'B' || piece === 'b') {
+        for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) continue;
+            let r = row + i;
+            let c = col + j;
+            while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === null) {
+              moves.push([r, c]);
+              r += i;
+              c += j;
+            }
+          }
+        }
+      } else if (piece === 'N' || piece === 'n') {
+        for (let i = -2; i <= 2; i++) {
+          for (let j = -2; j <= 2; j++) {
+            if (Math.abs(i) + Math.abs(j) === 3) {
+              const r = row + i;
+              const c = col + j;
+              if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === null) {
+                moves.push([r, c]);
+              }
+            }
+          }
+        }
+      } else if (piece === 'P' || piece === 'p') {
+        if (row === 6 && board[row - 2][col] === null) {
+          moves.push([row - 2, col]);
+        }
+        if (row > 0 && board[row - 1][col] === null) {
+          moves.push([row - 1, col]);
+        }
+        if (row > 0 && col > 0 && board[row - 1][col - 1] !== null) {
+          moves.push([row - 1, col - 1]);
+        }
+        if (row > 0 && col < 7 && board[row - 1][col + 1] !== null) {
+          moves.push([row - 1, col + 1]);
+        }
+      }
+      return moves;
+    }
+
+    init();
+    draw();
+    canvas.addEventListener('click', handleClick);
+  </script>
+</body>
+</html>

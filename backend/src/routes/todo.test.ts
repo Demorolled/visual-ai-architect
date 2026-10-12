@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'fs';
-import { parseTodoList, TODO_PATH } from './todo.js';
+import { parseTodoList, TODO_PATH, todoRoutes } from './todo.js';
 
 describe('parseTodoList', () => {
   it('parses sections with checkbox items and indented continuations', () => {
@@ -92,8 +92,33 @@ describe('parseTodoList', () => {
   });
 });
 
-describe('real todo file', () => {
-  it('exists and parses into the expected sections and items', () => {
+describe('todo route — real file or graceful degradation', () => {
+  // TODO fixes.txt is an OPTIONAL live artifact: the deep-scan file was
+  // archived/removed once its items were knocked off, and VACA_TODO_PATH can
+  // point anywhere. Exactly one of the two branches runs depending on whether
+  // the file exists — the suite stays green either way while BOTH behaviors
+  // (404-on-absent, parse-on-present) stay covered.
+
+  it.skipIf(existsSync(TODO_PATH))('returns a clean 404 (never 500) when the todo file is absent', () => {
+    expect(existsSync(TODO_PATH)).toBe(false);
+    // Invoke the express route handler directly (todo.ts: the route degrades
+    // to { success: false, error: 'Todo file not found' } when the file is
+    // missing — it must never throw a 500).
+    const stack = (todoRoutes as any).stack;
+    const layer = stack.find((l: any) => l.route?.path === '/');
+    const handler = layer.route.stack[0].handle;
+    let statusCode = 0;
+    let body: any = null;
+    const res: any = {
+      status: (c: number) => { statusCode = c; return res; },
+      json: (b: any) => { body = b; return res; },
+    };
+    handler({} as any, res);
+    expect(statusCode).toBe(404);
+    expect(body).toEqual({ success: false, error: 'Todo file not found' });
+  });
+
+  it.skipIf(!existsSync(TODO_PATH))('parses a real todo file into consistent sections and items', () => {
     // Same resolution as todo.ts TODO_PATH: backend/src/routes -> repo root.
     expect(existsSync(TODO_PATH)).toBe(true);
     const text = readFileSync(TODO_PATH, 'utf-8');
@@ -103,9 +128,11 @@ describe('real todo file', () => {
     expect(sections).toHaveLength(8);
     expect(sections.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
 
-    // Known items: 1.1 (open, P0) and 1.3 (done).
+    // Known items are present (states change as items get knocked off, so
+    // assert presence, not done-ness — except 1.3 which was already [x] when
+    // the file was written and stays done).
     const sec1 = sections.find((s) => s.number === 1)!;
-    expect(sec1.items.find((i) => i.id === '1.1')!.done).toBe(false);
+    expect(sec1.items.some((i) => i.id === '1.1')).toBe(true);
     expect(sec1.items.find((i) => i.id === '1.3')!.done).toBe(true);
 
     // Section titles carry priorities.

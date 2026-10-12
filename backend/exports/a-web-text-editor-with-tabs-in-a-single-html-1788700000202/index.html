@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nano Web Editor</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6; margin: 0;
+         display: flex; flex-direction: column; height: 100vh; }
+  .topbar { display: flex; gap: 8px; align-items: center; padding: 8px 14px; background: #14141f;
+            border-bottom: 1px solid #2a2a3a; flex-wrap: wrap; }
+  .topbar button { background: #2a2a3a; color: #e6e6e6; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  .topbar button.primary { background: #00d9ff; color: #04141a; }
+  .tabs { display: flex; gap: 6px; align-items: center; flex: 1; overflow-x: auto; }
+  .tab { background: #1a1a28; border: 1px solid #2a2a3a; border-radius: 6px 6px 0 0; padding: 6px 12px;
+         cursor: pointer; font-size: 13px; white-space: nowrap; }
+  .tab.on { background: #2a2a3a; border-color: #00d9ff; color: #00d9ff; }
+  .tab .x { color: #ff5c5c; margin-left: 8px; }
+  .findbar { display: none; gap: 8px; padding: 6px 14px; background: #10101c; border-bottom: 1px solid #2a2a3a; align-items: center; }
+  .findbar input { background: #0f0f1a; border: 1px solid #2a2a3a; color: #e6e6e6; border-radius: 6px; padding: 5px 8px; }
+  textarea { flex: 1; background: #0b0b14; color: #e6e6e6; border: none; outline: none;
+             padding: 16px; font-family: ui-monospace, monospace; font-size: 14px; line-height: 1.5; resize: none; }
+  .statusbar { padding: 5px 14px; background: #14141f; border-top: 1px solid #2a2a3a;
+               font-size: 12px; color: #888; display: flex; gap: 18px; }
+  .statusbar b { color: #3ddc84; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="tabs" id="tabs"></div>
+  <button id="newTabBtn">+ New</button>
+  <button id="findBtn">🔍 Find</button>
+  <button id="replaceBtn">✏️ Replace</button>
+  <button class="primary" id="saveBtn">💾 Save</button>
+</div>
+<div class="findbar" id="findbar">
+  <input id="findInput" placeholder="find…">
+  <input id="replaceInput" placeholder="replace with…">
+  <button id="findPrevBtn">▲</button>
+  <button id="findNextBtn">▼</button>
+  <button id="replaceOneBtn">Replace</button>
+  <button id="replaceAllBtn">Replace all</button>
+  <button id="closeFindBtn">✕</button>
+</div>
+<textarea id="editor" spellcheck="false"></textarea>
+<div class="statusbar">
+  <span>doc <b id="docName">untitled.txt</b></span>
+  <span>chars <b id="charCount">0</b></span>
+  <span>lines <b id="lineCount">1</b></span>
+  <span id="autosaveMsg"></span>
+</div>
+<script>
+  let docs = [];
+  let current = 0;
+  let searchIdx = -1;
+  let autosaveTimer = null;
+
+  function newDoc(name) {
+    let n = 1;
+    let candidate = name || ('untitled-' + n + '.txt');
+    while (docs.some(d => d.name === candidate)) { n += 1; candidate = 'untitled-' + n + '.txt'; }
+    return { name: candidate, text: '' };
+  }
+
+  function init() {
+    const saved = localStorage.getItem('nano-docs');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length) docs = parsed;
+      } catch (e) { docFallback(); }
+    } else {
+      docFallback();
+    }
+    if (!docs.length) docs = [newDoc()];
+    current = 0;
+    renderTabs();
+    render();
+  }
+
+  function docFallback() {
+    docs = [newDoc('untitled.txt')];
+  }
+
+  function renderTabs() {
+    const tabs = document.getElementById('tabs');
+    tabs.innerHTML = '';
+    docs.forEach((doc, i) => {
+      const tab = document.createElement('span');
+      tab.className = 'tab' + (i === current ? ' on' : '');
+      tab.textContent = doc.name;
+      const x = document.createElement('span');
+      x.className = 'x';
+      x.textContent = '✕';
+      x.addEventListener('click', (e) => { e.stopPropagation(); closeTab(i); });
+      tab.appendChild(x);
+      tab.addEventListener('click', () => selectTab(i));
+      tabs.appendChild(tab);
+    });
+    if (!docs[current]) { current = 0; renderTabs(); }
+  }
+
+  function selectTab(i) {
+    if (i === current) return;
+    persistDoc();
+    current = i;
+    renderTabs();
+    render();
+    renderTabs();
+  }
+
+  function closeTab(i) {
+    if (docs.length === 1) { docs = [newDoc()]; current = 0; }
+    else { docs.splice(i, 1); if (current >= docs.length) current = docs.length - 1; }
+    persistDoc();
+    renderTabs();
+    render();
+  }
+
+  function addTab() {
+    persistDoc();
+    docs.push(newDoc());
+    current = docs.length - 1;
+    renderTabs();
+    render();
+  }
+
+  function render() {
+    const doc = docs[current];
+    document.getElementById('editor').value = doc.text;
+    document.getElementById('docName').textContent = doc.name;
+    const lines = doc.text.split('\n').length;
+    document.getElementById('charCount').textContent = doc.text.length;
+    document.getElementById('lineCount').textContent = lines;
+  }
+
+  function persistDoc() {
+    const doc = docs[current];
+    if (!doc) return;
+    doc.text = document.getElementById('editor').value;
+    scheduleAutosave();
+  }
+
+  function scheduleAutosave() {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem('nano-docs', JSON.stringify(docs.map(d => ({ name: d.name, text: d.text }))));
+        document.getElementById('autosaveMsg').textContent = 'autosaved ✓';
+        setTimeout(() => { document.getElementById('autosaveMsg').textContent = ''; }, 1500);
+      } catch (e) { /* quota */ }
+    }, 800);
+  }
+
+  function manualSave() {
+    persistDoc();
+    try {
+      localStorage.setItem('nano-docs', JSON.stringify(docs.map(d => ({ name: d.name, text: d.text }))));
+      document.getElementById('autosaveMsg').textContent = 'saved ✓';
+      setTimeout(() => { document.getElementById('autosaveMsg').textContent = ''; }, 1500);
+    } catch (e) { document.getElementById('autosaveMsg').textContent = 'save failed (quota?)'; }
+  }
+
+  function findBar(show) {
+    document.getElementById('findbar').style.display = show ? 'flex' : 'none';
+    if (show) document.getElementById('findInput').focus();
+  }
+
+  function findNext() {
+    const text = document.getElementById('editor').value;
+    const needle = document.getElementById('findInput').value;
+    if (!needle) return;
+    const from = searchIdx >= 0 ? searchIdx + needle.length : 0;
+    const idx = text.indexOf(needle, from);
+    if (idx >= 0) {
+      searchIdx = idx;
+      const el = document.getElementById('editor');
+      el.focus();
+      el.setSelectionRange(idx, idx + needle.length);
+      flashMatch(idx);
+    } else {
+      searchIdx = -1;
+      document.getElementById('statusbar'); // noop
+    }
+  }
+
+  function findPrev() {
+    const text = document.getElementById('editor').value;
+    const needle = document.getElementById('findInput').value;
+    if (!needle) return;
+    const from = searchIdx > 0 ? searchIdx - 1 : text.length;
+    const idx = text.lastIndexOf(needle, from);
+    if (idx >= 0) {
+      searchIdx = idx;
+      const el = document.getElementById('editor');
+      el.focus();
+      el.setSelectionRange(idx, idx + needle.length);
+    }
+  }
+
+  function flashMatch(idx) {
+    // nudge scroll so a find near the end is visible
+    const el = document.getElementById('editor');
+    const lines = el.value.slice(0, idx).split('\n').length;
+    el.scrollTop = (lines - 6) * 19;
+  }
+
+  function replaceOne() {
+    const el = document.getElementById('editor');
+    const needle = document.getElementById('findInput').value;
+    const repl = document.getElementById('replaceInput').value;
+    if (!needle || el.selectionStart === el.selectionEnd) { findNext(); return; }
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    if (el.value.slice(start, end) === needle) {
+      el.value = el.value.slice(0, start) + repl + el.value.slice(end);
+      el.setSelectionRange(start + repl.length, start + repl.length);
+      searchIdx = start;
+      persistDoc();
+      updateStatus();
+    }
+  }
+
+  function replaceAll() {
+    const el = document.getElementById('editor');
+    const needle = document.getElementById('findInput').value;
+    const repl = document.getElementById('replaceInput').value;
+    if (!needle) return;
+    let count = 0;
+    el.value = el.value.split(needle).join(repl); // note: splits each occurrence
+    count = (el.value.match(new RegExp(needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+    persistDoc();
+    updateStatus();
+    document.getElementById('autosaveMsg').textContent = 'replaced';
+    setTimeout(() => { document.getElementById('autosaveMsg').textContent = ''; }, 1200);
+  }
+
+  function updateStatus() {
+    render();
+  }
+
+  document.getElementById('editor').addEventListener('input', () => {
+    persistDoc();
+    render();
+  });
+  document.getElementById('newTabBtn').addEventListener('click', addTab);
+  document.getElementById('findBtn').addEventListener('click', () => findBar(true));
+  document.getElementById('replaceBtn').addEventListener('click', () => { findBar(true); document.getElementById('replaceInput').focus(); });
+  document.getElementById('closeFindBtn').addEventListener('click', () => findBar(false));
+  document.getElementById('findNextBtn').addEventListener('click', findNext);
+  document.getElementById('findPrevBtn').addEventListener('click', findPrev);
+  document.getElementById('replaceOneBtn').addEventListener('click', replaceOne);
+  document.getElementById('replaceAllBtn').addEventListener('click', replaceAll);
+  document.getElementById('findInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') findNext(); });
+  document.getElementById('saveBtn').addEventListener('click', manualSave);
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 's') { e.preventDefault(); manualSave(); }
+    if (e.ctrlKey && e.key === 'f') { e.preventDefault(); findBar(true); }
+  });
+
+  init();
+</script>
+</body>
+</html>

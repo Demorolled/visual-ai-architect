@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note-Taking App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #f0f0f0;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+    .note-list {
+      margin-bottom: 20px;
+    }
+    .note-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+    }
+    .note-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .note-form input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .note-form button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    .note-form button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Note-Taking App</h1>
+    <div class="note-list" id="note-list"></div>
+    <div class="note-form">
+      <input type="text" id="note-input" placeholder="Enter a note">
+      <button onclick="addNote()">Add Note</button>
+    </div>
+  </div>
+
+  <script>
+    const noteList = document.getElementById('note-list');
+    const noteInput = document.getElementById('note-input');
+
+    function addNote() {
+      const noteText = noteInput.value.trim();
+      if (noteText) {
+        const noteItem = document.createElement('div');
+        noteItem.className = 'note-item';
+        noteItem.textContent = noteText;
+        noteList.appendChild(noteItem);
+        noteInput.value = '';
+      }
+    }
+  </script>
+</body>
+</html>

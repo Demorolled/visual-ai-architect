@@ -116,6 +116,14 @@ const SYSPROMPT_LEAK_MARKERS = [
   /\[CONTINUATION —/,
   /\[Emotion:/,
   /Follow these personality settings precisely/i,
+  // Role-swapped identity regurgitation: the model sometimes re-emits the
+  // identity rule with the "You are" aimed at the USER ("I'm Veronica, the
+  // assistant of the VACA platform. You are Veronica, the assistant of the
+  // VACA platform."). It never legitimately tells the user they are the
+  // assistant, so everything from "You are Veronica" onward is dropped — the
+  // "I'm Veronica" prefix (a legitimate answer to a name question) survives.
+  /You are Veronica, the assistant/i,
+  /You are the assistant of the VACA platform/i,
 ];
 
 export function cleanLLMResponse(text: string, opts?: CleanOptions): string {
@@ -200,6 +208,20 @@ export function cleanLLMResponse(text: string, opts?: CleanOptions): string {
   ];
   for (const pattern of memorizedLinePatterns) {
     text = text.replace(new RegExp(`^.*${pattern.source}.*$`, 'gm'), '');
+  }
+
+  // ── Strip an AEON-style "thinking-trace" prefix up to its lone `response`
+  //    delimiter. The AEON merge is trained to emit a chain-of-thought
+  //    narration ("We need to…", "Need to…") followed by a standalone
+  //    `response` line, then the REAL answer. Keep only the content after that
+  //    delimiter — the narration is training-artifact thinking, never content.
+  //    The delimiter is matched as a line containing ONLY the word "response"
+  //    so mid-prose uses are never touched, and the rewrite only happens when
+  //    real content follows the marker. ──
+  const aeonResponseMark = text.search(/^\s*response\s*$/im);
+  if (aeonResponseMark !== -1) {
+    const afterDelimiter = text.slice(aeonResponseMark).replace(/^\s*response\s*$/im, '').trim();
+    if (afterDelimiter) text = afterDelimiter;
   }
 
   // ── Strip DeepSeek R1 <think> reasoning blocks ──

@@ -6,11 +6,14 @@ import { writeFileSync, existsSync, mkdirSync, readFileSync } from 'fs'
 import path from 'path'
 import { scanDirectoryTree, readDirectoryFiles, processFiles, processFilesWithTools } from '../services/veronicaFileService.js'
 import { getIO } from '../socket/socketManager.js'
+import { PLAN_NODE_TYPES } from '../types.js'
 
 export const scannerRoutes = Router()
 
 // ─── Rule-based fallback analyzer ──────────────────────────────────
-const NODE_TYPES = ['input', 'output', 'logic', 'api', 'database', 'ui', 'ui-functions']
+// Canonical file-node types (single source of truth in types.ts) — previously
+// a local list that silently dropped 'gui-layout' relative to the planner.
+const NODE_TYPES: string[] = [...PLAN_NODE_TYPES]
 const FILE_CLASSIFIERS = [
   { patterns: [/route/i, /endpoint/i, /controller/i, /middleware/i], type: 'api', score: 8, labelHint: 'API Routes' },
   { patterns: [/store\//, /state/, /redux/, /store\./, /context/, /reducer/], type: 'logic', score: 8, labelHint: 'State Management' },

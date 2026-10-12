@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note-Taking App</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .col { display: flex; flex-direction: column; gap: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .card { background: #15152a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; }
+    .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="row">
+      <input id="titleInput" type="text" placeholder="Enter note" value="">
+      <button id="addBtn" class="btn btn-primary" onclick="addNote()">➕ Add Note</button>
+    </div>
+    <div class="grid" id="notesList"></div>
+  </div>
+  <script>
+    const notesList = document.getElementById('notesList');
+    const titleInput = document.getElementById('titleInput');
+    const addBtn = document.getElementById('addBtn');
+
+    let notes = [];
+
+    function renderNotes() {
+      notesList.innerHTML = '';
+      notes.forEach(note => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${note.title}</h3>`;
+        notesList.appendChild(card);
+      });
+    }
+
+    function addNote() {
+      const title = titleInput.value.trim();
+      if (title) {
+        notes.push({ title });
+        renderNotes();
+        titleInput.value = '';
+      }
+    }
+
+    renderNotes();
+  </script>
+</body>
+</html>

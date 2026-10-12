@@ -1,0 +1,19 @@
+{
+  "name": "note-taking-app",
+  "version": "1.0.0",
+  "description": "Note-taking app with Express server",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "node src/server.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.3",
+    "typescript": "^4.9.5"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "ts-jest": "^29.0.3"
+  }
+}

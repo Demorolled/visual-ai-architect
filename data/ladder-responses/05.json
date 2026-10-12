@@ -1,0 +1,328 @@
+{
+ "success": true,
+ "projectId": "a037a45a-a2d6-4a5a-adac-b28fcc8e98b6",
+ "matchedBy": "semantic",
+ "matchScore": 0.5959760185072364,
+ "blueprint": {
+  "app_type": "form_validator",
+  "description": "Form Validator Builder. \u2705 Form Validator Builder",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "core_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "core_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "data_store",
+    "data_passed": "state_and_events"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Open Source JSON Formatter &amp; Validator Alternatives\n    The best open source alternative to JSON Formatter &amp; Validator is DevToys. If that doesn&#x27;t suit you, our users have ranked more than 25 alternatives to JSON Formatter &amp; Validator and 12 i\n  \u2022 Json Validation Open Source Projects | Open Awesome\n    Discover 24 open-source projects tagged with Json Validation. Browse the best Json Validation tools, libraries, and frameworks.\n  \u2022 \u2b5012263 josdejong/jsoneditor: A web-based tool to view, edit, format, and validate JSON\n  \u2022 \u2b503142 cirosantilli/china-dictatorship: \u53cd\u4e2d\u5171\u653f\u6cbb\u5ba3\u4f20\u5e93\u3002Anti Chinese government propaganda. \u4f4f\u5728\u4e2d\u56fd\u771f\u540d\u7528\u6237\u7684\u7f51\u53cb\u8bf7\u522b\u7ed9\u661f\u661f\uff0c\u4e0d\u7136\u4f60\u8981\u88ab\u8b66\u5bdf\u8bf7\u559d\u8336\u3002\u5e38\u89c1\u95ee\u7b54\u96c6\uff0c\u65b0\u95fb\u96c6\u548c\u996d\u5e97\u548c\u97f3\u4e50\u5efa\u8bae\u3002\u5350\u4e60\u4e07\u5c81\u5350\u3002\u51a0\u72b6\u75c5\u6bd2\u5ba1\u67e5\u90dd\u6d77\u4e1c\u65b0\u7586\u6539\u9020\u4e2d\u5fc3\u516d\u56db\u4e8b\u4ef6\u6cd5\u8f6e\u529f 996.ICU709\u5927\u6293\u6355\u5df4\u62ff\u9a6c\u6587\u4ef6\u9093\u5bb6\u8d35\u4f4e\u7aef\u4eba\u53e3\u897f\u85cf\u9a9a\u4e71\u3002\n  \u2022 gitea (developer-tools): Accelerate DevOps with Gitea\n  \u2022 neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 9: DATA & KNOWLEDGE STORES\n    9.1 DATA DIRECTORY (data/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesigns.json                 \u2014 Generated design catalog (design storage)\ndesign-specs-v2.json         \u2014 Design specifications (v2)\nnode-designs.json            \u2014 Node design catalog\nsession-memory.json          \u2014 Session memory/persistence\ndesig\n  \u2022 Section 15: CHANGE LOG & SUGGESTIONS\n    CHANGE_LOG.md documents the Tool System implementation (legacy) + recent sessions.\n\nRECENT MAJOR CHANGES (July 29 \u2013 31, 2026):\n  \u2713 DSpark GGUF server (llama.cpp, OpenAI-compatible, :8000) \u2014 primary provider\n  \u2713 QLoRA 4-bit fine-tune of qwen2.5-7b (2-GPU DDP) on corrected dataset\n  \u2713 Tuned GGUF deplo\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 json_query \u2014 data tool\n    Query and extract values from JSON using dot-notation path (e.g., \"users.0.name\")\n    Code: // Tool: json_query\n// Category: data\n// Risk: readonly\n// Query and extract values from JSON using dot-notation path (e.g., \"users.0.name\")\n  \u2022 csv_parse \u2014 data tool\n    Parse CSV text into structured JSON array of objects\n    Code: // Tool: csv_parse\n// Category: data\n// Risk: readonly\n// Parse CSV text into structured JSON array of objects\n  \u2022 json_to_csv \u2014 data tool\n    Convert a JSON array of objects to CSV format\n    Code: // Tool: json_to_csv\n// Category: data\n// Risk: readonly\n// Convert a JSON array of objects to CSV format"
+ },
+ "candidates": [
+  {
+   "app_type": "form_validator",
+   "score": 0.5959760185072364
+  },
+  {
+   "app_type": "json_path_lab",
+   "score": 0.5885139175999775
+  },
+  {
+   "app_type": "normalization_tool_2",
+   "score": 0.5724746041573048
+  },
+  {
+   "app_type": "json_vs_jsonb_lab_2",
+   "score": 0.5520725942163691
+  },
+  {
+   "app_type": "json_vs_jsonb_lab",
+   "score": 0.5468748077395393
+  }
+ ],
+ "project": {
+  "id": "a037a45a-a2d6-4a5a-adac-b28fcc8e98b6",
+  "name": "a json validator tool",
+  "targetOS": "linux",
+  "nodeCount": 5,
+  "edgeCount": 3,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "form_validator blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "core_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "data_store"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 0,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 4,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "generated": [
+   "core_engine",
+   "ui_screens",
+   "input_handler",
+   "data_store"
+  ],
+  "matched": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "core-engine.ts",
+   "language": "typescript",
+   "code": "export function validateForm(data: { name: string; email: string; password: string; confirmPassword: string }): { isValid: boolean; errors: string[] } {\n    const errors: string[] = [];\n    if (!data.name) errors.push('Name is required');\n    if (!data.email) errors.push('Email is required');\n    if (!data.password) errors.push('Password is required');\n    if (data.password !== data.confirmPassword) errors.push('Passwords do not match');\n    return { isValid: errors.length === 0, errors };\n}\n\nexport function processInput(input: string): { isValid: boolean; errors: string[]; transformed: { name: string; email: string; password: string; confirmPassword: string } } {\n    try {\n        const parsedData = JSON.parse(input);\n        const validationResult = validateForm(parsedData);\n        if (validationResult.isValid) {\n            return validationResult;\n        }\n        return { isValid: false, errors: validationResult.errors, transformed: parsedData };\n    } catch (err) {\n        return { isValid: false, errors: [err.message], transformed: {} };\n    }\n}\n\nexport function handleFileInput(filePath: string): { isValid: boolean; errors: string[]; transformed: { name: string; email: string; password: string; confirmPassword: string } } {\n    try {\n        const data = require(filePath);\n        const validationResult = processInput(JSON.stringify(data));\n        if (validationResult.isValid) {\n            return validationResult;\n        }\n        return { isValid: false, errors: validationResult.errors, transformed: {} };\n    } catch (err) {\n        return { isValid: false, errors: [err.message], transformed: {} };\n    }\n}\n\nexport function saveToFile(filePath: string, data: { name: string; email: string; password: string; confirmPassword: string }) {\n    try {\n        const validationResult = validateForm(data);\n        if (validationResult.isValid) {\n            const transformedData = { name: data.name, email: data.email, password: data.password, confirmPassword: data.confirmPassword };\n            const json = JSON.stringify(transformedData, null, 2);\n            require('fs').writeFileSync(filePath, json);\n        }\n    } catch (err) {\n        console.error(err);\n    }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "core_engine",
+   "dependencies": [],
+   "exports": [
+    "validateForm",
+    "processInput",
+    "handleFileInput",
+    "saveToFile"
+   ],
+   "errors": [
+    "TS2741: Property 'transformed' is missing in type '{ isValid: boolean; errors: string[]; }' but required in type '{ isValid: boolean; errors: string[]; transformed: { name: string; email: string; password: string; confirmPassword: string; }; }'. (line 15)",
+    "TS2739: Type '{}' is missing the following properties from type '{ name: string; email: string; password: string; confirmPassword: string; }': name, email, password, confirmPassword (line 19)",
+    "TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`. (line 25)",
+    "TS2739: Type '{}' is missing the following properties from type '{ name: string; email: string; password: string; confirmPassword: string; }': name, email, password, confirmPassword (line 30)",
+    "TS2739: Type '{}' is missing the following properties from type '{ name: string; email: string; password: string; confirmPassword: string; }': name, email, password, confirmPassword (line 32)",
+    "TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`. (line 42)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { validateForm, processInput, handleFileInput, saveToFile } from '../core-engine/core-engine.ts';\n\nexport function render(container: HTMLElement) {\n  container.innerHTML = `\n    <div class=\"header\">\n      <h1>Form Validator</h1>\n      <div class=\"controls\">\n        <button id=\"validateBtn\" class=\"btn primary\">Validate</button>\n        <button id=\"resetBtn\" class=\"btn\">Reset</button>\n      </div>\n    </div>\n    <div class=\"form\">\n      <label>Name <input id=\"name\" type=\"text\" value=\"John Doe\"></label>\n      <label>Email <input id=\"email\" type=\"email\" value=\"john@example.com\"></label>\n      <label>Password <input id=\"password\" type=\"password\" value=\"password123\"></label>\n      <label>Confirm Password <input id=\"confirmPassword\" type=\"password\" value=\"password123\"></label>\n      <button id=\"addFieldBtn\" class=\"btn\">Add Field</button>\n    </div>\n    <div class=\"results\" id=\"results\"></div>\n  `;\n\n  const validateBtn = document.getElementById('validateBtn');\n  const resetBtn = document.getElementById('resetBtn');\n  const nameInput = document.getElementById('name');\n  const emailInput = document.getElementById('email');\n  const passwordInput = document.getElementById('password');\n  const confirmPasswordInput = document.getElementById('confirmPassword');\n  const addFieldBtn = document.getElementById('addFieldBtn');\n  const resultsDiv = document.getElementById('results');\n\n  const fields = [\n    { label: 'Name', name: 'name', value: '', type: 'text' },\n    { label: 'Email', name: 'email', value: '', type: 'email' },\n    { label: 'Password', name: 'password', value: '', type: 'password' },\n    { label: 'Confirm Password', name: 'confirmPassword', value: '', type: 'password' },\n  ];\n\n  function validate() {\n    let isValid = true;\n    let errors = [];\n    for (const field of fields) {\n      if (field.type === 'text' && !field.value) { isValid = false; errors.push(`Field ${field.label} is required`); continue; }\n      if (field.type === 'email' && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(field.value)) { isValid = false; errors.push(`Field ${field.label} is invalid`); continue; }\n      if (field.type === 'password' && field.value !== confirmPasswordInput.value) { isValid = false; errors.push(`Field ${field.label} does not match Confirm Password`); continue; }\n    }\n    resultsDiv.innerHTML = errors.length > 0 ? errors.map((e, i) => `<div class=\"error\">${i + 1}. ${e}</div>`).join('') : '<div class=\"success\">All fields are valid</div>';\n  }\n\n  validateBtn.addEventListener('click', validate);\n  resetBtn.addEventListener('click', () => { nameInput.value = ''; emailInput.value = ''; passwordInput.value = ''; });\n  addFieldBtn.addEventListener('click', () => {\n    const field = { label: `Field ${fields.length + 1}`, name: `field${fields.length + 1}`, value: '', type: 'text' };\n    fields.push(field);\n    validate();\n  });\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 44)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 50)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 50)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 50)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { handleFileInput, saveToFile } from '../core-engine/core-engine.ts';\n\nexport function processInput(input: string): { isValid: boolean; errors: string[]; transformed: { name: string; email: string; password: string; confirmPassword: string } } {\n    try {\n        const parsedData = JSON.parse(input);\n        const validationResult = validateForm(parsedData);\n        if (validationResult.isValid) {\n            return validationResult;\n        }\n        return { isValid: false, errors: validationResult.errors, transformed: parsedData };\n    } catch (err) {\n        return { isValid: false, errors: [err.message], transformed: {} };\n    }\n}\n\nexport function validateForm(data: { name: string; email: string; password: string; confirmPassword: string }): { isValid: boolean; errors: string[] } {\n    const errors: string[] = [];\n    if (!data.name) errors.push('Name is required');\n    if (!data.email) errors.push('Email is required');\n    if (!data.password) errors.push('Password is required');\n    if (data.password !== data.confirmPassword) errors.push('Passwords do not match');\n    return { isValid: errors.length === 0, errors };\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "processInput",
+    "validateForm"
+   ],
+   "errors": [
+    "TS2741: Property 'transformed' is missing in type '{ isValid: boolean; errors: string[]; }' but required in type '{ isValid: boolean; errors: string[]; transformed: { name: string; email: string; password: string; confirmPassword: string; }; }'. (line 8)",
+    "TS2739: Type '{}' is missing the following properties from type '{ name: string; email: string; password: string; confirmPassword: string; }': name, email, password, confirmPassword (line 12)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "import { processInput, validateForm } from '../input-handler/input-handler.ts';\n\nexport function storeState(state: any): void {\n  try {\n    const data = JSON.stringify(state);\n    const fs = require('fs');\n    fs.writeFileSync('data.json', data);\n  } catch (err) {\n    throw new Error(`Error storing states in data.json: ${err}`);\n  }\n}\n\nexport function loadState(): any {\n  try {\n    const fs = require('fs');\n    const data = fs.readFileSync('data.json', 'utf8');\n    return JSON.parse(data);\n  } catch (err) {\n    // Log or handle the error\n    console.error(`Error loading state from data.json: ${err}`);\n    return {};\n  }\n}\n\nexport function setState(key: string, value: any): void {\n  const currentState = loadState();\n  currentState[key] = value;\n  storeState(currentState);\n}\n\nexport function getState(key: string): any {\n  const state = loadState();\n  return state[key];\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "data_store",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "storeState",
+    "loadState",
+    "setState",
+    "getState"
+   ],
+   "errors": [
+    "TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`. (line 6)",
+    "TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`. (line 15)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a json validator tool</title>\n  <meta name=\"description\" content=\"a json validator tool \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a json validator tool...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __require = /* @__PURE__ */ ((x) => typeof require !== \"undefined\" ? require : typeof Proxy !== \"undefined\" ? new Proxy(x, {\n    get: (a, b) => (typeof require !== \"undefined\" ? require : a)[b]\n  }) : x)(function(x) {\n    if (typeof require !== \"undefined\") return require.apply(this, arguments);\n    throw Error('Dynamic require of \"' + x + '\" is not supported');\n  });\n\n  // ../../../../../tmp/vaca-preview-W48cih/core-engine/core-engine.ts\n  function validateForm(data) {\n    const errors = [];\n    if (!data.name) errors.push(\"Name is required\");\n    if (!data.email) errors.push(\"Email is required\");\n    if (!data.password) errors.push(\"Password is required\");\n    if (data.password !== data.confirmPassword) errors.push(\"Passwords do not match\");\n    return { isValid: errors.length === 0, errors };\n  }\n\n  // ../../../../../tmp/vaca-preview-W48cih/ui-screens/ui-screens.ts\n  function render(container) {\n    container.innerHTML = `\n    <div class=\"header\">\n      <h1>Form Validator</h1>\n      <div class=\"controls\">\n        <button id=\"validateBtn\" class=\"btn primary\">Validate</button>\n        <button id=\"resetBtn\" class=\"btn\">Reset</button>\n      </div>\n    </div>\n    <div class=\"form\">\n      <label>Name <input id=\"name\" type=\"text\" value=\"John Doe\"></label>\n      <label>Email <input id=\"email\" type=\"email\" value=\"john@example.com\"></label>\n      <label>Password <input id=\"password\" type=\"password\" value=\"password123\"></label>\n      <label>Confirm Password <input id=\"confirmPassword\" type=\"password\" value=\"password123\"></label>\n      <button id=\"addFieldBtn\" class=\"btn\">Add Field</button>\n    </div>\n    <div class=\"results\" id=\"results\"></div>\n  `;\n    const validateBtn = document.getElementById(\"validateBtn\");\n    const resetBtn = document.getElementById(\"resetBtn\");\n    const nameInput = document.getElementById(\"name\");\n    const emailInput = document.getElementById(\"email\");\n    const passwordInput = document.getElementById(\"password\");\n    const confirmPasswordInput = document.getElementById(\"confirmPassword\");\n    const addFieldBtn = document.getElementById(\"addFieldBtn\");\n    const resultsDiv = document.getElementById(\"results\");\n    const fields = [\n      { label: \"Name\", name: \"name\", value: \"\", type: \"text\" },\n      { label: \"Email\", name: \"email\", value: \"\", type: \"email\" },\n      { label: \"Password\", name: \"password\", value: \"\", type: \"password\" },\n      { label: \"Confirm Password\", name: \"confirmPassword\", value: \"\", type: \"password\" }\n    ];\n    function validate() {\n      let isValid = true;\n      let errors = [];\n      for (const field of fields) {\n        if (field.type === \"text\" && !field.value) {\n          isValid = false;\n          errors.push(`Field ${field.label} is required`);\n          continue;\n        }\n        if (field.type === \"email\" && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(field.value)) {\n          isValid = false;\n          errors.push(`Field ${field.label} is invalid`);\n          continue;\n        }\n        if (field.type === \"password\" && field.value !== confirmPasswordInput.value) {\n          isValid = false;\n          errors.push(`Field ${field.label} does not match Confirm Password`);\n          continue;\n        }\n      }\n      resultsDiv.innerHTML = errors.length > 0 ? errors.map((e, i) => `<div class=\"error\">${i + 1}. ${e}</div>`).join(\"\") : '<div class=\"success\">All fields are valid</div>';\n    }\n    validateBtn.addEventListener(\"click\", validate);\n    resetBtn.addEventListener(\"click\", () => {\n      nameInput.value = \"\";\n      emailInput.value = \"\";\n      passwordInput.value = \"\";\n    });\n    addFieldBtn.addEventListener(\"click\", () => {\n      const field = { label: `Field ${fields.length + 1}`, name: `field${fields.length + 1}`, value: \"\", type: \"text\" };\n      fields.push(field);\n      validate();\n    });\n  }\n\n  // ../../../../../tmp/vaca-preview-W48cih/input-handler/input-handler.ts\n  function processInput(input) {\n    try {\n      const parsedData = JSON.parse(input);\n      const validationResult = validateForm2(parsedData);\n      if (validationResult.isValid) {\n        return validationResult;\n      }\n      return { isValid: false, errors: validationResult.errors, transformed: parsedData };\n    } catch (err) {\n      return { isValid: false, errors: [err.message], transformed: {} };\n    }\n  }\n  function validateForm2(data) {\n    const errors = [];\n    if (!data.name) errors.push(\"Name is required\");\n    if (!data.email) errors.push(\"Email is required\");\n    if (!data.password) errors.push(\"Password is required\");\n    if (data.password !== data.confirmPassword) errors.push(\"Passwords do not match\");\n    return { isValid: errors.length === 0, errors };\n  }\n\n  // ../../../../../tmp/vaca-preview-W48cih/data-store/data-store.ts\n  function storeState(state) {\n    try {\n      const data = JSON.stringify(state);\n      const fs = __require(\"fs\");\n      fs.writeFileSync(\"data.json\", data);\n    } catch (err) {\n      throw new Error(`Error storing states in data.json: ${err}`);\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-W48cih/_preview_entry.ts\n  try {\n    if (typeof validateForm === \"function\" && !/^class\\s/.test(String(validateForm))) {\n      validateForm(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"core-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling core_engine.validateForm:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof processInput === \"function\" && !/^class\\s/.test(String(processInput))) {\n      processInput(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"input-handler.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling input_handler.processInput:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof storeState === \"function\" && !/^class\\s/.test(String(storeState))) {\n      storeState(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling data_store.storeState:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (4) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 4 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a json validator tool</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a json validator tool initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 18181,
+ "totalErrors": 14,
+ "validatedCount": 1,
+ "failedCount": 4,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "core-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "validateForm",
+    "processInput",
+    "handleFileInput",
+    "saveToFile"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "processInput",
+    "validateForm"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "data-store.ts",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "storeState",
+    "loadState",
+    "setState",
+    "getState"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 1,
+ "summary": {
+  "totalFiles": 5,
+  "totalChars": 18181,
+  "totalErrors": 14,
+  "validated": 1,
+  "failed": 4,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 149260
+ }
+}

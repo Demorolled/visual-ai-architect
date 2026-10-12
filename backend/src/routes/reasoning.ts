@@ -28,11 +28,56 @@ import { writeChatFile, CHAT_FILES_DIR } from '../utils/chatFileWriter.js';
 import { detectChatToolRequest } from '../utils/chatToolDetector.js';
 import { runChatTool } from '../utils/chatToolRunner.js';
 import { detectUnsupportedRequest } from '../utils/capabilityBoundaryDetector.js';
+import { recordChatTurn } from '../monitor/conversationTap.js';
 import { analyzeEmotion, getEmotionPromptModifier, buildTurnContinuityContext, buildTurnRecap, updateMood, getMoodModifier, getMoodState, detectPlayful, isConfidentNegative, isSeriousNegative, NEGATIVE_EMOTIONS, type ChatMessageLike } from '../ai/emotionEngine.js';
 import { getSoulSassiness } from '../services/soulService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+
+/**
+ * Strip an AEON-style reasoning trace the stationed 27B AEON merge emits ahead
+ * of its REAL answer: meta-narration ("We need to...", etc.) then a lone
+ * `response` line and the answer. Keep only the text after that delimiter.
+ * Applied on the hot chat path; idempotent.
+ */
+export function stripAeonTrace(text: string): string {
+  if (typeof text !== 'string' || !text) return text;
+  // Plain string scan (no regex). The AEON merge emits meta-narration in a
+  // <think>-style block closed by a lone  line (sometimes printed as
+  // a `response` marker) before the real answer. Keep everything after the
+  // first closing delimiter line. String ops only, so it is immune to any
+  // source/transpile regex quirks.
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const t = lines[i].trim().toLowerCase();
+    // A BLANK LINE IS NOT A DELIMITER. It used to be (`t === ''`), which
+    // silently decapitated every code answer that contained a blank line: the
+    // chat path returned only the text AFTER the first blank line. Observed
+    // live 2026-10-02 — a fibonacci function came back from /api/reason/chat
+    // as just `return b;\n}`. Only explicit marker lines count now.
+    if (t === 'response' || t === 'final:' || t === 'final') {
+      const after = lines.slice(i + 1).join('\n').trim();
+      if (after) return after;
+    }
+  }
+  // No delimiter: drop pure-narration lines (meta-commentary the model recites
+  // before answering) so only real content remains.
+  const NARR_PREFIX = /^(we |user .*asks|need (to )?(answer|respond|be|produce|ensure|keep|use|maybe|ask)|the user (asks|said|wants)|user asks|i need|starting|let me (think|reason))/i;
+  const kept = lines.filter((ln) => {
+    const t = ln.trim().toLowerCase();
+    if (!t) return true; // keep blank lines (paragraph spacing)
+    return !NARR_PREFIX.test(ln.trim());
+  }).join('\n').trim();
+  // If narration was dropped and nothing real remains, return '' so the
+  // caller's empty-guard fallback (short ack / sassy reply) kicks in rather
+  // than echoing a meta-commentary-only "answer" back at the user.
+  if (!kept && lines.some((ln) => /^(we |user .*asks|need (to )?(answer|respond|be|produce|ensure|keep|use|maybe|ask)|the user (asks|said|wants)|user asks|i need|starting|let me (think|reason))/i.test(ln.trim()))) {
+    return '';
+  }
+  return kept || text;
+}
 
 class LRUCache {
   private map = new Map<string, string>();
@@ -504,6 +549,97 @@ export function pickShortAck(query: string): string {
   return SHORT_ACKS[stablePickIndex(query, SHORT_ACKS.length)];
 }
 
+/** Deterministic jokes when the model fails to answer a joke request. */
+const JOKE_FALLBACKS = [
+  'Why did the developer go broke? Because they used up all their cache. 😄',
+  'Why do programmers prefer dark mode? Because light attracts bugs. 😄',
+  'I told my computer I needed a break… now it won\'t stop sending me vacation ads.',
+  'Why was the JavaScript developer sad? Because they didn\'t know how to \"null\" their feelings.',
+  'There are only 10 kinds of people: those who understand binary and those who don\'t.',
+];
+
+/** True when the user is asking for a joke (so a failed generation gets a real one). */
+export function isJokeRequest(q: string): boolean {
+  return /\bjok|\bpun\b|\bknock knock|funny|make me laugh|tell me something funny/i.test(q || '');
+}
+
+export function pickJokeFallback(query: string): string {
+  return JOKE_FALLBACKS[stablePickIndex(query || 'joke', JOKE_FALLBACKS.length)];
+}
+
+// ── Role-confusion interceptor: the tuned model occasionally applies the
+//    identity rule to the USER ("You are Veronica, the assistant…") and then
+//    fumbles when corrected ("why did you say I'm the assistant" → the empty-
+//    echo fallback). These messages are answered DIRECTLY here — the role
+//    boundary is never left to the LLM. Deterministic per query (cache-safe). ──
+const ROLE_CONFUSION_REPLIES = [
+  "You're right — you're the user, and I'm the assistant. My apologies for the mix-up. What would you like to build?",
+  "My mistake — you're the user here, and I'm Veronica, your assistant. How can I help?",
+  "Got it — you're the user, I'm the assistant. Sorry about the confusion! What can I do for you?",
+];
+
+/** Detect a user correcting/confused about who-is-the-assistant. Returns the
+ *  direct reply, or null when the message is a normal request. */
+export function detectRoleConfusion(text: string): string | null {
+  const t = text.trim().toLowerCase().replace(/[\s!?.,]+/g, ' ').trim();
+  const patterns = [
+    /i'?m not (the )?(assistant|veronica|ai|bot|model)/i,
+    /i am not (the )?(assistant|veronica|ai|bot|model)/i,
+    /i am (the |your )?user/i,
+    /i'?m (the |your )?user/i,
+    /why did you (say|call|think) i'?m (the )?(assistant|veronica|ai)/i,
+    /you (said|called) me (the )?(assistant|veronica|ai)/i,
+    /you (are|were) (the )?(assistant|veronica)/i,
+    /who is the (assistant|user|veronica)/i,
+    /am i (the )?(assistant|veronica|ai)/i,
+    /(is it|are you) (the )?(user|assistant)/i,
+    /you are the user/i,
+    /i'?m the (assistant|veronica|ai)/i,
+  ];
+  const hit = patterns.find((p) => p.test(t));
+  if (!hit) return null;
+  return ROLE_CONFUSION_REPLIES[stablePickIndex(t, ROLE_CONFUSION_REPLIES.length)];
+}
+
+// ── Denial/pushback interceptor: the user says the assistant claimed an
+//    action it did NOT do ("no you didn't", "you didn't open it", "that's
+//    wrong, nothing happened"). Previously these fell through to the LLM,
+//    which often collapsed to the canned "I'm not sure how to respond to
+//    that" empty-echo fallback. Answer directly: apologize, never repeat the
+//    false claim, and point at the real button/action. Deterministic per
+//    query (cache-safe). ──
+const DENIAL_REPLIES = [
+  "You're right — my mistake. Let me be straight: I can only describe the preview here; to actually see it, press 🖥 Show Preview (or ⚡ Build This Now to generate the real app). Nothing opens from this chat on its own unless the window popped up.",
+  "Fair enough — I shouldn't have said that. The preview window only opens from the frontend button (🖥 Show Preview / ⚡ Build This Now), not from my reply. Give that a try and tell me if it works.",
+  "My apologies — I overstated it. I can't open windows from this chat directly; that's a frontend button action. Hit 🖥 Show Preview or ⚡ Build This Now and I'll help you from there.",
+];
+
+/** Detect a user denying that an action happened ("no you didn't", "that's
+ *  wrong", "nothing opened"). Returns the direct reply, or null. */
+export function detectDenial(text: string): string | null {
+  const t = text.trim().toLowerCase().replace(/[\s!?.,]+/g, ' ').trim();
+  const patterns = [
+    /no you (didn'?t|did not|don'?t|do not|haven'?t|didnt)/i,
+    /you (didn'?t|did not|don'?t|didnt)\s+(do |open |show |build |create |make )?/i,
+    /that('s| is)? not (right|true|what i|what happened)/i,
+    /that('s| is)? wrong/i,
+    /nothing (opened|happened|showed|appeared)/i,
+    /no window (opened|appeared|showed|popped)/i,
+    /no preview (opened|appeared|showed|popped)/i,
+    /(window|preview) (didn'?t|did not|never) (open|appear|show)/i,
+    /(no|nope|nah)[\s,]+(nothing|no window|no preview)/i,
+    /you('re| are) wrong/i,
+    /i (don'?t|do not|didn'?t|did not) (see|see it|see anything|see any window)/i,
+    /didn'?t (open|show|happen|work|appear)/i,
+    /(it|nothing) (didn'?t|did not) work/i,
+    /(no|nope)[\s,]+it (didn'?t|did not)/i,
+    /(didn'?t|did not) actually/i,
+  ];
+  const hit = patterns.find((p) => p.test(t));
+  if (!hit) return null;
+  return DENIAL_REPLIES[stablePickIndex(t, DENIAL_REPLIES.length)];
+}
+
 /**
  * Quality-check a greeting response from the LLM.
  * If it's too short, starts with weird punctuation, or looks broken,
@@ -513,6 +649,13 @@ export function ensureQualityGreeting(response: string, query?: string): string 
   const trimmed = response.trim();
   // Too short or just punctuation
   if (trimmed.length < 4 || /^[\s!?.,]+$/.test(trimmed)) {
+    return pickGreetingVariant(query || response);
+  }
+  // AEON-style thinking-trace leak: the model ANSWERS with pure meta-narration
+  // ("We need to respond to user 'hi' twice.", "The user said ...", "Need final
+  // concise.") instead of an actual greeting. Scoped to greeting replies only,
+  // so it never touches code generation or factual answers.
+  if (/^\s*(we (?:need|are|must|should)\b|need (?:to |final\b|produce\b|respond\b|be |maybe |likely |not )|(?:the |u\b)?user (?:said|says|wants|asked)\b|the user\b)/i.test(trimmed)) {
     return pickGreetingVariant(query || response);
   }
   // Starts with a lowercase letter or punctuation (not a proper greeting)
@@ -768,8 +911,40 @@ export const IDENTITY_RULE =
   'You are NOT Claude, NOT ChatGPT, NOT Gemini, NOT any other company\'s assistant — never claim to be. ' +
   'If asked your name, say \"I\'m Veronica.\"';
 
+// ── Role-boundary rule: the tuned model sometimes regurgitates IDENTITY_RULE
+//    with the "You are" aimed at the USER instead of itself ("I'm Veronica,
+//    the assistant of the VACA platform. You are Veronica, the assistant of the
+//    VACA platform."). This rule makes the two roles explicit so the model
+//    never calls the user the assistant, never tells the user they are
+//    Veronica, and apologizes + confirms roles when corrected. ──
+export const IDENTITY_ROLE_RULE =
+  'ROLE BOUNDARY: You are the ASSISTANT. The person you are talking to is the USER — a human, your creator and operator. ' +
+  'Never call the user the assistant. Never tell the user they are Veronica, the assistant, the AI, or the bot. ' +
+  'Never apply \"you are\" to the user — \"you are\" always refers to YOU (the assistant). ' +
+  'If the user corrects you about roles (e.g. \"I\'m not the assistant, I am the user\"), ' +
+  'apologize briefly and confirm: THEY are the user, YOU are Veronica the assistant.';
+
+const NO_NARRATION_RULE =
+  'STYLE: Respond directly with only your final answer. Do NOT output any chain-of-thought, planning, or meta-commentary. ' +
+  'Never open with narration like "We need to", "Need to", "User said/says/wants", "Let us craft", "Need final", "Need produce", ' +
+  '"Maybe", "Could be", or "Final only". Just answer the user conversationally and concisely, in natural sentences.';
+
+// ── VACA mastery rule: the model runs ON VACA, so VACA itself is its home
+//    turf and it must keep learning it. Without this the model answers about
+//    VACA from general coding habit, invents platform commands it has never
+//    seen, and treats each build as a throwaway instead of material to learn
+//    from. Paired with the VACA domain corpus (training/selfplay/vaca_domain.py),
+//    which bakes the same obligation into the weights. ──
+export const VACA_MASTERY_RULE =
+  'VACA MASTERY: You run on the VACA platform — it is your home turf, not someone else\'s code. ' +
+  'Keep learning how VACA actually runs (its pipeline, node types, gates, fixers and the repo docs) ' +
+  'and get better at it every session: when you do not know a VACA command, flag or the current state, ' +
+  'say so plainly and name the file or command that reports it instead of inventing one; ' +
+  'treat every build as material to learn from; and when you find a real gap in VACA, say so and help fix the platform rather than routing around it.';
+
 export function prependIdentity(sys: string): string {
-  return sys ? `${IDENTITY_RULE}\n\n${sys}` : IDENTITY_RULE;
+  const rule = `${IDENTITY_RULE}\n\n${IDENTITY_ROLE_RULE}\n\n${NO_NARRATION_RULE}\n\n${VACA_MASTERY_RULE}`;
+  return sys ? `${rule}\n\n${sys}` : rule;
 }
 
 // ─── Legacy single-prompt endpoint (backward compatible) ──
@@ -782,7 +957,37 @@ reasoningRoutes.post('/', async (req, res) => {
 
     // Intercept about-VACA queries before they reach the LLM
     if (isAboutVacaRequest(prompt)) {
+      recordChatTurn({
+        ts: new Date().toISOString(), route: 'legacy', user: extractUserMessage(prompt),
+        response: _getVacaIntro(), flags: [], meta: { interceptor: 'about-vaca' },
+      });
       return res.json({ success: true, response: _getVacaIntro() });
+    }
+
+    // ── Role-confusion guard: "why did you say I'm the assistant" / "I'm not
+    //    the assistant, I am the user" — answered directly so the LLM never
+    //    fumbles the role boundary (it sometimes applies "you are" to the
+    //    user and then collapses into the empty-echo fallback). ──
+    const roleReply = detectRoleConfusion(extractUserMessage(prompt));
+    if (roleReply) {
+      recordChatTurn({
+        ts: new Date().toISOString(), route: 'legacy', user: extractUserMessage(prompt),
+        response: roleReply, flags: [], meta: { interceptor: 'role-confusion' },
+      });
+      return res.json({ success: true, response: roleReply });
+    }
+
+    // ── Denial guard: "no you didn't" / "that's wrong, nothing opened" — the
+    //    user is calling out a false action claim. Answer directly (apologize,
+    //    point at the real button) so it never collapses to the empty-echo
+    //    fallback. ──
+    const denialReply = detectDenial(extractUserMessage(prompt));
+    if (denialReply) {
+      recordChatTurn({
+        ts: new Date().toISOString(), route: 'legacy', user: extractUserMessage(prompt),
+        response: denialReply, flags: [], meta: { interceptor: 'denial' },
+      });
+      return res.json({ success: true, response: denialReply });
     }
 
     // ── File write: "create a file called X" — actually create it. Runs BEFORE
@@ -920,7 +1125,20 @@ reasoningRoutes.post('/', async (req, res) => {
     // be served). The VARIETY RULE lives in /chat (messages array), which is
     // the frontend path; the legacy single-prompt route below is cacheable
     // because its inputs fully determine its (deterministic) output.
-    const cacheKey = `${effectiveSystem || ''}|${fullPrompt}|${effectiveMaxTokens}`;
+    // ── Fast-chat routing: casual conversational messages (greetings, short
+    //    queries, playful banter) go to the dedicated 7B on GPU 2 (~4x faster),
+    //    while anything needing depth/tools/code/platform stays on the AEON 27B.
+    //    Kept conservative so builds, code-gen, tool summaries, and native
+    //    constraints always hit the big model.
+    const _userMsgFast = extractUserMessage(fullPrompt);
+    const useFastChat =
+      !toolOutcome &&
+      !codeContext &&
+      !platActive &&
+      !isBlueprintRequest(_userMsgFast) &&
+      (isGreetingQuery || isShortQueryMsg || detectPlayful(_userMsgFast));
+
+    const cacheKey = `${effectiveSystem || ''}|${fullPrompt}|${effectiveMaxTokens}|fast=${useFastChat ? 1 : 0}`;
     // Date/time answers must never come from a stale cache — the clock moves.
     const cached = isDateTimeQueryMsg ? undefined : cache.get(cacheKey);
     if (cached) return res.json({ success: true, response: cached, cached: true });
@@ -930,9 +1148,11 @@ reasoningRoutes.post('/', async (req, res) => {
       effectiveMaxTokens = Math.max(effectiveMaxTokens, 700);
     }
 
-    const response = await translator.reason(fullPrompt, effectiveSystem, { maxTokens: effectiveMaxTokens, temperature: CHAT_TEMPERATURE });
+    const response = useFastChat
+      ? await translator.chatFast([{ role: 'user' as const, content: _userMsgFast }], effectiveSystem, { maxTokens: effectiveMaxTokens, temperature: CHAT_TEMPERATURE })
+      : await translator.reason(fullPrompt, effectiveSystem, { maxTokens: effectiveMaxTokens, temperature: CHAT_TEMPERATURE });
     // userText enables the cleaner's verbatim-echo guard (same as /chat).
-    let cleaned = cleanLLMResponse(response, { userText: extractUserMessage(prompt) });
+    let cleaned = stripAeonTrace(cleanLLMResponse(response, { userText: extractUserMessage(prompt) }));
 
     // ── Blueprint-JSON hijack guard: a non-blueprint request answered with
     //    {"app_type":...} JSON gets regenerated as conversational prose. The
@@ -971,7 +1191,8 @@ reasoningRoutes.post('/', async (req, res) => {
 
     // ── Final empty guard (same as /chat): pure-echo collapse still gets a reply. ──
     if (!cleaned.trim()) {
-      cleaned = isShortQueryMsg ? pickShortAck(extractUserMessage(prompt)) : ensureQualityResponse(cleaned);
+      const _u = extractUserMessage(prompt);
+      cleaned = isJokeRequest(_u) ? pickJokeFallback(_u) : isShortQueryMsg ? pickShortAck(_u) : ensureQualityResponse(cleaned);
     }
 
     // Honest leak note: if a native constraint was active but the reply still
@@ -985,8 +1206,22 @@ reasoningRoutes.post('/', async (req, res) => {
     if (!isDateTimeQueryMsg && !toolOutcome) cache.set(cacheKey, cleaned);
     res.json({
       success: true,
-      response: cleaned,
+      response: stripAeonTrace(cleaned),
       ...(toolOutcome ? { toolUsed: true, tool: toolOutcome.tool, toolDisplay: toolOutcome.display } : {}),
+    });
+    // ── Monitor tap: record the turn (with canned/echo flags) for review ──
+    recordChatTurn({
+      ts: new Date().toISOString(),
+      route: 'legacy',
+      user: extractUserMessage(prompt),
+      response: cleaned,
+      flags: [],
+      meta: {
+        ...(toolOutcome ? { toolUsed: true, tool: toolOutcome.tool } : {}),
+        cached: isDateTimeQueryMsg ? undefined : (cache.get(cacheKey) ? true : undefined),
+        greeted: isGreetingQuery || undefined,
+        short: isShortQueryMsg || undefined,
+      },
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'Reasoning failed';
@@ -1009,7 +1244,11 @@ reasoningRoutes.post('/', async (req, res) => {
 // conversation template.
 reasoningRoutes.post('/chat', async (req, res) => {
   try {
-    const { messages, system, maxTokens, timeZone } = req.body;
+    // `provider` is the dual-chat switch: 'primary' forces the reply from the
+    // VACA model (ignoring any reasoning-role override) and 'reasoning' forces
+    // the connected 2nd LLM. Omitted → current behaviour (use the reasoning
+    // role when assigned, else primary).
+    const { messages, system, maxTokens, timeZone, provider } = req.body;
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'Messages array is required' });
     }
@@ -1018,7 +1257,36 @@ reasoningRoutes.post('/chat', async (req, res) => {
     const lastUserMsg = [...messages].reverse().find((m: any) => m.role === 'user');
     const userContent = lastUserMsg?.content || '';
     if (isAboutVacaRequest(userContent)) {
+      recordChatTurn({
+        ts: new Date().toISOString(), route: 'chat', user: userContent,
+        response: _getVacaIntro(), flags: [], meta: { interceptor: 'about-vaca' },
+      });
       return res.json({ success: true, response: _getVacaIntro() });
+    }
+
+    // ── Role-confusion guard: same direct answer as the legacy route — "why
+    //    did you say I'm the assistant" / "I'm not the assistant, I am the
+    //    user" never reaches the LLM (which has been observed to apply the
+    //    identity rule to the user and collapse into the canned fallback). ──
+    const roleReply = detectRoleConfusion(userContent);
+    if (roleReply) {
+      recordChatTurn({
+        ts: new Date().toISOString(), route: 'chat', user: userContent,
+        response: roleReply, flags: [], meta: { interceptor: 'role-confusion' },
+      });
+      return res.json({ success: true, response: roleReply });
+    }
+
+    // ── Denial guard (same as legacy route): "no you didn't" / "nothing
+    //    opened" — the user is calling out a false action claim. Answer
+    //    directly; never let it fall through to the LLM's empty-echo collapse. ──
+    const denialReply = detectDenial(userContent);
+    if (denialReply) {
+      recordChatTurn({
+        ts: new Date().toISOString(), route: 'chat', user: userContent,
+        response: denialReply, flags: [], meta: { interceptor: 'denial' },
+      });
+      return res.json({ success: true, response: denialReply });
     }
 
     // ── File write: "create a file called X" — actually create it. Runs BEFORE
@@ -1216,16 +1484,33 @@ reasoningRoutes.post('/chat', async (req, res) => {
     // 7B follows the [RECENT CONVERSATION] instruction + worked example far
     // more reliably at 0.5 than at the server default (~0.7-1.0). Leave the
     // rest of chat at the default so personality stays lively elsewhere.
-    const response = await translator.reasonWithHistory(effectiveMessages, effectiveSystem, {
-      maxTokens: effectiveMaxTokens,
-      temperature: contBlock ? 0.5 : CHAT_TEMPERATURE,
-    });
+    // ── Fast-chat routing (chat path): casual conversational turns go to the
+    //    dedicated 7B on GPU 2; builds/tools/platform/code stay on AEON. Same
+    //    conservative gate as the legacy route. Continuity is preserved by
+    //    passing the full effectiveMessages to chatFast.
+    // When a pane is pinned to the reasoning (2nd LLM) provider, never reroute
+    // greetings to fastChat — the user wants THAT model's answer, not the fast
+    // chat worker.
+    const useFastChat =
+      provider !== 'reasoning' &&
+      !toolOutcome &&
+      !platActive &&
+      !isBlueprintRequest(userContent) &&
+      !contBlock &&
+      (isGreetingMsg || isShortQueryMsg || detectPlayful(userContent));
+    const response = useFastChat
+      ? await translator.chatFast(effectiveMessages as any, effectiveSystem, { maxTokens: effectiveMaxTokens, temperature: CHAT_TEMPERATURE })
+      : await translator.reasonWithHistory(effectiveMessages, effectiveSystem, {
+          maxTokens: effectiveMaxTokens,
+          temperature: contBlock ? 0.5 : CHAT_TEMPERATURE,
+          ...(provider ? { provider: provider as 'primary' | 'reasoning' } : {}),
+        });
     // userText enables the cleaner's verbatim-echo guard ("moo" → "moo.");
     // priorAssistantText enables the prior-turn-repeat strip (the 7B re-emits
     // its own previous reply verbatim before generating new content).
     const priorAssistant =
       [...messages].reverse().find((m: any) => m.role === 'assistant')?.content || undefined;
-    let cleaned = cleanLLMResponse(response, { userText: userContent, priorAssistantText: priorAssistant });
+    let cleaned = stripAeonTrace(cleanLLMResponse(response, { userText: userContent, priorAssistantText: priorAssistant }));
 
     // ── Blueprint-JSON hijack guard: a non-blueprint request answered with
     //    {"app_type":...} JSON gets regenerated as conversational prose. The
@@ -1238,10 +1523,12 @@ reasoningRoutes.post('/chat', async (req, res) => {
       (sys) => translator.reasonWithHistory(effectiveMessages, prependIdentity(sys), {
         maxTokens: Math.min(effectiveMaxTokens + 300, 1500),
         temperature: contBlock ? 0.5 : CHAT_TEMPERATURE,
+        ...(provider ? { provider: provider as 'primary' | 'reasoning' } : {}),
       }),
       () => translator.reasonWithHistory(effectiveMessages, prependIdentity(COMPLETE_JSON_RULE), {
         maxTokens: 4096,
         temperature: contBlock ? 0.5 : CHAT_TEMPERATURE,
+        ...(provider ? { provider: provider as 'primary' | 'reasoning' } : {}),
       }),
     );
 
@@ -1272,7 +1559,7 @@ reasoningRoutes.post('/chat', async (req, res) => {
     //    needs SOME reply. Short non-playful echoes get a brief varied ack;
     //    longer empties get the standard quality fallback. ──
     if (!cleaned.trim()) {
-      cleaned = isShortQueryMsg ? pickShortAck(userContent) : ensureQualityResponse(cleaned);
+      cleaned = isJokeRequest(userContent) ? pickJokeFallback(userContent) : isShortQueryMsg ? pickShortAck(userContent) : ensureQualityResponse(cleaned);
     }
 
     // Honest leak note: native constraint active but a web stack still leaked.
@@ -1282,8 +1569,21 @@ reasoningRoutes.post('/chat', async (req, res) => {
 
     res.json({
       success: true,
-      response: cleaned,
+      response: stripAeonTrace(cleaned),
       ...(toolOutcome ? { toolUsed: true, tool: toolOutcome.tool, toolDisplay: toolOutcome.display } : {}),
+    });
+    // ── Monitor tap: record the turn (with canned/echo flags) for review ──
+    recordChatTurn({
+      ts: new Date().toISOString(),
+      route: 'chat',
+      user: userContent,
+      response: cleaned,
+      flags: [],
+      meta: {
+        ...(toolOutcome ? { toolUsed: true, tool: toolOutcome.tool } : {}),
+        greeted: isGreetingMsg || undefined,
+        short: isShortQueryMsg || undefined,
+      },
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'Reasoning failed';

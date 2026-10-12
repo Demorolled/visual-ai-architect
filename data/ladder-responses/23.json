@@ -1,0 +1,386 @@
+{
+ "success": true,
+ "projectId": "a4710e55-c138-4543-a1bc-54acdc070111",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "asteroids_2",
+  "description": "Classic asteroids arcade game with wrapping screen \u2014 Interactive asteroids with real-time visualization and analysis",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Game Controller",
+    "destination_module": "Game Engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Game Engine",
+    "destination_module": "Game State",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "Game State",
+    "destination_module": "AI Opponent",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "AI Opponent",
+    "destination_module": "Render View",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 asteroids-game \u00b7 GitHub Topics \u00b7 GitHub\n    Asteroids was one of the earliest video games, first released in 1979, and was simply mind blowing at the time. Get to experiment with the online version of the game based on HTML5 and Canvas .\n  \u2022 asteroids-game \u00b7 GitHub Topics \u00b7 GitHub\n    Asteroids is a Python and Pygame project where players control a spaceship, dodge asteroids, and shoot to survive. It features clean code organization, collision detection, and randomized asteroid beh\n  \u2022 \u2b5013 thorvg/thorvg.demo.janitor: An Asteroids-style arcade demo game showcasing the power of ThorVG.\n  \u2022 \u2b508 The1Fabi/space-collector-game: Space Collector is an arcade-style HTML5 game where you control a spaceship to gather stars. Avoid incoming asteroids while chasing the highest score \n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 59: SESSION UPDATE \u2014 August 14, 2026: VOID RAIDER GAME BUILDS + BLUEPRINT RESEARCH INJECTION (what it takes to build an arcade game)\n    Four full builds of the arcade space-shooter \"void raider\" ran through the\nblueprint pipeline this session. This section records what they taught.\n\n1. WHAT WAS BUILT\n   - space_shooter blueprint build \u2192 5 modules passed tsc except\n     game-renderer (truncated mid-class); world-state had 8 real type\n  \u2022 Section 9: DATA & KNOWLEDGE STORES\n    9.1 DATA DIRECTORY (data/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesigns.json                 \u2014 Generated design catalog (design storage)\ndesign-specs-v2.json         \u2014 Design specifications (v2)\nnode-designs.json            \u2014 Node design catalog\nsession-memory.json          \u2014 Session memory/persistence\ndesig\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move "
+ },
+ "candidates": [
+  {
+   "app_type": "asteroids_2",
+   "score": 1
+  },
+  {
+   "app_type": "asteroids",
+   "score": 1
+  },
+  {
+   "app_type": "space_shooter",
+   "score": 1
+  },
+  {
+   "app_type": "space_invaders_2",
+   "score": 1
+  },
+  {
+   "app_type": "void_raider",
+   "score": 1
+  }
+ ],
+ "project": {
+  "id": "a4710e55-c138-4543-a1bc-54acdc070111",
+  "name": "an asteroids arcade game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "asteroids_2 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "input",
+    "label": "Game Controller"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Game Engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "Game State"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "AI Opponent"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Render View"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 0,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 5,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "generated": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "matched": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "game-controller.ts",
+   "language": "typescript",
+   "code": "export class GameController {\n  private gameEngine: GameEngine;\n  private gameState: GameState;\n  private aiOpponent: AIOpponent;\n  private renderView: RenderView;\n\n  constructor() {\n    this.gameEngine = new GameEngine();\n    this.gameState = new GameState();\n    this.aiOpponent = new AIOpponent();\n    this.renderView = new RenderView();\n  }\n\n  startGame(): void {\n    this.gameState.init();\n    this.gameEngine.start();\n    this.aiOpponent.start();\n    this.renderView.render();\n  }\n\n  stopGame(): void {\n    this.gameEngine.stop();\n    this.aiOpponent.stop();\n    this.renderView.clear();\n  }\n\n  processInput(input: string): void {\n    if (input === 'w') {\n      this.gameState.ship.moveUp();\n    } else if (input === 's') {\n      this.gameState.ship.moveDown();\n    } else if (input === 'a') {\n      this.gameState.ship.moveLeft();\n    } else if (input === 'd') {\n      this.gameState.ship.moveRight();\n    } else if (input === ' ') {\n      this.gameState.ship.fireBullet();\n    } else if (input === 'q') {\n      this.stopGame();\n    }\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Game Controller",
+   "dependencies": [],
+   "exports": [
+    "GameController"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'GameEngine'. (line 2)",
+    "TS2304: Cannot find name 'GameState'. (line 3)",
+    "TS2304: Cannot find name 'AIOpponent'. (line 4)",
+    "TS2304: Cannot find name 'RenderView'. (line 5)",
+    "TS2304: Cannot find name 'GameEngine'. (line 8)",
+    "TS2304: Cannot find name 'GameState'. (line 9)",
+    "TS2304: Cannot find name 'AIOpponent'. (line 10)",
+    "TS2304: Cannot find name 'RenderView'. (line 11)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "import { GameController } from '../game-controller/game-controller.ts';\n\nexport class GameEngine {\n  private gameState: GameState;\n  private aiOpponent: AIOpponent;\n  private renderView: RenderView;\n\n  constructor() {\n    this.gameState = new GameState();\n    this.aiOpponent = new AIOpponent();\n    this.renderView = new RenderView();\n  }\n\n  startGame(): void {\n    this.gameState.init();\n    this.aiOpponent.start();\n    this.renderView.render();\n  }\n\n  stopGame(): void {\n    this.aiOpponent.stop();\n    this.renderView.clear();\n  }\n\n  processInput(input: string): void {\n    if (input === 'w') {\n      this.gameState.ship.moveUp();\n    } else if (input === 's') {\n      this.gameState.ship.moveDown();\n    } else if (input === 'a') {\n      this.gameState.ship.moveLeft();\n    } else if (input === 'd') {\n      this.gameState.ship.moveRight();\n    } else if (input === ' ') {\n      this.gameState.ship.fireBullet();\n    } else if (input === 'q') {\n      this.stopGame();\n    }\n  }\n\n  update(): void {\n    this.aiOpponent.update();\n    this.gameState.update();\n    this.renderView.render();\n  }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "Game Engine",
+   "dependencies": [
+    "Game Controller"
+   ],
+   "exports": [
+    "GameEngine"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'GameState'. (line 4)",
+    "TS2304: Cannot find name 'AIOpponent'. (line 5)",
+    "TS2304: Cannot find name 'RenderView'. (line 6)",
+    "TS2304: Cannot find name 'GameState'. (line 9)",
+    "TS2304: Cannot find name 'AIOpponent'. (line 10)",
+    "TS2304: Cannot find name 'RenderView'. (line 11)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-state.ts",
+   "language": "typescript",
+   "code": "import { GameEngine } from '../game-engine/game-engine.ts';\n\nexport class GameState {\n  private ship: { position: { x: number; y: number }; velocity: { x: number; y: number }; angle: number; health: number; bullets: { position: { x: number; y: number }; velocity: { x: number; y: number }; angle: number; damage: number }[] };\n  private asteroids: { position: { x: number; y: number }; velocity: { x: number; y: number }; size: number; health: number }[];\n  private bullets: { position: { x: number; y: number }; velocity: { x: number; y: number }; angle: number; damage: number; lifespan: number }[];\n  private score: number;\n  private highScore: number;\n  private gameRunning: boolean;\n\n  constructor() {\n    this.ship = { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, angle: 0, health: 100, bullets: [] };\n    this.asteroids = [];\n    this.bullets = [];\n    this.score = 0;\n    this.highScore = 0;\n    this.gameRunning = true;\n  }\n\n  init() {\n    this.ship.position.x = 0;\n    this.ship.position.y = 0;\n    this.ship.velocity.x = 0;\n    this.ship.velocity.y = 0;\n    this.ship.angle = 0;\n    this.ship.health = 100;\n    this.ship.bullets = [];\n    this.asteroids = [];\n    this.bullets = [];\n    this.score = 0;\n    this.highScore = 0;\n    this.gameRunning = true;\n  }\n\n  update(dt: number) {\n    this.ship.update(dt);\n    this.asteroids.forEach((asteroid) => {\n      asteroid.position.x += asteroid.velocity.x * dt;\n      asteroid.position.y += asteroid.velocity.y * dt;\n      if (asteroid.position.x < -100 || asteroid.position.x > 800 || asteroid.position.y < -100 || asteroid.position.y > 600) {\n        this.asteroids.splice(this.asteroids.indexOf(asteroid), 1);\n      }\n    });\n    this.bullets.forEach((bullet) => {\n      bullet.position.x += bullet.velocity.x * dt;\n      bullet.position.y += bullet.velocity.y * dt;\n      if (bullet.position.x < -100 || bullet.position.x > 800 || bullet.position.y < -100 || bullet.position.y > 600) {\n        this.bullets.splice(this.bullets.indexOf(bullet), 1);\n      }\n    });\n  }\n\n  render() {\n    // Render the game state\n  }\n\n  handleInput(input: string) {\n    if (input === 'w') {\n      this.ship.moveUp();\n    } else if (input === 's') {\n      this.ship.moveDown();\n    } else if (input === 'a') {\n      this.ship.moveLeft();\n    } else if (input === 'd') {\n      this.ship.moveRight();\n    } else if (input === ' ') {\n      this.ship.fireBullet();\n    }\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "Game State",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState"
+   ],
+   "errors": [
+    "TS2339: Property 'update' does not exist on type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; health: number; bullets: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; }[]; }'. (line 36)",
+    "TS2339: Property 'moveUp' does not exist on type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; health: number; bullets: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; }[]; }'. (line 59)",
+    "TS2339: Property 'moveDown' does not exist on type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; health: number; bullets: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; }[]; }'. (line 61)",
+    "TS2339: Property 'moveLeft' does not exist on type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; health: number; bullets: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; }[]; }'. (line 63)",
+    "TS2339: Property 'moveRight' does not exist on type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; health: number; bullets: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; }[]; }'. (line 65)",
+    "TS2339: Property 'fireBullet' does not exist on type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; health: number; bullets: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; }[]; }'. (line 67)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ai-opponent.ts",
+   "language": "typescript",
+   "code": "import { GameState } from '../game-state/game-state.ts';\n\nexport class AIOpponent {\n    private shipPosition: { x: number; y: number };\n    private velocity: { x: number; y: number };\n    private angle: number;\n    private health: number;\n    private bullets: { position: { x: number; y: number }; velocity: { x: number; y: number }; angle: number; damage: number }[];\n    private asteroids: { position: { x: number; y: number }; velocity: { x: number; y: number }; size: number; health: number }[];\n    private bullets: { position: { x: number; y: number }; velocity: { x: number; y: number }; angle: number; damage: number; lifespan: number }[];\n    private score: number;\n    private highScore: number;\n    private gameRunning: boolean;\n\n    constructor() {\n        this.shipPosition = { x: 0, y: 0 };\n        this.velocity = { x: 0, y: 0 };\n        this.angle = 0;\n        this.health = 100;\n        this.bullets = [];\n        this.asteroids = [];\n        this.bullets = [];\n        this.score = 0;\n        this.highScore = 0;\n        this.gameRunning = true;\n    }\n\n    stateAndEvents(): { currentState: string; inputCommands: { kind: 'move' }[] } | null {\n        try {\n            const currentStateData = {\n                ship: {\n                    position: { x: this.shipPosition.x, y: this.shipPosition.y },\n                    velocity: { x: this.velocity.x, y: this.velocity.y },\n                    angle: this.angle,\n                    health: this.health,\n                    bullets: this.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage })),\n                },\n                asteroids: this.asteroids.map((a) => ({ position: { x: a.position.x, y: a.position.y }, velocity: { x: a.velocity.x, y: a.velocity.y }, size: a.size })),\n                bullets: this.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage })),\n                score: this.score,\n                highScore: this.highScore,\n                gameRunning: this.gameRunning,\n            };\n            const inputCommands: { kind: 'move' }[] = [];\n            if (Math.random() < 0.3) inputCommands.push({ kind: 'move', direction: 'up' });\n            if (Math.random() < 0.3) inputCommands.push({ kind: 'move', direction: 'down' });\n            if (Math.random() < 0.3) inputCommands.push({ kind: 'move', direction: 'left' });\n            if (Math.random() < 0.3) inputCommands.push({ kind: 'move', direction: 'right' });\n            return { currentStateData, inputCommands };\n        } catch (error) {\n            console.error('AI opponent failed to process state and events:', error);\n            return null;\n        }\n    }\n\n    renderView(data): void {\n        try {\n            this.shipPosition.x = data.ship.position.x;\n            this.shipPosition.y = data.ship.position.y;\n            this.velocity.x = data.ship.velocity.x;\n            this.velocity.y = data.ship.velocity.y;\n            this.angle = data.ship.angle;\n            this.health = data.ship.health;\n            this.bullets = data.ship.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage }));\n            this.asteroids = data.asteroids.map((a) => ({ position: { x: a.position.x, y: a.position.y }, velocity: { x: a.velocity.x, y: a.velocity.y }, size: a.size }));\n            this.bullets = data.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage }));\n            this.score = data.score;\n            this.highScore = data.highScore;\n            this.gameRunning = data.gameRunning;\n            // Update the game state based on the received data\n        } catch (error) {\n            console.error('AI opponent failed to render view:', error);\n        }\n    }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "AI Opponent",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "AIOpponent"
+   ],
+   "errors": [
+    "TS2300: Duplicate identifier 'bullets'. (line 10)",
+    "TS2717: Subsequent property declarations must have the same type.  Property 'bullets' must be of type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; }[]', but here has type '{ position: { x: number; y: number; }; velocity: { x: number; y: number; }; angle: number; damage: number; lifespan: number; }[]'. (line 10)",
+    "TS2353: Object literal may only specify known properties, and 'direction' does not exist in type '{ kind: \"move\"; }'. (line 45)",
+    "TS2353: Object literal may only specify known properties, and 'direction' does not exist in type '{ kind: \"move\"; }'. (line 46)",
+    "TS2353: Object literal may only specify known properties, and 'direction' does not exist in type '{ kind: \"move\"; }'. (line 47)",
+    "TS2353: Object literal may only specify known properties, and 'direction' does not exist in type '{ kind: \"move\"; }'. (line 48)",
+    "TS2561: Object literal may only specify known properties, but 'currentStateData' does not exist in type '{ currentState: string; inputCommands: { kind: \"move\"; }[]; }'. Did you mean to write 'currentState'? (line 49)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "render-view.ts",
+   "language": "typescript",
+   "code": "import { AIOpponent } from '../ai-opponent/ai-opponent.ts';\n\nexport function renderAsteroidField() {\n    const belt = document.getElementById('belt');\n    if (!belt) return;\n    belt.innerHTML = '';\n    for (let i = 0; i < 30; i++) {\n        const a = document.createElement('div');\n        a.className = 'asteroid';\n        a.style.left = (Math.random() * 800).toString() + '%';\n        a.style.top = (Math.random() * 600).toString() + '%';\n        a.style.transform = 'rotate(' + (Math.random() * 360).toString() + 'deg)';\n        a.style.transformScale = (Math.random() * 0.5 + 0.5).toString();\n        belt.appendChild(a);\n    }\n}\n\nexport function renderShip(ship) {\n    const shipEl = document.getElementById('ship');\n    if (!shipEl) return;\n    shipEl.style.transform = 'translate(' + ship.x + 'px,' + ship.y + 'px) rotate(' + ship.angle + 'deg)';\n    shipEl.style.opacity = ship.health / 100;\n}\n\nexport function renderBullets(bullets) {\n    const belt = document.getElementById('belt');\n    if (!belt) return;\n    belt.innerHTML = '';\n    for (const b of bullets) {\n        const bullet = document.createElement('div');\n        bullet.className = 'bullet';\n        bullet.style.left = b.x + 'px';\n        bullet.style.top = b.y + 'px';\n        belt.appendChild(bullet);\n    }\n}\n\nexport function renderAsteroids(asteroids) {\n    const belt = document.getElementById('belt');\n    if (!belt) return;\n    belt.innerHTML = '';\n    for (const a of asteroids) {\n        const asteroid = document.createElement('div');\n        asteroid.className = 'asteroid';\n        asteroid.style.left = a.x + 'px';\n        asteroid.style.top = a.y + 'px';\n        asteroid.style.transform = 'rotate(' + a.angle + 'deg)';\n        asteroid.style.transformScale = a.size.toString();\n        belt.appendChild(asteroid);\n    }\n}\n\nexport function renderScore(score, highScore) {\n    document.getElementById('scoreDisplay').textContent = 'Score: ' + score + ' | High Score: ' + highScore;\n}\n\nexport function renderLives(lives) {\n    const livesDisplay = document.getElementById('livesDisplay');\n    if (!livesDisplay) return;\n    livesDisplay.innerHTML = '';\n    for (let i = 0; i < lives; i++) {\n        const life = document.createElement('div');\n        life.className = 'life';\n        livesDisplay.appendChild(life);\n    }\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "Render View",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "renderAsteroidField",
+    "renderShip",
+    "renderBullets",
+    "renderAsteroids",
+    "renderScore",
+    "renderLives"
+   ],
+   "errors": [
+    "TS2551: Property 'transformScale' does not exist on type 'CSSStyleDeclaration'. Did you mean 'transformStyle'? (line 13)",
+    "TS2322: Type 'number' is not assignable to type 'string'. (line 22)",
+    "TS2551: Property 'transformScale' does not exist on type 'CSSStyleDeclaration'. Did you mean 'transformStyle'? (line 48)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>an asteroids arcade game</title>\n  <meta name=\"description\" content=\"an asteroids arcade game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading an asteroids arcade game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-IlmQGV/game-controller/game-controller.ts\n  var GameController = class {\n    constructor() {\n      __publicField(this, \"gameEngine\");\n      __publicField(this, \"gameState\");\n      __publicField(this, \"aiOpponent\");\n      __publicField(this, \"renderView\");\n      this.gameEngine = new GameEngine();\n      this.gameState = new GameState();\n      this.aiOpponent = new AIOpponent();\n      this.renderView = new RenderView();\n    }\n    startGame() {\n      this.gameState.init();\n      this.gameEngine.start();\n      this.aiOpponent.start();\n      this.renderView.render();\n    }\n    stopGame() {\n      this.gameEngine.stop();\n      this.aiOpponent.stop();\n      this.renderView.clear();\n    }\n    processInput(input) {\n      if (input === \"w\") {\n        this.gameState.ship.moveUp();\n      } else if (input === \"s\") {\n        this.gameState.ship.moveDown();\n      } else if (input === \"a\") {\n        this.gameState.ship.moveLeft();\n      } else if (input === \"d\") {\n        this.gameState.ship.moveRight();\n      } else if (input === \" \") {\n        this.gameState.ship.fireBullet();\n      } else if (input === \"q\") {\n        this.stopGame();\n      }\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-IlmQGV/game-engine/game-engine.ts\n  var GameEngine2 = class {\n    constructor() {\n      __publicField(this, \"gameState\");\n      __publicField(this, \"aiOpponent\");\n      __publicField(this, \"renderView\");\n      this.gameState = new GameState();\n      this.aiOpponent = new AIOpponent();\n      this.renderView = new RenderView();\n    }\n    startGame() {\n      this.gameState.init();\n      this.aiOpponent.start();\n      this.renderView.render();\n    }\n    stopGame() {\n      this.aiOpponent.stop();\n      this.renderView.clear();\n    }\n    processInput(input) {\n      if (input === \"w\") {\n        this.gameState.ship.moveUp();\n      } else if (input === \"s\") {\n        this.gameState.ship.moveDown();\n      } else if (input === \"a\") {\n        this.gameState.ship.moveLeft();\n      } else if (input === \"d\") {\n        this.gameState.ship.moveRight();\n      } else if (input === \" \") {\n        this.gameState.ship.fireBullet();\n      } else if (input === \"q\") {\n        this.stopGame();\n      }\n    }\n    update() {\n      this.aiOpponent.update();\n      this.gameState.update();\n      this.renderView.render();\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-IlmQGV/game-state/game-state.ts\n  var GameState2 = class {\n    constructor() {\n      __publicField(this, \"ship\");\n      __publicField(this, \"asteroids\");\n      __publicField(this, \"bullets\");\n      __publicField(this, \"score\");\n      __publicField(this, \"highScore\");\n      __publicField(this, \"gameRunning\");\n      this.ship = { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 }, angle: 0, health: 100, bullets: [] };\n      this.asteroids = [];\n      this.bullets = [];\n      this.score = 0;\n      this.highScore = 0;\n      this.gameRunning = true;\n    }\n    init() {\n      this.ship.position.x = 0;\n      this.ship.position.y = 0;\n      this.ship.velocity.x = 0;\n      this.ship.velocity.y = 0;\n      this.ship.angle = 0;\n      this.ship.health = 100;\n      this.ship.bullets = [];\n      this.asteroids = [];\n      this.bullets = [];\n      this.score = 0;\n      this.highScore = 0;\n      this.gameRunning = true;\n    }\n    update(dt) {\n      this.ship.update(dt);\n      this.asteroids.forEach((asteroid) => {\n        asteroid.position.x += asteroid.velocity.x * dt;\n        asteroid.position.y += asteroid.velocity.y * dt;\n        if (asteroid.position.x < -100 || asteroid.position.x > 800 || asteroid.position.y < -100 || asteroid.position.y > 600) {\n          this.asteroids.splice(this.asteroids.indexOf(asteroid), 1);\n        }\n      });\n      this.bullets.forEach((bullet) => {\n        bullet.position.x += bullet.velocity.x * dt;\n        bullet.position.y += bullet.velocity.y * dt;\n        if (bullet.position.x < -100 || bullet.position.x > 800 || bullet.position.y < -100 || bullet.position.y > 600) {\n          this.bullets.splice(this.bullets.indexOf(bullet), 1);\n        }\n      });\n    }\n    render() {\n    }\n    handleInput(input) {\n      if (input === \"w\") {\n        this.ship.moveUp();\n      } else if (input === \"s\") {\n        this.ship.moveDown();\n      } else if (input === \"a\") {\n        this.ship.moveLeft();\n      } else if (input === \"d\") {\n        this.ship.moveRight();\n      } else if (input === \" \") {\n        this.ship.fireBullet();\n      }\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-IlmQGV/ai-opponent/ai-opponent.ts\n  var AIOpponent2 = class {\n    constructor() {\n      __publicField(this, \"shipPosition\");\n      __publicField(this, \"velocity\");\n      __publicField(this, \"angle\");\n      __publicField(this, \"health\");\n      __publicField(this, \"bullets\");\n      __publicField(this, \"asteroids\");\n      __publicField(this, \"bullets\");\n      __publicField(this, \"score\");\n      __publicField(this, \"highScore\");\n      __publicField(this, \"gameRunning\");\n      this.shipPosition = { x: 0, y: 0 };\n      this.velocity = { x: 0, y: 0 };\n      this.angle = 0;\n      this.health = 100;\n      this.bullets = [];\n      this.asteroids = [];\n      this.bullets = [];\n      this.score = 0;\n      this.highScore = 0;\n      this.gameRunning = true;\n    }\n    stateAndEvents() {\n      try {\n        const currentStateData = {\n          ship: {\n            position: { x: this.shipPosition.x, y: this.shipPosition.y },\n            velocity: { x: this.velocity.x, y: this.velocity.y },\n            angle: this.angle,\n            health: this.health,\n            bullets: this.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage }))\n          },\n          asteroids: this.asteroids.map((a) => ({ position: { x: a.position.x, y: a.position.y }, velocity: { x: a.velocity.x, y: a.velocity.y }, size: a.size })),\n          bullets: this.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage })),\n          score: this.score,\n          highScore: this.highScore,\n          gameRunning: this.gameRunning\n        };\n        const inputCommands = [];\n        if (Math.random() < 0.3) inputCommands.push({ kind: \"move\", direction: \"up\" });\n        if (Math.random() < 0.3) inputCommands.push({ kind: \"move\", direction: \"down\" });\n        if (Math.random() < 0.3) inputCommands.push({ kind: \"move\", direction: \"left\" });\n        if (Math.random() < 0.3) inputCommands.push({ kind: \"move\", direction: \"right\" });\n        return { currentStateData, inputCommands };\n      } catch (error) {\n        console.error(\"AI opponent failed to process state and events:\", error);\n        return null;\n      }\n    }\n    renderView(data) {\n      try {\n        this.shipPosition.x = data.ship.position.x;\n        this.shipPosition.y = data.ship.position.y;\n        this.velocity.x = data.ship.velocity.x;\n        this.velocity.y = data.ship.velocity.y;\n        this.angle = data.ship.angle;\n        this.health = data.ship.health;\n        this.bullets = data.ship.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage }));\n        this.asteroids = data.asteroids.map((a) => ({ position: { x: a.position.x, y: a.position.y }, velocity: { x: a.velocity.x, y: a.velocity.y }, size: a.size }));\n        this.bullets = data.bullets.map((b) => ({ position: { x: b.position.x, y: b.position.y }, velocity: { x: b.velocity.x, y: b.velocity.y }, angle: b.angle, damage: b.damage }));\n        this.score = data.score;\n        this.highScore = data.highScore;\n        this.gameRunning = data.gameRunning;\n      } catch (error) {\n        console.error(\"AI opponent failed to render view:\", error);\n      }\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-IlmQGV/render-view/render-view.ts\n  function renderAsteroidField() {\n    const belt = document.getElementById(\"belt\");\n    if (!belt) return;\n    belt.innerHTML = \"\";\n    for (let i = 0; i < 30; i++) {\n      const a = document.createElement(\"div\");\n      a.className = \"asteroid\";\n      a.style.left = (Math.random() * 800).toString() + \"%\";\n      a.style.top = (Math.random() * 600).toString() + \"%\";\n      a.style.transform = \"rotate(\" + (Math.random() * 360).toString() + \"deg)\";\n      a.style.transformScale = (Math.random() * 0.5 + 0.5).toString();\n      belt.appendChild(a);\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-IlmQGV/_preview_entry.ts\n  try {\n    if (typeof GameController === \"function\" && !/^class\\s/.test(String(GameController))) {\n      GameController(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-controller.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Controller.GameController:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof GameEngine2 === \"function\" && !/^class\\s/.test(String(GameEngine2))) {\n      GameEngine2(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Engine.GameEngine:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof GameState2 === \"function\" && !/^class\\s/.test(String(GameState2))) {\n      GameState2(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-state.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_State.GameState:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof AIOpponent2 === \"function\" && !/^class\\s/.test(String(AIOpponent2))) {\n      AIOpponent2(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ai-opponent.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling AI_Opponent.AIOpponent:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof renderAsteroidField === \"function\" && !/^class\\s/.test(String(renderAsteroidField))) {\n      renderAsteroidField(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"render-view.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Render_View.renderAsteroidField:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">an asteroids arcade game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 an asteroids arcade game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 26308,
+ "totalErrors": 30,
+ "validatedCount": 1,
+ "failedCount": 5,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "game-controller.ts",
+   "dependencies": [],
+   "exports": [
+    "GameController"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [
+    "Game Controller"
+   ],
+   "exports": [
+    "GameEngine"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "game-state.ts",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "ai-opponent.ts",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "AIOpponent"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "render-view.ts",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "renderAsteroidField",
+    "renderShip",
+    "renderBullets",
+    "renderAsteroids",
+    "renderScore",
+    "renderLives"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 4,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 26308,
+  "totalErrors": 30,
+  "validated": 1,
+  "failed": 5,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 212564
+ }
+}

@@ -1,0 +1,26 @@
+body {
+  background: #0a0a14;
+  color: #e0e0f0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  color: #00d9ff;
+  margin-bottom: 12px;
+}
+
+p {
+  color: #a8a8b8;
+  margin-bottom: 24px;
+}

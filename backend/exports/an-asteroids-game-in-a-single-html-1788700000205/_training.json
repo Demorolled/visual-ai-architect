@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:30:00.000Z",
+  "request": "Build an asteroids game in a single HTML file. A triangle ship thrusts and turns with arrow keys or WASD, space fires bullets with a cooldown, the ship, asteroids, and bullets all wrap around the edges, asteroids are irregular polygons that split into smaller ones when shot, hitting an asteroid costs a life with temporary invulnerability and a respawn, score accrues per rock and persists as a best in localStorage, rocks keep spawning up to a cap, and game over shows the final score.",
+  "intent": {
+    "goal": "build an asteroids game in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Asteroids HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build an asteroids game in a single HTML file. A triangle ship thrusts and turns with arrow keys or WASD, space fires bullets with a cooldown, the ship, asteroids, and bullets all wrap around the edges, asteroids are irregular polygons that split into smaller ones when shot, hitting an asteroid costs a life with temporary invulnerability and a respawn, score accrues per rock and persists as a best in localStorage, rocks keep spawning up to a cap, and game over shows the final score.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

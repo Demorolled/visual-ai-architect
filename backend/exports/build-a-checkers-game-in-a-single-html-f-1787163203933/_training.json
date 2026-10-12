@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-19T18:14:59.130Z",
+  "request": "Build a checkers game in a single HTML file - complete and feature-rich. 8x8 board, 12 red pieces and 12 black pieces, alternating turns. Full standard rules: pieces move diagonally forward one square, capture by jumping diagonally forward (mandatory captures), multi-jump capture chains in a single turn, kings that move and capture in all four diagonal directions, win detection (no legal moves or no pieces) with a winner banner, and a score tracker across multiple games. Also include: a minimax AI opponent with easy/medium/hard difficulty levels you can toggle, undo/redo buttons, legal-move highlighting when a piece is selected, a move history log, capture and move sound effects using the Web Audio API, CSS animations for piece movement and captures, a dark theme with custom piece colors, and touch support. Write EVERYTHING in this one HTML file with clear, heavily-commented JavaScript. The file must be complete and work when opened in a browser.",
+  "intent": {
+    "goal": "checkers game in a single HTML file - complete and feature-rich.",
+    "targetUser": "piece movement",
+    "coreFeatures": [
+      "AI opponent",
+      "score tracking",
+      "levels",
+      "undo/history"
+    ],
+    "uiStyle": "game, dark",
+    "language": "javascript"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "The single HTML file containing the entire checkers game, including the HTML structure, CSS styles, and JavaScript logic.",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nmodelVeronice.txt sections: 1. PROJECT OVERVIEW, 2. RUNNING SERVICES (as of scan time), 3. RUNTIME TOOLS, 4. FRONTEND APPLICATION, 5. BACKEND APPLICATION, 6. LLM CONFIGURATION, 7. INSTALLED OLLAMA MODELS, 8. LOCAL GGUF MODELS, 9. DATA & KNOWLEDGE STORES, 10. TRAINING SYSTEM, 11. SYSTEM MONITOR DAEMON, 12. GENERATED PROJECTS (projects/), 13. PROFILE & USER\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node (html).\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-patterns\n…(truncated)",
+  "files": [
+    "index.html"
+  ]
+}

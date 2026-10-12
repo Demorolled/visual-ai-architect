@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:00:00.000Z",
+  "request": "Build a 2048 puzzle game in a single HTML file. A 4x4 grid where arrow keys or WASD slide all tiles, equal adjacent tiles merge into their double with score gain, a new 2 or 4 tile spawns after every valid move, game over is detected when no merges remain, winning at 2048 shows a message while play continues, the best score persists in localStorage, and tiles are colored by value.",
+  "intent": {
+    "goal": "build a 2048 puzzle game in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "2048 HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a 2048 puzzle game in a single HTML file. A 4x4 grid where arrow keys or WASD slide all tiles, equal adjacent tiles merge into their double with score gain, a new 2 or 4 tile spawns after every valid move, game over is detected when no merges remain, winning at 2048 shows a message while play continues, the best score persists in localStorage, and tiles are colored by value.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

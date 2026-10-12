@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hangman</title><style>
+body{font-family:'Segoe UI',sans-serif;background:#0a0a14;color:#e6e6e6;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:#14141f;border:1px solid #2a2a3a;border-radius:12px;padding:28px;text-align:center;min-width:320px}
+h2{color:#00d9ff;margin:0 0 8px 0}#word{font-size:30px;letter-spacing:10px;margin:16px 0;color:#e6e6e6}
+#lives{color:#ffb454;margin-bottom:10px}
+.keys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:340px;margin:14px auto}
+.keys button{width:34px;height:34px;background:#2a2a3a;color:#e6e6e6;border:none;border-radius:6px;cursor:pointer;font-size:15px}
+.keys button.used{opacity:.25;cursor:default}
+.keys button.good{background:#3ddc84;color:#04141a}
+.keys button.bad{background:#ff5c5c;color:#14141f}
+#msg{min-height:22px;margin-top:10px;color:#3ddc84}
+</style></head><body>
+<div class="card"><h2>🪢 Hangman</h2><div id="lives">Lives: 6</div><div id="word"></div>
+<div id="msg"></div><div class="keys" id="keys"></div>
+<button id="newBtn">New Game</button></div>
+<script>
+const WORDS = ['puzzle', 'javascript', 'canvas', 'keyboard', 'mountain', 'library', 'react', 'training'];
+let word = '';
+let guessed = new Set();
+let lives = 6;
+
+function pickWord() { return WORDS[Math.floor(Math.random() * WORDS.length)]; }
+
+function displayWord() {
+  return [...word].map(c => guessed.has(c) ? c : '_').join(' ');
+}
+
+function render() {
+  document.getElementById('word').textContent = displayWord();
+  document.getElementById('lives').textContent = 'Lives: ' + lives;
+  document.querySelectorAll('.keys button').forEach(btn => {
+    const letter = btn.textContent;
+    btn.classList.toggle('used', guessed.has(letter));
+  });
+  const won = [...word].every(c => guessed.has(c));
+  const lost = lives <= 0;
+  if (won) { document.getElementById('msg').textContent = '🎉 You won!'; lockKeys(); }
+  else if (lost) { document.getElementById('msg').textContent = '💀 Lost! The word was: ' + word; lockKeys(); }
+}
+
+function lockKeys() {
+  document.querySelectorAll('.keys button').forEach(b => b.disabled = true);
+}
+
+function guess(letter) {
+  if (guessed.has(letter) || lives <= 0) return;
+  guessed.add(letter);
+  if (word.includes(letter)) {
+    const btn = [...document.querySelectorAll('.keys button')].find(b => b.textContent === letter);
+    if (btn) btn.classList.add('good');
+  } else {
+    lives -= 1;
+    const btn = [...document.querySelectorAll('.keys button')].find(b => b.textContent === letter);
+    if (btn) btn.classList.add('bad');
+  }
+  render();
+}
+
+function newGame() {
+  word = pickWord();
+  guessed = new Set();
+  lives = 6;
+  document.getElementById('msg').textContent = '';
+  document.querySelectorAll('.keys button').forEach(b => { b.disabled = false; b.classList.remove('used','good','bad'); });
+  render();
+}
+
+const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const keysEl = document.getElementById('keys');
+letters.forEach(l => {
+  const btn = document.createElement('button');
+  btn.textContent = l;
+  btn.addEventListener('click', () => guess(l));
+  keysEl.appendChild(btn);
+});
+document.getElementById('newBtn').addEventListener('click', newGame);
+newGame();
+</script></body></html>

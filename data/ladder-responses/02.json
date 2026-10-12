@@ -1,0 +1,276 @@
+{
+ "success": true,
+ "projectId": "e48c174d-2160-4663-ba46-76d5b170c2a6",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "password_generator",
+  "description": "Cryptographically secure password generator \u2014 Interactive desktop tool for password generator",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Data Store",
+    "destination_module": "Search & Filter",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Search & Filter",
+    "destination_module": "User Interface",
+    "data_passed": "results"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Best Open Source Password Generators 2026 - SourceForge\n    Browse free open source Password Generators and projects below. Use the toggles on the left to filter open source Password Generators by OS, license, language, programming language, and project status\n  \u2022 Top 23 password-generator Open-Source Projects | LibHunt\n    Which are the best open-source password-generator projects? This list will help you: pydictor, padloc, gokey, wordlists, Strongbox, psudohash, and cook.\n  \u2022 \u2b50243 ManojKumarPatnaik/Major-project-list: A list of practical projects that anyone can solve in any programming language (See solutions). These projects are divided into multiple categories, a\n  \u2022 \u2b50100 hiql/passwords-app: A random password generator\n  \u2022 keycloak (auth-and-sso): Open Source Identity Management\n  \u2022 authentik (auth-and-sso): The authentication glue you need\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 0,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 29: SESSION UPDATE \u2014 July 26, 2026: BATCH 2 \u2014 15 APPS (MEDIUM \u2192 EXTREME)\n    29.1 TIER 1 \u2014 MEDIUM (3 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  password-manager.html   (11.2 KB) \u2014 Generator + vault + strength meter + export\n  habit-tracker.html      (10.5 KB) \u2014 Streaks, heatmap, weekly view, stats\n  calendar-planner.html   (11.8 KB) \u2014 Monthly calendar, event CRUD, categories\n\n2\n  \u2022 Section 33: SESSION UPDATE \u2014 July 26, 2026: BATCH 5 \u2014 15 GUI BUILDER APPS\n    33.1 GUI BUILDER APPS (15 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nThese apps are design tools for building and generating UI components.\nAll include: localStorage persistence, escapeHTML() sanitization,\nlive preview, export functionality, and dark theme styling.\n\nCategory: Component Builders (5 apps"
+ },
+ "candidates": [
+  {
+   "app_type": "password_generator",
+   "score": 1
+  },
+  {
+   "app_type": "password_manager",
+   "score": 0.6307621084895858
+  },
+  {
+   "app_type": "name_generator",
+   "score": 0.5728344058124621
+  },
+  {
+   "app_type": "password_manager_2",
+   "score": 0.5714037213850238
+  },
+  {
+   "app_type": "quote_generator",
+   "score": 0.5512618421706511
+  }
+ ],
+ "project": {
+  "id": "e48c174d-2160-4663-ba46-76d5b170c2a6",
+  "name": "a password generator app",
+  "targetOS": "linux",
+  "nodeCount": 4,
+  "edgeCount": 2,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "password_generator blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "database",
+    "label": "Data Store"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Search & Filter"
+   },
+   {
+    "id": "mod_2",
+    "type": "ui",
+    "label": "User Interface"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 0,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 3,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "generated": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "matched": [
+   "Data Store",
+   "Search & Filter",
+   "User Interface"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "export interface User {\n  userId: string;\n  username: string;\n}\n\nexport interface Password {\n  passwordId: string;\n  userId: string;\n  password: string;\n  createdTime: number;\n}\n\nexport interface SearchFilterRequest {\n  searchCriteria: string;\n}\n\nexport class DataStore {\n  private users: Record<string, User> = {};\n  private passwords: Record<string, Password> = {};\n\n  addUser(user: User): void {\n    this.users[user.userId] = user;\n  }\n\n  getPassword(passwordId: string): Password | null {\n    return this.passwords[passwordId] || null;\n  }\n\n  async listPasswords(): Promise<Password[]> {\n    const userIds = Object.keys(this.users);\n    const userRequests = userIds.map(userId => ({ passwordCriteria: '' }));\n    const results = await fetch('https://api.example.com/passwords')\n      .then(response => response.json())\n      .then(data => data.rows.map(result => ({\n        userId: result.user_id,\n        passwordId: uuid(),\n        password: result.password,\n        createdTime: new Date(parseInt(result.created_at)).getTime()\n      })));\n    results.forEach((result, index) => {\n      this.passwords[result.passwordId] = result;\n    });\n    return results;\n  }\n\n  deletePassword(passwordId: string): void {\n    delete this.passwords[passwordId];\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Data Store",
+   "dependencies": [],
+   "exports": [
+    "User",
+    "Password",
+    "SearchFilterRequest",
+    "DataStore"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'uuid'. (line 36)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "search-filter.ts",
+   "language": "typescript",
+   "code": "export interface User {\n  userId: string;\n  username: string;\n}\n\nexport interface Password {\n  passwordId: string;\n  userId: string;\n  password: string;\n  createdTime: number;\n}\n\nexport interface SearchFilterRequest {\n  searchCriteria: string;\n}\n\nexport class DataStore {\n  private users: Record<string, User> = {};\n  private passwords: Record<string, Password> = {};\n\n  addUser(user: User): void {\n    this.users[user.userId] = user;\n  }\n\n  getPassword(passwordId: string): Password | null {\n    return this.passwords[passwordId] || null;\n  }\n\n  async listPasswords(): Promise<Password[]> {\n    const userIds = Object.keys(this.users);\n    const userRequests = userIds.map(userId => ({ passwordCriteria: '' }));\n    const results = await fetch('https://api.example.com/passwords')\n      .then(response => response.json())\n      .then(data => data.rows.map(result => ({\n        userId: result.user_id,\n        passwordId: uuid(),\n        password: result.password,\n        createdTime: new Date(parseInt(result.created_at)).getTime()\n      })));\n    results.forEach((result, index) => {\n      this.passwords[result.passwordId] = result;\n    });\n    return results;\n  }\n\n  deletePassword(passwordId: string): void {\n    delete this.passwords[passwordId];\n  }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "Search & Filter",
+   "dependencies": [],
+   "exports": [
+    "User",
+    "Password",
+    "SearchFilterRequest",
+    "DataStore"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'uuid'. (line 36)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "user-interface.ts",
+   "language": "typescript",
+   "code": "import { User, Password, SearchFilterRequest, DataStore } from '../search-filter/search-filter.ts';\n\nexport interface PasswordGenerationSettings {\n  length: number;\n  strengthLevel: string;\n}\n\nexport class UserInterfaceState {\n  private searchCriteria: string;\n  private passwordLength: number;\n  private passwordStrengthLevel: string;\n\n  constructor(\n    searchCriteria: string,\n    passwordLength: number,\n    passwordStrengthLevel: string\n  ) {\n    this.searchCriteria = searchCriteria;\n    this.passwordLength = passwordLength;\n    this.passwordStrengthLevel = passwordStrengthLevel;\n  }\n\n  getSearchCriteria(): string {\n    return this.searchCriteria;\n  }\n\n  getPasswordLength(): number {\n    return this.passwordLength;\n  }\n\n  getPasswordStrengthLevel(): string {\n    return this.passwordStrengthLevel;\n  }\n}\n\nexport const renderUserInterfaceMainContainer = (\n  container: HTMLElement\n): void => {\n  const appContainer = document.createElement('div');\n  appContainer.className = 'app';\n  container.appendChild(appContainer);\n\n  const generateButton = document.createElement('button');\n  generateButton.textContent = 'Generate';\n  generateButton.addEventListener('click', () => {\n    const settings: PasswordGenerationSettings = {\n      length: 12,\n      strengthLevel: 'high',\n    };\n    const generatedPassword = generatePassword(settings);\n    const passwordDisplay = document.createElement('div');\n    passwordDisplay.textContent = generatedPassword;\n    passwordDisplay.style.fontSize = '2rem';\n    passwordDisplay.style.color = '#00d9ff';\n    appContainer.appendChild(passwordDisplay);\n  });\n  appContainer.appendChild(generateButton);\n\n  const copyButton1 = document.createElement('button');\n  copyButton1.textContent = 'Copy';\n  copyButton1.addEventListener('click', () => {\n    const passwordDisplay = document.querySelector('.password-display');\n    if (passwordDisplay) {\n      const password = passwordDisplay.textContent;\n      if (password) {\n        navigator.clipboard.writeText(password);\n      }\n    }\n  });\n  appContainer.appendChild(copyButton1);\n\n  const copyButton2 = document.createElement('button');\n  copyButton2.textContent = 'Copy';\n  copyButton2.addEventListener('click', () => {\n    const passwordDisplay = document.querySelector('.password-display');\n    if (passwordDisplay) {\n      const password = passwordDisplay.textContent;\n      if (password) {\n        navigator.clipboard.writeText(password);\n      }\n    }\n  });\n  appContainer.appendChild(copyButton2);\n\n  const lengthSlider = document.createElement('input');\n  lengthSlider.type = 'range';\n  lengthSlider.min = '8';\n  lengthSlider.max = '32';\n  lengthSlider.value = '12';\n  lengthSlider.addEventListener('input', (e) => {\n    const value = parseInt(e.target.value);\n    updatePasswordLength(value);\n  });\n  appContainer.appendChild(lengthSlider);\n\n  const strengthSlider = document.createElement('input');\n  strengthSlider.type = 'range';\n  strengthSlider.min = '5';\n  strengthSlider.max = '7';\n  strengthSlider.value = '5';\n  strengthSlider.addEventListener('input', (e) => {\n    const value = parseInt(e.target.value);\n    updatePasswordStrength(value);\n  });\n  appContainer.appendChild(strengthSlider);\n};\n\nexport const generatePassword = (settings: PasswordGenerationSettings): string => {\n  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';\n  let password = '';\n  const length = settings.length;\n  const strengthLevel = settings.strengthLevel;\n  if (strengthLevel === 'low') {\n    for (let i = 0; i < length; i++) {\n      password += characters.charAt(Math.floor(Math.random() * characters.length));\n    }\n  } else if (strengthLevel === 'medium') {\n    for (let i = 0; i < length; i++) {\n      password += characters.charAt(Math.floor(Math.random() * characters.length));\n    }\n  } else if (strengthLevel === 'high') {\n    for (let i = 0; i < length; i++) {\n      password += characters.charAt(Math.floor(Math.random() * characters.length));\n    }\n  }\n  return password;\n};\n\nexport const updatePasswordLength = (length: number): void => {\n  // Update password length\n};\n\nexport const updatePasswordStrength = (strength: number): void => {\n  // Update password strength\n};",
+   "nodeId": "mod_2",
+   "nodeLabel": "User Interface",
+   "dependencies": [
+    "Search & Filter"
+   ],
+   "exports": [
+    "PasswordGenerationSettings",
+    "UserInterfaceState",
+    "renderUserInterfaceMainContainer",
+    "generatePassword",
+    "updatePasswordLength",
+    "updatePasswordStrength"
+   ],
+   "errors": [
+    "TS2339: Property 'value' does not exist on type 'EventTarget'. (line 91)",
+    "TS2339: Property 'value' does not exist on type 'EventTarget'. (line 102)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a password generator app</title>\n  <meta name=\"description\" content=\"a password generator app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a password generator app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-D3RPUh/_preview_entry.ts\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Data_Store.User:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"search-filter.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Search___Filter.User:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"user-interface.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling User_Interface.PasswordGenerationSettings:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (3) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 3 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a password generator app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a password generator app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 12482,
+ "totalErrors": 4,
+ "validatedCount": 1,
+ "failedCount": 3,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "data-store.ts",
+   "dependencies": [],
+   "exports": [
+    "User",
+    "Password",
+    "SearchFilterRequest",
+    "DataStore"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "search-filter.ts",
+   "dependencies": [],
+   "exports": [
+    "User",
+    "Password",
+    "SearchFilterRequest",
+    "DataStore"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "user-interface.ts",
+   "dependencies": [
+    "Search & Filter"
+   ],
+   "exports": [
+    "PasswordGenerationSettings",
+    "UserInterfaceState",
+    "renderUserInterfaceMainContainer",
+    "generatePassword",
+    "updatePasswordLength",
+    "updatePasswordStrength"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Data Store",
+    "Search & Filter",
+    "User Interface"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 4,
+  "totalChars": 12482,
+  "totalErrors": 4,
+  "validated": 1,
+  "failed": 3,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 137908
+ }
+}

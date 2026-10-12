@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, json, threading, time, gc
+import os, sys, json, math, threading, time, gc
 from pathlib import Path
 from datetime import datetime
 from tkinter import filedialog, messagebox
@@ -10,7 +10,13 @@ from matplotlib.figure import Figure
 from tkinterdnd2 import DND_FILES, DND_TEXT, TkinterDnD
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from engine import Engine, ALLOWED_EXTENSIONS, MODEL_EXTENSIONS, DATA_DIR, HAS_REAL_TRAINING, HAS_MINDSPACE, HAS_MINDSPACE_TRANSFORMER, HAS_RAG
+# The remote client lives in training/remote/; importable so the GUI can submit jobs to an
+# agent box over HTTP (no SSH). Missing dir is fine — the app just cannot go remote.
+_REMOTE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                           "training", "remote")
+if os.path.isdir(_REMOTE_DIR) and _REMOTE_DIR not in sys.path:
+    sys.path.append(_REMOTE_DIR)
+from engine import Engine, ALLOWED_EXTENSIONS, MODEL_EXTENSIONS, DATA_DIR, EXPORTS_DIR, HAS_REAL_TRAINING, HAS_MINDSPACE, HAS_MINDSPACE_TRANSFORMER, HAS_RAG
 
 # Optional: MindSpace API server
 HAS_MINDSPACE_API = False
@@ -26,6 +32,11 @@ ctk.set_default_color_theme("blue")
 
 PAD = {"padx": 8, "pady": 4}
 SML = {"padx": 4, "pady": 2}
+
+# Sentinel entry in the model dropdown: selecting it opens the "type a Hugging Face
+# repo id" dialog. It is deliberately not a usable model name, so it can never be
+# picked up and trained by accident.
+HF_ADD_ENTRY = "+ Add HF repo id"
 
 class LLMTrainingStudio:
     def __init__(self):
@@ -241,7 +252,7 @@ class LLMTrainingStudio:
         ctk.CTkLabel(train_frame, text="Target Model:").grid(row=1, column=3, **SML, sticky="e")
         self.model_var = ctk.StringVar(value="simulated")
         self.model_dropdown = ctk.CTkOptionMenu(train_frame, values=["simulated", "Loading..."],
-            variable=self.model_var, width=160)
+            variable=self.model_var, width=160, command=self._on_model_pick)
         self.model_dropdown.grid(row=0, column=4, **SML, sticky="e")
         self.ollama_label = ctk.CTkLabel(train_frame, text="Ollama: --", font=("Times New Roman", 11))
         self.ollama_label.grid(row=0, column=5, **SML, sticky="e")
@@ -302,6 +313,21 @@ class LLMTrainingStudio:
         ms_status = "MindSpace: Available" if HAS_MINDSPACE else "MindSpace: Unavailable (install torch)"
         ctk.CTkLabel(ms_frame, text=ms_status, font=("Times New Roman", 9),
             text_color="#00cec9" if HAS_MINDSPACE else "#e17055").grid(row=2, column=2, columnspan=4, **SML, sticky="w")
+
+        # ─── Agent box (remote training over HTTP) ──
+        agent_frame = ctk.CTkFrame(train_frame, fg_color="transparent")
+        agent_frame.grid(row=8, column=0, columnspan=8, **SML, sticky="ew")
+        self.use_agent_var = ctk.BooleanVar(value=bool(self.engine.settings.get("use_agent", False)))
+        ctk.CTkCheckBox(agent_frame, text="Train on agent box", variable=self.use_agent_var,
+            command=self._save_agent_settings, font=("Times New Roman", 11)).pack(side="left", padx=(0, 6))
+        self.agent_url_var = ctk.StringVar(value=self.engine.settings.get("agent_url", ""))
+        ctk.CTkEntry(agent_frame, textvariable=self.agent_url_var, width=230,
+            placeholder_text="http://192.168.1.234:8811").pack(side="left", padx=2)
+        ctk.CTkButton(agent_frame, text="Test", width=52, fg_color="#2d3148", hover_color="#6c5ce7",
+            command=self.test_agent).pack(side="left", padx=2)
+        self.agent_status_label = ctk.CTkLabel(agent_frame, text="remote off",
+            font=("Times New Roman", 10), text_color="#8b8fa3")
+        self.agent_status_label.pack(side="left", padx=6)
 
         # Buttons
         btn_frame = ctk.CTkFrame(train_frame, fg_color="transparent")
@@ -1327,6 +1353,11 @@ class LLMTrainingStudio:
                   "ram_percent": self.engine.settings.get("ram_percent", 50),
                   "gpu_devices": list(self.engine.settings.get("gpu_devices", []))}
 
+        # ── Remote: hand the job to the agent box instead of training here ──
+        if self.use_agent_var.get() and self.agent_url_var.get().strip():
+            self._start_remote_training(config)
+            return
+
         # ── MindSpace-specific config ──
         if model_name == "mindspace-rnn":
             try:
@@ -1717,17 +1748,238 @@ class LLMTrainingStudio:
         # MindSpace RNN — actual real training, not simulated
         if HAS_MINDSPACE:
             values.append("mindspace-rnn")
-        # MindSpace Transformer
-        if HAS_MINDSPACE_TRANSFORMER:
-            values.append("mindspace-transformer")
+        # Hugging Face repo ids the user added (persisted in settings), then the entry
+        # that opens the "type a repo id" dialog. Any HF base works here, including
+        # Mixture-of-Experts ones — those automatically get all-linear LoRA so the
+        # expert layers train too (see engine._detect_moe).
+        for repo_id in self.engine.settings.get("hf_models", []):
+            values.append(f"hf/{repo_id}")
+        values.append(HF_ADD_ENTRY)
         # Simulation opt-in at the end
         values.append("simulated")
 
         current = self.model_var.get()
         self.model_dropdown.configure(values=values)
-        first_real = next((v for v in values if not v.startswith("simulated")), "simulated")
-        if current not in values or (current.startswith("simulated") and first_real != "simulated"):
+        first_real = next((v for v in values
+                           if v != HF_ADD_ENTRY and not v.startswith("simulated")), "simulated")
+        # HF_ADD_ENTRY is an action, not a model — never leave it selected, and never
+        # leave a name selected that no longer exists in the list.
+        if (current not in values or current == HF_ADD_ENTRY
+                or (current.startswith("simulated") and first_real != "simulated")):
             self.model_var.set(first_real)
+
+    def _on_model_pick(self, choice: str):
+        """Model dropdown callback — handles the 'add a Hugging Face repo id' entry."""
+        if choice != HF_ADD_ENTRY:
+            return
+        repo_id = self._ask_hf_repo_id()
+        if repo_id:
+            ids = self.engine.settings.setdefault("hf_models", [])
+            if repo_id not in ids:
+                ids.append(repo_id)
+            self.engine.save_metadata(force=True)
+            self._rebuild_model_dropdown()
+            self.model_var.set(f"hf/{repo_id}")
+        else:
+            # Cancelled — drop the sentinel so it does not sit there looking like a model.
+            self._rebuild_model_dropdown()
+
+    def _ask_hf_repo_id(self):
+        """Ask for a Hugging Face repo id. Returns a normalised id, or None."""
+        import tkinter.simpledialog as sd
+        prompt = (
+            "Hugging Face repo id of the base model to fine-tune\n"
+            "(a leading 'hf/' is optional):\n\n"
+            "Dense models\n"
+            "  Qwen/Qwen2.5-Coder-7B-Instruct\n"
+            "  google/gemma-2-2b\n"
+            "  gpt2\n\n"
+            "Mixture-of-Experts models\n"
+            "  allenai/OLMoE-1B-7B-0924\n"
+            "  Qwen/Qwen1.5-MoE-A2.7B\n\n"
+            "The repo is downloaded on first use and must fit the GPU in 4-bit.")
+        ans = sd.askstring("Fine-tune a Hugging Face model", prompt,
+                           initialvalue="", parent=self.root)
+        if not ans:
+            return None
+        repo_id = ans.strip()
+        if repo_id.startswith("hf/"):
+            repo_id = repo_id[len("hf/"):]
+        repo_id = repo_id.strip().strip("/")
+        parts = [p for p in repo_id.split("/") if p]
+        if not repo_id or any(ch.isspace() for ch in repo_id) or len(parts) > 2:
+            messagebox.showerror(
+                "Invalid repo id",
+                f"'{ans.strip()}' is not a Hugging Face repo id.\n\n"
+                "Use 'namespace/name' (or a bare name such as 'gpt2').")
+            return None
+
+        # A mistyped repo id is worse than a rejected one: the engine falls back to
+        # *simulated* training when a model fails to load, so a typo would look like a
+        # successful run. Catch a definite 404 here. Anything else (offline, gated,
+        # rate-limited) is let through — the loader reports it properly.
+        try:
+            from huggingface_hub import HfApi
+            HfApi().model_info(repo_id)
+        except Exception as e:
+            if type(e).__name__ == "RepositoryNotFoundError":
+                messagebox.showerror(
+                    "Repo not found",
+                    f"Hugging Face has no model repo '{repo_id}'.\n\n"
+                    "Check the spelling, or paste the id from the model page.")
+                return None
+        return repo_id
+
+    # ─── Remote (agent box) ───────────────────────────────────────────────
+
+    def _save_agent_settings(self):
+        self.engine.settings["use_agent"] = bool(self.use_agent_var.get())
+        self.engine.settings["agent_url"] = self.agent_url_var.get().strip()
+        self.engine.save_metadata(force=True)
+
+    def test_agent(self):
+        """Check the agent worker is up and can really train."""
+        url = self.agent_url_var.get().strip()
+        if not url:
+            messagebox.showwarning("Agent box",
+                "Enter the agent box URL first, e.g. http://192.168.1.234:8811")
+            return
+        try:
+            import remote_job
+        except ImportError:
+            messagebox.showerror("Agent box", "training/remote/remote_job.py was not found.")
+            return
+        try:
+            info = remote_job.health(url)
+        except Exception as exc:
+            self.agent_status_label.configure(text=f"unreachable", text_color="#e17055")
+            messagebox.showerror("Agent box", f"Cannot reach {url}\n\n{exc}\n\nStart it there with:\n"
+                                             f"  training/remote/start-agent.sh")
+            return
+        gpus = 0
+        try:
+            gpus = len(remote_job.gpus(url).get("gpus", []))
+        except Exception:
+            pass
+        ok = bool(info.get("trainer"))
+        self.agent_status_label.configure(
+            text=f"{'ready' if ok else 'NO TRAINER'} · {gpus} GPU(s) · "
+                 f"{'busy' if info.get('busy') else 'idle'}",
+            text_color="#00cec9" if ok else "#e17055")
+        self._save_agent_settings()
+        if not ok:
+            messagebox.showwarning("Agent box",
+                "That worker cannot train for real (torch/transformers/peft missing), so jobs "
+                "would run in simulated mode. Install llm-training-app/requirements.txt there.")
+
+    def _start_remote_training(self, config: dict):
+        """Upload the queued files + config to the agent box and follow the job."""
+        try:
+            import remote_job
+        except ImportError:
+            messagebox.showerror("Agent box", "training/remote/remote_job.py was not found.")
+            return
+        url = self.agent_url_var.get().strip()
+        self._save_agent_settings()
+
+        if not self.engine.training_queue:
+            messagebox.showwarning("Train", "The queue is empty — add datasheets first.")
+            return
+
+        uploads = DATA_DIR / "uploads"
+        files = []
+        for fid in self.engine.training_queue:
+            fd = self.engine.files.get(fid) or {}
+            p = uploads / fd.get("saved_name", "")
+            if p.is_file():
+                files.append(str(p))
+        if not files:
+            messagebox.showerror("Train", "None of the queued files still exist on disk.")
+            return
+
+        out_name = f"agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        try:
+            res = remote_job.submit(url, config["model_name"], files, out_name,
+                                    epochs=config.get("epochs"),
+                                    learning_rate=config.get("learning_rate"),
+                                    batch_size=config.get("batch_size"),
+                                    gradient_accumulation_steps=config.get("gradient_accumulation_steps"),
+                                    max_length=config.get("max_length"))
+        except Exception as exc:
+            messagebox.showerror("Agent box", f"Could not submit the job:\n\n{exc}")
+            return
+
+        self.engine.training_active = True
+        self.engine.training_status = "running"
+        self.engine.current_epoch = 0
+        self.engine.current_step = 0
+        self.engine.total_steps = 0
+        print(f"[remote] job {res.get('job_id')} submitted to {url} "
+              f"({len(files)} file(s), output {res.get('output_name')})")
+        threading.Thread(target=self._follow_remote_job,
+                         args=(url, res.get("job_id"), res.get("output_name") or out_name),
+                         daemon=True).start()
+
+    def _ui_alert(self, title: str, text: str):
+        """Raise an error dialog from a worker thread, via the Tk main loop.
+
+        Touching Tk from a non-main thread raises "main thread is not in main loop",
+        so dialogs and refreshes are handed to the event loop instead.
+        """
+        if getattr(self, "root", None) is None:
+            print(f"[ui] {title}: {text}")
+            return
+        try:
+            self.root.after(0, lambda: messagebox.showerror(title, text))
+        except Exception:
+            print(f"[ui] {title}: {text}")
+
+    def _follow_remote_job(self, url: str, job_id: str, out_name: str):
+        """Mirror the remote job's progress onto the local charts, then fetch the adapter."""
+        import remote_job
+        try:
+            while True:
+                js = remote_job.status(url, job_id)
+                prog = js.get("progress") or {}
+                self.engine.current_epoch = prog.get("epoch", 0)
+                self.engine.current_step = prog.get("step", 0)
+                self.engine.total_steps = prog.get("total_steps", 0)
+                if js.get("metrics"):
+                    self.engine.model_metrics.update(js["metrics"])
+                if js["status"] in ("completed", "failed", "stopped"):
+                    break
+                time.sleep(3)
+        except Exception as exc:
+            self.engine.training_active = False
+            self.engine.training_status = "failed"
+            self._ui_alert("Agent box", f"Lost contact with the worker:\n\n{exc}")
+            return
+
+        if js["status"] != "completed":
+            self.engine.training_active = False
+            self.engine.training_status = js["status"]
+            self._ui_alert("Agent box",
+                f"Job {job_id} {js['status']}:\n\n{js.get('error') or '(no detail)'}")
+            return
+
+        try:
+            target = remote_job.fetch(url, job_id, str(EXPORTS_DIR))
+            entry = self.engine.ingest_model_folder(target)
+            self.engine.training_status = "completed"
+            if entry:
+                print(f"[remote] adapter fetched to {target} — registered as local/{entry['name']}")
+        except Exception as exc:
+            self.engine.training_status = "failed"
+            self._ui_alert("Agent box",
+                f"Training finished but the adapter could not be fetched:\n\n{exc}")
+        finally:
+            self.engine.training_active = False
+            # save_metadata() fires on_update -> refresh_ui, so it has to run on the
+            # main thread, not this worker thread.
+            try:
+                self.root.after(0, lambda: self.engine.save_metadata(force=True))
+            except Exception:
+                self.engine.save_metadata(force=True)
 
     def _get_ms_status_text(self) -> str:
         """Return a status string about available MindSpace Transformer checkpoints."""
@@ -1937,6 +2189,5 @@ class LLMTrainingStudio:
         self.root.mainloop()
 
 if __name__ == "__main__":
-    import math
     app = LLMTrainingStudio()
     app.run()

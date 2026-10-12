@@ -1,0 +1,298 @@
+{
+ "success": true,
+ "projectId": "be645871-e69a-4abc-8898-23aee8e0b131",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "unit_converter_3",
+  "description": "Unit Converter. \u2394 Unit Converter",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "core_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "core_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "data_store",
+    "data_passed": "state_and_events"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 6,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 0,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Universal Unit Converter\n    7 Conversion Categories - Length, Weight, Temperature, Area, Volume, Speed, and Energy Real-time Conversions - Instant results as you type Bidirectional Conversion - Convert between any units within a\n  \u2022 Top 12 unit-converter Open-Source Projects | LibHunt\n    Which are the best open-source unit-converter projects? This list will help you: UnitsNet, ConverterNOW, calculator, tools-nextjs, UnitSystems.jl, fusion360-basic-calculator, and UnitsTool.\n  \u2022 \u2b500 rizkiansyahalfin/unit-converter: A modern, responsive web app for converting between units of length, weight, and temperature. Built with pure HTML, CSS, and JavaScript, it delivers r\n  \u2022 \u2b500 AElalfee/unit_converter: This is a simple Flask-based web application that allows users to convert between various units of measurement across different categories. The app su\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 2,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n  \u2022 Section 33: SESSION UPDATE \u2014 July 26, 2026: BATCH 5 \u2014 15 GUI BUILDER APPS\n    33.1 GUI BUILDER APPS (15 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nThese apps are design tools for building and generating UI components.\nAll include: localStorage persistence, escapeHTML() sanitization,\nlive preview, export functionality, and dark theme styling.\n\nCategory: Component Builders (5 apps\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 test_writer_mini \u2014 testing tool\n    Generate unit tests for source code using AI (Vitest, Jest, pytest, etc.)\n    Code: // Tool: test_writer_mini\n// Category: testing\n// Risk: low\n// Generate unit tests for source code using AI (Vitest, Jest, pytest, etc.)\n  \u2022 json_to_csv \u2014 data tool\n    Convert a JSON array of objects to CSV format\n    Code: // Tool: json_to_csv\n// Category: data\n// Risk: readonly\n// Convert a JSON array of objects to CSV format"
+ },
+ "candidates": [
+  {
+   "app_type": "unit_converter_3",
+   "score": 1
+  },
+  {
+   "app_type": "unit_converter_2",
+   "score": 1
+  },
+  {
+   "app_type": "unit_converter",
+   "score": 1
+  },
+  {
+   "app_type": "video_converter",
+   "score": 0.5491886376285652
+  },
+  {
+   "app_type": "currency_converter_2",
+   "score": 0.5290287185098582
+  }
+ ],
+ "project": {
+  "id": "be645871-e69a-4abc-8898-23aee8e0b131",
+  "name": "a unit converter app",
+  "targetOS": "linux",
+  "nodeCount": 5,
+  "edgeCount": 3,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "unit_converter_3 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "core_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "data_store"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 3,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 1,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "generated": [
+   "core_engine",
+   "ui_screens",
+   "input_handler",
+   "data_store"
+  ],
+  "matched": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "core-engine.ts",
+   "language": "typescript",
+   "code": "export function convert(fromUnit: string, toUnit: string, value: number): number {\n  const conversionRates: Record<string, Record<string, number>> = {\n    length: { cm: 1, m: 0.01, km: 0.00001 },\n    weight: { g: 1, kg: 0.001, tonne: 0.000001 },\n    temperature: { celsius: 1, fahrenheit: 1.8, kelvin: 1 },\n    area: { sqcm: 1, sqm: 0.0001, sqkm: 1e-8 },\n    volume: { ml: 1, l: 0.001, m3: 0.000001 },\n    speed: { kmh: 1, mph: 0.621371 },\n    energy: { j: 1, cal: 0.239006 },\n  };\n\n  const fromCategory = fromUnit.match(/^(length|weight|temperature|area|volume|speed|energy)$/)?.[1];\n  const toCategory = toUnit.match(/^(length|weight|temperature|area|volume|speed|energy)$/)?.[1];\n\n  if (!fromCategory || !toCategory || !conversionRates[fromCategory] || !conversionRates[toCategory]) {\n    throw new Error('Invalid unit category');\n  }\n\n  const fromRate = conversionRates[fromCategory][fromUnit];\n  const toRate = conversionRates[toCategory][toUnit];\n\n  if (!fromRate || !toRate) {\n    throw new Error('Invalid unit');\n  }\n\n  return (value * fromRate) / toRate;\n}\n\nexport function getConversionRate(fromUnit: string, toUnit: string): number {\n  const conversionRates: Record<string, Record<string, number>> = {\n    length: { cm: 1, m: 0.01, km: 0.00001 },\n    weight: { g: 1, kg: 0.001, tonne: 0.000001 },\n    temperature: { celsius: 1, fahrenheit: 1.8, kelvin: 1 },\n    area: { sqcm: 1, sqm: 0.0001, sqkm: 1e-8 },\n    volume: { ml: 1, l: 0.001, m3: 0.000001 },\n    speed: { kmh: 1, mph: 0.621371 },\n    energy: { j: 1, cal: 0.239006 },\n  };\n\n  const fromCategory = fromUnit.match(/^(length|weight|temperature|area|volume|speed|energy)$/)?.[1];\n  const toCategory = toUnit.match(/^(length|weight|temperature|area|volume|speed|energy)$/)?.[1];\n\n  if (!fromCategory || !toCategory || !conversionRates[fromCategory] || !conversionRates[toCategory]) {\n    throw new Error('Invalid unit category');\n  }\n\n  const fromRate = conversionRates[fromCategory][fromUnit];\n  const toRate = conversionRates[toCategory][toUnit];\n\n  if (!fromRate || !toRate) {\n    throw new Error('Invalid unit');\n  }\n\n  return toRate / fromRate;\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "core_engine",
+   "dependencies": [],
+   "exports": [
+    "convert",
+    "getConversionRate"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { convert, getConversionRate } from '../core-engine/core-engine.ts';\n\nconst container = document.getElementById('app-container');\nif (!container) throw new Error('Container element not found');\n\nconst categories = {\n  length: { cm: 1, m: 0.01, km: 0.00001 },\n  weight: { g: 1, kg: 0.001, tonne: 0.000001 },\n  temperature: { celsius: 1, fahrenheit: 1.8, kelvin: 1 },\n  area: { sqcm: 1, sqm: 0.0001, sqkm: 1e-8 },\n  volume: { ml: 1, l: 0.001, m3: 0.000001 },\n  speed: { kmh: 1, mph: 0.621371 },\n  energy: { j: 1, cal: 0.239006 },\n};\n\nlet fromUnit = 'cm';\nlet toUnit = 'm';\nlet value = 1;\n\nfunction selectCategory(cat) {\n  fromUnit = Object.keys(categories[cat])[0];\n  toUnit = Object.keys(categories[cat])[1];\n  render(container);\n}\n\nfunction selectUnit(unit, isFrom) {\n  if (isFrom) {\n    fromUnit = unit;\n  } else {\n    toUnit = unit;\n  }\n  render(container);\n}\n\nfunction inputValue(e) {\n  value = parseFloat(e.target.value);\n  render(container);\n}\n\nfunction convertUnits() {\n  const fromCat = Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(fromUnit));\n  const toCat = Object.keys(categories).find(cat => Object.keys(categories[cat]).includes(toUnit));\n  if (!fromCat || !toCat) {\n    alert('Invalid unit');\n    return;\n  }\n  const rate = categories[fromCat][fromUnit] / categories[toCat][toUnit];\n  const converted = value * rate;\n  document.getElementById('resultDisplay').textContent = `${converted.toFixed(2)} ${toUnit}`;\n}\n\nfunction render(container) {\n  container.innerHTML = `\n    <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">\n      <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">\n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">\n          <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">\n            <label for=\"fromUnit\">From Unit</label>\n            <select id=\"fromUnit\" onchange=\"selectUnit(this.value, true)\">\n              <option value=\"cm\">cm</option>\n              <option value=\"m\">m</option>\n              <option value=\"km\">km</option>\n              <option value=\"g\">g</option>\n              <option value=\"kg\">kg</option>\n              <option value=\"tonne\">tonne</option>\n              <option value=\"celsius\">\u00b0C</option>\n              <option value=\"fahrenheit\">\u00b0F</option>\n              <option value=\"kelvin\">K</option>\n              <option value=\"sqcm\">sq cm</option>\n              <option value=\"sqm\">sq m</option>\n              <option value=\"sqkm\">sq km</option>\n              <option value=\"ml\">mL</option>\n              <option value=\"l\">L</option>\n              <option value=\"m3\">m\u00b3</option>\n              <option value=\"kmh\">km/h</option>\n              <option value=\"mph\">mph</option>\n              <option value=\"j\">J</option>\n              <option value=\"cal\">cal</option>\n            </select>\n          </div>\n          <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">\n            <label for=\"toUnit\">To Unit</label>\n            <select id=\"toUnit\" onchange=\"selectUnit(this.value, false)\">\n              <option value=\"cm\">cm</option>\n              <option value=\"m\">m</option>\n              <option value=\"km\">km</option>\n              <option value=\"g\">g</option>\n              <option value=\"kg\">kg</option>\n              <option value=\"tonne\">tonne</option>\n              <option value=\"celsius\">\u00b0C</option>\n              <option value=\"fahrenheit\">\u00b0F</option>\n              <option value=\"kelvin\">K</option>\n              <option value=\"sqcm\">sq cm</option>\n              <option value=\"sqm\">sq m</option>\n              <option value=\"sqkm\">sq km</option>\n              <option value=\"ml\">mL</option>\n              <option value=\"l\">L</option>\n              <option value=\"m3\">m\u00b3</option>\n              <option value=\"kmh\">km/h</option>\n              <option value=\"mph\">mph</option>\n              <option value=\"j\">J</option>\n              <option value=\"cal\">cal</option>\n            </select>\n          </div>\n        </div>\n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">\n          <label for=\"valueInput\">Value</label>\n          <input id=\"valueInput\" type=\"number\" value=\"1\" onchange=\"inputValue(event)\">\n        </div>\n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">\n          <button class=\"btn\" onclick=\"convertUnits()\">Convert</button>\n          <div id=\"resultDisplay\" style=\"font-size:1.2rem;color:#4a4a4a\">1 m = 0.01 km</div>\n        </div>\n      </div>\n    </div>\n  `;\n}\n\nrender(container);",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { convert, getConversionRate } from '../core-engine/core-engine.ts';\n\nexport function handleInput(value: string): void {\n    try {\n        const parts = value.split(' ');\n        if (parts.length < 3) {\n            throw new Error('Invalid format');\n        }\n\n        const fromUnit = parts[0];\n        const toUnit = parts[2];\n        const valueToConvert = parseFloat(parts[1]);\n\n        if (isNaN(valueToConvert)) {\n            throw new Error('Invalid value');\n        }\n\n        const convertedValue = convert(fromUnit, toUnit, valueToConvert);\n        console.log(`${valueToConvert} ${fromUnit} = ${convertedValue} ${toUnit}`);\n    } catch (error) {\n        console.error(error.message);\n    }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "import { handleInput } from '../input-handler/input-handler.ts';\n\nexport interface ConversionResult {\n  fromValue: number;\n  fromUnit: string;\n  toValue: number;\n  toUnit: string;\n}\n\nexport function handleConversion(value: string): ConversionResult {\n  try {\n    const parts = value.split(' ');\n    if (parts.length < 3) {\n      throw new Error('Invalid format');\n    }\n\n    const fromUnit = parts[0];\n    const toUnit = parts[2];\n    const valueToConvert = parseFloat(parts[1]);\n\n    if (isNaN(valueToConvert)) {\n      throw new Error('Invalid value');\n    }\n\n    const convertedValue = convert(fromUnit, toUnit, valueToConvert);\n    return {\n      fromValue: valueToConvert,\n      fromUnit,\n      toValue: convertedValue,\n      toUnit,\n    };\n  } catch (error) {\n    console.error(error.message);\n    throw new Error('Conversion failed');\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "data_store",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "ConversionResult",
+    "handleConversion"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'convert'. (line 25)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a unit converter app</title>\n  <meta name=\"description\" content=\"a unit converter app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a unit converter app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (4) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 4 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a unit converter app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a unit converter app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 12751,
+ "totalErrors": 1,
+ "validatedCount": 4,
+ "failedCount": 1,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "core-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "convert",
+    "getConversionRate"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": []
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "data-store.ts",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "ConversionResult",
+    "handleConversion"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 5,
+  "totalChars": 12751,
+  "totalErrors": 1,
+  "validated": 4,
+  "failed": 1,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 530397
+ }
+}

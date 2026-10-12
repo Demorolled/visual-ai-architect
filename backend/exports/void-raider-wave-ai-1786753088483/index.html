@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Void Raider — Arcade Space Shooter</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #04050d; color: #cfd8ff; font-family: monospace; }
+  #app { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 10px; }
+  canvas { border: 1px solid #1c2240; border-radius: 6px; background: #05060f; }
+  #hud { font-size: 13px; color: #7f8ac0; letter-spacing: 1px; }
+  kbd { background: #151a30; border: 1px solid #2a3355; border-radius: 3px; padding: 1px 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="game" width="800" height="600"></canvas>
+  <div id="hud">↑/W thrust &nbsp;·&nbsp; ←/A →/D turn &nbsp;·&nbsp; SPACE fire &nbsp;·&nbsp; R restart</div>
+</div>
+<script>
+'use strict';
+/* Void Raider — a self-contained playable build of the void_raider blueprint.
+   The five typed modules live in src/: ship-controls, wave-manager, enemy-ai,
+   combat-engine, game-renderer. This HTML is the runnable wrapper wiring them
+   together (mirrors the module logic 1:1). */
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// ── Input (ship-controls) ────────────────────────────────────────────────
+const keys = { thrust: false, turnLeft: false, turnRight: false, fire: false };
+const KEYMAP = { ArrowUp: 'thrust', KeyW: 'thrust', ArrowLeft: 'turnLeft', KeyA: 'turnLeft', ArrowRight: 'turnRight', KeyD: 'turnRight', Space: 'fire' };
+window.addEventListener('keydown', (e) => {
+  const action = KEYMAP[e.code];
+  if (!action) return;
+  e.preventDefault();
+  keys[action] = true;
+});
+window.addEventListener('keyup', (e) => {
+  const action = KEYMAP[e.code];
+  if (!action) return;
+  keys[action] = false;
+});
+
+// ── World state (combat-engine + enemy-ai + wave-manager) ────────────────
+const state = {
+  player: { x: W / 2, y: H - 60, angle: -Math.PI / 2, hp: 100 },
+  projectiles: [],
+  enemies: [],
+  score: 0,
+  lives: 3,
+  level: 1,
+  gameOver: false,
+};
+let fireCooldown = 0;
+
+function spawnWave(level) {
+  const count = Math.min(3 + level * 2, 24);
+  const speed = 40 + level * 12;
+  const hp = 2 + Math.floor(level / 2);
+  const cols = 8;
+  const gapX = Math.floor((W - 120) / cols);
+  state.enemies = [];
+  for (let i = 0; i < count; i++) {
+    const row = Math.floor(i / cols);
+    state.enemies.push({ id: i + 1, x: 60 + (i % cols) * gapX, y: -40 - row * 60, vy: speed, hp, maxHp: hp, alive: true });
+  }
+}
+
+// ── Game loop (combat-engine) ────────────────────────────────────────────
+function tryFire() {
+  if (fireCooldown > 0) return;
+  fireCooldown = 0.28;
+  state.projectiles.push({
+    x: state.player.x,
+    y: state.player.y,
+    vx: Math.cos(state.player.angle) * 420,
+    vy: Math.sin(state.player.angle) * 420,
+    owner: 'player',
+  });
+}
+
+function update(dt) {
+  if (state.gameOver) return;
+  fireCooldown = Math.max(0, fireCooldown - dt);
+
+  // Player movement.
+  if (keys.turnLeft) state.player.angle -= 3.2 * dt;
+  if (keys.turnRight) state.player.angle += 3.2 * dt;
+  if (keys.thrust) {
+    state.player.x += Math.cos(state.player.angle) * 260 * dt;
+    state.player.y += Math.sin(state.player.angle) * 260 * dt;
+  }
+  state.player.x = Math.max(20, Math.min(W - 20, state.player.x));
+  state.player.y = Math.max(20, Math.min(H - 20, state.player.y));
+  if (keys.fire) tryFire();
+
+  // Enemies (enemy-ai).
+  for (const e of state.enemies) {
+    e.y += e.vy * dt;
+    if (e.y > H + 40) { e.y = -40; e.x = 40 + Math.random() * (W - 80); }
+  }
+
+  // Projectiles.
+  for (const p of state.projectiles) { p.x += p.vx * dt; p.y += p.vy * dt; }
+  state.projectiles = state.projectiles.filter((p) => p.x > -20 && p.x < W + 20 && p.y > -20 && p.y < H + 20);
+
+  // Player projectiles vs enemies.
+  for (const p of state.projectiles) {
+    if (p.owner !== 'player') continue;
+    for (const e of state.enemies) {
+      if (!e.alive) continue;
+      if (Math.abs(p.x - e.x) < 22 && Math.abs(p.y - e.y) < 22) {
+        p.x = -999;
+        e.hp -= 1;
+        if (e.hp <= 0) { e.alive = false; state.score += 100; }
+        break;
+      }
+    }
+  }
+  state.projectiles = state.projectiles.filter((p) => p.x > -500);
+
+  // Enemies vs player.
+  for (const e of state.enemies) {
+    if (!e.alive) continue;
+    if (Math.abs(e.x - state.player.x) < 24 && Math.abs(e.y - state.player.y) < 24) {
+      state.player.hp -= 34;
+      e.alive = false;
+      if (state.player.hp <= 0) {
+        state.lives -= 1;
+        if (state.lives <= 0) {
+          state.gameOver = true;
+        } else {
+          state.player.hp = 100;
+          state.player.x = W / 2;
+          state.player.y = H - 60;
+        }
+      }
+    }
+  }
+
+  // Wave cleared → next wave (wave-manager).
+  state.enemies = state.enemies.filter((e) => e.alive);
+  if (state.enemies.length === 0 && state.projectiles.length === 0) {
+    state.level += 1;
+    spawnWave(state.level);
+  }
+}
+
+// ── Render (game-renderer) ───────────────────────────────────────────────
+function render() {
+  ctx.fillStyle = '#05060f';
+  ctx.fillRect(0, 0, W, H);
+
+  // Player ship.
+  ctx.save();
+  ctx.translate(state.player.x, state.player.y);
+  ctx.rotate(state.player.angle);
+  ctx.fillStyle = '#39ff88';
+  ctx.beginPath();
+  ctx.moveTo(18, 0); ctx.lineTo(-12, -11); ctx.lineTo(-6, 0); ctx.lineTo(-12, 11);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+
+  // Enemies.
+  for (const e of state.enemies) {
+    ctx.fillStyle = e.hp > 1 ? '#ff5c5c' : '#ff9d5c';
+    ctx.beginPath(); ctx.arc(e.x, e.y, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#2b0f0f';
+    ctx.beginPath(); ctx.arc(e.x, e.y, 6, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Projectiles.
+  for (const p of state.projectiles) {
+    ctx.fillStyle = p.owner === 'player' ? '#ffe14d' : '#ff6b6b';
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(Math.atan2(p.vy, p.vx));
+    ctx.fillRect(-2, -6, 4, 12);
+    ctx.restore();
+  }
+
+  // HUD.
+  ctx.fillStyle = '#cfd8ff';
+  ctx.font = '16px monospace';
+  ctx.fillText('SCORE ' + state.score, 12, 24);
+  ctx.fillText('LIVES ' + state.lives, 12, 46);
+  ctx.fillText('WAVE ' + state.level, 12, 68);
+
+  if (state.gameOver) {
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#ff5555';
+    ctx.font = 'bold 42px monospace';
+    ctx.fillText('GAME OVER', 240, 290);
+    ctx.fillStyle = '#cfd8ff';
+    ctx.font = '16px monospace';
+    ctx.fillText('Final score: ' + state.score + ' — press R to restart', 220, 330);
+  }
+}
+
+function reset() {
+  state.player = { x: W / 2, y: H - 60, angle: -Math.PI / 2, hp: 100 };
+  state.projectiles = [];
+  state.enemies = [];
+  state.score = 0;
+  state.lives = 3;
+  state.level = 1;
+  state.gameOver = false;
+  fireCooldown = 0;
+  spawnWave(1);
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'KeyR') reset();
+});
+
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  update(dt);
+  render();
+  requestAnimationFrame(frame);
+}
+
+reset();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

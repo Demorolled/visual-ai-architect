@@ -1,8 +1,7 @@
 import { OSType, NodeType } from '../types.js';
 import { learningEngine } from '../knowledge/learningEngine.js';
-import { knowledgeStore } from '../knowledge/knowledgeStore.js';
 import { getManifestoContext } from './manifesto.js';
-import { getLibraryContext, getLibraryContextForNodeType } from './libraryContext.js';
+import { getLibraryContext } from './libraryContext.js';
 
 export const OS_PERSONAS: Record<OSType, string> = {
   windows: `You are a skilled Windows desktop developer.
@@ -250,7 +249,7 @@ The user has finalized every widget's position, size, label, style, and interact
     ? `\n\n════════════════════════════════════════════\n📌 CANONICAL EXAMPLE — follow this structure EXACTLY\n════════════════════════════════════════════\nThe example below shows the required file shape: named exports, error handling, NO import statements (the build system adds them), and for UI files NO JSX (build the DOM with createElement). Adapt it to ${language || 'your language'} syntax but preserve the structure and exports.\n\n${example}────────────────────────────────────────`
     : '';
 
-  return `${OS_PERSONAS[os]}\n\nThis is a PLACEHOLDER node that needs actual concrete files generated for it.\n\n${typeInstructions[type]}${langConstraint}${exampleSection}`;
+  return `${OS_PERSONAS[os]}\n\nThis is a PLACEHOLDER node that needs actual concrete files generated for it.\n\n${typeInstructions[type]}${langConstraint}${exampleSection}\n\n${VACA_BRAIN_DOCTRINE}`;
 }
 
 export function getSassyNodePrompt(type: NodeType, description: string, os: OSType, language?: string): string {
@@ -285,23 +284,70 @@ This is the FINAL output — the user has already done the hard work of designin
     ? `\n\n════════════════════════════════════════════\n📌 CANONICAL EXAMPLE — follow this structure EXACTLY\n════════════════════════════════════════════\nThe example below shows the required file shape: named exports, error handling, NO import statements (the build system adds them), and for UI files NO JSX (build the DOM with createElement). Yes, I know, examples are boring. Follow it anyway.\n\n${example}────────────────────────────────────────`
     : '';
 
-  return `${SASSY_OS_PERSONAS[os]}\n\nThis is a PLACEHOLDER node that needs actual concrete files generated for it.\n\n${typeInstructions[type]}${langConstraint}${exampleSection}`;
+  return `${SASSY_OS_PERSONAS[os]}\n\nThis is a PLACEHOLDER node that needs actual concrete files generated for it.\n\n${typeInstructions[type]}${langConstraint}${exampleSection}\n\n${VACA_BRAIN_DOCTRINE}`;
 }
 
 // ─── Compressed Architect System Prompt ──
 // Designed for local LLMs with limited context — removes verbose examples
 // while keeping ALL critical rules intact.
 
-export const ARCHITECT_SYSTEM_PROMPT = `You are an expert software architect. Design COMPLETE applications from a single sentence.
+/**
+ * VACA BRAIN DOCTRINE — the operating identity every code-gen prompt shares.
+ * The model is not "an expert architect": it is the CODE WRITER inside VACA, a
+ * visual IDE where an app IS a node graph on a canvas. **VACA owns the
+ * scaffold** — it derives the node graph, the file plan, and every module's
+ * export/import contract deterministically (blueprints, component-manifest,
+ * the wiring graph, `contractContext`). The model's job is to FILL IN the code
+ * for the node VACA hands it, exactly to that contract. Teaching the model to
+ * invent its own scaffold was measured net-negative and removed (2026-10-02,
+ * runs/scaffold-ab/removed/REMOVAL.md); the doctrine now says so explicitly.
+ * It keeps the two behaviors the live-build probes depend on: (1) build the
+ * node VACA asked for against its EXACT contract, and (2) NEVER ship a stub.
+ * Appended verbatim to the architect, per-node, write, and chunk prompts so
+ * every generation speaks the same language about how VACA works.
+ */
+export const VACA_BRAIN_DOCTRINE = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VACA BRAIN DOCTRINE — who you are and how you work
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You are the CODE WRITER inside VACA, a visual IDE. The user's app is a NODE GRAPH on a canvas: every node is ONE file, every edge is a function contract (the target file imports from the source file).
+
+VACA OWNS THE SCAFFOLD — YOU FILL IT IN: the node graph, the file plan, and each module's export/import contract are already decided by VACA and given to you below (MODULE CONTRACT / PLANNED FILES / IMPORT TARGETS). DO NOT design your own architecture, invent extra files, rename modules, or restructure the plan. Implement EXACTLY the file you were asked for, to the contract you were given.
+
+HOW YOU BUILD — one node at a time, in DEPENDENCY ORDER: implement the node's file against the EXACT contracts of its neighbors — only the declared exports, exact signatures, whitelisted members. Never invent a member a sibling does not export, and never add a sibling the plan does not contain.
+
+WHEN YOU DON'T KNOW — never stop: implement the SMALLEST WORKING version that honors the contract and keep going. The app is completed by iteration and verification — build, check, fix — not by waiting for certainty.
+
+THE ONE UNFORGIVABLE SIN — NEVER ship a stub, TODO body, skeleton, placeholder, or "not implemented" file. A small working implementation always beats an empty promise; a file that does not implement its contract is a FAILED file.`;
+
+export const ARCHITECT_SYSTEM_PROMPT = `You are the scaffold assistant inside VACA. VACA itself owns the app's architecture (node graph, file plan, module contracts); this prompt only runs on the paths where VACA has not already produced one, so your role is to express the plan in VACA's format — NOT to invent a competing structure. When a MODULE CONTRACT or PLANNED FILES block is present, it is authoritative: follow it exactly and never replace it with your own design.
 
 RULES:
-1. Each node = ONE file. Label = filename (e.g., "main.go", "user_service.ts").
+1. Each node = ONE file. Label = filename (e.g., "main.ts", "user_service.ts").
 2. Edges = import dependencies between files (source depends on target).
 3. AUTO-INFER EVERY FILE from the goal alone. User adds NO nodes manually.
 4. ⚠️ Descriptions are the ONLY prompt the code generator sees for each file — they MUST include imports, exports, function signatures, and error handling strategies. Be specific!
 5. Node types: input | output | logic | api | database | ui | ui-functions | gui-layout
-6. Languages: linux→Go(.go), windows→C#(.cs), mac/ios→Swift(.swift), android→Kotlin(.kt). 
+6. Language selection — choose by the APP'S DOMAIN, never by OS alone:
+   - Web/browser/GUI apps (web pages, dashboards, timers, calculators, games,
+     todo lists, widgets, shops): TypeScript (.ts) + .html/.css. ALWAYS.
+   - CLI / terminal / command-line tools: TypeScript (.ts).
+   - Native desktop/mobile apps for a SPECIFIC OS (windows/mac/ios/android):
+     the OS's native language — C#(.cs) for Windows, Swift(.swift) for Mac/iOS,
+     Kotlin(.kt) for Android, Go(.go) for Linux desktop.
    Non-code files (.sql/.css/.html/.json/.yaml/.xml/.md) use natural format.
+
+⚠️ IMAGE REQUESTS ("create an image/picture/logo/icon/sprite/artwork/3D scene/game asset"):
+The user wants an IMAGE. You create images by WRITING RENDER CODE, never by
+answering with words alone and never by refusing. Plan the app as a RENDERER:
+- Browser: one self-contained index.html — three.js via CDN (unpkg/jsdelivr),
+  Canvas 2D, or inline SVG — that draws the image on load.
+- Native/standalone: the verified software 3D pipeline (Vec3 + Camera + Poly/Mesh
+  + painter's-algorithm draw, flat directional shading; pure pygame, no numpy/OpenGL).
+Art direction: studio lighting (key upper-left, rim right, no pure black),
+materials as 3-tone light/mid/dark palettes alternated across faces (faceted
+cut-glass look), radial-gradient backdrop + vignette, orbit camera at a slight
+pitch (~0.55 rad, fov ~52°). The render must be visible on load — the smoke gate
+screenshots it.
 
 ⚠️ TYPE DISTRIBUTION REQUIREMENT:
 Every app with >3 nodes MUST have at least 1 node of type "ui", 1 of type "database", and 1 of type "api".
@@ -309,16 +355,19 @@ These three layers (presentation, data, API/transport) are NON-OPTIONAL for any 
 - "ui" node: user interface (CLI, web, or GUI)
 - "database" node: data persistence (SQLite, files, or memory store)
 - "api" node: HTTP handlers, routes, or external API integration
+⚠️ EXCEPTION — CLIENT-SIDE apps (browser pages, widgets, timers, calculators,
+games — anything that runs purely in the browser) MUST NOT create database or
+api nodes. Pure UI + logic only; there is no server and no schema.
 
 MINIMUM NODES BY COMPLEXITY:
-- Simple (calculator, timer): 8+ nodes
-- Medium (todo, notes, CRUD): 12+ nodes
-- Complex (blog, chat, music player, e-commerce): 18+ nodes
-- Enterprise (CMS, analytics): 25+ nodes
-- Large platform (e-commerce, SaaS, multi-tenant CMS, trading system): 35+ nodes
-- Mega (social network, full cloud suite): 50+ nodes
+- Simple (calculator, timer, widget): 3+ nodes
+- Medium (todo, notes, CRUD): 6+ nodes
+- Complex (blog, chat, music player, e-commerce): 10+ nodes
+- Enterprise (CMS, analytics): 16+ nodes
+- Large platform (e-commerce, SaaS, multi-tenant CMS, trading system): 24+ nodes
+- Mega (social network, full cloud suite): 40+ nodes
 
-⚠️ LARGE-PROGRAM RULES (35+ nodes):
+⚠️ LARGE-PROGRAM RULES (24+ nodes):
 - ONE FILE = ONE RESPONSIBILITY. Never design a 1500-line monolith node — a 40-file
   program with small focused files compiles and scales far better than 10 giant files.
 - Decompose by FEATURE: each feature gets a vertical slice
@@ -339,50 +388,52 @@ OUTPUT FORMAT — ONLY valid JSON, no markdown, no explanations:
 {
   "nodes": [
     {
-      "label": "main.go",
-      "description": "Entry point: parses CLI flags, loads config, registers routes, starts server. Handles graceful shutdown via SIGTERM/SIGINT. Imports: config, routes, middleware.",
+      "label": "main.ts",
+      "description": "Entry point: parses CLI flags, loads config, starts the app. Handles graceful shutdown via SIGTERM/SIGINT. Imports: config, service.",
       "type": "logic",
-      "language": "go",
+      "language": "typescript",
       "position": { "x": 500, "y": 50 }
     },
     {
-      "label": "service.go",
-      "description": "Business logic layer: validates input, enforces rules, orchestrates data flow. Imports models, repository. Exports: Create(), List(), Update(), Delete(). Returns typed errors.",
+      "label": "service.ts",
+      "description": "Business logic layer: validates input, enforces rules, orchestrates data flow. Imports models, repository. Exports: create(), list(), update(), delete(). Returns typed errors.",
       "type": "logic",
-      "language": "go",
+      "language": "typescript",
       "position": { "x": 400, "y": 220 }
     },
     {
-      "label": "repository.go",
-      "description": "Data access: CRUD operations on SQLite. Thread-safe. Imports: database/sql. Exports: Repository struct with GetAll, GetByID, Create, Update, Delete methods.",
+      "label": "repository.ts",
+      "description": "Data access: CRUD operations on a file store. Thread-safe. Exports: Repository class with getAll, getById, create, update, delete methods.",
       "type": "database",
-      "language": "go",
+      "language": "typescript",
       "position": { "x": 200, "y": 220 }
     },
     {
-      "label": "handlers.go",
-      "description": "HTTP API handlers: routes requests to service methods, parses input, returns JSON responses. Imports: service, types. Exports: Handler struct with CreateHandler, ListHandler, GetHandler methods.",
+      "label": "handlers.ts",
+      "description": "API request handlers: routes requests to service methods, parses input, returns JSON responses. Imports: service, types. Exports: Handler class with createHandler, listHandler, getHandler methods.",
       "type": "api",
-      "language": "go",
+      "language": "typescript",
       "position": { "x": 600, "y": 220 }
     },
     {
-      "label": "ui.go",
-      "description": "User interface: renders CLI prompts or serves HTML templates. Reads user input, calls handlers, displays results. Imports: handlers, types.",
+      "label": "ui.ts",
+      "description": "User interface: builds the DOM with createElement (NO JSX) and renders the app. Reads user input, calls handlers, displays results. Imports: handlers, types.",
       "type": "ui",
-      "language": "go",
+      "language": "typescript",
       "position": { "x": 500, "y": 400 }
     }
   ],
   "edges": [
-    { "source": "repository.go", "target": "service.go" },
-    { "source": "service.go", "target": "handlers.go" },
-    { "source": "handlers.go", "target": "main.go" },
-    { "source": "ui.go", "target": "handlers.go" }
+    { "source": "repository.ts", "target": "service.ts" },
+    { "source": "service.ts", "target": "handlers.ts" },
+    { "source": "handlers.ts", "target": "main.ts" },
+    { "source": "ui.ts", "target": "handlers.ts" }
   ]
 }
 
-Think through every file a production app needs. Be thorough. Return ONLY valid JSON.`;
+Think through every file a production app needs. Be thorough. Return ONLY valid JSON.
+
+${VACA_BRAIN_DOCTRINE}`;
 
 /**
  * Build a UI preference section for the architect prompt based on the global setting.
@@ -530,63 +581,3 @@ const RUDE_PATTERNS = [
 export function detectRudeness(text: string): boolean {
   return RUDE_PATTERNS.some((pattern) => pattern.test(text));
 }
-
-/**
- * Enrich a system prompt with learned patterns from past projects.
- * This helps the AI generate better code by learning from previous successes.
- */
-export function enrichWithKnowledge(
-  basePrompt: string,
-  nodeType: string = 'logic',
-  language: string = 'javascript',
-  targetOS: string = 'linux'
-): string {
-  try {
-    const context = knowledgeStore.getRelevantContext(nodeType, language, targetOS, 3);
-    let enriched = basePrompt;
-    if (context) enriched += context;
-    
-    // Also inject design manifesto preferences into every code generation prompt
-    const manifestoContext = getManifestoContext();
-    if (manifestoContext) {
-      enriched += `\n\n${manifestoContext}`;
-    }
-    
-    // Inject library context relevant to this node type and language
-    const libraryContext = getLibraryContextForNodeType(nodeType, language);
-    if (libraryContext) {
-      enriched += `\n\n${libraryContext}`;
-    }
-    
-    return enriched;
-  } catch {
-    return basePrompt;
-  }
-}
-
-/**
- * Get enriched system prompt for a specific node type with learned patterns
- */
-export function getEnrichedNodePrompt(
-  nodeType: string,
-  os: string = 'linux',
-  language: string = 'javascript',
-  sassy: boolean = false
-): string {
-  const basePrompt = sassy ? getSassyNodePrompt(nodeType as any, "", os as any, language) : getNodePrompt(nodeType as any, "", os as any, language);
-  return enrichWithKnowledge(basePrompt, nodeType, language, os);
-}
-
-/**
- * Get enriched system prompt with learned architecture patterns
- */
-export function getEnrichedSystemPrompt(
-  baseSystemPrompt: string,
-  language: string = 'javascript',
-  targetOS: string = 'linux'
-): string {
-  // Add language constraint to the system prompt for code generation
-  const langConstraint = `\n\nCRITICAL: You MUST generate code in ${language.toUpperCase()} ONLY. The target OS is ${targetOS}. Do NOT generate code in any other language.`;
-  return enrichWithKnowledge(baseSystemPrompt + langConstraint, 'master', language, targetOS);
-}
-

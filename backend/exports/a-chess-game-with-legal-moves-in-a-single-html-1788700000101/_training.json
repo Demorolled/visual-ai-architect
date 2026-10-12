@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:00:00.000Z",
+  "request": "Build a chess game in a single HTML file. It renders an 8x8 board, allows selecting a piece to highlight its legal moves, enforces full rules: piece movement, capture, pawn double moves and en passant, castling kingside and queenside with all rights tracked, check detection, checkmate and stalemate detection, pawn promotion to queen, move undo, and turn tracking between white and black.",
+  "intent": {
+    "goal": "build a chess game in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Chess HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a chess game in a single HTML file. It renders an 8x8 board, allows selecting a piece to highlight its legal moves, enforces full rules: piece movement, capture, pawn double moves and en passant, castling kingside and queenside with all rights tracked, check detection, checkmate and stalemate detection, pawn promotion to queen, move undo, and turn tracking between white and black.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

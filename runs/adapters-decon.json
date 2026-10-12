@@ -1,0 +1,24 @@
+{
+  "gold": "/home/homellmlab/Desktop/visual-ai-architect/corpora/vaca/gold.jsonl",
+  "held_out_only": true,
+  "n_tasks": 7,
+  "baseline": "nogrpo",
+  "num_predict": 1200,
+  "num_ctx": 8192,
+  "summary": {
+    "nogrpo": {
+      "tag": "vaca-r40-off-nogrpo-adapter:latest",
+      "n": 7,
+      "mean_similarity": 0.3301,
+      "code_like": 7,
+      "elapsed_s": 44.1
+    },
+    "distill": {
+      "tag": "vaca-r40-off-distill-adapter:latest",
+      "n": 7,
+      "mean_similarity": 0.3565,
+      "code_like": 7,
+      "elapsed_s": 54.1
+    }
+  }
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minesweeper</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .wrap { text-align: center; }
+  h2 { color: #00d9ff; margin: 0; }
+  .bar { display: flex; justify-content: center; gap: 10px; margin: 12px 0; align-items: center; }
+  .bar select, .bar button { background: #2a2a3a; color: #e6e6e6; border: 1px solid #3a3a4a;
+                             border-radius: 8px; padding: 7px 12px; cursor: pointer; font-size: 13px; }
+  .bar button.primary { background: #00d9ff; color: #04141a; border: none; }
+  .stats { display: flex; justify-content: center; gap: 24px; font-size: 13px; margin-bottom: 10px; }
+  .stats b { color: #ffb454; }
+  .board { display: grid; gap: 2px; width: max-content; margin: 0 auto; }
+  .cell { width: 32px; height: 32px; background: #2a2a3a; border-radius: 4px; display: flex;
+          align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+          cursor: pointer; user-select: none; color: #e6e6e6; }
+  .cell.open { background: #14141f; cursor: default; }
+  .cell.flag { color: #ff5c5c; }
+  .cell.mine { background: #3a1010; color: #ff5c5c; }
+  .c1 { color: #3ddc84; } .c2 { color: #4dd8d8; } .c3 { color: #ff5c5c; }
+  .c4 { color: #8c5cff; } .c5 { color: #ffb454; } .c6 { color: #ff8c5c; }
+  #msg { min-height: 22px; margin: 10px 0; color: #ffb454; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2>Minesweeper</h2>
+  <div class="bar">
+    <select id="diff">
+      <option value="easy">Easy 9×9</option>
+      <option value="medium">Medium 16×16</option>
+      <option value="hard">Hard 16×30</option>
+    </select>
+    <button class="primary" id="newBtn">New</button>
+  </div>
+  <div class="stats"><span>Mines <b id="mineCount">0</b></span><span>Time <b id="timer">0</b></span>
+    <span>Best <b id="bestTime">—</b></span></div>
+  <div class="board" id="board"></div>
+  <div id="msg"></div>
+  <div class="hint" style="color:#666;font-size:11px">left-click reveal · right-click flag</div>
+</div>
+<script>
+  const DIFFS = { easy: { r: 9, c: 9, m: 10 }, medium: { r: 16, c: 16, m: 40 }, hard: { r: 16, c: 30, m: 99 } };
+  const BEST_KEY = { easy: 'ms-best-easy', medium: 'ms-best-medium', hard: 'ms-best-hard' };
+  let rows, cols, mines;
+  let grid = [];
+  let flags = 0;
+  let opened = 0;
+  let started = false;
+  let over = false;
+  let seconds = 0;
+  let timerId = null;
+
+  function size() { return rows * cols; }
+
+  function reset() {
+    const d = DIFFS[document.getElementById('diff').value];
+    rows = d.r; cols = d.c; mines = d.m;
+    grid = [];
+    for (let r = 0; r < rows; r++) {
+      const row = [];
+      for (let c = 0; c < cols; c++) row.push({ mine: false, open: false, flag: false, n: 0 });
+      grid.push(row);
+    }
+    flags = 0;
+    opened = 0;
+    started = false;
+    over = false;
+    seconds = 0;
+    document.getElementById('msg').textContent = '';
+    stopTimer();
+    document.getElementById('timer').textContent = '0';
+    document.getElementById('mineCount').textContent = mines;
+    showBest();
+    draw();
+  }
+
+  function placeMines(safeR, safeC) {
+    let placed = 0;
+    while (placed < mines) {
+      const r = Math.floor(Math.random() * rows);
+      const c = Math.floor(Math.random() * cols);
+      if (grid[r][c].mine) continue;
+      if (Math.abs(r - safeR) <= 1 && Math.abs(c - safeC) <= 1) continue;
+      grid[r][c].mine = true;
+      placed += 1;
+    }
+    for (let r = 0; r < rows; r++)
+      for (let c = 0; c < cols; c++)
+        grid[r][c].n = countNeighbors(r, c);
+  }
+
+  function countNeighbors(r, c) {
+    let n = 0;
+    for (let dr = -1; dr <= 1; dr++)
+      for (let dc = -1; dc <= 1; dc++) {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc].mine) n += 1;
+      }
+    return n;
+  }
+
+  function startTimer() {
+    if (timerId !== null) return;
+    timerId = setInterval(() => {
+      seconds += 1;
+      document.getElementById('timer').textContent = seconds;
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerId !== null) { clearInterval(timerId); timerId = null; }
+  }
+
+  function reveal(r, c) {
+    if (over || r < 0 || r >= rows || c < 0 || c >= cols) return;
+    const cell = grid[r][c];
+    if (cell.open || cell.flag) return;
+    if (!started) {
+      started = true;
+      placeMines(r, c);
+      startTimer();
+    }
+    cell.open = true;
+    opened += 1;
+    if (cell.mine) {
+      cell.exploded = true;
+      gameOver(false);
+      return;
+    }
+    if (cell.n === 0) {
+      for (let dr = -1; dr <= 1; dr++)
+        for (let dc = -1; dc <= 1; dc++)
+          if (dr || dc) reveal(r + dr, c + dc);
+    }
+    if (opened === size() - mines) gameOver(true);
+    draw();
+  }
+
+  function flag(r, c) {
+    if (over) return;
+    const cell = grid[r][c];
+    if (cell.open) return;
+    cell.flag = !cell.flag;
+    flags += cell.flag ? 1 : -1;
+    document.getElementById('mineCount').textContent = Math.max(0, mines - flags);
+    draw();
+  }
+
+  function chord(r, c) {
+    const cell = grid[r][c];
+    if (!cell.open || cell.n === 0) return;
+    let around = 0;
+    for (let dr = -1; dr <= 1; dr++)
+      for (let dc = -1; dc <= 1; dc++)
+        if (dr || dc) {
+          const nr = r + dr, nc = c + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc].flag) around += 1;
+        }
+    if (around !== cell.n) return;
+    for (let dr = -1; dr <= 1; dr++)
+      for (let dc = -1; dc <= 1; dc++)
+        if (dr || dc) reveal(r + dr, c + dc);
+    draw();
+  }
+
+  function gameOver(won) {
+    over = true;
+    stopTimer();
+    if (won) {
+      const diff = document.getElementById('diff').value;
+      const key = BEST_KEY[diff];
+      const prev = parseInt(localStorage.getItem(key) || '99999', 10);
+      if (seconds < prev) {
+        localStorage.setItem(key, String(seconds));
+        document.getElementById('msg').textContent = '🏆 Cleared in ' + seconds + 's — new best!';
+      } else {
+        document.getElementById('msg').textContent = '🎉 Cleared in ' + seconds + 's (best ' + prev + 's)';
+      }
+      showBest();
+    } else {
+      document.getElementById('msg').textContent = '💥 Boom! Click New to try again';
+      for (let r = 0; r < rows; r++)
+        for (let c = 0; c < cols; c++)
+          if (grid[r][c].mine) grid[r][c].open = true;
+    }
+    draw();
+  }
+
+  function showBest() {
+    const diff = document.getElementById('diff').value;
+    const prev = parseInt(localStorage.getItem(BEST_KEY[diff]) || '0', 10);
+    document.getElementById('bestTime').textContent = prev ? prev + 's' : '—';
+  }
+
+  function draw() {
+    const el = document.getElementById('board');
+    el.innerHTML = '';
+    el.style.gridTemplateColumns = 'repeat(' + cols + ', 32px)';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        const info = grid[r][c];
+        if (info.flag) {
+          cell.textContent = '🚩';
+          cell.classList.add('flag');
+        } else if (info.open) {
+          cell.classList.add('open');
+          if (info.mine) {
+            cell.textContent = '💣';
+            cell.classList.add('mine');
+          } else if (info.n > 0) {
+            cell.textContent = info.n;
+            cell.classList.add('c' + info.n);
+          }
+        }
+        cell.addEventListener('click', () => reveal(r, c));
+        cell.addEventListener('contextmenu', (e) => { e.preventDefault(); flag(r, c); });
+        cell.addEventListener('dblclick', (e) => { e.preventDefault(); chord(r, c); });
+        el.appendChild(cell);
+      }
+    }
+  }
+
+  document.getElementById('newBtn').addEventListener('click', reset);
+  document.getElementById('diff').addEventListener('change', reset);
+  reset();
+</script>
+</body>
+</html>

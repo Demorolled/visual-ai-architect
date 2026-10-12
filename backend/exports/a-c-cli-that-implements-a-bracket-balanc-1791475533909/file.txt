@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+
+public class BracketBalancedEvaluator  
+{
+    private static List<char> openingBrackets = new List<char>{'(', '[', '{'};
+    private static List<char> closing Brackets = new List<char>{')', ']', ')'}; // Fix: missing 'a'
+    
+    public double Evaluate(string expression)
+    {
+        var tokens = Tokenize(expression);
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            Console.WriteLine(tokens[i]);
+        }
+        
+        return ParseExpression(tokens, ref i); 
+    }
+
+    private string[] Tokenize(string expression)
+    {
+    
+// Add implementation here
+return new string[0];
+}
+
+private double ParseExpression(string[] tokens, ref int index) // Fix: missing 'x'
+{  
+// Add implementation here
+return 0.0;
+}
+}

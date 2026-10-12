@@ -122,3 +122,225 @@ export function readPlanFile(name: string): { content: string; filePath: string 
   if (!existsSync(filePath)) return null;
   return { content: readFileSync(filePath, 'utf-8'), filePath };
 }
+
+// ── Plan graphs (Big Plan Mode) ──────────────────────────────────────────────
+//
+// A Big Plan Mode plan is a FOLDER, not a note: data/plans/<name>/ holding
+//
+//   plan.md     the human-readable design — what the app is, one line per node
+//               declaring its function, then the wiring between them
+//   graph.json  the raw nodes/edges, so the canvas can reload the design later
+//
+// The folder appears the moment the master node is placed and is rewritten by
+// the 5-minute autosave, so a design is never only in the user's head. Nothing
+// here generates the app itself — Big Plan Mode is design time. Compiling the
+// plan into a build is a separate, deliberate step.
+
+export interface PlanGraphNode {
+  id: string;
+  type: string;
+  label: string;
+  description?: string;
+  language?: string;
+  /** The master node: the statement of intent the whole design hangs off. */
+  isMaster?: boolean;
+  /**
+   * Questions the co-worker asked about this node and the user's answers.
+   * Recorded with the node (not as a loose transcript) so the decisions stay
+   * attached to what they are about when the plan is read back later.
+   */
+  qa?: Array<{ q?: string; a?: string; at?: string }>;
+}
+
+export interface PlanGraphEdge {
+  source: string;
+  target: string;
+  label?: string;
+}
+
+export interface PlanGraphRecord {
+  projectName: string;
+  dirName: string;
+  dirPath: string;
+  files: string[];
+  nodeCount: number;
+  edgeCount: number;
+  updatedAt: string;
+}
+
+/** Render the plan folder's plan.md. */
+export function formatPlanMarkdown(opts: {
+  projectName: string;
+  goal: string;
+  nodes: PlanGraphNode[];
+  edges: PlanGraphEdge[];
+  updatedAt: string;
+}): string {
+  const { projectName, goal, nodes, edges, updatedAt } = opts;
+  const rule = '='.repeat(60);
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const lines = [
+    rule,
+    `PLAN: ${projectName}`,
+    rule,
+    'Status: DESIGNING (Big Plan Mode)',
+    `Last saved: ${updatedAt}`,
+    '',
+    '## What are we building?',
+    '--------------------',
+    goal.trim() || '(the master node has no description yet)',
+    '',
+    '## Functions (nodes)',
+    '--------------------',
+  ];
+  if (nodes.length === 0) {
+    lines.push('(no nodes yet)');
+  } else {
+    for (const n of nodes) {
+      const lang = n.language ? ` [${n.type}/${n.language}]` : ` [${n.type}]`;
+      const mark = n.isMaster ? '● ' : '- ';
+      lines.push(`${mark}${n.label}${lang}`);
+      lines.push(`    ${(n.description || '(no function declared yet)').trim()}`);
+      for (const qa of n.qa || []) {
+        if (!qa?.a) continue;
+        lines.push(`    Q: ${(qa.q || '').trim()}`);
+        lines.push(`    A: ${qa.a.trim()}`);
+      }
+    }
+  }
+  lines.push('', '## Wiring', '--------------------');
+  if (edges.length === 0) {
+    lines.push('(no edges yet)');
+  } else {
+    for (const e of edges) {
+      const from = byId.get(e.source)?.label || e.source;
+      const to = byId.get(e.target)?.label || e.target;
+      lines.push(`- ${from} -> ${to}${e.label ? `  (${e.label})` : ''}`);
+    }
+  }
+  lines.push(
+    '',
+    '---',
+    'Auto-saved by Big Plan Mode every 5 minutes. Nothing is generated from this',
+    'plan until you choose to build it.',
+    '',
+  );
+  return lines.join('\n');
+}
+
+/**
+ * Save (create or update) a plan graph folder. Creates the directory on first
+ * call, which is what "auto-create the files and folders" means here: the plan
+ * starts existing on disk as soon as there is something to save.
+ */
+export function savePlanGraph(data: {
+  projectName: string;
+  goal?: string;
+  nodes: PlanGraphNode[];
+  edges: PlanGraphEdge[];
+}): PlanGraphRecord {
+  const projectName = (data.projectName || 'Untitled Project').trim();
+  const dirName = safePlanName(projectName);
+  const dirPath = path.join(PLANS_DIR, dirName);
+  const nodes = Array.isArray(data.nodes) ? data.nodes : [];
+  const edges = Array.isArray(data.edges) ? data.edges : [];
+  const updatedAt = new Date().toISOString();
+
+  mkdirSync(dirPath, { recursive: true });
+
+  writeFileSync(
+    path.join(dirPath, 'graph.json'),
+    JSON.stringify({ projectName, goal: data.goal || '', nodes, edges, updatedAt }, null, 2),
+    'utf-8',
+  );
+  writeFileSync(
+    path.join(dirPath, 'plan.md'),
+    formatPlanMarkdown({ projectName, goal: data.goal || '', nodes, edges, updatedAt }),
+    'utf-8',
+  );
+
+  return {
+    projectName,
+    dirName,
+    dirPath,
+    files: ['plan.md', 'graph.json'],
+    nodeCount: nodes.length,
+    edgeCount: edges.length,
+    updatedAt,
+  };
+}
+
+export interface PlanGraphListing {
+  projectName: string;
+  dirName: string;
+  goal: string;
+  nodeCount: number;
+  edgeCount: number;
+  updatedAt: string;
+}
+
+/**
+ * List saved Big Plan Mode designs (the folders written by savePlanGraph).
+ *
+ * Separate from listPlanFiles(): those are the old single-file `.txt` plans.
+ * A plan graph is a folder holding graph.json + plan.md, and only the folders
+ * can be reloaded onto the canvas — so the "open a saved plan" picker needs
+ * this list, not the .txt one. A folder without a readable graph.json is
+ * skipped rather than listed as broken: it is either mid-write or was never a
+ * plan graph.
+ */
+export function listPlanGraphs(): PlanGraphListing[] {
+  if (!existsSync(PLANS_DIR)) return [];
+  const out: PlanGraphListing[] = [];
+  for (const entry of readdirSync(PLANS_DIR)) {
+    const dirPath = path.join(PLANS_DIR, entry);
+    try {
+      if (!statSync(dirPath).isDirectory()) continue;
+    } catch {
+      continue;
+    }
+    const graphPath = path.join(dirPath, 'graph.json');
+    if (!existsSync(graphPath)) continue;
+    try {
+      const raw = JSON.parse(readFileSync(graphPath, 'utf-8'));
+      out.push({
+        projectName: raw.projectName || entry,
+        dirName: entry,
+        goal: raw.goal || '',
+        nodeCount: Array.isArray(raw.nodes) ? raw.nodes.length : 0,
+        edgeCount: Array.isArray(raw.edges) ? raw.edges.length : 0,
+        updatedAt: raw.updatedAt || '',
+      });
+    } catch {
+      continue;
+    }
+  }
+  // Most recently saved first: the design you were just working on is the one
+  // you are most likely reopening.
+  return out.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
+}
+
+/** Read a plan graph folder back (for reloading a design onto the canvas). */
+export function readPlanGraph(name: string): {
+  projectName: string;
+  goal: string;
+  nodes: PlanGraphNode[];
+  edges: PlanGraphEdge[];
+  dirPath: string;
+} | null {
+  const dirPath = path.join(PLANS_DIR, safePlanName(name));
+  const graphPath = path.join(dirPath, 'graph.json');
+  if (!existsSync(graphPath)) return null;
+  try {
+    const raw = JSON.parse(readFileSync(graphPath, 'utf-8'));
+    return {
+      projectName: raw.projectName || name,
+      goal: raw.goal || '',
+      nodes: Array.isArray(raw.nodes) ? raw.nodes : [],
+      edges: Array.isArray(raw.edges) ? raw.edges : [],
+      dirPath,
+    };
+  } catch {
+    return null;
+  }
+}

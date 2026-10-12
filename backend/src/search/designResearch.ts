@@ -154,6 +154,37 @@ function formatWebForContext(
 // ─── Main Research Function ────────────────────────────────────────────
 
 /**
+ * Build a COMPACT research context for injection into a generation prompt.
+ * Unlike `DesignResearchResult.context` (the full verbose report), this keeps
+ * only the top few results per source so the prompt stays small — important
+ * for local models that slow down on very large prompts. Pure function, so it
+ * is unit-testable without any network access.
+ */
+export function formatResearchContext(
+  research: DesignResearchResult,
+  maxPerSource: number = 2
+): string {
+  const lines: string[] = [];
+  lines.push(
+    '📋 Reference designs found from the web, GitHub, and open source alternatives:'
+  );
+
+  for (const w of research.webResults.slice(0, maxPerSource)) {
+    lines.push(`  • ${w.title}`);
+    lines.push(`    ${w.content.substring(0, 200)}`);
+  }
+  for (const g of research.githubResults.slice(0, maxPerSource)) {
+    lines.push(`  • ⭐${g.stars} ${g.full_name}: ${g.description.substring(0, 150)}`);
+  }
+  for (const a of research.altResults.projects.slice(0, maxPerSource)) {
+    lines.push(`  • ${a.name} (${a.category}): ${a.description.substring(0, 150)}`);
+  }
+
+  lines.push('\nUse these as inspiration for designing the app architecture.');
+  return lines.join('\n');
+}
+
+/**
  * Perform comprehensive design research for the user's app idea.
  * Searches the web, GitHub, and opensourcealternative.to in parallel,
  * then formats everything as a single context string for the LLM.

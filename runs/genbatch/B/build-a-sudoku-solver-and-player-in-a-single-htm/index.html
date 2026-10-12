@@ -1,0 +1,126 @@
+<div id="solver">
+  <h1>Sudoku Solver</h1>
+  <div id="grid-input" class="grid-input"></div>
+  <button id="solveBtn" class="btn btn-primary" onclick="solveBoard()">Solve</button>
+  <button id="clearBtn" class="btn" onclick="clearBoard()">Clear</button>
+  <div id="solutionDisplay"></div>
+<script type="module">
+function solveSudoku(grid) {
+    if (grid.length !== 9 || grid.some(row => row.length !== 9))
+        return false;
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (grid[row][col] === 0) {
+                for (let num = 1; num <= 9; num++) {
+                    if (isValid(grid, row, col, num)) {
+                        grid[row][col] = num;
+                        if (solveSudoku(grid))
+                            return true;
+                        grid[row][col] = 0;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+function validateGrid(grid) {
+    if (grid.length !== 9 || grid.some(row => row.length !== 9))
+        return false;
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (grid[row][col] < 0 || grid[row][col] > 9)
+                return false;
+            if (!isValid(grid, row, col, grid[row][col]))
+                return false;
+        }
+    }
+    return true;
+}
+function isValid(grid, row, col, num) {
+    for (let i = 0; i < 9; i++) {
+        if (grid[row][i] === num || grid[i][col] === num)
+            return false;
+        const boxRow = Math.floor(row / 3) * 3 + Math.floor(i / 3);
+        const boxCol = Math.floor(col / 3) * 3 + i % 3;
+        if (grid[boxRow][boxCol] === num)
+            return false;
+    }
+    return true;
+}
+function generateInputGrid(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        throw new Error('Container element not found');
+    }
+    gridInputHtml = document.createElement('div');
+    gridInputHtml.style.display = 'grid';
+    gridInputHtml.style.gridTemplateColumns = 'repeat(9, 1fr)';
+    gridInputHtml.style.gap = '4px';
+    for (let i = 0; i < 81; i++) {
+        const inputDiv = document.createElement('div');
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.max = '9';
+        input.style.width = '100%';
+        input.style.boxSizing = 'border-box';
+        inputDiv.appendChild(input);
+        gridInputHtml.appendChild(inputDiv);
+    }
+    container.innerHTML = '';
+    container.appendChild(gridInputHtml);
+}
+function solveBoard() {
+    const gridInput = gridInputHtml.children;
+    let grid = [];
+    let rowSize = Math.sqrt(gridInput.length);
+    for (let i = 0; i < gridInput.length; i++) {
+        const rowIdx = Math.floor(i / rowSize);
+        if (!grid[rowIdx]) {
+            grid[rowIdx] = [];
+        }
+        const inputVal = gridInput[i].children[0].value || 0;
+        grid[rowIdx].push(parseInt(inputVal, 10));
+    }
+    solveSudoku(grid);
+    displayBoard(grid);
+}
+function displayBoard(grid) {
+    const solutionDisplay = document.getElementById('solutionDisplay');
+    if (!solutionDisplay) {
+        throw new Error('Solution display element not found');
+    }
+    solutionDisplay.innerHTML = '<h2>Solution:</h2>' + JSON.stringify(grid, null, 2);
+}
+function clearBoard() {
+    const gridInput = gridInputHtml.children;
+    for (let i = 0; i < gridInput.length; i++) {
+        gridInput[i].children[0].value = '';
+    }
+    const solutionDisplay = document.getElementById('solutionDisplay');
+    if (solutionDisplay) {
+        solutionDisplay.innerHTML = '';
+    }
+}
+generateInputGrid('solver');
+</script>
+<style>
+/* Generated input grid */
+.grid-input {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+}
+.btn-primary {
+  background-color: #1f468b;
+  color: white;
+    border: none;
+}
+.btn {
+  padding: 8px 16px;
+  margin-top: 10px;
+}
+</style>
+</div>

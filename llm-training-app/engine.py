@@ -1087,6 +1087,28 @@ class Engine:
             return self.parse_file(saved)
         return fd.get("content_preview", "")
 
+    @staticmethod
+    def _detect_moe(cfg) -> bool:
+        """True when a HF model config describes a sparse Mixture-of-Experts model.
+
+        MoE bases keep most of their knowledge in per-expert MLP layers. LoRA on
+        q/k/v/o alone therefore leaves the experts frozen, which is the usual reason
+        an MoE fine-tune appears to "not take". Detecting this lets the loader widen
+        LoRA to every linear layer (experts included) instead.
+        """
+        if cfg is None:
+            return False
+        model_type = str(getattr(cfg, "model_type", "") or "").lower()
+        if "moe" in model_type or model_type in ("mixtral", "olmoe", "deepseek_v2", "deepseek_v3"):
+            return True
+        for attr in ("num_experts", "num_local_experts", "n_routed_experts",
+                     "num_experts_per_tok", "moe_intermediate_size",
+                     "expert_intermediate_size", "num_experts_per_tok"):
+            val = getattr(cfg, attr, None)
+            if isinstance(val, int) and val > 1:
+                return True
+        return False
+
     # ── _prepare_dataset is replaced by StreamingTextDataset (see top of file) ──
     # StreamingTextDataset loads + tokenizes ONE file at a time from disk,
     # discarding file content immediately after yielding training chunks.
@@ -1142,9 +1164,18 @@ class Engine:
             if adapter_path:
                 model = PeftModel.from_pretrained(model, adapter_path)
             else:
+                # Attention-only LoRA (the default) never touches a MoE model's expert
+                # MLPs, so an MoE base gets all-linear instead. An explicit
+                # config["lora_target_modules"] always wins.
+                is_moe = self._detect_moe(getattr(model, "config", None))
+                target_modules = config.get("lora_target_modules") or (
+                    "all-linear" if is_moe else ["q_proj", "v_proj", "k_proj", "o_proj"])
+                if is_moe:
+                    print(f"MoE base detected (model_type={getattr(model.config, 'model_type', '?')!r}) "
+                          f"— LoRA target_modules={target_modules!r}, experts included")
                 lora_cfg = LoraConfig(
                     r=16, lora_alpha=32,
-                    target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],
+                    target_modules=target_modules,
                     lora_dropout=0.05, bias="none", task_type="CAUSAL_LM")
                 model = get_peft_model(model, lora_cfg)
 
@@ -1215,7 +1246,11 @@ class Engine:
         global_step = 0
         model.train()
         use_amp = use_amp and device.type == "cuda"
-        scaler = torch.cuda.amp.GradScaler(enabled=use_amp) if use_amp else None
+        # Always build a GradScaler, just disabled when AMP is off: the loop below calls
+        # scaler.scale()/unscale_()/step() unconditionally, so a None scaler crashed every
+        # run that passed use_mixed_precision=False. A disabled scaler is a documented
+        # pass-through, so this keeps both paths correct without branching.
+        scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
 
         try:
             for epoch in range(epochs):
@@ -1226,11 +1261,14 @@ class Engine:
                 # ── Fresh streaming dataset per epoch ──
                 epoch_dataset = StreamingTextDataset(
                     self.training_queue, self, tokenizer, max_length=max_length)
+                # No prefetch_factor here: it is only valid with num_workers > 0, and
+                # passing it with the default num_workers=0 raises
+                # "prefetch_factor option could only be specified in multiprocessing",
+                # which aborted the first batch and still saved an untrained adapter.
                 epoch_loader = DataLoader(
                     epoch_dataset, batch_size=batch_size,
                     pin_memory=torch.cuda.is_available(),
                     drop_last=True,
-                    prefetch_factor=1,  # minimal prefetch to reduce RAM
                 )
 
                 optimizer.zero_grad()
@@ -1311,7 +1349,15 @@ class Engine:
                 self.save_experiment(config)
                 # Save trained model for compilation
                 try:
-                    save_path = EXPORTS_DIR / "trained_model"
+                    # config["output_name"] keeps one adapter per run. Without it every
+                    # run overwrites exports/trained_model, so training several adapters
+                    # in sequence (one per role, say) would leave only the last one.
+                    # Restricted to a plain name — no separators, so a config value
+                    # cannot escape EXPORTS_DIR.
+                    raw_name = str(config.get("output_name") or "trained_model")
+                    save_name = "".join(
+                        c for c in raw_name if c.isalnum() or c in "-_.") or "trained_model"
+                    save_path = EXPORTS_DIR / save_name
                     save_path.mkdir(parents=True, exist_ok=True)
                     model.save_pretrained(str(save_path))
                     tokenizer.save_pretrained(str(save_path))

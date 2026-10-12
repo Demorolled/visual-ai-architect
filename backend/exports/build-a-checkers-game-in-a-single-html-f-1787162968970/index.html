@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkers</title>
+<style>
+  #board {
+    display: flex;
+    flex-wrap: wrap;
+    width: 400px;
+    margin: 0 auto;
+  }
+  .cell {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+  .red-piece {
+    width: 40px;
+    height: 40px;
+    background: #e74c3c;
+    border-radius: 50%;
+  }
+  .black-piece {
+    width: 40px;
+    height: 40px;
+    background: #2c3e50;
+    border-radius: 50%;
+  }
+  .selected {
+    border: 2px solid #ff6347;
+  }
+  .legal-move {
+    background: rgba(255, 99, 71, 0.2);
+  }
+</style>
+</head>
+<body>
+<div id="board"></div>
+<script>
+  const BOARD_SIZE = 8;
+  let turn = 'red';
+  let selectedPiece = null;
+  let selectedRow = -1;
+  let selectedCol = -1;
+  let legalMoves = [];
+  let board = [];
+
+  function initBoard() {
+    board = [];
+    for (let row = 0; row < BOARD_SIZE; row++) {
+      const rowArray = [];
+      for (let col = 0; col < BOARD_SIZE; col++) {
+        if ((row + col) % 2 !== 0) {
+          if (row < 3) {
+            rowArray.push('red');
+          } else if (row > 4) {
+            rowArray.push('black');
+          } else {
+            rowArray.push(null);
+          }
+        } else {
+          rowArray.push(null);
+        }
+      }
+      board.push(rowArray);
+    }
+  }
+
+  function renderBoard() {
+    const boardElement = document.getElementById('board');
+    boardElement.innerHTML = '';
+    for (let row = 0; row < BOARD_SIZE; row++) {
+      for (let col = 0; col < BOARD_SIZE; col++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        if (board[row][col] === 'red') {
+          const piece = document.createElement('div');
+          piece.classList.add('red-piece');
+          cell.appendChild(piece);
+        } else if (board[row][col] === 'black') {
+          const piece = document.createElement('div');
+          piece.classList.add('black-piece');
+          cell.appendChild(piece);
+        }
+        if (selectedRow === row && selectedCol === col) {
+          cell.classList.add('selected');
+        }
+        if (legalMoves.includes(`${row},${col}`)) {
+          cell.classList.add('legal-move');
+        }
+        cell.addEventListener('click', () => handleCellClick(row, col));
+        boardElement.appendChild(cell);
+      }
+    }
+  }
+
+  function handleCellClick(row, col) {
+    if (selectedPiece && selectedPiece === board[row][col]) {
+      clearSelection();
+      return;
+    }
+    if (selectedPiece && !board[row][col] && legalMoves.includes(`${row},${col}`)) {
+      makeMove(row, col);
+      return;
+    }
+    if (!board[row][col] && (selectedRow === -1 || selectedCol === -1)) {
+      clearSelection();
+      return;
+    }
+    clearSelection();
+    selectedPiece = board[row][col];
+    selectedRow = row;
+    selectedCol = col;
+    legalMoves = getLegalMoves(row, col);
+    renderBoard();
+  }
+
+  function clearSelection() {
+    selectedPiece = null;
+    selectedRow = -1;
+    selectedCol = -1;
+    legalMoves = [];
+    renderBoard();
+  }
+
+  function makeMove(row, col) {
+    board[selectedRow][selectedCol] = null;
+    board[row][col] = selectedPiece;
+    clearSelection();
+    const jumps = getJumps(row, col);
+    if (jumps.length > 0) {
+      selectedPiece = board[row][col];
+      selectedRow = row;
+      selectedCol = col;
+      legalMoves = jumps;
+      renderBoard();
+      return;
+    }
+    turn = turn === 'red' ? 'black' : 'red';
+    renderBoard();
+  }
+
+  function getLegalMoves(row, col) {
+    const moves = [];
+    const directions = [1, -1];
+    for (const dir of directions) {
+      const newRow = row + dir;
+      const newCol = col + dir;
+      if (newRow >= 0 && newRow < BOARD_SIZE && newCol >= 0 && newCol < BOARD_SIZE && !board[newRow][newCol]) {
+        moves.push(`${newRow},${newCol}`);
+      }
+    }
+    return moves;
+  }
+
+  function getJumps(row, col) {
+    const jumps = [];
+    const directions = [1, -1];
+    for (const dir of directions) {
+      const newRow = row + dir;
+      const newCol = col + dir;
+      if (newRow >= 0 && newRow < BOARD_SIZE && newCol >= 0 && newCol < BOARD_SIZE && board[newRow][newCol] && board[newRow][newCol] !== turn) {
+        const captureRow = newRow + dir;
+        const captureCol = newCol + dir;
+        if (captureRow >= 0 && captureRow < BOARD_SIZE && captureCol >= 0 && captureCol < BOARD_SIZE && !board[captureRow][captureCol]) {
+          jumps.push(`${captureRow},${captureCol}`);
+        }
+      }
+    }
+    return jumps;
+  }
+
+  initBoard();
+  renderBoard();
+</script>
+</body>
+</html>

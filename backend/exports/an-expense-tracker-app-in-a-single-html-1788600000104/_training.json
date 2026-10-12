@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "tier": "hard",
+  "request": "Build an expense tracker app in a single HTML file. Add expenses with amount, category and note; list them with delete; show total, per-category breakdown and a bar chart; persist to localStorage.",
+  "intent": {
+    "goal": "build an expense tracker app in a single html file",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "App HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "",
+  "files": [
+    "index.html"
+  ]
+}

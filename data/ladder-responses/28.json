@@ -1,0 +1,367 @@
+{
+ "success": true,
+ "projectId": "9168d299-9d66-4816-b501-922fff2f5b40",
+ "matchedBy": "semantic",
+ "matchScore": 0.9626788517448399,
+ "blueprint": {
+  "app_type": "pong_game",
+  "description": "Classic two-player Pong with paddle physics, ball collision, and score tracking \u2014 A complete Pong implementation with paddle movement, ball bouncing physics, collision detection, score tracking, and AI opponent mode",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Paddle Controller",
+   "Physics Engine",
+   "AI Opponent",
+   "Game State Store",
+   "Game Renderer"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Paddle Controller",
+    "destination_module": "Physics Engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Physics Engine",
+    "destination_module": "AI Opponent",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "AI Opponent",
+    "destination_module": "Game State Store",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "Game State Store",
+    "destination_module": "Game Renderer",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 6 pong-game Open-Source Projects - LibHunt\n    Which are the best open-source pong-game projects? This list will help you: TouchBarPong, clash-pong, Pong-curses, pong-is-not-ping, multi-window-pong-game, and Qlearning-Pong-Workshop-in-Cpp.\n  \u2022 Top 19 pong Open-Source Projects | LibHunt\n    Which are the best open-source pong projects? This list will help you: pong-command, TouchBarPong, cobol-js-emscripten, EnttPong, DQN-Atari, HCSR04-ultrasonic-sensor-lib, and unity-pong-tutorial.\n  \u2022 \u2b50217 jakesgordon/javascript-pong: A javascript version of the classic 1972 arcade game Pong!\n  \u2022 \u2b50122 UnityTechnologies/DOTS_Pong: This project is a simple creation of the classic Pong game with a DOTS implementation. The focus was on simplicity and using the latest entities synta\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 9: DATA & KNOWLEDGE STORES\n    9.1 DATA DIRECTORY (data/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesigns.json                 \u2014 Generated design catalog (design storage)\ndesign-specs-v2.json         \u2014 Design specifications (v2)\nnode-designs.json            \u2014 Node design catalog\nsession-memory.json          \u2014 Session memory/persistence\ndesig\n  \u2022 Section 10: TRAINING SYSTEM\n    10.1 LLM TRAINING APP (llm-training-app/) \u2014 LEGACY (superseded by 10.2 gui_trainer/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFrontend:     HTML + CSS + JS (custom UI, no framework)\nBackend:      Python FastAPI\nEngine:       Custom engine.py + mindspace_api.\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "pong_game",
+   "score": 0.9626788517448399
+  },
+  {
+   "app_type": "pong_evolution_2",
+   "score": 0.893045080249949
+  },
+  {
+   "app_type": "pong_evolution",
+   "score": 0.8774096316339227
+  },
+  {
+   "app_type": "connect4",
+   "score": 0.367607311046904
+  },
+  {
+   "app_type": "voxel_renderer",
+   "score": 0.3481553119113956
+  }
+ ],
+ "project": {
+  "id": "9168d299-9d66-4816-b501-922fff2f5b40",
+  "name": "a pong game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "pong_game blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "input",
+    "label": "Paddle Controller"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Physics Engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "AI Opponent"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "Game State Store"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Game Renderer"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 1,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 4,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Paddle Controller",
+   "Physics Engine",
+   "AI Opponent",
+   "Game State Store",
+   "Game Renderer"
+  ],
+  "generated": [
+   "Paddle Controller",
+   "Physics Engine",
+   "AI Opponent",
+   "Game State Store",
+   "Game Renderer"
+  ],
+  "matched": [
+   "Paddle Controller",
+   "Physics Engine",
+   "AI Opponent",
+   "Game State Store",
+   "Game Renderer"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "paddle-controller.ts",
+   "language": "typescript",
+   "code": "export class PaddleController {\n  private paddle: HTMLCanvasElement;\n  private canvas: HTMLCanvasElement;\n  private ctx: CanvasRenderingContext2D;\n  private game: HTMLDivElement;\n  private ball: HTMLCanvasElement;\n  private ballCtx: CanvasRenderingContext2D;\n  private paddleSpeed: number = 5;\n  private ballSpeedX: number = 4;\n  private ballSpeedY: number = 4;\n  private ballRadius: number = 10;\n  private score: number = 0;\n  private isGameRunning: boolean = true;\n  private lastTime: number = 0;\n\n  constructor() {\n    this.canvas = document.createElement('canvas');\n    this.canvas.width = 800;\n    this.canvas.height = 600;\n    this.ctx = this.canvas.getContext('2d');\n    this.game = document.createElement('div');\n    this.game.style.width = '800px';\n    this.game.style.height = '600px';\n    this.game.appendChild(this.canvas);\n    this.paddle = document.createElement('canvas');\n    this.paddle.width = 10;\n    this.paddle.height = 100;\n    this.paddleCtx = this.paddle.getContext('2d');\n    this.ball = document.createElement('canvas');\n    this.ball.width = this.ball.height = this.ballRadius * 2;\n    this.ballCtx = this.ball.getContext('2d');\n    this.game.appendChild(this.paddle);\n    this.game.appendChild(this.ball);\n    document.body.appendChild(this.game);\n    this.init();\n  }\n\n  private init() {\n    this.ctx.fillStyle = '#000';\n    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);\n    this.paddleCtx.fillStyle = '#f00';\n    this.paddleCtx.fillRect(0, 0, this.paddle.width, this.paddle.height);\n    this.ballCtx.fillStyle = '#0f0';\n    this.ballCtx.beginPath();\n    this.ballCtx.arc(this.ballRadius, this.ballRadius, this.ballRadius, 0, Math.PI * 2);\n    this.ballCtx.fill();\n    this.update();\n  }\n\n  private update() {\n    if (!this.isGameRunning) return;\n    this.lastTime = Date.now();\n    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);\n    this.paddleCtx.clearRect(0, 0, this.paddle.width, this.paddle.height);\n    this.ballCtx.clearRect(0, 0, this.ball.width, this.ball.height);\n    this.updatePaddle();\n    this.updateBall();\n    this.render();\n    requestAnimationFrame(this.update.bind(this));\n  }\n\n  private updatePaddle() {\n    const rect = this.paddle.getBoundingClientRect();\n    const gameRect = this.game.getBoundingClientRect();\n    const gameX = gameRect.left + this.game.offsetLeft;\n    const gameY = gameRect.top + this.game.offsetTop;\n    const paddleX = (event.clientX - gameX) - (this.paddle.width / 2);\n    const paddleY = gameY + gameRect.height - this.paddle.height;\n    this.paddle.style.left = paddleX + 'px';\n    this.paddle.style.top = paddleY + 'px';\n    this.paddleCtx.clearRect(0, 0, this.paddle.width, this.paddle.height);\n    this.paddleCtx.fillStyle = '#f00';\n    this.paddleCtx.fillRect(0, 0, this.paddle.width, this.paddle.height);\n  }\n\n  private updateBall() {\n    const ballRect = this.ball.getBoundingClientRect();\n    const ballX = ballRect.left + this.ball.width / 2;\n    const ballY = ballRect.top + this.ball.height / 2;\n    this.ballCtx.clearRect(0, 0, this.ball.width, this.ball.height);\n    this.ballCtx.fillStyle = '#0f0';\n    this.ballCtx.beginPath();\n    this.ballCtx.arc(ballX, ballY, this.ballRadius, 0, Math.PI * 2);\n    this.ballCtx.fill();\n    this.ballSpeedX += (event.clientX - (ballX)) * 0.01;\n    this.ballSpeedY += 0.1;\n    const ballXNew = ballX + this.ballSpeedX;\n    const ballYNew = ballY + this.ballSpeedY;\n    if (ballYNew + this.ballRadius > this.canvas.height) {\n      this.ballSpeedY = -this.ballSpeedY * 0.9;\n      this.ballSpeedX *= 0.9;\n    }\n    if (ballXNew - this.ballRadius < 0 || ballXNew + this.ballRadius > this.canvas.width) {\n      this.ballSpeedX = -this.ballSpeedX * 0.9;\n    }\n    if (ballYNew - this.ballRadius < 0) {\n      this.ballSpeedY = -this.ballSpeedY;\n    }\n    if (ballYNew + this.ballRadius > this.paddle.getBoundingClientRect().top && ballXNew > this.paddle.getBoundingClientRect().left && ballXNew < this.paddle.getBoundingClientRect().right) {\n      this.ballSpeedY = -this.ballSpeedY * 0.9;\n      this.score++;\n    }\n    this.ballCtx.clearRect(0, 0, this.ball.width, this.ball.height);\n    this.ballCtx.fillStyle = '#0f0';\n    this.ballCtx.beginPath();\n    this.ballCtx.arc(ballXNew, ballYNew, this.ballRadius, 0, Math.PI * 2);\n    this.ballCtx.fill();\n  }\n\n  private render() {\n    this.ctx.fillStyle = '#000';\n    this.ctx.font = '20px Arial';\n    this.ctx.fillText('Score: ' + this.score, 10, 30);\n  }\n\n  private startGame() {\n    this.isGameRunning = true;\n  }\n\n  private stopGame() {\n    this.isGameRunning = false;\n  }\n\n  private resetGame() {\n    this.score = 0;\n    this.isGameRunning = false;\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Paddle Controller",
+   "dependencies": [],
+   "exports": [
+    "PaddleController"
+   ],
+   "errors": [
+    "TS2551: Property 'paddleCtx' does not exist on type 'PaddleController'. Did you mean 'paddle'? (line 28)",
+    "TS2551: Property 'paddleCtx' does not exist on type 'PaddleController'. Did you mean 'paddle'? (line 41)",
+    "TS2551: Property 'paddleCtx' does not exist on type 'PaddleController'. Did you mean 'paddle'? (line 42)",
+    "TS2551: Property 'paddleCtx' does not exist on type 'PaddleController'. Did you mean 'paddle'? (line 54)",
+    "TS2339: Property 'clientX' does not exist on type 'Event'. (line 67)",
+    "TS2551: Property 'paddleCtx' does not exist on type 'PaddleController'. Did you mean 'paddle'? (line 71)",
+    "TS2551: Property 'paddleCtx' does not exist on type 'PaddleController'. Did you mean 'paddle'? (line 72)",
+    "TS2551: Property 'paddleCtx' does not exist on type 'PaddleController'. Did you mean 'paddle'? (line 73)",
+    "TS2339: Property 'clientX' does not exist on type 'Event'. (line 85)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "physics-engine.ts",
+   "language": "typescript",
+   "code": "import { PaddleController } from '../paddle-controller/paddle-controller.ts';\n\nexport class PhysicsEngine {\n  private paddleController: PaddleController;\n  private ballSpeedX: number;\n  private ballSpeedY: number;\n  private ballRadius: number;\n  private ballX: number;\n  private ballY: number;\n  private paddleY: number;\n  private score: number;\n\n  constructor(paddleController: PaddleController) {\n    this.paddleController = paddleController;\n    this.ballSpeedX = 4;\n    this.ballSpeedY = 4;\n    this.ballRadius = 10;\n    this.ballX = 400;\n    this.ballY = 300;\n    this.paddleY = 550;\n    this.score = 0;\n  }\n\n  update() {\n    this.ballX += this.ballSpeedX;\n    this.ballY += this.ballSpeedY;\n\n    // Check for wall collision\n    if (this.ballX <= 0 || this.ballX >= 790) {\n      this.ballSpeedX = -this.ballSpeedX;\n    }\n\n    // Check for paddle collision\n    if (this.ballY + this.ballRadius >= 550 && this.ballX >= this.paddleY && this.ballX <= this.paddleY + 100) {\n      this.ballSpeedY = -this.ballSpeedY;\n    }\n\n    // Check for top wall collision\n    if (this.ballY <= 0) {\n      this.ballSpeedY = -this.ballSpeedY;\n    }\n\n    // Check for goal\n    if (this.ballY + this.ballRadius >= 600) {\n      this.score++;\n      this.ballX = 400;\n      this.ballY = 300;\n      this.ballSpeedX = 4;\n      this.ballSpeedY = 4;\n    }\n\n    this.paddleY = this.paddleController.getMoves()[0].dy;\n    this.paddleController.updateCanvas();\n  }\n\n  getScore() {\n    return this.score;\n  }\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "Physics Engine",
+   "dependencies": [
+    "Paddle Controller"
+   ],
+   "exports": [
+    "PhysicsEngine"
+   ],
+   "errors": [
+    "TS2339: Property 'getMoves' does not exist on type 'PaddleController'. (line 52)",
+    "TS2339: Property 'updateCanvas' does not exist on type 'PaddleController'. (line 53)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ai-opponent.ts",
+   "language": "typescript",
+   "code": "import { PhysicsEngine } from '../physics-engine/physics-engine.ts';\n\nexport class AIOpponent {\n  private paddleController: PaddleController;\n  private ballSpeedX: number;\n  private ballSpeedY: number;\n  private ballRadius: number;\n  private ballX: number;\n  private ballY: number;\n  private paddleY: number;\n  private score: number;\n\n  constructor(paddleController: PaddleController) {\n    this.paddleController = paddleController;\n    this.ballSpeedX = 4;\n    this.ballSpeedY = 4;\n    this.ballRadius = 10;\n    this.ballX = 400;\n    this.ballY = 300;\n    this.paddleY = 550;\n    this.score = 0;\n  }\n\n  getMoves(): { x: number; y: number; }[] {\n    const input = this.paddleController.getGameBoard().getCurrentPlayerInput();\n    if (input === 'up') {\n      return [{ x: 0, y: -1 }];\n    } else if (input === 'down') {\n      return [{ x: 0, y: 1 }];\n    } else {\n      return [];\n    }\n  }\n\n  update() {\n    const moves = this.getMoves();\n    for (const move of moves) {\n      move.dy += -9.81 * 0.1;\n      move.dy *= 0.95;\n      const paddle = this.paddleController.getGameBoard().getCurrentPlayer();\n      if (paddle && paddle.isInPlay() && move.x > paddle.getXMin() && move.x < paddle.getXMax()) {\n        move.dy *= -1;\n      }\n      if (move.x > this.paddleController.getGameBoard().getWidth()) {\n        move.dx *= -0.5;\n      } else if (move.x < 0) {\n        move.dx *= -0.5;\n      }\n    }\n    this.paddleController.updateCanvas();\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "AI Opponent",
+   "dependencies": [
+    "Physics Engine"
+   ],
+   "exports": [
+    "AIOpponent"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'PaddleController'. (line 4)",
+    "TS2304: Cannot find name 'PaddleController'. (line 13)",
+    "TS2339: Property 'dy' does not exist on type '{ x: number; y: number; }'. (line 38)",
+    "TS2339: Property 'dy' does not exist on type '{ x: number; y: number; }'. (line 39)",
+    "TS2339: Property 'dy' does not exist on type '{ x: number; y: number; }'. (line 42)",
+    "TS2339: Property 'dx' does not exist on type '{ x: number; y: number; }'. (line 45)",
+    "TS2339: Property 'dx' does not exist on type '{ x: number; y: number; }'. (line 47)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-state-store.ts",
+   "language": "typescript",
+   "code": "import { AIOpponent } from '../ai-opponent/ai-opponent.ts';\n\nexport class GameStateStore {\n  private stateAndEvents: { [key: string]: any[] } = {};\n\n  constructor() {}\n\n  public storeState(key: string, stateAndEvents: any[]) {\n    this.stateAndEvents[key] = stateAndEvents;\n  }\n\n  public retrieveState(key: string): any[] {\n    return this.stateAndEvents[key] || [];\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "Game State Store",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "GameStateStore"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "game-renderer.ts",
+   "language": "typescript",
+   "code": "import { GameStateStore } from '../game-state-store/game-state-store.ts';\n\nexport class GameRenderer {\n  private canvas: HTMLCanvasElement;\n  private paddleController: PaddleController;\n  private ctx: CanvasRenderingContext2D;\n  private ball: { x: number; y: number; vx: number; vy: number; radius: number };\n  private paddle1: { x: number; y: number; width: number; height: number; vy: number };\n  private paddle2: { x: number; y: number; width: number; height: number; vy: number };\n  private score1: number;\n  private score2: number;\n  private speed: number;\n\n  constructor(canvas: HTMLCanvasElement, paddleController: PaddleController) {\n    this.canvas = canvas;\n    this.paddleController = paddleController;\n    this.ctx = this.canvas.getContext('2d')!;\n    this.ball = { x: this.canvas.width / 2, y: this.canvas.height / 2, vx: 0, vy: 0, radius: 10 };\n    this.paddle1 = { x: 20, y: this.canvas.height / 2 - 40, width: 10, height: 80, vy: 0 };\n    this.paddle2 = { x: this.canvas.width - 30, y: this.canvas.height / 2 - 40, width: 10, height: 80, vy: 0 };\n    this.score1 = 0;\n    this.score2 = 0;\n    this.speed = 3;\n  }\n\n  public init(): void {\n    this.canvas.width = 800;\n    this.canvas.height = 600;\n    this.render();\n    this.animate();\n  }\n\n  public render(): void {\n    this.ctx.fillStyle = 'black';\n    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);\n\n    this.ctx.beginPath();\n    this.ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2);\n    this.ctx.fillStyle = '#0095dd';\n    this.ctx.fill();\n\n    this.ctx.beginPath();\n    this.ctx.moveTo(this.paddle1.x, this.paddle1.y);\n    this.ctx.lineTo(this.paddle1.x + this.paddle1.width, this.paddle1.y);\n    this.ctx.fillStyle = '#ffffff';\n    this.ctx.fill();\n\n    this.ctx.beginPath();\n    this.ctx.moveTo(this.paddle2.x, this.paddle2.y);\n    this.ctx.lineTo(this.paddle2.x + this.paddle2.width, this.paddle2.y);\n    this.ctx.fillStyle = '#ffffff';\n    this.ctx.fill();\n\n    this.ctx.font = '24px Arial';\n    this.ctx.fillText(this.score1, this.canvas.width / 4, 30);\n    this.ctx.fillText(this.score2, this.canvas.width * 3 / 4, 30);\n  }\n\n  public animate(): void {\n    this.update();\n    this.render();\n    requestAnimationFrame(this.animate.bind(this));\n  }\n\n  public update(): void {\n    this.ball.x += this.ball.vx;\n    this.ball.y += this.ball.vy;\n\n    if (this.ball.x + this.ball.radius > this.canvas.width || this.ball.x - this.ball.radius < 0) {\n      this.ball.vx = -this.ball.vx;\n    }\n\n    if (this.ball.y + this.ball.radius > this.canvas.height || this.ball.y - this.ball.radius < 0) {\n      this.ball.vy = -this.ball.vy;\n    }\n\n    const paddle1Rect = { x: this.paddle1.x, y: this.paddle1.y, width: this.paddle1.width, height: this.paddle1.height };\n    const paddle2Rect = { x: this.paddle2.x, y: this.paddle2.y, width: this.paddle2.width, height: this.paddle2.height };\n\n    if (this.ball.x + this.ball.radius > this.paddle2.x && this.ball.y > this.paddle2.y && this.ball.y < this.paddle2.y + this.paddle2.height) {\n      this.ball.vx = this.speed;\n      this.ball.x = this.paddle2.x + this.paddle2.width;\n      this.ball.vx = -this.ball.vx;\n    }\n\n    if (this.ball.x - this.ball.radius < this.paddle1.x + this.paddle1.width && this.ball.y > this.paddle1.y && this.ball.y < this.paddle1.y + this.paddle1.height) {\n      this.ball.vx = this.speed;\n      this.ball.x = this.paddle1.x + this.paddle1.width;\n      this.ball.vx = -this.ball.vx;\n    }\n\n    if (this.ball.x > this.canvas.width) {\n      this.score1++;\n      this.ball.x = this.canvas.width / 2;\n      this.ball.y = this.canvas.height / 2;\n      this.ball.vx = 0;\n      this.ball.vy = 0;\n    }\n\n    if (this.ball.x < 0) {\n      this.score2++;\n      this.ball.x = this.canvas.width / 2;\n      this.ball.y = this.canvas.height / 2;\n      this.ball.vx = 0;\n      this.ball.vy = 0;\n    }\n\n    this.paddle1.y += this.paddle1.vy;\n    this.paddle2.y += this.paddle2.vy;\n\n    if (this.paddle1.y < 0) {\n      this.paddle1.y = 0;\n    }\n\n    if (this.paddle1.y + this.paddle1.height > this.canvas.height) {\n      this.paddle1.y = this.canvas.height - this.paddle1.height;\n    }\n\n    if (this.paddle2.y < 0) {\n      this.paddle2.y = 0;\n    }\n\n    if (this.paddle2.y + this.paddle2.height > this.canvas.height) {\n      this.paddle2.y = this.canvas.height - this.paddle2.height;\n    }\n  }\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "Game Renderer",
+   "dependencies": [
+    "Game State Store"
+   ],
+   "exports": [
+    "GameRenderer"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'PaddleController'. (line 5)",
+    "TS2304: Cannot find name 'PaddleController'. (line 14)",
+    "TS2345: Argument of type 'number' is not assignable to parameter of type 'string'. (line 55)",
+    "TS2345: Argument of type 'number' is not assignable to parameter of type 'string'. (line 56)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a pong game</title>\n  <meta name=\"description\" content=\"a pong game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a pong game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-Alki9N/paddle-controller/paddle-controller.ts\n  var PaddleController = class {\n    constructor() {\n      __publicField(this, \"paddle\");\n      __publicField(this, \"canvas\");\n      __publicField(this, \"ctx\");\n      __publicField(this, \"game\");\n      __publicField(this, \"ball\");\n      __publicField(this, \"ballCtx\");\n      __publicField(this, \"paddleSpeed\", 5);\n      __publicField(this, \"ballSpeedX\", 4);\n      __publicField(this, \"ballSpeedY\", 4);\n      __publicField(this, \"ballRadius\", 10);\n      __publicField(this, \"score\", 0);\n      __publicField(this, \"isGameRunning\", true);\n      __publicField(this, \"lastTime\", 0);\n      this.canvas = document.createElement(\"canvas\");\n      this.canvas.width = 800;\n      this.canvas.height = 600;\n      this.ctx = this.canvas.getContext(\"2d\");\n      this.game = document.createElement(\"div\");\n      this.game.style.width = \"800px\";\n      this.game.style.height = \"600px\";\n      this.game.appendChild(this.canvas);\n      this.paddle = document.createElement(\"canvas\");\n      this.paddle.width = 10;\n      this.paddle.height = 100;\n      this.paddleCtx = this.paddle.getContext(\"2d\");\n      this.ball = document.createElement(\"canvas\");\n      this.ball.width = this.ball.height = this.ballRadius * 2;\n      this.ballCtx = this.ball.getContext(\"2d\");\n      this.game.appendChild(this.paddle);\n      this.game.appendChild(this.ball);\n      document.body.appendChild(this.game);\n      this.init();\n    }\n    init() {\n      this.ctx.fillStyle = \"#000\";\n      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);\n      this.paddleCtx.fillStyle = \"#f00\";\n      this.paddleCtx.fillRect(0, 0, this.paddle.width, this.paddle.height);\n      this.ballCtx.fillStyle = \"#0f0\";\n      this.ballCtx.beginPath();\n      this.ballCtx.arc(this.ballRadius, this.ballRadius, this.ballRadius, 0, Math.PI * 2);\n      this.ballCtx.fill();\n      this.update();\n    }\n    update() {\n      if (!this.isGameRunning) return;\n      this.lastTime = Date.now();\n      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);\n      this.paddleCtx.clearRect(0, 0, this.paddle.width, this.paddle.height);\n      this.ballCtx.clearRect(0, 0, this.ball.width, this.ball.height);\n      this.updatePaddle();\n      this.updateBall();\n      this.render();\n      requestAnimationFrame(this.update.bind(this));\n    }\n    updatePaddle() {\n      const rect = this.paddle.getBoundingClientRect();\n      const gameRect = this.game.getBoundingClientRect();\n      const gameX = gameRect.left + this.game.offsetLeft;\n      const gameY = gameRect.top + this.game.offsetTop;\n      const paddleX = event.clientX - gameX - this.paddle.width / 2;\n      const paddleY = gameY + gameRect.height - this.paddle.height;\n      this.paddle.style.left = paddleX + \"px\";\n      this.paddle.style.top = paddleY + \"px\";\n      this.paddleCtx.clearRect(0, 0, this.paddle.width, this.paddle.height);\n      this.paddleCtx.fillStyle = \"#f00\";\n      this.paddleCtx.fillRect(0, 0, this.paddle.width, this.paddle.height);\n    }\n    updateBall() {\n      const ballRect = this.ball.getBoundingClientRect();\n      const ballX = ballRect.left + this.ball.width / 2;\n      const ballY = ballRect.top + this.ball.height / 2;\n      this.ballCtx.clearRect(0, 0, this.ball.width, this.ball.height);\n      this.ballCtx.fillStyle = \"#0f0\";\n      this.ballCtx.beginPath();\n      this.ballCtx.arc(ballX, ballY, this.ballRadius, 0, Math.PI * 2);\n      this.ballCtx.fill();\n      this.ballSpeedX += (event.clientX - ballX) * 0.01;\n      this.ballSpeedY += 0.1;\n      const ballXNew = ballX + this.ballSpeedX;\n      const ballYNew = ballY + this.ballSpeedY;\n      if (ballYNew + this.ballRadius > this.canvas.height) {\n        this.ballSpeedY = -this.ballSpeedY * 0.9;\n        this.ballSpeedX *= 0.9;\n      }\n      if (ballXNew - this.ballRadius < 0 || ballXNew + this.ballRadius > this.canvas.width) {\n        this.ballSpeedX = -this.ballSpeedX * 0.9;\n      }\n      if (ballYNew - this.ballRadius < 0) {\n        this.ballSpeedY = -this.ballSpeedY;\n      }\n      if (ballYNew + this.ballRadius > this.paddle.getBoundingClientRect().top && ballXNew > this.paddle.getBoundingClientRect().left && ballXNew < this.paddle.getBoundingClientRect().right) {\n        this.ballSpeedY = -this.ballSpeedY * 0.9;\n        this.score++;\n      }\n      this.ballCtx.clearRect(0, 0, this.ball.width, this.ball.height);\n      this.ballCtx.fillStyle = \"#0f0\";\n      this.ballCtx.beginPath();\n      this.ballCtx.arc(ballXNew, ballYNew, this.ballRadius, 0, Math.PI * 2);\n      this.ballCtx.fill();\n    }\n    render() {\n      this.ctx.fillStyle = \"#000\";\n      this.ctx.font = \"20px Arial\";\n      this.ctx.fillText(\"Score: \" + this.score, 10, 30);\n    }\n    startGame() {\n      this.isGameRunning = true;\n    }\n    stopGame() {\n      this.isGameRunning = false;\n    }\n    resetGame() {\n      this.score = 0;\n      this.isGameRunning = false;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-Alki9N/physics-engine/physics-engine.ts\n  var PhysicsEngine = class {\n    constructor(paddleController) {\n      __publicField(this, \"paddleController\");\n      __publicField(this, \"ballSpeedX\");\n      __publicField(this, \"ballSpeedY\");\n      __publicField(this, \"ballRadius\");\n      __publicField(this, \"ballX\");\n      __publicField(this, \"ballY\");\n      __publicField(this, \"paddleY\");\n      __publicField(this, \"score\");\n      this.paddleController = paddleController;\n      this.ballSpeedX = 4;\n      this.ballSpeedY = 4;\n      this.ballRadius = 10;\n      this.ballX = 400;\n      this.ballY = 300;\n      this.paddleY = 550;\n      this.score = 0;\n    }\n    update() {\n      this.ballX += this.ballSpeedX;\n      this.ballY += this.ballSpeedY;\n      if (this.ballX <= 0 || this.ballX >= 790) {\n        this.ballSpeedX = -this.ballSpeedX;\n      }\n      if (this.ballY + this.ballRadius >= 550 && this.ballX >= this.paddleY && this.ballX <= this.paddleY + 100) {\n        this.ballSpeedY = -this.ballSpeedY;\n      }\n      if (this.ballY <= 0) {\n        this.ballSpeedY = -this.ballSpeedY;\n      }\n      if (this.ballY + this.ballRadius >= 600) {\n        this.score++;\n        this.ballX = 400;\n        this.ballY = 300;\n        this.ballSpeedX = 4;\n        this.ballSpeedY = 4;\n      }\n      this.paddleY = this.paddleController.getMoves()[0].dy;\n      this.paddleController.updateCanvas();\n    }\n    getScore() {\n      return this.score;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-Alki9N/ai-opponent/ai-opponent.ts\n  var AIOpponent = class {\n    constructor(paddleController) {\n      __publicField(this, \"paddleController\");\n      __publicField(this, \"ballSpeedX\");\n      __publicField(this, \"ballSpeedY\");\n      __publicField(this, \"ballRadius\");\n      __publicField(this, \"ballX\");\n      __publicField(this, \"ballY\");\n      __publicField(this, \"paddleY\");\n      __publicField(this, \"score\");\n      this.paddleController = paddleController;\n      this.ballSpeedX = 4;\n      this.ballSpeedY = 4;\n      this.ballRadius = 10;\n      this.ballX = 400;\n      this.ballY = 300;\n      this.paddleY = 550;\n      this.score = 0;\n    }\n    getMoves() {\n      const input = this.paddleController.getGameBoard().getCurrentPlayerInput();\n      if (input === \"up\") {\n        return [{ x: 0, y: -1 }];\n      } else if (input === \"down\") {\n        return [{ x: 0, y: 1 }];\n      } else {\n        return [];\n      }\n    }\n    update() {\n      const moves = this.getMoves();\n      for (const move of moves) {\n        move.dy += -9.81 * 0.1;\n        move.dy *= 0.95;\n        const paddle = this.paddleController.getGameBoard().getCurrentPlayer();\n        if (paddle && paddle.isInPlay() && move.x > paddle.getXMin() && move.x < paddle.getXMax()) {\n          move.dy *= -1;\n        }\n        if (move.x > this.paddleController.getGameBoard().getWidth()) {\n          move.dx *= -0.5;\n        } else if (move.x < 0) {\n          move.dx *= -0.5;\n        }\n      }\n      this.paddleController.updateCanvas();\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-Alki9N/game-state-store/game-state-store.ts\n  var GameStateStore = class {\n    constructor() {\n      __publicField(this, \"stateAndEvents\", {});\n    }\n    storeState(key, stateAndEvents) {\n      this.stateAndEvents[key] = stateAndEvents;\n    }\n    retrieveState(key) {\n      return this.stateAndEvents[key] || [];\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-Alki9N/game-renderer/game-renderer.ts\n  var GameRenderer = class {\n    constructor(canvas, paddleController) {\n      __publicField(this, \"canvas\");\n      __publicField(this, \"paddleController\");\n      __publicField(this, \"ctx\");\n      __publicField(this, \"ball\");\n      __publicField(this, \"paddle1\");\n      __publicField(this, \"paddle2\");\n      __publicField(this, \"score1\");\n      __publicField(this, \"score2\");\n      __publicField(this, \"speed\");\n      this.canvas = canvas;\n      this.paddleController = paddleController;\n      this.ctx = this.canvas.getContext(\"2d\");\n      this.ball = { x: this.canvas.width / 2, y: this.canvas.height / 2, vx: 0, vy: 0, radius: 10 };\n      this.paddle1 = { x: 20, y: this.canvas.height / 2 - 40, width: 10, height: 80, vy: 0 };\n      this.paddle2 = { x: this.canvas.width - 30, y: this.canvas.height / 2 - 40, width: 10, height: 80, vy: 0 };\n      this.score1 = 0;\n      this.score2 = 0;\n      this.speed = 3;\n    }\n    init() {\n      this.canvas.width = 800;\n      this.canvas.height = 600;\n      this.render();\n      this.animate();\n    }\n    render() {\n      this.ctx.fillStyle = \"black\";\n      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);\n      this.ctx.beginPath();\n      this.ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2);\n      this.ctx.fillStyle = \"#0095dd\";\n      this.ctx.fill();\n      this.ctx.beginPath();\n      this.ctx.moveTo(this.paddle1.x, this.paddle1.y);\n      this.ctx.lineTo(this.paddle1.x + this.paddle1.width, this.paddle1.y);\n      this.ctx.fillStyle = \"#ffffff\";\n      this.ctx.fill();\n      this.ctx.beginPath();\n      this.ctx.moveTo(this.paddle2.x, this.paddle2.y);\n      this.ctx.lineTo(this.paddle2.x + this.paddle2.width, this.paddle2.y);\n      this.ctx.fillStyle = \"#ffffff\";\n      this.ctx.fill();\n      this.ctx.font = \"24px Arial\";\n      this.ctx.fillText(this.score1, this.canvas.width / 4, 30);\n      this.ctx.fillText(this.score2, this.canvas.width * 3 / 4, 30);\n    }\n    animate() {\n      this.update();\n      this.render();\n      requestAnimationFrame(this.animate.bind(this));\n    }\n    update() {\n      this.ball.x += this.ball.vx;\n      this.ball.y += this.ball.vy;\n      if (this.ball.x + this.ball.radius > this.canvas.width || this.ball.x - this.ball.radius < 0) {\n        this.ball.vx = -this.ball.vx;\n      }\n      if (this.ball.y + this.ball.radius > this.canvas.height || this.ball.y - this.ball.radius < 0) {\n        this.ball.vy = -this.ball.vy;\n      }\n      const paddle1Rect = { x: this.paddle1.x, y: this.paddle1.y, width: this.paddle1.width, height: this.paddle1.height };\n      const paddle2Rect = { x: this.paddle2.x, y: this.paddle2.y, width: this.paddle2.width, height: this.paddle2.height };\n      if (this.ball.x + this.ball.radius > this.paddle2.x && this.ball.y > this.paddle2.y && this.ball.y < this.paddle2.y + this.paddle2.height) {\n        this.ball.vx = this.speed;\n        this.ball.x = this.paddle2.x + this.paddle2.width;\n        this.ball.vx = -this.ball.vx;\n      }\n      if (this.ball.x - this.ball.radius < this.paddle1.x + this.paddle1.width && this.ball.y > this.paddle1.y && this.ball.y < this.paddle1.y + this.paddle1.height) {\n        this.ball.vx = this.speed;\n        this.ball.x = this.paddle1.x + this.paddle1.width;\n        this.ball.vx = -this.ball.vx;\n      }\n      if (this.ball.x > this.canvas.width) {\n        this.score1++;\n        this.ball.x = this.canvas.width / 2;\n        this.ball.y = this.canvas.height / 2;\n        this.ball.vx = 0;\n        this.ball.vy = 0;\n      }\n      if (this.ball.x < 0) {\n        this.score2++;\n        this.ball.x = this.canvas.width / 2;\n        this.ball.y = this.canvas.height / 2;\n        this.ball.vx = 0;\n        this.ball.vy = 0;\n      }\n      this.paddle1.y += this.paddle1.vy;\n      this.paddle2.y += this.paddle2.vy;\n      if (this.paddle1.y < 0) {\n        this.paddle1.y = 0;\n      }\n      if (this.paddle1.y + this.paddle1.height > this.canvas.height) {\n        this.paddle1.y = this.canvas.height - this.paddle1.height;\n      }\n      if (this.paddle2.y < 0) {\n        this.paddle2.y = 0;\n      }\n      if (this.paddle2.y + this.paddle2.height > this.canvas.height) {\n        this.paddle2.y = this.canvas.height - this.paddle2.height;\n      }\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-Alki9N/_preview_entry.ts\n  try {\n    if (typeof PaddleController === \"function\" && !/^class\\s/.test(String(PaddleController))) {\n      PaddleController(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"paddle-controller.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Paddle_Controller.PaddleController:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof PhysicsEngine === \"function\" && !/^class\\s/.test(String(PhysicsEngine))) {\n      PhysicsEngine(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"physics-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Physics_Engine.PhysicsEngine:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof AIOpponent === \"function\" && !/^class\\s/.test(String(AIOpponent))) {\n      AIOpponent(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ai-opponent.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling AI_Opponent.AIOpponent:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof GameStateStore === \"function\" && !/^class\\s/.test(String(GameStateStore))) {\n      GameStateStore(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-state-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_State_Store.GameStateStore:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof GameRenderer === \"function\" && !/^class\\s/.test(String(GameRenderer))) {\n      GameRenderer(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-renderer.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Renderer.GameRenderer:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a pong game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a pong game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Paddle Controller",
+    "Physics Engine",
+    "AI Opponent",
+    "Game State Store",
+    "Game Renderer"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 31806,
+ "totalErrors": 22,
+ "validatedCount": 2,
+ "failedCount": 4,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "paddle-controller.ts",
+   "dependencies": [],
+   "exports": [
+    "PaddleController"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "physics-engine.ts",
+   "dependencies": [
+    "Paddle Controller"
+   ],
+   "exports": [
+    "PhysicsEngine"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "ai-opponent.ts",
+   "dependencies": [
+    "Physics Engine"
+   ],
+   "exports": [
+    "AIOpponent"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "game-state-store.ts",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "GameStateStore"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "game-renderer.ts",
+   "dependencies": [
+    "Game State Store"
+   ],
+   "exports": [
+    "GameRenderer"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Paddle Controller",
+    "Physics Engine",
+    "AI Opponent",
+    "Game State Store",
+    "Game Renderer"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 2,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 31806,
+  "totalErrors": 22,
+  "validated": 2,
+  "failed": 4,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 209427
+ }
+}

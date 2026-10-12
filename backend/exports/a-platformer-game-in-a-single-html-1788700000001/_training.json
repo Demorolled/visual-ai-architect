@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T18:10:00.000Z",
+  "request": "Build a canvas platformer game in a single HTML file. A player character runs and jumps across three levels of platforms with arrow keys (and space to jump), gravity and collision physics, collectible coins, patrolling enemies, a flag to finish each level, score with coins and level completion, three lives, a game-over state with restart, a HUD showing score coins lives and level, and persists the best score in localStorage.",
+  "intent": {"goal": "canvas platformer game in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Platformer game HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "canvas platformer with physics, platforms, coins, enemies, levels, flag, lives, score, requestAnimationFrame loop, localStorage best score",
+  "files": ["index.html"],
+  "tier": "extreme"
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Adventure Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2e;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 80%;
+      max-width: 600px;
+      text-align: center;
+    }
+    .title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #4ade80;
+    }
+    .description {
+      margin-bottom: 20px;
+      color: #ccc;
+      text-align: left;
+      font-size: 16px;
+    }
+    .inventory {
+      margin-bottom: 20px;
+      color: #ccc;
+      text-align: left;
+      font-size: 14px;
+    }
+    .commands {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .command {
+      padding: 10px 15px;
+      background-color: #333;
+      border: 1px solid #555;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #fff;
+    }
+    .command:hover {
+      background-color: #444;
+    }
+    .command:active {
+      background-color: #222;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Text Adventure Game</h1>
+    <div id="description" class="description">You find yourself in a dimly lit room. There is a door to the north and a small key on the floor.</div>
+    <div id="inventory" class="inventory">Inventory: key</div>
+    <div class="commands">
+      <button class="command" onclick="move('north')">Move North</button>
+      <button class="command" onclick="look()">Look</button>
+      <button class="command" onclick="take('key')">Take Key</button>
+    </div>
+  </div>
+  <script>
+    const rooms = {
+      'room1': {
+        description: 'You find yourself in a dimly lit room. There is a door to the north and a small key on the floor.',
+        items: ['key'],
+        north: 'room2'
+      },
+      'room2': {
+        description: 'You are in a brightly lit room. There is a door to the south and a locked chest in the center.',
+        items: ['locked chest'],
+        south: 'room1'
+      }
+    };
+
+    let currentRoom = 'room1';
+    let inventory = [];
+
+    function move(direction) {
+      const room = rooms[currentRoom];
+      if (room[direction]) {
+        currentRoom = room[direction];
+        updateDescription();
+      } else {
+        alert('You cannot go that way.');
+      }
+    }
+
+    function look() {
+      const room = rooms[currentRoom];
+      alert(room.description);
+    }
+
+    function take(item) {
+      const room = rooms[currentRoom];
+      if (room.items.includes(item)) {
+        inventory.push(item);
+        room.items = room.items.filter(i => i !== item);
+        alert(`You picked up the ${item}.`);
+        updateInventory();
+      } else {
+        alert(`There is no ${item} here.`);
+      }
+    }
+
+    function updateDescription() {
+      const room = rooms[currentRoom];
+      document.getElementById('description').textContent = room.description;
+    }
+
+    function updateInventory() {
+      document.getElementById('inventory').textContent = `Inventory: ${inventory.join(', ')}`;
+    }
+  </script>
+</body>
+</html>

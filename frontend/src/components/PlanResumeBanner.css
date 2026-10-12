@@ -1,0 +1,79 @@
+/* PlanResumeBanner — offered only on an empty canvas, top-centre of the canvas
+   so it reads as an offer about the workspace, not a dialog to dismiss. */
+
+.plan-resume {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 640px;
+  padding: 8px 10px 8px 12px;
+  background: rgba(15, 15, 26, 0.94);
+  border: 1px solid rgba(147, 197, 253, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.5);
+}
+
+.plan-resume-icon {
+  font-size: 16px;
+}
+
+.plan-resume-body {
+  min-width: 0;
+}
+
+.plan-resume-title {
+  font-size: 12px;
+  color: #e5e7eb;
+}
+
+.plan-resume-title strong {
+  color: #bfdbfe;
+}
+
+.plan-resume-meta {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #8b93a7;
+}
+
+.plan-resume-error {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #fca5a5;
+}
+
+.plan-resume-btn {
+  flex: 0 0 auto;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #60a5fa;
+  color: #0f0f1a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.plan-resume-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.plan-resume-dismiss {
+  flex: 0 0 auto;
+  background: transparent;
+  border: none;
+  color: #8b93a7;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.plan-resume-dismiss:hover {
+  color: #cbd5e1;
+}

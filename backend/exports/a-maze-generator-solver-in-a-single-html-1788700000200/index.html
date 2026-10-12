@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maze Lab</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .wrap { text-align: center; }
+  h2 { color: #00d9ff; margin: 0 0 8px 0; }
+  .bar { display: flex; justify-content: center; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .bar button, .bar select { background: #2a2a3a; color: #e6e6e6; border: 1px solid #3a3a4a;
+                             border-radius: 8px; padding: 7px 12px; cursor: pointer; font-size: 13px; }
+  .bar button.primary { background: #00d9ff; color: #04141a; border: none; }
+  canvas { background: #0f0f1a; border: 1px solid #2a2a3a; border-radius: 10px; display: block; margin: 0 auto; }
+  .stats { margin-top: 10px; font-size: 13px; }
+  .stats b { color: #ffb454; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2>🧭 Maze Lab</h2>
+  <div class="bar">
+    <select id="size">
+      <option value="11">11×11</option>
+      <option value="15">15×15</option>
+      <option value="21">21×21</option>
+      <option value="31">31×31</option>
+    </select>
+    <button class="primary" id="genBtn">Generate</button>
+    <select id="solveMode">
+      <option value="bfs">BFS</option>
+      <option value="dfs">DFS</option>
+      <option value="astar">A*</option>
+    </select>
+    <button id="solveBtn">Solve</button>
+    <button id="stepBtn">Step</button>
+  </div>
+  <canvas id="maze" width="620" height="620"></canvas>
+  <div class="stats"><b id="info">generated — pick an algorithm</b></div>
+</div>
+<script>
+  let N = 15;
+  let grid = [];
+  let solving = false;
+  let anim = null;
+  let expanded = 0;
+  let pathLen = 0;
+
+  function makeGrid() {
+    grid = [];
+    for (let r = 0; r < N; r++) {
+      const row = [];
+      for (let c = 0; c < N; c++) row.push({ wall: true, visited: false, onPath: false, f: 0 });
+      grid.push(row);
+    }
+  }
+
+  function generate() {
+    N = parseInt(document.getElementById('size').value, 10);
+    makeGrid();
+    const stack = [[1, 1]];
+    const seen = new Set(['1,1']);
+    grid[1][1].wall = false;
+    while (stack.length) {
+      const [r, c] = stack[stack.length - 1];
+      const moves = [];
+      const cands = [[-2, 0], [2, 0], [0, -2], [0, 2]];
+      for (const [dr, dc] of cands) {
+        const nr = r + dr, nc = c + dc;
+        if (nr > 0 && nr < N - 1 && nc > 0 && nc < N - 1 && !seen.has(nr + ',' + nc)) {
+          moves.push([dr, dc]);
+        }
+      }
+      if (!moves.length) { stack.pop(); continue; }
+      const [dr, dc] = moves[Math.floor(Math.random() * moves.length)];
+      const nr = r + dr, nc = c + dc;
+      grid[r + dr / 2][c + dc / 2].wall = false;
+      grid[nr][nc].wall = false;
+      seen.add(nr + ',' + nc);
+      stack.push([nr, nc]);
+    }
+    grid[1][1].start = true;
+    grid[N - 2][N - 2].end = true;
+    solving = false;
+    if (anim !== null) cancelAnimationFrame(anim);
+    anim = null;
+    document.getElementById('info').textContent = 'generated — pick an algorithm';
+    draw();
+  }
+
+  function neighbors(r, c) {
+    const out = [];
+    const cands = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    for (const [dr, dc] of cands) {
+      const nr = r + dr, nc = c + dc;
+      if (nr >= 0 && nr < N && nc >= 0 && nc < N && !grid[nr][nc].wall) out.push([nr, nc]);
+    }
+    return out;
+  }
+
+  function manhattan(r, c) {
+    return Math.abs(r - (N - 2)) + Math.abs(c - (N - 2));
+  }
+
+  function solve() {
+    if (solving) return;
+    solving = true;
+    expanded = 0;
+    pathLen = 0;
+    for (const row of grid)
+      for (const cell of row) { cell.visited = false; cell.onPath = false; }
+    const mode = document.getElementById('solveMode').value;
+    if (mode === 'bfs') bfs();
+    else if (mode === 'dfs') dfsSolve();
+    else astar();
+  }
+
+  function bfs() {
+    const q = [[1, 1]];
+    const prev = {};
+    grid[1][1].visited = true;
+    const steps = [];
+    while (q.length) {
+      const [r, c] = q.shift();
+      steps.push([r, c]);
+      if (r === N - 2 && c === N - 2) break;
+      for (const [nr, nc] of neighbors(r, c)) {
+        if (!grid[nr][nc].visited) {
+          grid[nr][nc].visited = true;
+          prev[nr + ',' + nc] = r + ',' + c;
+          q.push([nr, nc]);
+        }
+      }
+    }
+    animateSolve(steps, prev);
+  }
+
+  function dfsSolve() {
+    const steps = [];
+    const prev = {};
+    const stack = [[1, 1]];
+    grid[1][1].visited = true;
+    while (stack.length) {
+      const [r, c] = stack.pop();
+      steps.push([r, c]);
+      if (r === N - 2 && c === N - 2) break;
+      for (const [nr, nc] of neighbors(r, c)) {
+        if (!grid[nr][nc].visited) {
+          grid[nr][nc].visited = true;
+          prev[nr + ',' + nc] = r + ',' + c;
+          stack.push([nr, nc]);
+        }
+      }
+    }
+    animateSolve(steps, prev);
+  }
+
+  function astar() {
+    const open = [[1, 1]];
+    const gScore = {};
+    const prev = {};
+    grid[1][1].visited = true;
+    key = '1,1';
+    gScore['1,1'] = 0;
+    grid[1][1].f = manhattan(1, 1);
+    const steps = [];
+    const inOpen = new Set(['1,1']);
+    while (open.length) {
+      open.sort((a, b) => grid[a[0]][a[1]].f - grid[b[0]][b[1]].f);
+      const [r, c] = open.shift();
+      inOpen.delete(r + ',' + c);
+      steps.push([r, c]);
+      if (r === N - 2 && c === N - 2) break;
+      for (const [nr, nc] of neighbors(r, c)) {
+        const key = nr + ',' + nc;
+        const tentative = gScore[r + ',' + c] + 1;
+        if (tentative < (gScore[key] === undefined ? 1e9 : gScore[key])) {
+          gScore[key] = tentative;
+          prev[key] = r + ',' + c;
+          grid[nr][nc].f = tentative + manhattan(nr, nc);
+          if (!inOpen.has(key)) { open.push([nr, nc]); inOpen.add(key); }
+          grid[nr][nc].visited = true;
+        }
+      }
+    }
+    animateSolve(steps, prev);
+  }
+
+  function animateSolve(steps, prev) {
+    let i = 0;
+    const tick = () => {
+      if (i >= steps.length) { finishPath(prev); return; }
+      const [r, c] = steps[i];
+      grid[r][c].explored = true;
+      expanded += 1;
+      i += 1;
+      draw();
+      anim = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  function finishPath(prev) {
+    let cur = (N - 2) + ',' + (N - 2);
+    const chain = [];
+    while (cur) {
+      const [r, c] = cur.split(',').map(Number);
+      chain.push([r, c]);
+      if (r === 1 && c === 1) break;
+      cur = prev[cur];
+    }
+    for (const [r, c] of chain) {
+      grid[r][c].onPath = true;
+      pathLen += 1;
+    }
+    solving = false;
+    document.getElementById('info').textContent =
+      'expanded ' + expanded + ' cells · solution ' + pathLen + ' steps';
+    draw();
+  }
+
+  function stepOnce() {
+    if (solving) return;
+    solve();
+  }
+
+  function draw() {
+    const cvs = document.getElementById('maze');
+    const ctx = cvs.getContext('2d');
+    const cell = Math.floor(cvs.width / N);
+    ctx.fillStyle = '#0f0f1a';
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cellInfo = grid[r][c];
+        const x = c * cell, y = r * cell;
+        if (cellInfo.wall) {
+          ctx.fillStyle = '#3a3a4a';
+          ctx.fillRect(x, y, cell, cell);
+        } else if (cellInfo.onPath) {
+          ctx.fillStyle = '#3ddc84';
+          ctx.fillRect(x, y, cell, cell);
+        } else if (cellInfo.explored) {
+          ctx.fillStyle = '#1a3a2a';
+          ctx.fillRect(x, y, cell, cell);
+        } else {
+          ctx.fillStyle = '#14141f';
+          ctx.fillRect(x, y, cell, cell);
+        }
+        if (cellInfo.start) {
+          ctx.fillStyle = '#00d9ff';
+          ctx.fillRect(x + 3, y + 3, cell - 6, cell - 6);
+        }
+        if (cellInfo.end) {
+          ctx.fillStyle = '#ff5c5c';
+          ctx.fillRect(x + 3, y + 3, cell - 6, cell - 6);
+        }
+      }
+    }
+  }
+
+  document.getElementById('genBtn').addEventListener('click', generate);
+  document.getElementById('solveBtn').addEventListener('click', solve);
+  document.getElementById('stepBtn').addEventListener('click', stepOnce);
+  generate();
+</script>
+</body>
+</html>

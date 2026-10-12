@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "request": "Build a kanban task board app in a single HTML file. Three columns (To Do, In Progress, Done) hold task cards. Tasks can be added per column, deleted, and moved between columns with HTML5 drag-and-drop. All state persists to localStorage and the board re-renders on every change.",
+  "intent": {"goal": "kanban task board app in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Kanban board HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "", "files": ["index.html"]
+}

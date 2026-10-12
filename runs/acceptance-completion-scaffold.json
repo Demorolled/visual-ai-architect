@@ -1,0 +1,1729 @@
+{
+  "tasks_file": "/home/homellmlab/Desktop/visual-ai-architect/corpora/vaca/tasks.txt",
+  "n_tasks": 197,
+  "role": "completion",
+  "n_applicable": 197,
+  "baseline": null,
+  "num_predict": 1200,
+  "num_ctx": 8192,
+  "summary": {
+    "distill_scaffold": {
+      "tag": "vaca-r40-off-distill-adapter:latest",
+      "role": "completion",
+      "n_applicable": 197,
+      "passed": 102,
+      "parse_ok": 108,
+      "exports_ok": 175,
+      "pass_rate": 0.5178,
+      "file_named": 0,
+      "non_trivial": 0,
+      "mean_exports_coverage": null,
+      "n_with_exports": 0,
+      "mean_sibling_coverage": null,
+      "n_with_siblings": 0,
+      "elapsed_s": 1310.4
+    }
+  },
+  "per_task": {
+    "distill_scaffold": {
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'Scene' as a type.",
+          "TS2709 L8: Cannot use namespace 'Input' as a type."
+        ]
+      },
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 36,
+        "missing": [
+          "InputHandler"
+        ],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS2304 L1: Cannot find name 'handleMouseUp'."
+        ]
+      },
+      "3d-chees-game-1786611956524__src-canvas.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L32: Cannot use namespace 'Scene' as a type.",
+          "TS2709 L49: Cannot use namespace 'Cheese' as a type."
+        ]
+      },
+      "3d-chees-game-1786611956524__src-entities-cheese.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chees-game-1786611956524__src-entities-enemy.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chees-game-1786611956524__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 9,
+        "missing": [
+          "startGame"
+        ],
+        "errors": [
+          "TS2304 L1: Cannot find name 'InputHandler'.",
+          "TS2304 L1: Cannot find name 'canvas'."
+        ]
+      },
+      "3d-chees-game-1786611956524__src-input.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chees-game-1786611956524__src-scene.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 7,
+        "missing": [],
+        "errors": [
+          "TS2709 L8: Cannot use namespace 'Cheese' as a type.",
+          "TS2709 L8: Cannot use namespace 'Enemy' as a type."
+        ]
+      },
+      "3d-chess-game-1787074372022__src-board.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS1128 L3: Declaration or statement expected."
+        ]
+      },
+      "3d-chess-game-1787074372022__src-game.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chess-game-1787074372022__src-input.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chess-game-1787074372022__src-main.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chess-game-1787074372022__src-render.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "3d-chess-game-create-a-3d-chess-game-1786817101988__chess3d.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-ai.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-game.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-tile.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-cli.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L39: Cannot use namespace 'Ledger' as a type.",
+          "TS2709 L54: Cannot use namespace 'Ledger' as a type."
+        ]
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L6: Cannot find name 'Account'.",
+          "TS2304 L18: Cannot find name 'Account'."
+        ]
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-cli.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-history.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L4: Cannot use namespace 'LedgerState' as a type.",
+          "TS2709 L11: Cannot use namespace 'LedgerState' as a type."
+        ]
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-ledger.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-budget.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786997848181__src-budget.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 3,
+        "missing": [],
+        "errors": [
+          "TS2709 L25: Cannot use namespace 'Expense' as a type.",
+          "TS2709 L25: Cannot use namespace 'Balance' as a type."
+        ]
+      },
+      "a-command-line-expense-tracker-in-typesc-1786357706649__src-utils.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786988799000__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "loadTodos",
+          "saveTodos"
+        ],
+        "errors": []
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-contact.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-utils.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-cli.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-index.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-cli.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-flashcards.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-test-flashcards.test.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-cards.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 5,
+        "missing": [],
+        "errors": [
+          "TS2709 L29: Cannot use namespace 'Note' as a type.",
+          "TS2709 L40: Cannot use namespace 'Note' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-frontend.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L14: Cannot use namespace 'App' as a type.",
+          "TS1005 L14: '>' expected."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-services.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-tests.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 17,
+        "missing": [],
+        "errors": [
+          "TS2304 L16: Cannot find name 'jest'.",
+          "TS2304 L26: Cannot find name 'jest'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-__tests__-index.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-app.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-frontend-store.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 5,
+        "missing": [],
+        "errors": [
+          "TS2395 L1: Individual declarations in merged declaration 'configureStore' must be all exported or all local.",
+          "TS2440 L1: Import declaration conflicts with local declaration of 'configureStore'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-routes.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-services.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-App.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 1,
+        "missing": [
+          "App"
+        ],
+        "errors": [
+          "TS2694 L7: Namespace '\"*\"' has no exported member 'FC'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-NoteList.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 9,
+        "missing": [
+          "NoteList"
+        ],
+        "errors": [
+          "TS2304 L1: Cannot find name 'notes'.",
+          "TS2304 L2: Cannot find name 'NoteItem'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-services-noteApi.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 3,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Note' as a type.",
+          "TS2709 L5: Cannot use namespace 'Note' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__src-services-noteService.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteApi.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 25,
+        "missing": [],
+        "errors": [
+          "TS2695 L1: Left side of comma operator is unused and has no side effects.",
+          "TS2304 L1: Cannot find name 'content'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteService.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 11,
+        "missing": [],
+        "errors": [
+          "TS2304 L1: Cannot find name 'updatedNote'.",
+          "TS2304 L2: Cannot find name 'getNotes'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__client-src-components-NoteForm.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L6: Cannot use namespace 'Note' as a type.",
+          "TS2694 L10: Namespace '\"*\"' has no exported member 'FC'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__tests-app.test.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786896484419__src-services-noteService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 8,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'Note' as a type.",
+          "TS2709 L9: Cannot use namespace 'NoteInput' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786897701361__client-src-App.test.tsx": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786897701361__tests-server.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L11: Cannot find name 'before'.",
+          "TS2304 L15: Cannot find name 'after'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-App.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2694 L7: Namespace '\"*\"' has no exported member 'FC'.",
+          "TS2347 L8: Untyped function calls may not accept type arguments."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-NoteForm.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Note' as a type.",
+          "TS2709 L6: Cannot use namespace 'Note' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 10,
+        "missing": [],
+        "errors": [
+          "TS1005 L1: ';' expected.",
+          "TS1128 L1: Declaration or statement expected."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__tests-notes.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 15,
+        "missing": [],
+        "errors": [
+          "TS2552 L1: Cannot find name 'request'. Did you mean 'Request'?",
+          "TS2304 L1: Cannot find name 'app'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786906927842__client-src-api-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 11,
+        "missing": [],
+        "errors": [
+          "TS2709 L6: Cannot use namespace 'Note' as a type.",
+          "TS2347 L8: Untyped function calls may not accept type arguments."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__backend-src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__frontend-src-AddNote.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 1,
+        "missing": [
+          "AddNote"
+        ],
+        "errors": [
+          "TS2694 L8: Namespace '\"*\"' has no exported member 'FormEvent'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__tests-backend-notesService.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 1,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'Note' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908038933__src-backend-controllers-noteController.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 10,
+        "missing": [
+          "createNote",
+          "getNotes",
+          "updateNote"
+        ],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS2349 L1: This expression is not callable.   Type 'String' has no call signatures."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908038933__src-frontend-src-components-NoteApp.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [
+          "NoteApp"
+        ],
+        "errors": [
+          "TS2694 L6: Namespace '\"*\"' has no exported member 'FC'.",
+          "TS2347 L7: Untyped function calls may not accept type arguments."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908261632__src-database.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908261632__src-services-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 3,
+        "missing": [],
+        "errors": [
+          "TS2709 L3: Cannot use namespace 'Note' as a type.",
+          "TS2709 L7: Cannot use namespace 'Note' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-config-index.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-interface-api.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-services-notes.service.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 5,
+        "missing": [],
+        "errors": [
+          "TS2709 L6: Cannot use namespace 'Note' as a type.",
+          "TS2709 L6: Cannot use namespace 'Note' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__tests-frontend-NotesList.test.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 7,
+        "missing": [],
+        "errors": [
+          "TS1005 L2: ';' expected.",
+          "TS2695 L2: Left side of comma operator is unused and has no side effects."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925409480__src-app.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925409480__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925714974__frontend-src-components-NoteList.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 1,
+        "missing": [],
+        "errors": [
+          "TS2694 L5: Namespace '\"*\"' has no exported member 'FC'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925714974__tests-backend-routes-note.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 39,
+        "missing": [],
+        "errors": [
+          "TS2552 L1: Cannot find name 'request'. Did you mean 'Request'?",
+          "TS2304 L1: Cannot find name 'app'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925927926__src-controllers-noteController.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [],
+        "errors": [
+          "TS2430 L7: Interface 'NoteRequest' incorrectly extends interface 'Request'.   Types of property 'body' are incompatible.     Type '{ title: string; content: string; }' is missing the following properties from type 'ReadableStream<Uint8Array<ArrayBuffer>>': locked, cancel, getReader, pipeThrough, and",
+          "TS2349 L18: This expression is not callable.   Type 'Number' has no call signatures."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925927926__tests-noteController.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2694 L12: Namespace '\"*\"' has no exported member 'Application'.",
+          "TS2694 L13: Namespace '\"*\"' has no exported member 'SinonSandbox'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteForm.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS1128 L2: Declaration or statement expected."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteList.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__src-utils-logger.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "info",
+          "error"
+        ],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__backend-note.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 14,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'DatabaseConnection' as a type.",
+          "TS2709 L9: Cannot use namespace 'DatabaseConnection' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteForm.test.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "testNoteForm"
+        ],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteList.test.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [],
+        "errors": [
+          "TS2304 L13: Cannot find name 'jest'.",
+          "TS2304 L14: Cannot find name 'jest'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786961607585__frontend-src-notesService.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786961607585__src-controllers.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 7,
+        "missing": [
+          "addNote",
+          "getNotes",
+          "updateNote",
+          "deleteNote"
+        ],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS1128 L1: Declaration or statement expected."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786990924420__src-NoteItem.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS2304 L3: Cannot find name 'NoteItem'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786990924420__src-routes.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__src-database.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__src-models-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 1,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'ObjectId' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__tests-frontend.test.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 27,
+        "missing": [],
+        "errors": [
+          "TS2304 L1: Cannot find name 'axios'.",
+          "TS2304 L3: Cannot find name 'render'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993152454__src-tests-index.test.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L9: Cannot find name 'beforeAll'.",
+          "TS2304 L15: Cannot find name 'afterAll'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "createNote",
+          "getNotes",
+          "updateNote",
+          "deleteNote"
+        ],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-models.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-routes.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787011839360__client-src-Notes.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2694 L4: Namespace '\"*\"' has no exported member 'FC'.",
+          "TS2347 L5: Untyped function calls may not accept type arguments."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787011839360__tests-unit-routes.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L8: Cannot find name 'beforeAll'.",
+          "TS2304 L12: Cannot find name 'afterAll'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-controllers.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 18,
+        "missing": [],
+        "errors": [
+          "TS2709 L8: Cannot use namespace 'NextFunction' as a type.",
+          "TS2554 L11: Expected 0 arguments, but got 1."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [
+          "NotesService"
+        ],
+        "errors": [
+          "TS2709 L18: Cannot use namespace 'NoteStorage' as a type.",
+          "TS2709 L20: Cannot use namespace 'NoteStorage' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-app.test.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-notes.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 22,
+        "missing": [
+          "testCreateNote",
+          "testGetNotes",
+          "testUpdateNote",
+          "testDeleteNote"
+        ],
+        "errors": [
+          "TS2695 L1: Left side of comma operator is unused and has no side effects.",
+          "TS2304 L2: Cannot find name 'content'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-utils.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787013450703__src-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L6: Cannot use namespace 'Application' as a type.",
+          "TS2709 L7: Cannot use namespace 'Application' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787013450703__tests-unit.test.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787014007010__client-src-components-AddNote.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2694 L3: Namespace '\"*\"' has no exported member 'FC'.",
+          "TS2694 L7: Namespace '\"*\"' has no exported member 'FormEvent'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.controller.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 26,
+        "missing": [
+          "NotesController"
+        ],
+        "errors": [
+          "TS1434 L1: Unexpected keyword or identifier.",
+          "TS2304 L1: Cannot find name 'INTERNAL_SERVER_ERROR'."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044595344__src-AddNote.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2694 L4: Namespace '\"*\"' has no exported member 'FC'.",
+          "TS2347 L8: Untyped function calls may not accept type arguments."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__client-src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__src-db.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L3: Cannot use namespace 'Database' as a type.",
+          "TS2709 L5: Cannot use namespace 'Database' as a type."
+        ]
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787686629354__src-utils.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787740976664__build-pipeline.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787740976664__database-sqlite-db.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 1,
+        "missing": [],
+        "errors": [
+          "TS2304 L3: Cannot find name 'db'."
+        ]
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-habitService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 9,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Habit' as a type.",
+          "TS2709 L6: Cannot use namespace 'StorageService' as a type."
+        ]
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-storageService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Habit' as a type.",
+          "TS2709 L9: Cannot use namespace 'Habit' as a type."
+        ]
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Habit' as a type.",
+          "TS2304 L7: Cannot find name 'fs'."
+        ]
+      },
+      "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-ui.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 3,
+        "missing": [],
+        "errors": [
+          "TS2304 L1: Cannot find name 'Habit'.",
+          "TS2304 L11: Cannot find name 'Streak'."
+        ]
+      },
+      "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Task' as a type.",
+          "TS2304 L7: Cannot find name 'Deno'."
+        ]
+      },
+      "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-taskService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'Task' as a type.",
+          "TS2709 L7: Cannot use namespace 'Column' as a type."
+        ]
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logAnalyzer.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logCounter.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logParser.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-logParser.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [],
+        "errors": [
+          "TS2709 L11: Cannot use namespace 'ParsedLog' as a type.",
+          "TS2709 L13: Cannot use namespace 'ParsedLog' as a type."
+        ]
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-moduleReport.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L9: Cannot use namespace 'ParsedLog' as a type.",
+          "TS2709 L9: Cannot use namespace 'ModuleReport' as a type."
+        ]
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786986887187__src-markdown-reader.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786986887187__src-template-renderer.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786996575652__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-markdown-blog-generator-in-typescript--1786996575652__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-scheduler.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-music-playlist-manager-app-in-typescri-1786988402035__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'Playlist' as a type.",
+          "TS2709 L19: Cannot use namespace 'Playlist' as a type."
+        ]
+      },
+      "a-music-playlist-manager-app-in-typescri-1786988402035__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-music-playlist-manager-app-in-typescri-1786997631362__src-playlistService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 12,
+        "missing": [],
+        "errors": [
+          "TS2304 L2: Cannot find name 'playlist'.",
+          "TS2304 L2: Cannot find name 'playlist'."
+        ]
+      },
+      "a-note-taking-app-in-typescript-store-no-1786967060818__src-notes.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-password-strength-checker-app-in-types-1787000544776__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-history.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 3,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Session' as a type.",
+          "TS2709 L15: Cannot use namespace 'Session' as a type."
+        ]
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786996932424__src-timer.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 12,
+        "missing": [
+          "Timer"
+        ],
+        "errors": [
+          "TS2532 L2: Object is possibly 'undefined'.",
+          "TS1128 L3: Declaration or statement expected."
+        ]
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-questions.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-scoring.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 3,
+        "missing": [],
+        "errors": [
+          "TS2709 L17: Cannot use namespace 'Answer' as a type.",
+          "TS2709 L27: Cannot use namespace 'Answer' as a type."
+        ]
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-quiz.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 33,
+        "missing": [],
+        "errors": [
+          "TS1109 L1: Expression expected.",
+          "TS6189 L1: Multiple consecutive numeric separators are not permitted."
+        ]
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L3: Cannot find name 'Question'.",
+          "TS2304 L16: Cannot find name 'Question'."
+        ]
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-recipe.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L6: Cannot find name 'Recipe'.",
+          "TS2304 L16: Cannot find name 'Recipe'."
+        ]
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786999611395__src-recipe.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-simple-password-generator-cli-tool-in--1787263797116__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-small-todo-list-cli-app-with-add-list--1786727010717__src-todo.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-small-todo-list-cli-app-with-add-list--1787520513922__main.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 1,
+        "missing": [],
+        "errors": [
+          "TS2709 L23: Cannot use namespace 'Todo' as a type."
+        ]
+      },
+      "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-portfolio.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 7,
+        "missing": [],
+        "errors": [
+          "TS2532 L2: Object is possibly 'undefined'.",
+          "TS1128 L6: Declaration or statement expected."
+        ]
+      },
+      "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L7: Cannot use namespace 'Portfolio' as a type.",
+          "TS2709 L20: Cannot use namespace 'Portfolio' as a type."
+        ]
+      },
+      "a-temperature-converter-app-in-typescrip-1786966906890__src-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "convertTemperature"
+        ],
+        "errors": []
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-commands.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L8: Cannot use namespace 'Player' as a type.",
+          "TS2709 L17: Cannot use namespace 'Player' as a type."
+        ]
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L37: Cannot find name 'Player'.",
+          "TS2304 L39: Cannot find name 'Player'."
+        ]
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-items.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-player.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 9,
+        "missing": [],
+        "errors": [
+          "TS1128 L4: Declaration or statement expected.",
+          "TS2304 L8: Cannot find name 'Room'."
+        ]
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-render.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2709 L10: Cannot use namespace 'GameState' as a type.",
+          "TS2709 L17: Cannot use namespace 'Room' as a type."
+        ]
+      },
+      "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-stats.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 6,
+        "missing": [
+          "Player"
+        ],
+        "errors": [
+          "TS1128 L2: Declaration or statement expected.",
+          "TS1128 L3: Declaration or statement expected."
+        ]
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-ui.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-gameLogic.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-main.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786357584176__src-game-logic.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 9,
+        "missing": [],
+        "errors": [
+          "TS2304 L1: Cannot find name 'GameState'.",
+          "TS2304 L2: Cannot find name 'isGameOver'."
+        ]
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-game-logic.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-tic-tac-toe.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 38,
+        "missing": [
+          "TicTacToeBoard",
+          "TicTacToePlayer"
+        ],
+        "errors": [
+          "TS2304 L1: Cannot find name 'row'.",
+          "TS2304 L1: Cannot find name 'col'."
+        ]
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-game-logic.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-ui.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2304 L1: Cannot find name 'GameState'.",
+          "TS2304 L11: Cannot find name 'handleCellClick'."
+        ]
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360347970__src-game-logic.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360967129__src-game-logic.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 4,
+        "missing": [],
+        "errors": [
+          "TS2322 L36: Type '(\"X\" | \"O\")[]' is not assignable to type '\"X\" | \"O\"'.",
+          "TS2322 L61: Type 'string' is not assignable to type '(\"X\" | \"O\")[]'."
+        ]
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786361527799__src-game-logic.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786362105481__src-main.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 11,
+        "missing": [],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS2872 L1: This kind of expression is always truthy."
+        ]
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786362606779__src-game-logic.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-typescript-cli-tool-that-reads-a-csv-f-1786357640821__src-csv-parser.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 14,
+        "missing": [
+          "parseCSV",
+          "calculateMovingAverage"
+        ],
+        "errors": [
+          "TS2304 L1: Cannot find name 'prices'.",
+          "TS2304 L1: Cannot find name 'i'."
+        ]
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-redirect.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-shorten.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "createShortUrl"
+        ],
+        "errors": []
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-storage.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "a-voting-poll-app-in-typescript-create-p-1787001731335__src-pollService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 13,
+        "missing": [
+          "PollService"
+        ],
+        "errors": [
+          "TS1128 L1: Declaration or statement expected.",
+          "TS2532 L1: Object is possibly 'undefined'."
+        ]
+      },
+      "a-voting-poll-app-in-typescript-create-p-1787001731335__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 2,
+        "missing": [],
+        "errors": [
+          "TS2709 L5: Cannot use namespace 'Poll' as a type.",
+          "TS2709 L11: Cannot use namespace 'Poll' as a type."
+        ]
+      },
+      "a-voting-poll-app-in-typescript-create-p-1787001731335__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "an-event-countdown-planner-app-in-typesc-1787000399819__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "an-expense-tracker-app-in-typescript-add-1786987396890__src-expense.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "an-expense-tracker-app-in-typescript-add-1786987396890__src-storage.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "an-expense-tracker-app-in-typescript-add-1786997065329__src-expenses.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786566803017__src-todo.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786572070132__src-config.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786572070132__src-types.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "build-a-small-todo-app-add-tasks-mark-do-1788593586525__src-todo.ts": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      },
+      "build-a-todo-list-app-in-a-single-html-f-1786561227765__app.js": {
+        "passed": true,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": []
+      }
+    }
+  }
+}

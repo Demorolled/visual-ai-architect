@@ -1,0 +1,269 @@
+{
+  "sample_input": "the quick brown fox the fox\n",
+  "expected_output": "words=6 distinct=4",
+  "availability": {
+    "typescript": {
+      "available": true,
+      "binary": "/home/homellmlab/Desktop/visual-ai-architect/node_modules/.bin/tsc",
+      "install": "npm install (typescript in node_modules)"
+    },
+    "javascript": {
+      "available": true,
+      "binary": "node",
+      "install": "sudo apt-get install -y nodejs"
+    },
+    "python": {
+      "available": true,
+      "binary": "python3",
+      "install": "sudo apt-get install -y python3"
+    },
+    "go": {
+      "available": true,
+      "binary": "go",
+      "install": "sudo apt-get install -y golang-go"
+    },
+    "rust": {
+      "available": false,
+      "binary": null,
+      "install": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
+    },
+    "java": {
+      "available": true,
+      "binary": "javac",
+      "install": "sudo apt-get install -y openjdk-17-jdk-headless"
+    },
+    "csharp": {
+      "available": false,
+      "binary": null,
+      "install": "sudo apt-get install -y dotnet-sdk-8.0"
+    },
+    "swift": {
+      "available": true,
+      "binary": "swiftc",
+      "install": "https://www.swift.org/install/linux/"
+    },
+    "kotlin": {
+      "available": true,
+      "binary": "kotlinc",
+      "install": "sudo snap install kotlin --classic"
+    },
+    "php": {
+      "available": true,
+      "binary": "php",
+      "install": "sudo apt-get install -y php-cli"
+    },
+    "ruby": {
+      "available": true,
+      "binary": "ruby",
+      "install": "sudo apt-get install -y ruby-full"
+    },
+    "c": {
+      "available": true,
+      "binary": "gcc",
+      "install": "sudo apt-get install -y build-essential"
+    },
+    "cpp": {
+      "available": true,
+      "binary": "g++",
+      "install": "sudo apt-get install -y build-essential"
+    }
+  },
+  "results": [
+    {
+      "language": "typescript",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "typescript",
+        "available": true,
+        "clean": true,
+        "command": "/home/homellmlab/Desktop/visual-ai-architect/node_modules/.bin/tsc --noEmit -p /tmp/vaca-typescript-_9ncyb_v",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "javascript",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "javascript",
+        "available": true,
+        "clean": true,
+        "command": "node --check word-summary.mjs",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "python",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "python",
+        "available": true,
+        "clean": true,
+        "command": "python3 -m py_compile word_summary.py",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "go",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "go",
+        "available": true,
+        "clean": true,
+        "command": "go build ./...",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "rust",
+      "verdict": "UNAVAILABLE",
+      "contract_problems": [],
+      "gate": {
+        "language": "rust",
+        "available": false,
+        "clean": false,
+        "command": "",
+        "output": "toolchain not installed (rust)"
+      },
+      "ran": false,
+      "got": "toolchain not installed (rust)",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "java",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "java",
+        "available": true,
+        "clean": true,
+        "command": "javac -d /tmp/vaca-java-lpuo5jyh/classes WordSummary.java",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "csharp",
+      "verdict": "UNAVAILABLE",
+      "contract_problems": [],
+      "gate": {
+        "language": "csharp",
+        "available": false,
+        "clean": false,
+        "command": "",
+        "output": "toolchain not installed (csharp)"
+      },
+      "ran": false,
+      "got": "toolchain not installed (csharp)",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "swift",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "swift",
+        "available": true,
+        "clean": true,
+        "command": "swiftc -typecheck main.swift",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "kotlin",
+      "verdict": "COMPILE-OK",
+      "contract_problems": [],
+      "gate": {
+        "language": "kotlin",
+        "available": true,
+        "clean": true,
+        "command": "kotlinc main.kt -d /tmp/vaca-kotlin-osyf1wh3/out.jar",
+        "output": "main.kt:4:35: warning: 'fun readLine(): String?' is deprecated. Use `readln()` instead of `readLine()!!`, and `readlnOrNull()` instead of `readLine()`.\n    val text = generateSequence { readLine() }.joinToString(\"\\n\")\n                                  ^^^^^^^^\n"
+      },
+      "ran": false,
+      "got": "kotlin is compile-verified only on this machine (no `kotlin` launcher)",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "php",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "php",
+        "available": true,
+        "clean": true,
+        "command": "php -l word_summary.php",
+        "output": "No syntax errors detected in word_summary.php\n"
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "ruby",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "ruby",
+        "available": true,
+        "clean": true,
+        "command": "ruby -c word_summary.rb",
+        "output": "Syntax OK\n"
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "c",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "c",
+        "available": true,
+        "clean": true,
+        "command": "gcc -fsyntax-only -std=c11 word_summary.c",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    },
+    {
+      "language": "cpp",
+      "verdict": "PASS",
+      "contract_problems": [],
+      "gate": {
+        "language": "cpp",
+        "available": true,
+        "clean": true,
+        "command": "g++ -fsyntax-only -std=c++17 word_summary.cpp",
+        "output": ""
+      },
+      "ran": true,
+      "got": "words=6 distinct=4",
+      "expected": "words=6 distinct=4"
+    }
+  ],
+  "failed": 0
+}

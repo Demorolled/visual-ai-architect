@@ -11,7 +11,10 @@
 #      — re-runs the shared-scratch regression probe and FAILS CI if it
 #      produces zero spurious failures across --probe-rounds (default 3),
 #      i.e. the probe no longer detects the bug it guards.
-#   4. Cloud-notebook cell validation (scripts/validate-cloud-notebooks.py)
+#   4. Notebook embedded-file sync (scripts/sync-notebook-embedded-files.py
+#      --check) — fails if a notebook's %%writefile body has drifted from its
+#      repo source, printing the one-line fix to re-embed it.
+#   5. Cloud-notebook cell validation (scripts/validate-cloud-notebooks.py)
 #      — compile-checks every code cell of the Colab + Kaggle notebooks so
 #      escaping/typo bugs (e.g. the 2026-08-01 'Colab's' SyntaxError that
 #      killed Step 2) and stale embedded trainers can never ship again.
@@ -37,6 +40,7 @@ PY_SCRIPTS=(
   scripts/merge-campaign50-into-dataset.py
   scripts/restore-dataset-meta.py
   scripts/validate-cloud-notebooks.py
+  scripts/sync-notebook-embedded-files.py
   tests/test-kaggle-adaptive-run-cell.py
   tests/test-tsc-concurrency.py
 )
@@ -62,6 +66,14 @@ for f in "${PY_SCRIPTS[@]}"; do
   fi
 done
 echo "  ✅ py_compile OK"
+
+echo "── check-training: notebook embedded-file sync (stale-trainer guard) ──"
+if ! python3 scripts/sync-notebook-embedded-files.py --check; then
+  echo "  ❌ stale embedded file(s) in cloud notebooks — fix with:"
+  echo "     python3 scripts/sync-notebook-embedded-files.py"
+  exit 1
+fi
+echo "  ✅ notebook embedded files in sync"
 
 echo "── check-training: cloud-notebook cell validation (Colab + Kaggle) ──"
 if ! python3 scripts/validate-cloud-notebooks.py --quiet; then

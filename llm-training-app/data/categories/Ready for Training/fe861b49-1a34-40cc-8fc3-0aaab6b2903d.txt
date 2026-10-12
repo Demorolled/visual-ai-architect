@@ -1,0 +1,4 @@
+{"instruction": "What is the VACA backend route mount `/api/user` bound to?", "input": "", "output": "`/api/user` is served by `userRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/venorica` bound to?", "input": "", "output": "`/api/venorica` is served by `neuralRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/voice-action` bound to?", "input": "", "output": "`/api/voice-action` is served by `voiceActionRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/wiki` bound to?", "input": "", "output": "`/api/wiki` is served by `wikiRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}

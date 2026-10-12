@@ -1,0 +1,434 @@
+{
+ "success": true,
+ "projectId": "aad406d3-120f-4b27-9860-024e272e574b",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "music_player",
+  "description": "Music Player. \ud83c\udfb5 Music Player",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "audio_engine"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "core_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "core_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "data_store",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "data_store",
+    "destination_module": "audio_engine",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 23 music-player Open-Source Projects | LibHunt\n    Which are the best open-source music-player projects? This list will help you: lx-music-desktop, spotube, pear-desktop, nuclear, lx-music-mobile, koel, and feishin.\n  \u2022 I tested 5 open-source music players and this is the only one I kept\n    Echo is the only open-source music player I&#x27;ll use, because it beautifully handles both on-device files and streaming service in a single app.\n  \u2022 \u2b508680 tonhowtf/omniget: Download Udemy and Hotmart courses, YouTube videos, music and books \u2014 1,800+ sites, no terminal. Free open-source desktop app for Windows, macOS and L\n  \u2022 \u2b503143 cirosantilli/china-dictatorship: \u53cd\u4e2d\u5171\u653f\u6cbb\u5ba3\u4f20\u5e93\u3002Anti Chinese government propaganda. \u4f4f\u5728\u4e2d\u56fd\u771f\u540d\u7528\u6237\u7684\u7f51\u53cb\u8bf7\u522b\u7ed9\u661f\u661f\uff0c\u4e0d\u7136\u4f60\u8981\u88ab\u8b66\u5bdf\u8bf7\u559d\u8336\u3002\u5e38\u89c1\u95ee\u7b54\u96c6\uff0c\u65b0\u95fb\u96c6\u548c\u996d\u5e97\u548c\u97f3\u4e50\u5efa\u8bae\u3002\u5350\u4e60\u4e07\u5c81\u5350\u3002\u51a0\u72b6\u75c5\u6bd2\u5ba1\u67e5\u90dd\u6d77\u4e1c\u65b0\u7586\u6539\u9020\u4e2d\u5fc3\u516d\u56db\u4e8b\u4ef6\u6cd5\u8f6e\u529f 996.ICU709\u5927\u6293\u6355\u5df4\u62ff\u9a6c\u6587\u4ef6\u9093\u5bb6\u8d35\u4f4e\u7aef\u4eba\u53e3\u897f\u85cf\u9a9a\u4e71\u3002\n  \u2022 obs-studio (video): Stream and record easily\n  \u2022 mpv (video): Command line media player\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 28: SESSION UPDATE \u2014 July 26, 2026: SYSTEM IMPROVEMENTS\n    28.1 12 NEW APPS CREATED (projects/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTier 1 \u2014 Simple:\n  memory-game.html       (9.9 KB) \u2014 Card flipping memory game\n  quote-generator.html   (12 KB)  \u2014 Random quote generator with categories\n\nTier 2 \u2014 Medium:\n  pomodoro-timer.html    (8 KB)   \u2014 Work/break timer\n  \u2022 Section 29: SESSION UPDATE \u2014 July 26, 2026: BATCH 2 \u2014 15 APPS (MEDIUM \u2192 EXTREME)\n    29.1 TIER 1 \u2014 MEDIUM (3 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  password-manager.html   (11.2 KB) \u2014 Generator + vault + strength meter + export\n  habit-tracker.html      (10.5 KB) \u2014 Streaks, heatmap, weekly view, stats\n  calendar-planner.html   (11.8 KB) \u2014 Monthly calendar, event CRUD, categories\n\n2\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "music_player",
+   "score": 1
+  },
+  {
+   "app_type": "home_media_server",
+   "score": 0.7975900072948532
+  },
+  {
+   "app_type": "music_studio",
+   "score": 0.5603515809558356
+  },
+  {
+   "app_type": "music_organizer",
+   "score": 0.5475951029281729
+  },
+  {
+   "app_type": "media_player_desktop",
+   "score": 0.5460392117639213
+  }
+ ],
+ "project": {
+  "id": "aad406d3-120f-4b27-9860-024e272e574b",
+  "name": "a music player app",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "music_player blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "core_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "data_store"
+   },
+   {
+    "id": "mod_4",
+    "type": "logic",
+    "label": "audio_engine"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 0,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 5,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "audio_engine"
+  ],
+  "generated": [
+   "core_engine",
+   "ui_screens",
+   "input_handler",
+   "data_store",
+   "audio_engine"
+  ],
+  "matched": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store",
+   "audio_engine"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "core-engine.ts",
+   "language": "typescript",
+   "code": "export function loadPlaylist(playlist: string[]): void {\n    playlist.forEach((song) => {\n        const audio = new Audio(song);\n        audio.play();\n    });\n}\n\nexport function togglePlayback(): void {\n    if (isPlaying) {\n        pause();\n    } else {\n        resume();\n    }\n}\n\nexport function pause(): void {\n    isPlaying = false;\n    currentTime = 0;\n    seekBar.value = 0;\n    playButton.textContent = '\u25b6';\n}\n\nexport function resume(): void {\n    isPlaying = true;\n    const remainingTime = duration - currentTime;\n    seekBar.max = duration;\n    seekBar.value = currentTime;\n    const interval = setInterval(() => {\n        currentTime += 1;\n        seekBar.value = currentTime;\n        if (currentTime >= duration) {\n            clearInterval(interval);\n            currentTime = 0;\n            seekBar.value = 0;\n            playButton.textContent = '\u25b6';\n        }\n    }, 1000);\n}\n\nexport function seek(e: MouseEvent): void {\n    const rect = seekBar.parentElement!.getBoundingClientRect();\n    const offsetX = e.clientX - rect.left;\n    const ratio = offsetX / rect.width;\n    currentTime = Math.floor(duration * ratio);\n    seekBar.value = currentTime;\n    if (isPlaying) {\n        const remainingTime = duration - currentTime;\n        const interval = setInterval(() => {\n            currentTime += 1;\n            seekBar.value = currentTime;\n            if (currentTime >= duration) {\n                clearInterval(interval);\n                currentTime = 0;\n                seekBar.value = 0;\n                playButton.textContent = '\u25b6';\n            }\n        }, 1000);\n    }\n}\n\nexport function changeVolume(volume: number): void {\n    volumeSlider.value = volume;\n    volume = volume / 100;\n    volumeSlider.style.background = `conic-gradient(#00d9ff 0% ${volume}%, #333 ${volume}% 100%)`;\n    audio.volume = volume;\n}\n\nexport function toggleMute(): void {\n    if (isMuted) {\n        isMuted = false;\n        volumeSlider.value = 100;\n        volumeSlider.style.background = `conic-gradient(#00d9ff 0% 100%, #333 0% 100%)`;\n        audio.volume = 1;\n        muteButton.textContent = '\ud83d\udd07';\n    } else {\n        isMuted = true;\n        volumeSlider.value = 0;\n        volumeSlider.style.background = `conic-gradient(#333 0% 100%, #333 0% 100%)`;\n        audio.volume = 0;\n        muteButton.textContent = '\ud83d\udd0a';\n    }\n}\n\nexport function addSong(song: string): void {\n    playlist.push(song);\n    document.getElementById('playlistDisplay')!.innerHTML += `<div class=\"playlist-item\">${song}</div>`;\n}\n\nexport function removeSong(index: number): void {\n    playlist.splice(index, 1);\n    document.getElementById('playlistDisplay')!.querySelectorAll('.playlist-item')[index].remove();\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "core_engine",
+   "dependencies": [],
+   "exports": [
+    "loadPlaylist",
+    "togglePlayback",
+    "pause",
+    "resume",
+    "seek",
+    "changeVolume",
+    "toggleMute",
+    "addSong",
+    "removeSong"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'isPlaying'. (line 9)",
+    "TS2304: Cannot find name 'isPlaying'. (line 17)",
+    "TS2304: Cannot find name 'currentTime'. (line 18)",
+    "TS2304: Cannot find name 'seekBar'. (line 19)",
+    "TS2304: Cannot find name 'playButton'. (line 20)",
+    "TS2304: Cannot find name 'isPlaying'. (line 24)",
+    "TS2304: Cannot find name 'duration'. (line 25)",
+    "TS2304: Cannot find name 'currentTime'. (line 25)",
+    "TS2304: Cannot find name 'seekBar'. (line 26)",
+    "TS2304: Cannot find name 'duration'. (line 26)",
+    "TS2304: Cannot find name 'seekBar'. (line 27)",
+    "TS2304: Cannot find name 'currentTime'. (line 27)",
+    "TS2304: Cannot find name 'currentTime'. (line 29)",
+    "TS2304: Cannot find name 'seekBar'. (line 30)",
+    "TS2304: Cannot find name 'currentTime'. (line 30)",
+    "TS2304: Cannot find name 'currentTime'. (line 31)",
+    "TS2304: Cannot find name 'duration'. (line 31)",
+    "TS2304: Cannot find name 'currentTime'. (line 33)",
+    "TS2304: Cannot find name 'seekBar'. (line 34)",
+    "TS2304: Cannot find name 'playButton'. (line 35)",
+    "TS2304: Cannot find name 'seekBar'. (line 41)",
+    "TS2304: Cannot find name 'currentTime'. (line 44)",
+    "TS2304: Cannot find name 'duration'. (line 44)",
+    "TS2304: Cannot find name 'seekBar'. (line 45)",
+    "TS2304: Cannot find name 'currentTime'. (line 45)",
+    "TS2304: Cannot find name 'isPlaying'. (line 46)",
+    "TS2304: Cannot find name 'duration'. (line 47)",
+    "TS2304: Cannot find name 'currentTime'. (line 47)",
+    "TS2304: Cannot find name 'currentTime'. (line 49)",
+    "TS2304: Cannot find name 'seekBar'. (line 50)",
+    "TS2304: Cannot find name 'currentTime'. (line 50)",
+    "TS2304: Cannot find name 'currentTime'. (line 51)",
+    "TS2304: Cannot find name 'duration'. (line 51)",
+    "TS2304: Cannot find name 'currentTime'. (line 53)",
+    "TS2304: Cannot find name 'seekBar'. (line 54)",
+    "TS2304: Cannot find name 'playButton'. (line 55)",
+    "TS2304: Cannot find name 'volumeSlider'. (line 62)",
+    "TS2304: Cannot find name 'volumeSlider'. (line 64)",
+    "TS2304: Cannot find name 'audio'. (line 65)",
+    "TS2304: Cannot find name 'isMuted'. (line 69)",
+    "TS2304: Cannot find name 'isMuted'. (line 70)",
+    "TS2304: Cannot find name 'volumeSlider'. (line 71)",
+    "TS2304: Cannot find name 'volumeSlider'. (line 72)",
+    "TS2304: Cannot find name 'audio'. (line 73)",
+    "TS2304: Cannot find name 'muteButton'. (line 74)",
+    "TS2304: Cannot find name 'isMuted'. (line 76)",
+    "TS2304: Cannot find name 'volumeSlider'. (line 77)",
+    "TS2304: Cannot find name 'volumeSlider'. (line 78)",
+    "TS2304: Cannot find name 'audio'. (line 79)",
+    "TS2304: Cannot find name 'muteButton'. (line 80)",
+    "TS2304: Cannot find name 'playlist'. (line 85)",
+    "TS2304: Cannot find name 'playlist'. (line 90)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { loadPlaylist, togglePlayback, pause, resume, seek, changeVolume, toggleMute, addSong, removeSong } from '../core-engine/core-engine.ts';\n\nexport function render(container: HTMLElement) {\n  container.innerHTML = `\n    <div class=\"player\">\n      <div class=\"album-art\" style=\"background-image:url('https://via.placeholder.com/300')\"></div>\n      <div class=\"track-info\">\n        <h1 id=\"trackTitle\">Track Name</h1>\n        <p id=\"trackArtist\">Artist Name</p>\n        <div class=\"controls\">\n          <button id=\"playBtn\" class=\"btn\" onclick=\"togglePlayback()\">\u25b6 Play</button>\n          <button id=\"prevBtn\" class=\"btn\" onclick=\"prevTrack()\">\u25c0 Prev</button>\n          <button id=\"nextBtn\" class=\"btn\" onclick=\"nextTrack()\">Next \u25b6</button>\n          <div class=\"volume-slider\">\n            <input type=\"range\" min=\"0\" max=\"100\" value=\"70\" id=\"volumeSlider\" oninput=\"adjustVolume(Number(this.value))\">\n            <span id=\"volumeDisplay\">70%</span>\n          </div>\n        </div>\n        <div class=\"progress-bar\">\n          <div class=\"progress-fill\" id=\"progressFill\"></div>\n          <div class=\"progress-time\" id=\"progressTime\">0:00</div>\n        </div>\n      </div>\n    </div>\n    <div class=\"playlist\">\n      <h2>Playlist</h2>\n      <div class=\"playlist-items\">\n        <div class=\"playlist-item\" onclick=\"playTrack(0)\">\n          <span class=\"track-number\">1</span>\n          <span class=\"track-title\">Track 1</span>\n          <span class=\"track-duration\">3:45</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(1)\">\n          <span class=\"track-number\">2</span>\n          <span class=\"track-title\">Track 2</span>\n          <span class=\"track-duration\">4:20</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(2)\">\n          <span class=\"track-number\">3</span>\n          <span class=\"track-title\">Track 3</span>\n          <span class=\"track-duration\">5:15</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(3)\">\n          <span class=\"track-number\">4</span>\n          <span class=\"track-title\">Track 4</span>\n          <span class=\"track-duration\">3:50</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(4)\">\n          <span class=\"track-number\">5</span>\n          <span class=\"track-title\">Track 5</span>\n          <span class=\"track-duration\">4:30</span>\n        </div>\n      </div>\n    </div>\n  `;\n\n  const btnPlay = document.getElementById('playBtn');\n  const btnPrev = document.getElementById('prevBtn');\n  const btnNext = document.getElementById('nextBtn');\n  const volumeSlider = document.getElementById('volumeSlider');\n  const progressFill = document.getElementById('progressFill');\n  const progressTime = document.getElementById('progressTime');\n\n  let currentTrack = 0;\n  let isPlaying = false;\n  let audio: HTMLAudioElement;\n\n  function togglePlayback() {\n    isPlaying = !isPlaying;\n    if (isPlaying) {\n      btnPlay.textContent = '\u23f8 Pause';\n      playTrack(currentTrack);\n    } else {\n      btnPlay.textContent = '\u25b6 Play';\n      pausePlayback();\n    }\n  }\n\n  function playTrack(index: number) {\n    currentTrack = index;\n    if (isPlaying) {\n      resumePlayback();\n    } else {\n      pausePlayback();\n      loadTrack(index);\n    }\n  }\n\n  function pausePlayback() {\n    if (audio) {\n      audio.pause();\n      audio.currentTime = 0;\n    }\n  }\n\n  function resumePlayback() {\n    if (audio) {\n      audio.play();\n    }\n  }\n\n  function loadTrack(index: number) {\n    const tracks = [\n      { title: 'Track 1', artist: 'Artist 1', duration: 245, src: 'track1.mp3' },\n      { title: 'Track 2', artist: 'Artist 2', duration: 250, src: 'track2.mp3' },\n      { title: 'Track 3', artist: 'Artist 3', duration: 260, src: 'track3.mp3' },\n      { title: 'Track 4', artist: 'Artist 4', duration: 240, src: 'track4.mp3' },\n      { title: 'Track 5', artist: 'Artist 5', duration: 255, src: 'track5.mp3' },\n    ];\n\n    const track = tracks[index];\n    if (track) {\n      if (audio) {\n        audio.src = track.src;\n        audio.currentTime = 0;\n        audio.volume = volumeSlider.value / 100;\n        audio.play();\n      }\n      updateProgress(0, track.duration);\n      updateTrackDisplay(track.title, track.artist);\n    }\n  }\n\n  function updateProgress(current: number, total: number) {\n    if (audio) {\n      const fill = (current / total) * 100;\n      progressFill.style.width = fill + '%';\n      progressTime.textContent = formatTime(current) + ' / ' + formatTime(total);\n    }\n  }\n\n  function formatTime(seconds: number) {\n    const minutes = Math.floor(seconds / 60);\n    const remaining = seconds % 60;\n    return `${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`;\n  }\n\n  function nextTrack() {\n    currentTrack = (currentTrack + 1) % 5;\n    playTrack(currentTrack);\n  }\n\n  function prevTrack() {\n    currentTrack = (currentTrack - 1 + 5) % 5;\n    playTrack(currentTrack);\n  }\n\n  function adjustVolume(volume: number) {\n    if (audio) {\n      audio.volume = volume / 100;\n      volumeSlider.value = audio.volume * 100;\n      document.getElementById('volumeDisplay')!.textContent = volume + '%';\n    }\n  }\n\n  function updateTrackDisplay(title: string, artist: string) {\n    document.getElementById('trackTitle')!.textContent = title;\n    document.getElementById('trackArtist')!.textContent = artist;\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 116)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 151)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { loadPlaylist, togglePlayback, pause, resume, seek, changeVolume, toggleMute, addSong, removeSong } from '../core-engine/core-engine.ts';\n\nexport function handleInput(event: KeyboardEvent | MouseEvent): void {\n    const inputType = event instanceof MouseEvent ? 'click' : 'keyboard';\n    const key = (event instanceof MouseEvent ? (event as MouseEvent).button : event.key).toLowerCase();\n    const actions = {\n        play_pause: ['space', 'play', 'pause'],\n        rewind: ['left', 'arrowleft'],\n        forward: ['right', 'arrowright'],\n        volume_down: ['down', 'arrowdown'],\n        volume_up: ['up', 'arrowup'],\n        mute: ['m', 'm'],\n        next: ['n', 'arrowright'],\n        previous: ['p', 'arrowleft'],\n    };\n\n    for (const [action, keys] of Object.entries(actions)) {\n        if (keys.includes(key)) {\n            switch (action) {\n                case 'play_pause':\n                    togglePlayback();\n                    break;\n                case 'rewind':\n                    seek(-10);\n                    break;\n                case 'forward':\n                    seek(10);\n                    break;\n                case 'volume_down':\n                    changeVolume(Math.max(0, Math.min(100, parseInt(document.getElementById('volumeSlider')!.value) - 10)));\n                    break;\n                case 'volume_up':\n                    changeVolume(Math.min(100, parseInt(document.getElementById('volumeSlider')!.value) + 10));\n                    break;\n                case 'mute':\n                    toggleMute();\n                    break;\n                case 'next':\n                    nextSong();\n                    break;\n                case 'previous':\n                    previousSong();\n                    break;\n                default:\n                    break;\n            }\n            return;\n        }\n    }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ],
+   "errors": [
+    "TS2339: Property 'toLowerCase' does not exist on type 'string | number'. (line 5)",
+    "TS2345: Argument of type 'number' is not assignable to parameter of type 'MouseEvent'. (line 24)",
+    "TS2345: Argument of type 'number' is not assignable to parameter of type 'MouseEvent'. (line 27)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 30)",
+    "TS2339: Property 'value' does not exist on type 'HTMLElement'. (line 33)",
+    "TS2304: Cannot find name 'nextSong'. (line 39)",
+    "TS2304: Cannot find name 'previousSong'. (line 42)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "import { handleInput } from '../input-handler/input-handler.ts';\n\nexport class MusicPlayerDataStore {\n  private state: { songs: { title: string; artist: string; duration: number; played: boolean }[]; currentSongIndex: number; volume: number; isPlaying: boolean } = { songs: [], currentSongIndex: 0, volume: 100, isPlaying: false };\n  private events: { type: 'state_changes' | 'song_played' | 'volume_changed' | 'play_pause' }[] = [];\n\n  constructor() {}\n\n  connectDb() {\n    this.state.songs = [\n      { title: 'Song 1', artist: 'Artist 1', duration: 300, played: false },\n      { title: 'Song 2', artist: 'Artist 2', duration: 250, played: false },\n      { title: 'Song 3', artist: 'Artist 3', duration: 350, played: false },\n    ];\n  }\n\n  saveState(newState: { songs: { title: string; artist: string; duration: number; played: boolean }[]; currentSongIndex: number; volume: number; isPlaying: boolean }) {\n    this.state = { ...this.state, ...newState };\n    this.events.push({ type: 'state_changes', snapshot: { ...this.state } });\n  }\n\n  loadFromDb() {\n    this.state.songs = [\n      { title: 'Song 4', artist: 'Artist 4', duration: 200, played: true },\n      { title: 'Song 5', artist: 'Artist 5', duration: 250, played: false },\n      { title: 'Song 6', artist: 'Artist 6', duration: 300, played: true },\n    ];\n    this.state.currentSongIndex = 2;\n    this.state.volume = 75;\n    this.state.isPlaying = true;\n  }\n\n  getGameState() {\n    return this.state;\n  }\n\n  playPause() {\n    this.state.isPlaying = !this.state.isPlaying;\n    this.events.push({ type: 'play_pause', snapshot: { ...this.state } });\n  }\n\n  volumeUp() {\n    this.state.volume = Math.min(100, this.state.volume + 5);\n    this.events.push({ type: 'volume_changed', snapshot: { ...this.state } });\n  }\n\n  volumeDown() {\n    this.state.volume = Math.max(0, this.state.volume - 5);\n    this.events.push({ type: 'volume_changed', snapshot: { ...this.state } });\n  }\n\n  nextSong() {\n    this.state.currentSongIndex = (this.state.currentSongIndex + 1) % this.state.songs.length;\n    this.events.push({ type: 'song_played', snapshot: { ...this.state } });\n  }\n\n  prevSong() {\n    this.state.currentSongIndex = (this.state.currentSongIndex - 1 + this.state.songs.length) % this.state.songs.length;\n    this.events.push({ type: 'song_played', snapshot: { ...this.state } });\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "data_store",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "MusicPlayerDataStore"
+   ],
+   "errors": [
+    "TS2353: Object literal may only specify known properties, and 'snapshot' does not exist in type '{ type: \"play_pause\" | \"state_changes\" | \"song_played\" | \"volume_changed\"; }'. (line 19)",
+    "TS2353: Object literal may only specify known properties, and 'snapshot' does not exist in type '{ type: \"play_pause\" | \"state_changes\" | \"song_played\" | \"volume_changed\"; }'. (line 39)",
+    "TS2353: Object literal may only specify known properties, and 'snapshot' does not exist in type '{ type: \"play_pause\" | \"state_changes\" | \"song_played\" | \"volume_changed\"; }'. (line 44)",
+    "TS2353: Object literal may only specify known properties, and 'snapshot' does not exist in type '{ type: \"play_pause\" | \"state_changes\" | \"song_played\" | \"volume_changed\"; }'. (line 49)",
+    "TS2353: Object literal may only specify known properties, and 'snapshot' does not exist in type '{ type: \"play_pause\" | \"state_changes\" | \"song_played\" | \"volume_changed\"; }'. (line 54)",
+    "TS2353: Object literal may only specify known properties, and 'snapshot' does not exist in type '{ type: \"play_pause\" | \"state_changes\" | \"song_played\" | \"volume_changed\"; }'. (line 59)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "audio-engine.ts",
+   "language": "typescript",
+   "code": "import { MusicPlayerDataStore } from '../data-store/data-store.ts';\n\nexport class AudioEngine {\n  private audioContext: AudioContext | undefined;\n  private audioSources: { [id: string]: AudioBufferSourceNode } = {};\n  private audioBuffers: { [id: string]: AudioBuffer } = {};\n  private currentTrack: number = 0;\n  private volume: number = 0.5;\n  private muted: boolean = false;\n\n  constructor() {}\n\n  async initAudioContext() {\n    if (this.audioContext) return;\n    try {\n      this.audioContext = new AudioContext();\n      console.log('Audio context initialized');\n    } catch (error) {\n      console.error('Error initializing audio context:', error);\n    }\n  }\n\n  async loadAudioBuffer(id: string, src: string) {\n    if (this.audioBuffers[id]) return;\n    try {\n      const response = await fetch(src);\n      const arrayBuffer = await response.arrayBuffer();\n      this.audioBuffers[id] = await this.audioContext?.decodeAudioData(arrayBuffer);\n      console.log(`Loaded audio buffer: ${id}`);\n    } catch (error) {\n      console.error(`Error loading audio buffer ${id}:`, error);\n    }\n  }\n\n  async playTrack(trackId: string) {\n    if (!this.audioContext) return;\n    try {\n      const track = this.audioBuffers[trackId];\n      if (!track) {\n        console.error(`Track not found: ${trackId}`);\n        return;\n      }\n      if (this.audioSources[trackId]) {\n        this.audioSources[trackId].stop();\n        delete this.audioSources[trackId];\n      }\n      const source = this.audioContext?.createBufferSource();\n      source?.connect(this.audioContext?.destination);\n      source?.buffer = track;\n      source?.start();\n      this.audioSources[trackId] = source;\n      this.currentTrack = trackId;\n      console.log(`Playing track: ${trackId}`);\n    } catch (error) {\n      console.error(`Error playing track ${trackId}:`, error);\n    }\n  }\n\n  async pauseTrack() {\n    if (!this.audioContext) return;\n    try {\n      if (this.audioSources[this.currentTrack]) {\n        this.audioSources[this.currentTrack].stop();\n      }\n    } catch (error) {\n      console.error('Error pausing track:', error);\n    }\n  }\n\n  async resumeTrack() {\n    if (!this.audioContext) return;\n    try {\n      if (this.audioSources[this.currentTrack]) {\n        this.audioSources[this.currentTrack].resume();\n      }\n    } catch (error) {\n      console.error('Error resuming track:', error);\n    }\n  }\n\n  async stopAllTracks() {\n    if (!this.audioContext) return;\n    try {\n      for (const source of Object.values(this.audioSources)) {\n        if (source) source?.stop();\n      }\n      this.audioSources = {};\n      this.currentTrack = null;\n      console.log('All tracks stopped');\n    } catch (error) {\n      console.error('Error stopping tracks:', error);\n    }\n  }\n\n  setVolume(volume: number) {\n    this.volume = volume;\n    if (this.audioContext) {\n      this.audioContext?.masterGain?.gain?.value = volume;\n    }\n  }\n\n  toggleMute() {\n    this.muted = !this.muted;\n    this.setVolume(this.muted ? 0 : this.volume);\n  }\n\n  shutdown() {\n    this.stopAllTracks();\n    this.audioContext?.close();\n    this.audioContext = undefined;\n    console.log('Audio engine shutdown');\n  }\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "audio_engine",
+   "dependencies": [
+    "data_store"
+   ],
+   "exports": [
+    "AudioEngine"
+   ],
+   "errors": [
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 49)",
+    "TS2322: Type 'string' is not assignable to type 'number'. (line 52)",
+    "TS2339: Property 'resume' does not exist on type 'AudioBufferSourceNode'. (line 74)",
+    "TS2779: The left-hand side of an assignment expression may not be an optional property access. (line 98)",
+    "TS2339: Property 'masterGain' does not exist on type 'AudioContext'. (line 98)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a music player app</title>\n  <meta name=\"description\" content=\"a music player app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a music player app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n      // \u2500\u2500 Declare module namespaces (used by the legacy IIFEs below) \u2500\u2500\n      var core_engine = {}; var ui_screens = {}; var input_handler = {}; var data_store = {}; var audio_engine = {};\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n// \u2500\u2500 core-engine.ts \u2500\u2500\n\n(function(exports) {\nexports.loadPlaylist = loadPlaylist;\nexports.togglePlayback = togglePlayback;\nexports.pause = pause;\nexports.resume = resume;\nexports.seek = seek;\nexports.changeVolume = changeVolume;\nexports.toggleMute = toggleMute;\nexports.addSong = addSong;\nexports.removeSong = removeSong;\nfunction loadPlaylist(playlist) {\n    playlist.forEach((song) => {\n        const audio = new Audio(song);\n        audio.play();\n    });\n}\nfunction togglePlayback() {\n    if (isPlaying) {\n        pause();\n    }\n    else {\n        resume();\n    }\n}\nfunction pause() {\n    isPlaying = false;\n    currentTime = 0;\n    seekBar.value = 0;\n    playButton.textContent = '\u25b6';\n}\nfunction resume() {\n    isPlaying = true;\n    const remainingTime = duration - currentTime;\n    seekBar.max = duration;\n    seekBar.value = currentTime;\n    const interval = setInterval(() => {\n        currentTime += 1;\n        seekBar.value = currentTime;\n        if (currentTime >= duration) {\n            clearInterval(interval);\n            currentTime = 0;\n            seekBar.value = 0;\n            playButton.textContent = '\u25b6';\n        }\n    }, 1000);\n}\nfunction seek(e) {\n    const rect = seekBar.parentElement.getBoundingClientRect();\n    const offsetX = e.clientX - rect.left;\n    const ratio = offsetX / rect.width;\n    currentTime = Math.floor(duration * ratio);\n    seekBar.value = currentTime;\n    if (isPlaying) {\n        const remainingTime = duration - currentTime;\n        const interval = setInterval(() => {\n            currentTime += 1;\n            seekBar.value = currentTime;\n            if (currentTime >= duration) {\n                clearInterval(interval);\n                currentTime = 0;\n                seekBar.value = 0;\n                playButton.textContent = '\u25b6';\n            }\n        }, 1000);\n    }\n}\nfunction changeVolume(volume) {\n    volumeSlider.value = volume;\n    volume = volume / 100;\n    volumeSlider.style.background = \\`conic-gradient(#00d9ff 0% \\${volume}%, #333 \\${volume}% 100%)\\`;\n    audio.volume = volume;\n}\nfunction toggleMute() {\n    if (isMuted) {\n        isMuted = false;\n        volumeSlider.value = 100;\n        volumeSlider.style.background = \\`conic-gradient(#00d9ff 0% 100%, #333 0% 100%)\\`;\n        audio.volume = 1;\n        muteButton.textContent = '\ud83d\udd07';\n    }\n    else {\n        isMuted = true;\n        volumeSlider.value = 0;\n        volumeSlider.style.background = \\`conic-gradient(#333 0% 100%, #333 0% 100%)\\`;\n        audio.volume = 0;\n        muteButton.textContent = '\ud83d\udd0a';\n    }\n}\nfunction addSong(song) {\n    playlist.push(song);\n    document.getElementById('playlistDisplay').innerHTML += \\`<div class=\"playlist-item\">\\${song}</div>\\`;\n}\nfunction removeSong(index) {\n    playlist.splice(index, 1);\n    document.getElementById('playlistDisplay').querySelectorAll('.playlist-item')[index].remove();\n}\n})(typeof core_engine !== 'undefined' ? core_engine : {});\n\n// \u2500\u2500 ui-screens.ts \u2500\u2500\n\n(function(exports) {\nexports.render = render;\nfunction render(container) {\n    container.innerHTML = \\`\n    <div class=\"player\">\n      <div class=\"album-art\" style=\"background-image:url('https://via.placeholder.com/300')\"></div>\n      <div class=\"track-info\">\n        <h1 id=\"trackTitle\">Track Name</h1>\n        <p id=\"trackArtist\">Artist Name</p>\n        <div class=\"controls\">\n          <button id=\"playBtn\" class=\"btn\" onclick=\"togglePlayback()\">\u25b6 Play</button>\n          <button id=\"prevBtn\" class=\"btn\" onclick=\"prevTrack()\">\u25c0 Prev</button>\n          <button id=\"nextBtn\" class=\"btn\" onclick=\"nextTrack()\">Next \u25b6</button>\n          <div class=\"volume-slider\">\n            <input type=\"range\" min=\"0\" max=\"100\" value=\"70\" id=\"volumeSlider\" oninput=\"adjustVolume(Number(this.value))\">\n            <span id=\"volumeDisplay\">70%</span>\n          </div>\n        </div>\n        <div class=\"progress-bar\">\n          <div class=\"progress-fill\" id=\"progressFill\"></div>\n          <div class=\"progress-time\" id=\"progressTime\">0:00</div>\n        </div>\n      </div>\n    </div>\n    <div class=\"playlist\">\n      <h2>Playlist</h2>\n      <div class=\"playlist-items\">\n        <div class=\"playlist-item\" onclick=\"playTrack(0)\">\n          <span class=\"track-number\">1</span>\n          <span class=\"track-title\">Track 1</span>\n          <span class=\"track-duration\">3:45</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(1)\">\n          <span class=\"track-number\">2</span>\n          <span class=\"track-title\">Track 2</span>\n          <span class=\"track-duration\">4:20</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(2)\">\n          <span class=\"track-number\">3</span>\n          <span class=\"track-title\">Track 3</span>\n          <span class=\"track-duration\">5:15</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(3)\">\n          <span class=\"track-number\">4</span>\n          <span class=\"track-title\">Track 4</span>\n          <span class=\"track-duration\">3:50</span>\n        </div>\n        <div class=\"playlist-item\" onclick=\"playTrack(4)\">\n          <span class=\"track-number\">5</span>\n          <span class=\"track-title\">Track 5</span>\n          <span class=\"track-duration\">4:30</span>\n        </div>\n      </div>\n    </div>\n  \\`;\n    const btnPlay = document.getElementById('playBtn');\n    const btnPrev = document.getElementById('prevBtn');\n    const btnNext = document.getElementById('nextBtn');\n    const volumeSlider = document.getElementById('volumeSlider');\n    const progressFill = document.getElementById('progressFill');\n    const progressTime = document.getElementById('progressTime');\n    let currentTrack = 0;\n    let isPlaying = false;\n    let audio;\n    function togglePlayback() {\n        isPlaying = !isPlaying;\n        if (isPlaying) {\n            btnPlay.textContent = '\u23f8 Pause';\n            playTrack(currentTrack);\n        }\n        else {\n            btnPlay.textContent = '\u25b6 Play';\n            pausePlayback();\n        }\n    }\n    function playTrack(index) {\n        currentTrack = index;\n        if (isPlaying) {\n            resumePlayback();\n        }\n        else {\n            pausePlayback();\n            loadTrack(index);\n        }\n    }\n    function pausePlayback() {\n        if (audio) {\n            audio.pause();\n            audio.currentTime = 0;\n        }\n    }\n    function resumePlayback() {\n        if (audio) {\n            audio.play();\n        }\n    }\n    function loadTrack(index) {\n        const tracks = [\n            { title: 'Track 1', artist: 'Artist 1', duration: 245, src: 'track1.mp3' },\n            { title: 'Track 2', artist: 'Artist 2', duration: 250, src: 'track2.mp3' },\n            { title: 'Track 3', artist: 'Artist 3', duration: 260, src: 'track3.mp3' },\n            { title: 'Track 4', artist: 'Artist 4', duration: 240, src: 'track4.mp3' },\n            { title: 'Track 5', artist: 'Artist 5', duration: 255, src: 'track5.mp3' },\n        ];\n        const track = tracks[index];\n        if (track) {\n            if (audio) {\n                audio.src = track.src;\n                audio.currentTime = 0;\n                audio.volume = volumeSlider.value / 100;\n                audio.play();\n            }\n            updateProgress(0, track.duration);\n            updateTrackDisplay(track.title, track.artist);\n        }\n    }\n    function updateProgress(current, total) {\n        if (audio) {\n            const fill = (current / total) * 100;\n            progressFill.style.width = fill + '%';\n            progressTime.textContent = formatTime(current) + ' / ' + formatTime(total);\n        }\n    }\n    function formatTime(seconds) {\n        const minutes = Math.floor(seconds / 60);\n        const remaining = seconds % 60;\n        return \\`\\${String(minutes).padStart(2, '0')}:\\${String(remaining).padStart(2, '0')}\\`;\n    }\n    function nextTrack() {\n        currentTrack = (currentTrack + 1) % 5;\n        playTrack(currentTrack);\n    }\n    function prevTrack() {\n        currentTrack = (currentTrack - 1 + 5) % 5;\n        playTrack(currentTrack);\n    }\n    function adjustVolume(volume) {\n        if (audio) {\n            audio.volume = volume / 100;\n            volumeSlider.value = audio.volume * 100;\n            document.getElementById('volumeDisplay').textContent = volume + '%';\n        }\n    }\n    function updateTrackDisplay(title, artist) {\n        document.getElementById('trackTitle').textContent = title;\n        document.getElementById('trackArtist').textContent = artist;\n    }\n}\n})(typeof ui_screens !== 'undefined' ? ui_screens : {});\n\n// \u2500\u2500 input-handler.ts \u2500\u2500\n\n(function(exports) {\nexports.handleInput = handleInput;\nconst core_engine_ts_1 = require(\"../core-engine/core-engine.ts\");\nfunction handleInput(event) {\n    const inputType = event instanceof MouseEvent ? 'click' : 'keyboard';\n    const key = (event instanceof MouseEvent ? event.button : event.key).toLowerCase();\n    const actions = {\n        play_pause: ['space', 'play', 'pause'],\n        rewind: ['left', 'arrowleft'],\n        forward: ['right', 'arrowright'],\n        volume_down: ['down', 'arrowdown'],\n        volume_up: ['up', 'arrowup'],\n        mute: ['m', 'm'],\n        next: ['n', 'arrowright'],\n        previous: ['p', 'arrowleft'],\n    };\n    for (const [action, keys] of Object.entries(actions)) {\n        if (keys.includes(key)) {\n            switch (action) {\n                case 'play_pause':\n                    (0, core_engine_ts_1.togglePlayback)();\n                    break;\n                case 'rewind':\n                    (0, core_engine_ts_1.seek)(-10);\n                    break;\n                case 'forward':\n                    (0, core_engine_ts_1.seek)(10);\n                    break;\n                case 'volume_down':\n                    (0, core_engine_ts_1.changeVolume)(Math.max(0, Math.min(100, parseInt(document.getElementById('volumeSlider').value) - 10)));\n                    break;\n                case 'volume_up':\n                    (0, core_engine_ts_1.changeVolume)(Math.min(100, parseInt(document.getElementById('volumeSlider').value) + 10));\n                    break;\n                case 'mute':\n                    (0, core_engine_ts_1.toggleMute)();\n                    break;\n                case 'next':\n                    nextSong();\n                    break;\n                case 'previous':\n                    previousSong();\n                    break;\n                default:\n                    break;\n            }\n            return;\n        }\n    }\n}\n})(typeof input_handler !== 'undefined' ? input_handler : {});\n\n// \u2500\u2500 data-store.ts \u2500\u2500\n\n(function(exports) {\nexports.MusicPlayerDataStore = void 0;\nclass MusicPlayerDataStore {\n    constructor() {\n        this.state = { songs: [], currentSongIndex: 0, volume: 100, isPlaying: false };\n        this.events = [];\n    }\n    connectDb() {\n        this.state.songs = [\n            { title: 'Song 1', artist: 'Artist 1', duration: 300, played: false },\n            { title: 'Song 2', artist: 'Artist 2', duration: 250, played: false },\n            { title: 'Song 3', artist: 'Artist 3', duration: 350, played: false },\n        ];\n    }\n    saveState(newState) {\n        this.state = Object.assign(Object.assign({}, this.state), newState);\n        this.events.push({ type: 'state_changes', snapshot: Object.assign({}, this.state) });\n    }\n    loadFromDb() {\n        this.state.songs = [\n            { title: 'Song 4', artist: 'Artist 4', duration: 200, played: true },\n            { title: 'Song 5', artist: 'Artist 5', duration: 250, played: false },\n            { title: 'Song 6', artist: 'Artist 6', duration: 300, played: true },\n        ];\n        this.state.currentSongIndex = 2;\n        this.state.volume = 75;\n        this.state.isPlaying = true;\n    }\n    getGameState() {\n        return this.state;\n    }\n    playPause() {\n        this.state.isPlaying = !this.state.isPlaying;\n        this.events.push({ type: 'play_pause', snapshot: Object.assign({}, this.state) });\n    }\n    volumeUp() {\n        this.state.volume = Math.min(100, this.state.volume + 5);\n        this.events.push({ type: 'volume_changed', snapshot: Object.assign({}, this.state) });\n    }\n    volumeDown() {\n        this.state.volume = Math.max(0, this.state.volume - 5);\n        this.events.push({ type: 'volume_changed', snapshot: Object.assign({}, this.state) });\n    }\n    nextSong() {\n        this.state.currentSongIndex = (this.state.currentSongIndex + 1) % this.state.songs.length;\n        this.events.push({ type: 'song_played', snapshot: Object.assign({}, this.state) });\n    }\n    prevSong() {\n        this.state.currentSongIndex = (this.state.currentSongIndex - 1 + this.state.songs.length) % this.state.songs.length;\n        this.events.push({ type: 'song_played', snapshot: Object.assign({}, this.state) });\n    }\n}\nexports.MusicPlayerDataStore = MusicPlayerDataStore;\n})(typeof data_store !== 'undefined' ? data_store : {});\n\n// \u2500\u2500 audio-engine.ts \u2500\u2500\n\n(function(exports) {\nexports.AudioEngine = void 0;\nclass AudioEngine {\n    constructor() {\n        this.audioSources = {};\n        this.audioBuffers = {};\n        this.currentTrack = 0;\n        this.volume = 0.5;\n        this.muted = false;\n    }\n    async initAudioContext() {\n        if (this.audioContext)\n            return;\n        try {\n            this.audioContext = new AudioContext();\n            console.log('Audio context initialized');\n        }\n        catch (error) {\n            console.error('Error initializing audio context:', error);\n        }\n    }\n    async loadAudioBuffer(id, src) {\n        var _a;\n        if (this.audioBuffers[id])\n            return;\n        try {\n            const response = await fetch(src);\n            const arrayBuffer = await response.arrayBuffer();\n            this.audioBuffers[id] = await ((_a = this.audioContext) === null || _a === void 0 ? void 0 : _a.decodeAudioData(arrayBuffer));\n            console.log(\\`Loaded audio buffer: \\${id}\\`);\n        }\n        catch (error) {\n            console.error(\\`Error loading audio buffer \\${id}:\\`, error);\n        }\n    }\n    async playTrack(trackId) {\n        var _a, _b;\n        if (!this.audioContext)\n            return;\n        try {\n            const track = this.audioBuffers[trackId];\n            if (!track) {\n                console.error(\\`Track not found: \\${trackId}\\`);\n                return;\n            }\n            if (this.audioSources[trackId]) {\n                this.audioSources[trackId].stop();\n                delete this.audioSources[trackId];\n            }\n            const source = (_a = this.audioContext) === null || _a === void 0 ? void 0 : _a.createBufferSource();\n            source === null || source === void 0 ? void 0 : source.connect((_b = this.audioContext) === null || _b === void 0 ? void 0 : _b.destination);\n            source === null || source === void 0 ? void 0 : source.buffer = track;\n            source === null || source === void 0 ? void 0 : source.start();\n            this.audioSources[trackId] = source;\n            this.currentTrack = trackId;\n            console.log(\\`Playing track: \\${trackId}\\`);\n        }\n        catch (error) {\n            console.error(\\`Error playing track \\${trackId}:\\`, error);\n        }\n    }\n    async pauseTrack() {\n        if (!this.audioContext)\n            return;\n        try {\n            if (this.audioSources[this.currentTrack]) {\n                this.audioSources[this.currentTrack].stop();\n            }\n        }\n        catch (error) {\n            console.error('Error pausing track:', error);\n        }\n    }\n    async resumeTrack() {\n        if (!this.audioContext)\n            return;\n        try {\n            if (this.audioSources[this.currentTrack]) {\n                this.audioSources[this.currentTrack].resume();\n            }\n        }\n        catch (error) {\n            console.error('Error resuming track:', error);\n        }\n    }\n    async stopAllTracks() {\n        if (!this.audioContext)\n            return;\n        try {\n            for (const source of Object.values(this.audioSources)) {\n                if (source)\n                    source === null || source === void 0 ? void 0 : source.stop();\n            }\n            this.audioSources = {};\n            this.currentTrack = null;\n            console.log('All tracks stopped');\n        }\n        catch (error) {\n            console.error('Error stopping tracks:', error);\n        }\n    }\n    setVolume(volume) {\n        var _a, _b, _c;\n        this.volume = volume;\n        if (this.audioContext) {\n            (_c = (_b = (_a = this.audioContext) === null || _a === void 0 ? void 0 : _a.masterGain) === null || _b === void 0 ? void 0 : _b.gain) === null || _c === void 0 ? void 0 : _c.value = volume;\n        }\n    }\n    toggleMute() {\n        this.muted = !this.muted;\n        this.setVolume(this.muted ? 0 : this.volume);\n    }\n    shutdown() {\n        var _a;\n        this.stopAllTracks();\n        (_a = this.audioContext) === null || _a === void 0 ? void 0 : _a.close();\n        this.audioContext = undefined;\n        console.log('Audio engine shutdown');\n    }\n}\nexports.AudioEngine = AudioEngine;\n})(typeof audio_engine !== 'undefined' ? audio_engine : {});\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n  try { if(typeof core_engine.loadPlaylist === 'function' && !/^class\\s/.test(String(core_engine.loadPlaylist))) core_engine.loadPlaylist(document.getElementById('app-container')); else console.log('core-engine.ts: awaiting user interaction'); } catch(e) { console.warn('core_engine init:', e); }\n  try { ui_screens.render(document.getElementById('app-container')); } catch(e) { console.error('Error calling ui_screens.render:', e); addError(e.message); }\n  try { if(typeof input_handler.handleInput === 'function' && !/^class\\s/.test(String(input_handler.handleInput))) input_handler.handleInput(document.getElementById('app-container')); else console.log('input-handler.ts: awaiting user interaction'); } catch(e) { console.warn('input_handler init:', e); }\n  try { if(typeof data_store.MusicPlayerDataStore === 'function' && !/^class\\s/.test(String(data_store.MusicPlayerDataStore))) data_store.MusicPlayerDataStore(document.getElementById('app-container')); else console.log('data-store.ts: awaiting user interaction'); } catch(e) { console.warn('data_store init:', e); }\n  try { if(typeof audio_engine.AudioEngine === 'function' && !/^class\\s/.test(String(audio_engine.AudioEngine))) audio_engine.AudioEngine(document.getElementById('app-container')); else console.log('audio-engine.ts: awaiting user interaction'); } catch(e) { console.warn('audio_engine init:', e); }\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a music player app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a music player app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store",
+    "audio_engine"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 38655,
+ "totalErrors": 72,
+ "validatedCount": 1,
+ "failedCount": 5,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "core-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "loadPlaylist",
+    "togglePlayback",
+    "pause",
+    "resume",
+    "seek",
+    "changeVolume",
+    "toggleMute",
+    "addSong",
+    "removeSong"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "handleInput"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "data-store.ts",
+   "dependencies": [
+    "input_handler"
+   ],
+   "exports": [
+    "MusicPlayerDataStore"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "audio-engine.ts",
+   "dependencies": [
+    "data_store"
+   ],
+   "exports": [
+    "AudioEngine"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store",
+    "audio_engine"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 38655,
+  "totalErrors": 72,
+  "validated": 1,
+  "failed": 5,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 277733
+ }
+}

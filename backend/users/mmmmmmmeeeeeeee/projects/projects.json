@@ -1,0 +1,241 @@
+[
+  {
+    "id": "proj_1788749121787",
+    "name": "script to greatly app",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master",
+        "type": "master",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "data": {
+          "label": "great_expectations_lab blueprint",
+          "description": "script to greatly app",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "script to greatly app",
+          "appPurpose": "Great Expectations data quality validation suite — an interactive data engineering tool with a visual interface.",
+          "selectedOS": "linux",
+          "scale": "medium",
+          "blueprintContext": "APP TYPE: great_expectations_lab\nAPP DESCRIPTION: Great Expectations data quality validation suite — an interactive data engineering tool with a visual interface.\nTARGET STACK: frontend=React, backend=Node.js Express, database=SQLite\nSOURCE LANGUAGE: typescript\n\nARCHITECTURE CHECKLIST (the whole app is exactly these modules, each implemented in its own file):\n  - ui_screens\n  - file_loader\n  - format_engine\n  - schema_models\n  - visualization_engine\n\nWIRING GRAPH (data contracts between sibling modules — use these names verbatim so files connect):\n  - file_loader → ui_screens : requests\n  - file_loader → format_engine : results\n  - format_engine → schema_models : state_and_events\n  - schema_models → visualization_engine : data\n\nRULE: You are generating ONE module of this app. Implement exactly the module named in THIS FILE'S MODULE below.\nDo NOT implement other checklist modules — they are separate files. Do NOT invent new modules.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDESIGN RESEARCH (live web search — use as reference for the design)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📋 Reference designs found from the web, GitHub, and open source alternatives:\n  • Top 19 apps-script Open-Source Projects - LibHunt\n    Which are the best open-source apps-script projects? This list will help you: clasp, apps-script-samples, apps-script-oauth2, google-chat-samples, gas-clasp-starter, developer-tools, and FormEasy.\n  • opensource-apps · GitHub Topics · GitHub\n    A curated, self-refreshing directory of real open-source application codebases - built for developers who want to learn from production apps and find projects worth contributing to.\n  • ⭐1 FCP-INDI/cpac_outputs_to_bids: Configurable script to convert CPAC outputs to BIDS format, greatly reduces the amount of storage needed for outputs, and works with BIDS APPS!\n  • ⭐1 iaji/AI-AppSec-Analysis: A DSPy powered script for automating first pass analysis on codebases, API specs, and more. Leveraging DSPy to create Gists to support processing of f\n  • gitea (developer-tools): Accelerate DevOps with Gitea\n  • neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nVACA INTERNAL KNOWLEDGE (patterns + wiki — consult before implementing)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📗 MATCHING WIKI SECTIONS (modelVeronice.txt — platform knowledge, history, lessons):\n  • Section 4: FRONTEND APPLICATION\n    4.1 PACKAGE DETAILS\n────────────────────\nFramework:  React 18.2.0\nBuild Tool: Vite 8.x\nLanguage:   TypeScript 5.3.3\nState:      Zustand 4.4.7\n3D:         Three.js 0.184.0, @react-three/fiber 8.18.0, @react-three/drei 9.122.0\nFlow:       ReactFlow 11.10.1\nHTTP:       Axios 1.6.2\nPWA:        vite-plug\n  • Section 5: BACKEND APPLICATION\n    5.1 PACKAGE DETAILS\n────────────────────\nRuntime:    Node.js (ESM - type:module)\nRunner:     tsx (dev), tsc → node (prod)\nFramework:  Express 4.18.2\nAI SDK:     OpenAI SDK 6.37.0\nWebSocket:  socket.io 4.8.3\nPort:       3001\nTesting:    Vitest 4.1.8\nTypeScript: 5.3.3, target ES2022, strict mode\n\n5.2 \n🧠 MATCHING INTERNAL PATTERNS (knowledge store — proven code from past builds):\n  • diagram_flow — diagram tool\n    Generate Mermaid.js flow/sequence/class/mindmap diagram markup from a text description using AI\n    Code: // Tool: diagram_flow\n// Category: diagram\n// Risk: low\n// Generate Mermaid.js flow/sequence/class/mindmap diagram markup from a text description using AI\n  • Auto-learned conversation\n    Auto-learned from auto-learn-conversation. Tags: conversation, frontend, reasoning-panel, 55, 416\n    Code: do you have a pattern to build a home media server o/s/\n\n⚠️ Tried to build **home media server o/s/** but the architecture engine didn't respond in time.\n\nThis can happen when:\n• The LLM is still warming up — try again in a moment\n• The app descripti"
+        }
+      },
+      {
+        "id": "mod_0",
+        "type": "ui",
+        "position": {
+          "x": 60,
+          "y": 120
+        },
+        "data": {
+          "label": "ui_screens",
+          "description": "Module \"ui_screens\" of a great_expectations_lab app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: file_loader → ui_screens (requests).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"ui_screens\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): file_loader (requests)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_1",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "label": "file_loader",
+          "description": "Module \"file_loader\" of a great_expectations_lab app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: file_loader → ui_screens (requests); file_loader → format_engine (results).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"file_loader\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: ui_screens (requests), format_engine (results)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to ui_screens, format_engine — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_2",
+        "type": "logic",
+        "position": {
+          "x": 700,
+          "y": 120
+        },
+        "data": {
+          "label": "format_engine",
+          "description": "Module \"format_engine\" of a great_expectations_lab app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: file_loader → format_engine (results); format_engine → schema_models (state_and_events).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"format_engine\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: schema_models (state_and_events)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): file_loader (results)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to schema_models — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_3",
+        "type": "database",
+        "position": {
+          "x": 60,
+          "y": 340
+        },
+        "data": {
+          "label": "schema_models",
+          "description": "Module \"schema_models\" of a great_expectations_lab app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: format_engine → schema_models (state_and_events); schema_models → visualization_engine (data).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"schema_models\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: visualization_engine (data)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): format_engine (state_and_events)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to visualization_engine — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_4",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 340
+        },
+        "data": {
+          "label": "visualization_engine",
+          "description": "Module \"visualization_engine\" of a great_expectations_lab app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: schema_models → visualization_engine (data).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"visualization_engine\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): schema_models (data)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0",
+        "source": "mod_1",
+        "target": "mod_0"
+      },
+      {
+        "id": "edge_1",
+        "source": "mod_1",
+        "target": "mod_2"
+      },
+      {
+        "id": "edge_2",
+        "source": "mod_2",
+        "target": "mod_3"
+      },
+      {
+        "id": "edge_3",
+        "source": "mod_3",
+        "target": "mod_4"
+      }
+    ],
+    "savedAt": "2026-09-07T02:45:21.787Z",
+    "version": 1
+  },
+  {
+    "id": "proj_1788760163849",
+    "name": "file explorer",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master",
+        "type": "master",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "data": {
+          "label": "file_explorer_2 blueprint",
+          "description": "file explorer",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "file explorer",
+          "appPurpose": "File Explorer. 📁 File Explorer",
+          "selectedOS": "linux",
+          "scale": "medium",
+          "blueprintContext": "APP TYPE: file_explorer_2\nAPP DESCRIPTION: File Explorer. 📁 File Explorer\nTARGET STACK: frontend=React, backend=Node.js Express, database=SQLite\nSOURCE LANGUAGE: typescript\n\nARCHITECTURE CHECKLIST (the whole app is exactly these modules, each implemented in its own file):\n  - ui_screens\n  - core_engine\n  - input_handler\n  - data_store\n\nWIRING GRAPH (data contracts between sibling modules — use these names verbatim so files connect):\n  - core_engine → ui_screens : requests\n  - core_engine → input_handler : results\n  - input_handler → data_store : state_and_events\n\nRULE: You are generating ONE module of this app. Implement exactly the module named in THIS FILE'S MODULE below.\nDo NOT implement other checklist modules — they are separate files. Do NOT invent new modules.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDESIGN RESEARCH (live web search — use as reference for the design)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📋 Reference designs found from the web, GitHub, and open source alternatives:\n  • Open Source File Explorer Alternatives: Top 12 File Managers\n    The best open source alternative to File Explorer is Double Commander. If that doesn&#x27;t suit you, our users have ranked more than 100 alternatives to File Explorer and loads of them is open source\n  • Open Source File Explorer Alternatives for Windows: Top 12 File ...\n    There are many alternatives to File Explorer for Windows if you are looking for a replacement. The best open source Windows alternative is Double Commander. If that doesn&#x27;t suit you, our users ha\n  • ⭐38913 spacedriveapp/spacedrive: Spacedrive is an open source cross-platform file explorer, powered by a virtual distributed filesystem written in Rust.\n  • ⭐15167 Tichau/FileConverter: File Converter is a very simple tool which allows you to convert and compress files using the context menu in windows explorer.\n  • gitea (developer-tools): Accelerate DevOps with Gitea\n  • neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nVACA INTERNAL KNOWLEDGE (patterns + wiki — consult before implementing)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📗 MATCHING WIKI SECTIONS (modelVeronice.txt — platform knowledge, history, lessons):\n  • Section 29: SESSION UPDATE — July 26, 2026: BATCH 2 — 15 APPS (MEDIUM → EXTREME)\n    29.1 TIER 1 — MEDIUM (3 apps)\n───────────────────────────────\n  password-manager.html   (11.2 KB) — Generator + vault + strength meter + export\n  habit-tracker.html      (10.5 KB) — Streaks, heatmap, weekly view, stats\n  calendar-planner.html   (11.8 KB) — Monthly calendar, event CRUD, categories\n\n2\n  • Section 1: PROJECT OVERVIEW\n    Name:         Visual AI Code Architect (VACA)\nVersion:      1.0.0\nRoot:         /home/final-flash1/Desktop/visual-ai-architect\nDescription:  AI-powered visual development environment with\n              flowchart-based code generation, voice control, emotion-aware\n              LLM reasoning, and neu\n🧠 MATCHING INTERNAL PATTERNS (knowledge store — proven code from past builds):\n  • Micro-app idea — a tiny notes app\n    single in-memory store, one file Focus: smaller\n    Code: // FILE: main.ts\nexport const store = new Map()\n  • Micro-app idea — a mini http server\n    route-lookup dispatch Focus: smaller, universal\n    Code: // FILE: server.js\nconst routes={};http.createServer((req,res)=>res.end(routes[req.url]||routes[\"/\"])).listen(3000);\n  • Micro-app idea — a tiny notes app\n    single in-memory store, one file Focus: smaller\n    Code: // FILE: main.ts\nexport const store = new Map()"
+        }
+      },
+      {
+        "id": "mod_0",
+        "type": "ui",
+        "position": {
+          "x": 60,
+          "y": 120
+        },
+        "data": {
+          "label": "ui_screens",
+          "description": "Module \"ui_screens\" of a file_explorer_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"ui_screens\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): core_engine (requests)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_1",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "label": "core_engine",
+          "description": "Module \"core_engine\" of a file_explorer_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests); core_engine → input_handler (results).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"core_engine\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: ui_screens (requests), input_handler (results)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to ui_screens, input_handler — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_2",
+        "type": "input",
+        "position": {
+          "x": 700,
+          "y": 120
+        },
+        "data": {
+          "label": "input_handler",
+          "description": "Module \"input_handler\" of a file_explorer_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → input_handler (results); input_handler → data_store (state_and_events).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"input_handler\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: data_store (state_and_events)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): core_engine (results)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to data_store — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_3",
+        "type": "database",
+        "position": {
+          "x": 60,
+          "y": 340
+        },
+        "data": {
+          "label": "data_store",
+          "description": "Module \"data_store\" of a file_explorer_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: input_handler → data_store (state_and_events).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"data_store\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): input_handler (state_and_events)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0",
+        "source": "mod_1",
+        "target": "mod_0"
+      },
+      {
+        "id": "edge_1",
+        "source": "mod_1",
+        "target": "mod_2"
+      },
+      {
+        "id": "edge_2",
+        "source": "mod_2",
+        "target": "mod_3"
+      }
+    ],
+    "savedAt": "2026-09-07T05:49:23.849Z",
+    "version": 1
+  }
+]

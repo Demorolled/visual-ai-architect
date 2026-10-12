@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "tier": "easy",
+  "request": "Build a tip calculator app in a single HTML file. Enter the bill amount and tip percentage; it shows the tip amount and total, and a quick 15/18/20 percent button row.",
+  "intent": {
+    "goal": "build a tip calculator app in a single html file",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "App HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "",
+  "files": [
+    "index.html"
+  ]
+}

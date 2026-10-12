@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=LLM Training Studio
+GenericName=LLM training and dataset curation
+Comment=Launch the LLM Training Studio desktop app (training queue, dataset curation, charts)
+Exec=/home/homellmlab/Desktop/visual-ai-architect/scripts/llm-training-studio.sh start
+Icon=applications-science
+Terminal=false
+Categories=Development;Science;ArtificialIntelligence;
+Keywords=llm;training;lora;qlora;dataset;studio;vaca;
+StartupNotify=false
+Path=/home/homellmlab/Desktop/visual-ai-architect

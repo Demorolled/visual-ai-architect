@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temperature Converter</title>
+<style>
+body {font-family:Arial,sans-serif;}
+input, button {padding:10px;margin:5px;}</nstyle>
+</head>
+<body>
+<h1>Temperature Converter</h1>
+<input id="celsius" type="number" placeholder="Celsius"> °C -><br>
+<input id="fahrenheit" type="number" placeholder="Fahrenheit"> °F<br>
+<button onclick="convert('celsius')">Convert C to F</button><button onclick="convert('fahrenheit')">Convert F to C</button>
+<script>
+function convert(type) {
+const celsiusEl = document.getElementById('celsius');
+const fahrenheitEl = document.getElementById('fahrenheit');
+if (type === 'celsius') {
+const celsius = parseFloat(celsiusEl.value);
+if (isNaN(celsius)) {alert('Invalid input'); return;}
+celsiusEl.value = ((celsius * 9/5) + 32).toFixed(2);
+fahrenheitEl.value = '';}
+else {
+const fahrenheit = parseFloat(fahrenheitEl.value);
+if (isNaN(fahrenheit)) {alert('Invalid input'); return;}
+fahrenheitEl.value = ((fahrenheit - 32) * 5/9).toFixed(2);
+celsiusEl.value = '';}}
+</script>
+</body>
+</html>

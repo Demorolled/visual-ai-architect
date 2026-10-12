@@ -2,6 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Where the dev server proxies /api, /ws and /health. Defaults to the usual
+// localhost backend; override with VACA_API_TARGET when the backend is bound to
+// a single interface such as the Tailscale IP. The proxy request is made by the
+// dev server, not the browser, so the page stays same-origin and CORS never
+// applies to remote clients.
+const API_TARGET = process.env.VACA_API_TARGET || 'http://localhost:3001'
+const WS_TARGET = API_TARGET.replace(/^http/, 'ws')
+
 export default defineConfig({
   plugins: [
     react(),
@@ -84,15 +92,15 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: API_TARGET,
         changeOrigin: true,
       },
       '/ws': {
-        target: 'ws://localhost:3001',
+        target: WS_TARGET,
         ws: true,
       },
       '/health': {
-        target: 'http://localhost:3001',
+        target: API_TARGET,
         changeOrigin: true,
       },
     }

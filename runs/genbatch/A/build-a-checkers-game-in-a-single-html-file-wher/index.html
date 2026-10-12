@@ -1,0 +1,9 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Checkers</title><style>.board{display:grid;grid-template-columns:repeat(8,50px);gap:2px}.square{width:50px;height:50px}player1{background:#333}player2{background:#666}king{border:2px solid white}</style></head><body><div class="app"><div class="board" id="board"></div></div><script>
+function renderBoard() { const board = document.getElementById('board'); board.innerHTML = ''; for (let i = 0; i < 32; i++) {
+    const square = document.createElement('div');
+    square.className = 'square';
+    square.style.backgroundColor = i & 1 ? 'silver' : 'gray';
+    board.appendChild(square);
+} }
+renderBoard();
+</script></body></html>

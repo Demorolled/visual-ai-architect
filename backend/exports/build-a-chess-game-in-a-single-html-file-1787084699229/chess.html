@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #0a0a14;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 0;
+        }
+        .chess-square {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .chess-square.light {
+            background: #e2e2e2;
+        }
+        .chess-square.dark {
+            background: #769656;
+        }
+        .chess-piece {
+            width: 50px;
+            height: 50px;
+        }
+        .chess-piece.white {
+            filter: brightness(1.5);
+        }
+        .chess-piece.black {
+            filter: brightness(0.8);
+        }
+        .selected {
+            border: 2px solid #00d9ff;
+        }
+        .move-destination {
+            border: 2px solid #4ade80;
+        }
+        .checkmate {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f87171;
+        }
+    </style>
+</head>
+<body>
+    <div class="chess-board" id="chessBoard"></div>
+    <div id="statusMsg" role="status"></div>
+    <div class="row" style="display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px">
+        <button id="newGameBtn" class="btn btn-primary" onclick="newGame()">🔄 New Game</button>
+        <button id="saveBtn" class="btn" onclick="saveGame()">💾 Save</button>
+        <button id="loadBtn" class="btn" onclick="loadGame()">🔄 Load</button>
+    </div>
+
+    <script>
+        const BOARD_SIZE = 8;
+        const PIECES = {
+            'r': '♖', 'n': '♘', 'b': '♗', 'q': '♕', 'k': '♔', 'p': '♙',
+            'R': '♜', 'N': '♞', 'B': '♝', 'Q': '♛', 'K': '♚', 'P': '♟'
+        };
+
+        let board = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
+        let selectedSquare = null;
+        let turn = 'w';
+        let whiteKingPosition = [7, 4];
+        let blackKingPosition = [0, 4];
+        let enPassantTarget = null;
+        let halfmoveClock = 0;
+        let fullmoveNumber = 1;
+
+        function newGame() {
+            board = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
+            const initialBoard = [
+                ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
+                ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+                ...Array(4).fill(Array(8).fill(null)),
+                ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+                ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r']
+            ];
+            board = initialBoard;
+            selectedSquare = null;
+            turn = 'w';
+            whiteKingPosition = [7, 4];
+            blackKingPosition = [0, 4];
+            enPassantTarget = null;
+            halfmoveClock = 0;
+            fullmoveNumber = 1;
+            renderBoard();
+            document.getElementById('statusMsg').textContent = 'New game started';
+        }
+
+        function renderBoard() {
+            const chessBoard = document.getElementById('chessBoard');
+            chessBoard.innerHTML = '';
+            for (let row = 0; row < BOARD_SIZE; row++) {
+                for (let col = 0; col < BOARD_SIZE; col++) {
+                    const square = document.createElement('div');
+                    square.className = `chess-square ${((row + col) % 2 === 0) ? 'light' : 'dark'}`;
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    square.style.backgroundColor = (selectedSquare && selectedSquare.row === row && selectedSquare.col === col) ? '#00d9ff' : square.style.backgroundColor;
+                    if (board[row][col]) {
+                        const piece = document.createElement('span');
+                        piece.className = `chess-piece ${board[row][col].toLowerCase()}`;
+                        piece.textContent = PIECES[board[row][col]];
+                        square.appendChild(piece);
+                    }
+                    square.addEventListener('click', () => handleSquareClick(row, col));
+                    chessBoard.appendChild(square);
+                }
+            }
+        }
+
+        function handleSquareClick(row, col) {
+            if (selectedSquare && selectedSquare.row === row && selectedSquare.col === col) {
+                selectedSquare = null;
+                renderBoard();
+                return;
+            }
+            if (!selectedSquare) {
+                const piece = board[row][col];
+                if (piece && (piece.toLowerCase() === piece) === (turn === 'w')) {
+                    selectedSquare = { row, col };
+                    renderBoard();
+                    return;
+                }
+            }
+            const piece = board[row][col];
+            if (!piece && !selectedSquare) return;
+            const moves = getLegalMoves(selectedSquare.row, selectedSquare.col);
+            if (moves.some(m => m.row === row && m.col === col)) {
+                movePiece(selectedSquare.row, selectedSquare.col, row, col);
+                selectedSquare = null;
+                renderBoard();
+                updateStatus();
+                turn = (turn === 'w') ? 'b' : 'w';
+                if (isCheckmate()) {
+                    document.

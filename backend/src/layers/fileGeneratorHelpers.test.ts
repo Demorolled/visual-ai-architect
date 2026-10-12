@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { postProcessTsJsCode, buildImportStatement, verifyGeneratedCodeContracts, findLocalDeclaredNames } from '../layers/fileGenerator.js';
+import { postProcessTsJsCode, buildImportStatement, verifyGeneratedCodeContracts, findLocalDeclaredNames, nodeTypeStem, buildTypeOwnershipSection } from '../layers/fileGenerator.js';
 
 describe('postProcessTsJsCode (hardened import stripper)', () => {
   it('strips a standard leading import', () => {
@@ -275,5 +275,32 @@ describe('dependency source injection (REAL SOURCE of ...)', () => {
     const out = renderDepSource('big.ts', big);
     expect(out.length).toBeLessThan(big.length + 200);
     expect(out).toContain('// ... (dependency truncated)');
+  });
+});
+
+describe('type ownership section (graph-free duplicate-type prevention)', () => {
+  it('derives a PascalCase stem from a node label, extension included', () => {
+    expect(nodeTypeStem('budget-store')).toBe('BudgetStore');
+    expect(nodeTypeStem('temp-store.swift')).toBe('TempStore');
+    expect(nodeTypeStem('cli')).toBe('Cli');
+    expect(nodeTypeStem('')).toBe('');
+  });
+
+  it('names each sibling as the owner of its concept and forbids redeclaring it', () => {
+    const section = buildTypeOwnershipSection('cli.swift', [
+      { label: 'stats.swift', description: 'temperature statistics' },
+      { label: 'temp-store.swift', description: 'stores readings' },
+    ]);
+    expect(section).toContain('TYPE OWNERSHIP (MANDATORY)');
+    expect(section).toContain('THIS FILE ("cli.swift") owns the types that carry ITS OWN responsibility');
+    expect(section).toContain('named like `Cli`');
+    expect(section).toContain('- stats.swift — owns types named like `Stats*`');
+    expect(section).toContain('temperature statistics');
+    expect(section).toContain('NEVER declare a type whose definition already exists in a sibling file');
+    expect(section).toContain('Do NOT declare the program entry point');
+  });
+
+  it('is empty for a single-file app, so that prompt is unchanged', () => {
+    expect(buildTypeOwnershipSection('app.ts', [])).toBe('');
   });
 });

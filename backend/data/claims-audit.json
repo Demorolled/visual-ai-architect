@@ -1,0 +1,183 @@
+{
+ "results": [
+  {
+   "claim": "read named files",
+   "probe": "read backend/src/index.ts",
+   "passed": false,
+   "detail": "response[:200]:  (attempt 3)",
+   "score": 5
+  },
+  {
+   "claim": "search codebase",
+   "probe": "search for sessionMemory",
+   "passed": false,
+   "detail": "response[:220]: ",
+   "score": 4
+  },
+  {
+   "claim": "create file in chat-files",
+   "probe": "create audit-test file",
+   "passed": false,
+   "detail": "files: [] (attempt 3) | resp: ",
+   "score": 5
+  },
+  {
+   "claim": "write memory",
+   "probe": "remember favorite color teal",
+   "passed": false,
+   "detail": "notes matching 'teal': False | resp: ",
+   "score": 4
+  },
+  {
+   "claim": "recall memory",
+   "probe": "what is my favorite color?",
+   "passed": false,
+   "detail": "resp: ",
+   "score": 3
+  },
+  {
+   "claim": "code generation",
+   "probe": "fibonacci python function",
+   "passed": false,
+   "detail": "resp[:200]: ",
+   "score": 4
+  },
+  {
+   "claim": "write-code files array",
+   "probe": "/write-code returns files[] of written {path,content}",
+   "passed": false,
+   "detail": "files: [] | written-ok: [] | resp keys: []",
+   "score": 4
+  },
+  {
+   "claim": "blueprint generation",
+   "probe": "build todo blueprint (wiring + edges reference real modules/nodes)",
+   "passed": false,
+   "detail": "checklist=0 wiring=0 dangleMod=0 nodes=0 edges=0 dangleEdge=0 | matchedBy=None err=<urlopen error [Errno 111] Connection refused>",
+   "score": 6
+  },
+  {
+   "claim": "self-analysis",
+   "probe": "read own source + explain",
+   "passed": false,
+   "detail": "resp[:250]: ",
+   "score": 4
+  },
+  {
+   "claim": "LLM integration",
+   "probe": "/api/health llm block",
+   "passed": false,
+   "detail": "health llm: {}",
+   "score": 2
+  },
+  {
+   "claim": "WebSocket",
+   "probe": "socket.io polling handshake",
+   "passed": false,
+   "detail": "error: [Errno 111] Connection refused",
+   "score": 2
+  },
+  {
+   "claim": "live codegen progress stream",
+   "probe": "generation_progress events over /ws during write-code",
+   "passed": false,
+   "detail": "no generation_progress events captured",
+   "score": 2
+  },
+  {
+   "claim": "TTS",
+   "probe": "voices list + real MP3 synthesis",
+   "passed": false,
+   "detail": "voices: 0",
+   "score": 2
+  },
+  {
+   "claim": "emotional response",
+   "probe": "stressed user message",
+   "passed": false,
+   "detail": "resp[:250]: ",
+   "score": 4
+  },
+  {
+   "claim": "emotional continuity",
+   "probe": "turn-2 worse news \u2192 warm + references turn 1",
+   "passed": false,
+   "detail": "turn2 warm=False referencesTurn1=False | resp[:220]: ",
+   "score": 4
+  },
+  {
+   "claim": "emotion",
+   "probe": "soul.json emotional_state history freshness",
+   "passed": false,
+   "detail": "dominant: None | entries: 0 | last_ts:  (was stale pre-P2: Jul 4)",
+   "score": 4
+  },
+  {
+   "claim": "project mgmt",
+   "probe": "save/load/export/import round-trip + disk persistence",
+   "passed": false,
+   "detail": "create:-1 | disk=False",
+   "score": 3
+  },
+  {
+   "claim": "workflow: define the idea",
+   "probe": "blueprint description states the core functionality/problem",
+   "passed": false,
+   "detail": "desc[:200]: ",
+   "score": 3
+  },
+  {
+   "claim": "workflow: sketch the architecture",
+   "probe": "blueprint wiring_graph nodes+edges (no dangling refs)",
+   "passed": false,
+   "detail": "wiring=0 nodes=0 edges=0 dangleMod=0 dangleEdge=0",
+   "score": 5
+  },
+  {
+   "claim": "workflow: choose a language",
+   "probe": "blueprint target_stack names concrete technologies per layer",
+   "passed": false,
+   "detail": "stack: {}",
+   "score": 4
+  },
+  {
+   "claim": "workflow: core-first (core separate from UI)",
+   "probe": "write-code emits core/business-logic files separate from UI files",
+   "passed": false,
+   "detail": "core=False ui=False | no files: write cycle failed",
+   "score": 3
+  },
+  {
+   "claim": "workflow: UI design",
+   "probe": "write-code emits UI/component files (or ui_screens in blueprint checklist)",
+   "passed": false,
+   "detail": "ui=False checklist_has_ui_screens=False | no files: write cycle failed",
+   "score": 4
+  },
+  {
+   "claim": "workflow: wire up the UI",
+   "probe": "UI connected to core (wiring edge ui\u2192api and/or UI+API files in one write)",
+   "passed": false,
+   "detail": "wireEdge=False uiAndApiFiles=False | no files: write cycle failed",
+   "score": 4
+  },
+  {
+   "claim": "workflow: testing",
+   "probe": "write-code emits unit/integration test files",
+   "passed": false,
+   "detail": "tests=False | no files: write cycle failed",
+   "score": 3
+  },
+  {
+   "claim": "workflow: deployment",
+   "probe": "write-code emits deployment artifacts (Dockerfile/scripts)",
+   "passed": false,
+   "detail": "deploy=False | no files: write cycle failed",
+   "score": 3
+  }
+ ],
+ "total": 91,
+ "max": 250,
+ "pct": 36,
+ "at": "2026-08-24T06:37:52Z"
+}

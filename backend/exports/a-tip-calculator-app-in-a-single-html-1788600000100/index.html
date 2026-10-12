@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tip Calculator</title><style>
+body{font-family:'Segoe UI',sans-serif;background:#0a0a14;color:#e6e6e6;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{background:#14141f;border:1px solid #2a2a3a;border-radius:12px;padding:28px;text-align:center;min-width:280px}
+h2{color:#00d9ff;margin:0 0 14px 0}label{display:block;font-size:13px;color:#aaa;margin:10px 0 4px}
+input{background:#0f0f1a;border:1px solid #2a2a3a;color:#e6e6e6;border-radius:8px;padding:9px 12px;font-size:16px;width:180px;text-align:center}
+.quick{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.quick button{background:#2a2a3a;color:#e6e6e6;border:none;border-radius:8px;padding:8px 14px;cursor:pointer}
+.quick button.on{background:#00d9ff;color:#04141a}
+.result{font-size:20px;margin-top:14px}.result b{color:#00d9ff}
+</style></head><body>
+<div class="card"><h2>💵 Tip Calculator</h2>
+<label>Bill amount ($)</label><input id="bill" type="number" min="0" step="0.01" value="50">
+<label>Tip %</label><input id="pct" type="number" min="0" max="100" step="1" value="18">
+<div class="quick"><button data-p="15">15%</button><button data-p="18" class="on">18%</button><button data-p="20">20%</button></div>
+<div class="result">Tip: <b id="tipAmt">$9.00</b><br>Total: <b id="total">$59.00</b></div>
+</div>
+<script>
+function recalc() {
+  const bill = parseFloat(document.getElementById('bill').value) || 0;
+  const pct = parseFloat(document.getElementById('pct').value) || 0;
+  const tip = bill * pct / 100;
+  document.getElementById('tipAmt').textContent = '$' + tip.toFixed(2);
+  document.getElementById('total').textContent = '$' + (bill + tip).toFixed(2);
+}
+document.getElementById('bill').addEventListener('input', recalc);
+document.getElementById('pct').addEventListener('input', recalc);
+document.querySelectorAll('.quick button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.quick button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('pct').value = btn.dataset.p;
+    recalc();
+  });
+});
+recalc();
+</script></body></html>

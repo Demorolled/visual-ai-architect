@@ -1,0 +1,2053 @@
+{
+  "tasks_file": "/home/homellmlab/Desktop/visual-ai-architect/corpora/vaca/tasks.txt",
+  "n_tasks": 197,
+  "role": "scaffold",
+  "n_applicable": 197,
+  "baseline": null,
+  "num_predict": 1200,
+  "num_ctx": 8192,
+  "summary": {
+    "distill": {
+      "tag": "vaca-r40-off-distill-adapter:latest",
+      "role": "scaffold",
+      "n_applicable": 197,
+      "passed": 0,
+      "parse_ok": 197,
+      "exports_ok": 178,
+      "pass_rate": 0.0,
+      "file_named": 2,
+      "non_trivial": 147,
+      "mean_exports_coverage": 0.8905,
+      "n_with_exports": 169,
+      "mean_sibling_coverage": 0.0214,
+      "n_with_siblings": 195,
+      "elapsed_s": 464.9
+    }
+  },
+  "per_task": {
+    "distill": {
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "1-level-first-person-shooter-game-move-a-1786301591657__src-scene.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-entities-cheese.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-entities-enemy.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chees-game-1786611956524__src-scene.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-chess.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-input.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-main.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "3d-chess-game-1787074372022__src-render.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-ai.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-game.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": false
+      },
+      "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-tile.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-cli.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786989674089__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-history.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-banking-ledger-app-in-typescript-accou-1786999980769__src-store.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-budget.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786988675306__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-budget-splitter-app-in-typescript-spli-1786997848181__src-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-command-line-expense-tracker-in-typesc-1786357706649__src-expense-store.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "addExpense",
+          "listExpenses",
+          "loadExpenses",
+          "saveExpenses"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-command-line-expense-tracker-in-typesc-1786357706649__src-utils.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-command-line-expense-tracker-in-typesc-1786361246932__src-expense-store.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "addExpense",
+          "listExpenses",
+          "loadExpenses"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-command-line-note-taking-app-in-typesc-1787263215248__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786988799000__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-contact.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-contact-book-app-in-typescript-add-sea-1786997994164__src-utils.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "validateEmail",
+          "validatePhone"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-file-organizer-app-in-typescript-sort--1787001821302__src-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.5,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-cli.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "runCli"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-flashcards.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-test-flashcards.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786987500960__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-flashcard-study-app-in-typescript-deck-1786997336101__src-quiz.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-models.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356120852__src-services.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-__tests__-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "runTests"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-database.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-frontend-index.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-models.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786356370922__src-services.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-App.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "App"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-index.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__src-in-memory-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__src-models-noteModel.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__src-services-noteService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteService.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__client-src-components-NoteForm.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__src-models-note.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__src-routes-note.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786890984902__tests-app.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786896484419__src-services-noteService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786897701361__client-src-useNotes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786897701361__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786897701361__tests-server.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-NoteForm.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898204964__tests-notes.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898795070__client-src-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786898795070__src-services-noteService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786906927842__src-routes-note.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__backend-src-services-notesService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__frontend-src-NotesList.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907414891__tests-backend-notesService.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907868615__src-app.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786907868615__src-services-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908038933__src-backend-routes-noteRoutes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908261632__src-database.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786908261632__src-services-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-config-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__src-interface-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786924894561__tests-backend-notes.service.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925409480__src-app.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925409480__src-config.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925714974__frontend-src-components-NoteForm.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925714974__tests-backend-routes-note.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786925927926__tests-noteController.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-App.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteForm.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786926471424__src-utils-logger.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__backend-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-App.test.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteForm.test.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-index.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786961607585__frontend-src-Note.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786961607585__src-controllers.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786990924420__src-NoteItem.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786990924420__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786991416638__src-services.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__src-database.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786992245826__tests-backend.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993152454__src-app.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993152454__src-db.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993152454__src-tests-index.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "runTests"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-database.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": true
+      },
+      "a-full-stack-note-taking-app-in-typescri-1786993589574__src-routes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787011839360__client-src-Notes.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787011839360__tests-unit-routes.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-controllers.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-app.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012386826__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787012848494__src-frontend-src-noteService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787013450703__src-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787013450703__tests-unit.test.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787014007010__client-src-components-AddNote.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787014007010__src-note.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787043686263__src-database.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.controller.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044595344__src-AddNote.tsx": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": true
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044595344__src-controller.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__client-src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787044874338__src-db.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787049381458__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787686629354__src-frontend-api.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787686629354__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787740976664__backend-express-server.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787740976664__database-sqlite-db.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-full-stack-note-taking-app-in-typescri-1787740976664__frontend-react-app.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-interface.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "addHabit",
+          "markDone",
+          "showStreaks"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-habit-tracker-app-in-typescript-track--1786967347530__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-ui.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "renderHabits",
+          "renderStreaks",
+          "renderReminders"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-kanban-task-board-cli-app-in-typescrip-1786996354415__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logAnalyzer.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logParser.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logReporter.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-moduleReport.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-markdown-blog-generator-in-typescript--1786986887187__src-config.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-markdown-blog-generator-in-typescript--1786986887187__src-markdown-reader.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-markdown-blog-generator-in-typescript--1786996575652__src-config.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-markdown-blog-generator-in-typescript--1786996575652__src-html.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-markdown-blog-generator-in-typescript--1786996575652__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-music-playlist-manager-app-in-typescri-1786988402035__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-music-playlist-manager-app-in-typescri-1786997631362__src-playlistService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-note-taking-app-in-typescript-store-no-1786967060818__src-notes.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-password-strength-checker-app-in-types-1787000544776__src-password.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-core-engine.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-pomodoro-timer-app-in-typescript-25-mi-1786996932424__src-history.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-questions.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-ui.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-recipeService.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-simple-password-generator-cli-tool-in--1787263797116__src-commands.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-simple-password-generator-cli-tool-in--1787263797116__src-password.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-simple-password-generator-cli-tool-in--1787264420575__src-password.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 1,
+        "file_named": false
+      },
+      "a-small-todo-list-cli-app-with-add-list--1786357318305__src-todo.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-small-todo-list-cli-app-with-add-list--1786357318305__src-utils.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "log",
+          "readFile",
+          "writeFile"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-small-todo-list-cli-app-with-add-list--1786727010717__src-todoStorage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-small-todo-list-cli-app-with-add-list--1786889878300__src-todo-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-small-todo-list-cli-app-with-add-list--1786897136310__src-todo.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-small-todo-list-cli-app-with-add-list--1787520513922__main.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-small-todo-list-cli-app-with-add-list--1787740666925__todo-list.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": null,
+        "file_named": false
+      },
+      "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-temperature-converter-app-in-typescrip-1786966906890__src-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": null,
+        "file_named": false
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-game.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-index.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "runGame"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-player.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-text-adventure-game-app-in-typescript--1787000604729__src-rooms.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-ui.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "renderBoard",
+          "getPlayerInput"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-board.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-main.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786357584176__src-main.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "playGame"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-game-logic.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "playGame"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-game-logic.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786360347970__src-game-logic.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "MinMaxComputer"
+        ],
+        "errors": [],
+        "exports_coverage": 0.5,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786361527799__src-game-logic.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-tic-tac-toe-game-in-typescript-with-a--1786362105481__src-main.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "startGame"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-todo-list-app-lets-the-user-add-comple-1787262109236__src-todo.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-todo-list-cli-app-in-typescript-with-a-1786986447362__src-todo.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-typescript-cli-tool-that-reads-a-csv-f-1786357984960__src-csv-parser.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "parseCSV"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-app.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0.6666666666666666,
+        "file_named": false
+      },
+      "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-shorten.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "createShortUrl"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-url-shortener-app-an-express-api-that--1786996196333__src-shortener.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-url-shortener-app-an-express-api-that--1786996196333__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-voting-poll-app-in-typescript-create-p-1787001731335__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "a-weather-dashboard-web-app-in-typescrip-1786357484009__src-weather-store.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [
+          "fetchWeatherData",
+          "storeWeatherData"
+        ],
+        "errors": [],
+        "exports_coverage": 0,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "an-event-countdown-planner-app-in-typesc-1787000399819__src-events.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "an-event-countdown-planner-app-in-typesc-1787000399819__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "an-expense-tracker-app-in-typescript-add-1786987396890__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "build-a-cli-calculator-in-typescript-1787171224872__src-calculator.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "build-a-habit-tracker-cli-app-in-typescr-1786562160975__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786572070132__src-config.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "build-a-simple-cli-todo-manager-in-types-1786572070132__src-types.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "build-a-simple-todo-list-cli-app-in-type-1787172724034__src-storage.ts": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": 1,
+        "sibling_coverage": 0,
+        "file_named": false
+      },
+      "build-a-todo-list-app-in-a-single-html-f-1786561227765__app.js": {
+        "passed": false,
+        "applicable": true,
+        "n_errors": 0,
+        "missing": [],
+        "errors": [],
+        "exports_coverage": null,
+        "sibling_coverage": 0,
+        "file_named": false
+      }
+    }
+  }
+}

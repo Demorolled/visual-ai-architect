@@ -1,0 +1,76 @@
+/* PlanLibraryDialog — the "open a saved plan" picker.
+   Reuses the merge dialog shell (.merge-*) so it matches the other dialogs;
+   only the list itself is new. */
+
+.plan-library-dialog {
+  max-width: 720px;
+}
+
+.plan-library-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+.plan-library-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid rgba(96, 165, 250, 0.5);
+}
+
+.plan-library-item.current {
+  border-left-color: #60a5fa;
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.plan-library-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.plan-library-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.plan-library-flag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(96, 165, 250, 0.2);
+  color: #93c5fd;
+}
+
+.plan-library-goal {
+  margin-top: 3px;
+  font-size: 11px;
+  color: #cbd5e1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-library-meta {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #8b93a7;
+}
+
+.plan-library-meta code {
+  color: #93c5fd;
+}
+
+.plan-library-open {
+  flex: 0 0 auto;
+}

@@ -1,0 +1,16 @@
+{
+  "id": "__USERNAME__/vaca-qlora-round28-missed-corpus-14b",
+  "title": "VACA QLoRA Round28 (Missed-Corpus 14B)",
+  "code_file": "train_r28_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "competition_sources": [],
+  "dataset_sources": [
+    "__USERNAME__/vaca-r28-missed-corpus"
+  ],
+  "kernel_sources": [],
+  "model_sources": []
+}

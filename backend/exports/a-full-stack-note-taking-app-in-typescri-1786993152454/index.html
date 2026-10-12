@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note-Taking App</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #0a0a14;
+  color: #e0e0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+.container {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+  background: #12121e;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+h1 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #00d9ff;
+}
+
+/* Input Form */
+.input-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.input-form input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  background: #0e0e1a;
+  color: #e0e0f0;
+  font-size: 16px;
+}
+.input-form input:focus {
+  border-color: #00d9ff;
+}
+.input-form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #00d9ff;
+  color: #0a0a14;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.input-form button:hover {
+  background: #00b3ff;
+}
+
+/* Note List */
+.note-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.note-item {
+  background: #1a1a2e;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 16px;
+  transition: transform 0.2s;
+}
+.note-item:hover {
+  transform: translateY(-4px);
+}
+.note-item h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #e0e0f0;
+}
+.note-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  margin-top: 30px;
+  color: #666;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Note-Taking App</h1>
+
+  <!-- Input Form -->
+  <div class="input-form">
+    <input id="titleInput" type="text" placeholder="Title" value="">
+    <input id="contentInput" type="text" placeholder="Content" value="">
+    <button onclick="addNote()">➕ Add Note</button>
+  </div>
+
+  <!-- Note List -->
+  <div class="note-list" id="noteList"></div>
+
+  <!-- Empty State -->
+  <div class="empty-state" id="emptyState">No notes yet. Add one above!</div>
+</div>
+
+<!-- Inline JavaScript -->
+<script>
+// Sample notes
+const notes = [
+  { title: 'Meeting Notes', content: 'Discuss project timeline and milestones.' },
+  { title: 'Shopping List', content: 'Milk, eggs, bread, bananas, cheese.' }
+];
+
+// Add note to list
+function addNote() {
+  const title = document.getElementById('titleInput').value.trim();
+  const content = document.getElementById('contentInput').value.trim();
+  if (!title || !content) return;
+
+  notes.push({ title, content });
+  renderNotes();
+  document.getElementById('titleInput').value = '';
+  document.getElementById('contentInput').value = '';
+}
+
+// Render notes
+function renderNotes() {
+  const list = document.getElementById('noteList');
+  const emptyState = document.getElementById('emptyState');
+  list.innerHTML = '';
+
+  if (notes.length === 0) {
+    emptyState.style.display = 'block';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  notes.forEach(note => {
+    const item = document.createElement('div');
+    item.className = 'note-item';
+    item.innerHTML = `<h3>${note.title}</h3><p>${note.content}</p>`;
+    list.appendChild(item);
+  });
+}
+
+// Initial render
+renderNotes();
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery</title><style>
+body{font-family:'Segoe UI',sans-serif;background:#0a0a14;color:#e6e6e6;margin:0;padding:24px}
+h1{color:#00d9ff;margin:0 0 12px 0}
+.tags{display:flex;gap:8px;margin-bottom:16px}
+.tags button{background:#2a2a3a;color:#e6e6e6;border:none;border-radius:16px;padding:6px 14px;cursor:pointer;font-size:13px}
+.tags button.on{background:#00d9ff;color:#04141a}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.item{background:#14141f;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;cursor:pointer}
+.item img{width:100%;height:140px;object-fit:cover;display:block;background:#0f0f1a}
+.item .cap{padding:8px 10px;font-size:13px;color:#ccc}
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:99}
+#lightbox img{max-width:82vw;max-height:78vh;border-radius:8px}
+#lightbox .cap{position:absolute;bottom:28px;left:0;right:0;text-align:center;color:#ccc}
+#lightbox .nav{position:absolute;top:50%;transform:translateY(-50%);background:#2a2a3a;border:none;color:#e6e6e6;font-size:26px;width:48px;height:48px;border-radius:50%;cursor:pointer}
+#lbPrev{left:18px}#lbNext{right:18px}#lbClose{position:absolute;top:14px;right:18px;background:none;border:none;color:#e6e6e6;font-size:28px;cursor:pointer}
+</style></head><body>
+<h1>🖼️ Gallery</h1>
+<div class="tags" id="tags"></div>
+<div class="grid" id="grid"></div>
+<div id="lightbox"><button id="lbClose">✕</button><button class="nav" id="lbPrev">‹</button>
+<img id="lbImg" alt=""><div class="cap" id="lbCap"></div><button class="nav" id="lbNext">›</button></div>
+<script>
+const ITEMS = [
+  { src:'https://picsum.photos/id/1015/400/280', cap:'River and mountains', tag:'nature' },
+  { src:'https://picsum.photos/id/1016/400/280', cap:'Canyon view', tag:'nature' },
+  { src:'https://picsum.photos/id/1025/400/280', cap:'Dog portrait', tag:'animals' },
+  { src:'https://picsum.photos/id/103/400/280', cap:'City lights', tag:'city' },
+  { src:'https://picsum.photos/id/104/400/280', cap:'Street scene', tag:'city' },
+  { src:'https://picsum.photos/id/106/400/280', cap:'Flowers', tag:'nature' },
+  { src:'https://picsum.photos/id/108/400/280', cap:'Dog', tag:'animals' },
+  { src:'https://picsum.photos/id/110/400/280', cap:'Meadow', tag:'nature' },
+];
+let filter = 'all';
+let lbIndex = -1;
+
+function visible() { return ITEMS.filter((_, i) => filter === 'all' || ITEMS[i].tag === filter); }
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  visible().forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = '<img src="' + item.src + '" alt="' + item.cap + '">' +
+      '<div class="cap">' + item.cap + ' <span style="color:#00d9ff">#' + item.tag + '</span></div>';
+    el.addEventListener('click', () => openLightbox(i));
+    grid.appendChild(el);
+  });
+}
+
+function renderTags() {
+  const tags = ['all', ...new Set(ITEMS.map(i => i.tag))];
+  const wrap = document.getElementById('tags');
+  wrap.innerHTML = '';
+  tags.forEach(t => {
+    const btn = document.createElement('button');
+    btn.textContent = t;
+    btn.className = filter === t ? 'on' : '';
+    btn.addEventListener('click', () => { filter = t; renderTags(); renderGrid(); });
+    wrap.appendChild(btn);
+  });
+}
+
+function openLightbox(i) {
+  const list = visible();
+  lbIndex = i;
+  const item = list[lbIndex];
+  document.getElementById('lbImg').src = item.src;
+  document.getElementById('lbCap').textContent = item.cap + ' (' + (lbIndex + 1) + '/' + list.length + ')';
+  document.getElementById('lightbox').style.display = 'flex';
+}
+
+function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; }
+
+function step(dir) {
+  const list = visible();
+  lbIndex = (lbIndex + dir + list.length) % list.length;
+  openLightbox(lbIndex);
+}
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', () => step(-1));
+document.getElementById('lbNext').addEventListener('click', () => step(1));
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightbox').style.display !== 'flex') return;
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+  if (e.key === 'Escape') closeLightbox();
+});
+renderTags();
+renderGrid();
+</script></body></html>

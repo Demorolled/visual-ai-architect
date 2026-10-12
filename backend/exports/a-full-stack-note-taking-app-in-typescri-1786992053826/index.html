@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note Taking App</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #1a1a2e; color: #e0e0f0; padding: 20px; }
+  .container { max-width: 800px; margin: 0 auto; }
+  h1 { color: #fff; text-align: center; margin-bottom: 20px; }
+  .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+  .btn-primary { background: #007bff; color: #fff; }
+  .btn-danger { background: #dc3545; color: #fff; }
+  .btn-secondary { background: #6c757d; color: #fff; }
+  .form-group { margin-bottom: 10px; }
+  .form-group label { display: block; margin-bottom: 4px; color: #888; }
+  .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #333; border-radius: 4px; background: #111; color: #fff; }
+  .notes-list { margin-top: 20px; }
+  .note-card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; margin-bottom: 10px; }
+  .note-card h3 { margin: 0 0 8px; font-size: 16px; color: #00d9ff; }
+  .note-card p { margin: 0 0 12px; font-size: 14px; color: #aaa; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Note Taking App</h1>
+  <div class="form-group">
+    <label for="titleInput">Title</label>
+    <input id="titleInput" type="text" placeholder="Enter title" value="">
+  </div>
+  <div class="form-group">
+    <label for="contentInput">Content</label>
+    <textarea id="contentInput" rows="4" placeholder="Enter note content"></textarea>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary" onclick="addNote()">➕ Add Note</button>
+  </div>
+  <div class="notes-list" id="notesList"></div>
+</div>
+
+<script>
+  let notes = [];
+  const notesList = document.getElementById('notesList');
+  const titleInput = document.getElementById('titleInput');
+  const contentInput = document.getElementById('contentInput');
+
+  function addNote() {
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+    if (!title || !content) {
+      alert('Title and content are required');
+      return;
+    }
+    notes.push({ title, content, id: Date.now() });
+    saveNotes();
+    renderNotes();
+    titleInput.value = '';
+    contentInput.value = '';
+  }
+
+  function saveNotes() {
+    localStorage.setItem('notes', JSON.stringify(notes));
+  }
+
+  function loadNotes() {
+    try {
+      const data = localStorage.getItem('notes');
+      if (data) notes = JSON.parse(data);
+    } catch (e) {
+      console.error('Failed to load notes:', e);
+    }
+  }
+
+  function renderNotes() {
+    notesList.innerHTML = '';
+    if (notes.length === 0) {
+      notesList.innerHTML = '<p>No notes yet.</p>';
+      return;
+    }
+    notes.forEach(note => {
+      const card = document.createElement('div');
+      card.className = 'note-card';
+      card.innerHTML = `
+        <h3>${note.title}</h3>
+        <p>${note.content}</p>
+        <button class="btn btn-danger" onclick="deleteNote(${note.id})">✕ Delete</button>
+      `;
+      notesList.appendChild(card);
+    });
+  }
+
+  function deleteNote(id) {
+    notes = notes.filter(n => n.id !== id);
+    saveNotes();
+    renderNotes();
+  }
+
+  // Load and render on init
+  loadNotes();
+  renderNotes();
+</script>
+</body>
+</html>

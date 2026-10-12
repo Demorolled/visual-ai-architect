@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { prependIdentity, IDENTITY_RULE, humanizeBlueprintJson, buildPlatformConstraint, pickGreetingVariant, ensureQualityGreeting, buildVarietyInstruction, pickSassyFallback, pickShortAck, isContinuationFollowUp } from './reasoning.js';
+import { prependIdentity, IDENTITY_RULE, humanizeBlueprintJson, buildPlatformConstraint, pickGreetingVariant, ensureQualityGreeting, buildVarietyInstruction, pickSassyFallback, pickShortAck, stripAeonTrace, isContinuationFollowUp, detectRoleConfusion, detectDenial, isJokeRequest, pickJokeFallback } from './reasoning.js';
 
 describe('humanizeBlueprintJson', () => {
   it('humanizes a complete blueprint JSON into readable prose', () => {
@@ -77,9 +77,19 @@ describe('prependIdentity (name-anchoring fix)', () => {
     expect(out).toContain('You are a helpful assistant.');
   });
 
-  it('returns the identity rule alone when given an empty prompt', () => {
-    expect(prependIdentity('')).toBe(IDENTITY_RULE);
-    expect(prependIdentity(undefined as unknown as string)).toBe(IDENTITY_RULE);
+  it('returns the identity rule + role boundary alone when given an empty prompt', () => {
+    const out = prependIdentity('');
+    expect(out.startsWith('Your name is Veronica.')).toBe(true);
+    expect(out).toContain('ROLE BOUNDARY');
+    expect(out).toContain('You are the ASSISTANT');
+    expect(prependIdentity(undefined as unknown as string)).toBe(out);
+  });
+
+  it('includes the role-boundary rule so the model never applies "you are" to the user', () => {
+    const out = prependIdentity('You are a helpful assistant.');
+    expect(out).toContain('ROLE BOUNDARY');
+    expect(out).toContain('Never call the user the assistant');
+    expect(out).toContain('Never apply "you are" to the user');
   });
 
   it('explicitly denies other company identities (never Claude)', () => {
@@ -149,6 +159,53 @@ describe('response variety (similar questions get different answers)', () => {
     expect(ensureQualityGreeting('omg', 'hi')).toBe(ensureQualityGreeting('omg', 'hi'));
   });
 
+  it('stripAeonTrace removes narration up to the lone response delimiter', () => {
+    expect(stripAeonTrace('We need answer user: \"hi\". Final concise.\n response\n\nHi! How can I help?')).toBe('Hi! How can I help?');
+    expect(stripAeonTrace('No delimiter here')).toBe('No delimiter here');
+  });
+  it('stripAeonTrace also cuts at a closing  block before the real answer', () => {
+    expect(stripAeonTrace('User asks for the date.\n\n Today is Saturday.')).toBe('Today is Saturday.');
+  });
+  it('stripAeonTrace does NOT truncate code at its first blank line (regression)', () => {
+    // A blank line used to be treated as a reasoning-trace delimiter, so any
+    // code answer containing one came back with everything before it deleted
+    // (a fibonacci function was returned as just `return b;\n}` — reported
+    // live 2026-10-02 through /api/reason/chat).
+    const fn = 'function fibonacci(n: number): number {\n  if (n <= 1) return n;\n\n  let a = 0, b = 1, temp = 0;\n  for (let i = 2; i <= n; i++) {\n    temp = a + b;\n    a = b;\n    b = temp;\n  }\n  return b;\n}';
+    expect(stripAeonTrace(fn)).toBe(fn);
+    const imp = "import { Router } from 'express';\n\nconst router = Router();\nexport default router;";
+    expect(stripAeonTrace(imp)).toBe(imp);
+  });
+
+  it('stripAeonTrace empties out pure narration with no real answer', () => {
+    expect(stripAeonTrace('We need answer user: \"tell me a joke\".')).toBe('');
+    expect(stripAeonTrace('User asks: \"what is the date\". Need final only.')).toBe('');
+  });
+  it('isJokeRequest and pickJokeFallback answer joke requests deterministically', () => {
+    expect(isJokeRequest('tell me a joke')).toBe(true);
+    expect(isJokeRequest('what is the date')).toBe(false);
+    const j = pickJokeFallback('tell me a joke');
+    expect(j.length).toBeGreaterThan(10);
+  });
+  it('prependIdentity includes the no-narration style guard', () => {
+    const out = prependIdentity('be brief');
+    expect(out).toContain('STYLE: Respond directly');
+    expect(out).toContain('chain-of-thought');
+    expect(out).toContain('be brief');
+  });
+
+  it('ensureQualityGreeting drops AEON thinking-trace narration for a real greeting', () => {
+    // AEON answers a greeting with pure meta-narration — must fall back, not echo it.
+    const out = ensureQualityGreeting('We need to respond to user "hi" twice.');
+    expect(out).not.toContain('We need to respond');
+    expect(out).not.toContain('user');
+    expect(out.length).toBeGreaterThan(0);
+    expect(out).toMatch(/[A-Z]/);           // a real capitalized greeting
+    expect(ensureQualityGreeting('User said \"hi\".')).not.toContain('User said');
+    expect(ensureQualityGreeting('The user said \"hello friend\".')).not.toContain('user said');
+    expect(ensureQualityGreeting('Need final. Keep concise.')).not.toContain('Need final');
+  });
+
   it('ensureQualityGreeting preserves a good greeting', () => {
     expect(ensureQualityGreeting('Hey! What can I build for you?', 'hi')).toBe('Hey! What can I build for you?');
   });
@@ -178,6 +235,78 @@ describe('response variety (similar questions get different answers)', () => {
     expect(out).toContain('recent answer');
     expect(out).toContain('old answer two');
     expect(out).not.toContain('old answer one');
+  });
+});
+
+describe('role-confusion guard (identity applied to the user)', () => {
+  it('answers role-corrections directly (never the LLM fumbling them)', () => {
+    const queries = [
+      "I'm not the assistant I am the user",
+      "why did you say I'm the assistant",
+      "I am the user not the assistant",
+      'you called me the assistant',
+      'I am the user',
+    ];
+    for (const q of queries) {
+      const reply = detectRoleConfusion(q);
+      expect(reply, `should intercept: ${q}`).toBeTruthy();
+      expect(reply).toMatch(/you'?re the user|you are the user/i);
+      expect(reply).toMatch(/assistant/i);
+    }
+  });
+
+  it('does NOT intercept normal requests (build/chat/wiki/todo)', () => {
+    const normal = [
+      'build me a todo app',
+      'what is your wiki',
+      'show me the todo list',
+      'tell me a joke',
+      'I am building an assistant app',
+    ];
+    for (const q of normal) {
+      expect(detectRoleConfusion(q), `should NOT intercept: ${q}`).toBeNull();
+    }
+  });
+
+  it('detectRoleConfusion is deterministic per query', () => {
+    expect(detectRoleConfusion('why did you say I\'m the assistant')).toBe(
+      detectRoleConfusion('why did you say I\'m the assistant'));
+  });
+});
+
+describe('denial guard (no-you-didnt / false action claim callout)', () => {
+  it('intercepts denials and never repeats the false claim', () => {
+    const queries = [
+      "no you didn't",
+      'no you didnt open it',
+      "that's wrong, nothing opened",
+      'nothing happened',
+      'no you did not',
+      'no window opened',
+      "i don't see anything",
+    ];
+    for (const q of queries) {
+      const reply = detectDenial(q);
+      expect(reply, `should intercept: ${q}`).toBeTruthy();
+      expect(reply).toMatch(/preview|button|open/i);
+      expect(reply).not.toMatch(/i'?m not sure how to respond/i);
+    }
+  });
+
+  it('does NOT intercept normal requests', () => {
+    const normal = [
+      'build me a chess game',
+      'show me a preview of the board',
+      'what is the weather',
+      'you open the file and read it',
+    ];
+    for (const q of normal) {
+      expect(detectDenial(q), `should NOT intercept: ${q}`).toBeNull();
+    }
+  });
+
+  it('detectDenial is deterministic per query', () => {
+    expect(detectDenial('no you didn\'t')).toBe(detectDenial('no you didn\'t'));
   });
 });
 

@@ -1,0 +1,111 @@
+{
+  "tag": "r16-7b",
+  "a": "7B R16",
+  "url_a": "http://127.0.0.1:8000",
+  "b": "7B R16",
+  "url_b": "http://127.0.0.1:8000",
+  "tests": [
+    {
+      "id": "ts_fibonacci",
+      "desc": "TypeScript function, compilable",
+      "prompt": "Write a complete TypeScript file that exports a function `fibonacci(n: number): number[]` returning the first n Fibonacci numbers (n >= 0). Handle edge cases. No imports, no comments explaining what to do \u2014 just the code.",
+      "a": {
+        "content": "export function fibonacci(n: number): number[] {\n    if (n < 0) return [];\n    if (n === 0) return [0];\n    if (n === 1) return [0, 1];\n    const result = [0, 1];\n    for (let i = 2; i < n; i++) {\n        result.push(result[i - 1] + result[i - 2]);\n    }\n    return result;\n}",
+        "elapsed": 1.9,
+        "tokens": 96
+      },
+      "a_code": "export function fibonacci(n: number): number[] {\n    if (n < 0) return [];\n    if (n === 0) return [0];\n    if (n === 1) return [0, 1];\n    const result = [0, 1];\n    for (let i = 2; i < n; i++) {\n        result.push(result[i - 1] + result[i - 2]);\n    }\n    return result;\n}",
+      "b": {
+        "content": "export function fibonacci(n: number): number[] {\n    if (n < 0) return [];\n    if (n === 0) return [0];\n    if (n === 1) return [0, 1];\n    const result = [0, 1];\n    for (let i = 2; i < n; i++) {\n        result.push(result[i - 1] + result[i - 2]);\n    }\n    return result;\n}",
+        "elapsed": 1.5,
+        "tokens": 96
+      },
+      "b_code": "export function fibonacci(n: number): number[] {\n    if (n < 0) return [];\n    if (n === 0) return [0];\n    if (n === 1) return [0, 1];\n    const result = [0, 1];\n    for (let i = 2; i < n; i++) {\n        result.push(result[i - 1] + result[i - 2]);\n    }\n    return result;\n}"
+    },
+    {
+      "id": "ts_url_parser",
+      "desc": "TypeScript URL query parser with types",
+      "prompt": "Write a complete TypeScript file that exports a function `parseQuery(url: string): Record<string, string>` that parses the query string of a URL (handles ?, &, =, and decodes values). Include the type signature. No imports.",
+      "a": {
+        "content": "export function parseQuery(url: string): Record<string, string> {\n  const q = url.split('?')[1];\n  if (!q) return {};\n  const pairs = q.split('&').map(p => p.split('='));\n  return pairs.reduce((acc, [k, v]) => {\n    acc[decodeURIComponent(k)] = decodeURIComponent(v || '');\n    return acc;\n  }, {} as Record<string, string>);\n}",
+        "elapsed": 1.4,
+        "tokens": 87
+      },
+      "a_code": "export function parseQuery(url: string): Record<string, string> {\n  const q = url.split('?')[1];\n  if (!q) return {};\n  const pairs = q.split('&').map(p => p.split('='));\n  return pairs.reduce((acc, [k, v]) => {\n    acc[decodeURIComponent(k)] = decodeURIComponent(v || '');\n    return acc;\n  }, {} as Record<string, string>);\n}",
+      "b": {
+        "content": "export function parseQuery(url: string): Record<string, string> {\n  const q = url.split('?')[1];\n  if (!q) return {};\n  const pairs = q.split('&');\n  const result: Record<string, string> = {};\n  for (const p of pairs) {\n    const [k, v] = p.split('=');\n    result[decodeURIComponent(k)] = decodeURIComponent(v || '');\n  }\n  return result;\n}",
+        "elapsed": 1.4,
+        "tokens": 91
+      },
+      "b_code": "export function parseQuery(url: string): Record<string, string> {\n  const q = url.split('?')[1];\n  if (!q) return {};\n  const pairs = q.split('&');\n  const result: Record<string, string> = {};\n  for (const p of pairs) {\n    const [k, v] = p.split('=');\n    result[decodeURIComponent(k)] = decodeURIComponent(v || '');\n  }\n  return result;\n}"
+    },
+    {
+      "id": "py_water_jug",
+      "desc": "Python water-jug solver (BFS)",
+      "prompt": "Write a Python function `water_jug(cap_a, cap_b, target)` that returns the shortest sequence of states solving the classic water jug puzzle using BFS, or None if impossible. Return a list of (a, b) tuples. Just the code.",
+      "a": {
+        "content": "from collections import deque\n\ndef water_jug(cap_a, cap_b, target):\n    def neighbors(a, b):\n        c = (cap_a - a, 0)\n        d = (0, cap_b)\n        e = (a, cap_b)\n        f = (cap_a, b)\n        g = (0, b)\n        h = (a, 0)\n        i = (min(a + b, cap_a), max(0, a + b - cap_a))\n        j = (max(0, a + b - cap_b), min(b + a, cap_b))\n        return [c, d, e, f, g, h, i, j]\n    start = (0, 0)\n    if target == 0: return [start]\n    queue = deque([(start, [start])])\n    visited = set([start])\n    while queue:\n        (a, b), path = queue.popleft()\n        for na, nb in neighbors(a, b):\n            if (na, nb) == (0, target): return path + [(na, nb)]\n            if (na, nb) not in visited:\n                visited.add((na, nb))\n                queue.append(((na, nb), path + [(na, nb)]))\n    return None",
+        "elapsed": 4.3,
+        "tokens": 269
+      },
+      "a_code": "from collections import deque\n\ndef water_jug(cap_a, cap_b, target):\n    def neighbors(a, b):\n        c = (cap_a - a, 0)\n        d = (0, cap_b)\n        e = (a, cap_b)\n        f = (cap_a, b)\n        g = (0, b)\n        h = (a, 0)\n        i = (min(a + b, cap_a), max(0, a + b - cap_a))\n        j = (max(0, a + b - cap_b), min(b + a, cap_b))\n        return [c, d, e, f, g, h, i, j]\n    start = (0, 0)\n    if target == 0: return [start]\n    queue = deque([(start, [start])])\n    visited = set([start])\n    while queue:\n        (a, b), path = queue.popleft()\n        for na, nb in neighbors(a, b):\n            if (na, nb) == (0, target): return path + [(na, nb)]\n            if (na, nb) not in visited:\n                visited.add((na, nb))\n                queue.append(((na, nb), path + [(na, nb)]))\n    return None",
+      "b": {
+        "content": "from collections import deque\n\ndef water_jug(cap_a, cap_b, target):\n    def neighbors(a, b):\n        c = [(0, b), (a, 0), (a, cap_b), (0, a+b) if a+b<=cap_b else (a-(cap_b-b), cap_b), (a+b, 0) if a+b<=cap_a else (cap_a, a-(cap_a-(b-a)))]\n        return [(x, y) for x, y in c if 0<=x<=cap_a and 0<=y<=cap_b]\n    start = (0, 0)\n    if target == 0: return [start]\n    q = deque([(start, [start], set())])\n    visited = set([start])\n    while q:\n        (a, b), path, seen = q.popleft()\n        for na, nb in neighbors(a, b):\n            if (na, nb) == (0, 0): continue\n            if (na, nb) == (target, 0) or (na, nb) == (0, target):\n                path.append((na, nb))\n                return path\n            if (na, nb) not in seen:\n                seen.add((na, nb))\n                q.append(((na, nb), path + [(na, nb)], seen))\n    return None",
+        "elapsed": 4.6,
+        "tokens": 286
+      },
+      "b_code": "from collections import deque\n\ndef water_jug(cap_a, cap_b, target):\n    def neighbors(a, b):\n        c = [(0, b), (a, 0), (a, cap_b), (0, a+b) if a+b<=cap_b else (a-(cap_b-b), cap_b), (a+b, 0) if a+b<=cap_a else (cap_a, a-(cap_a-(b-a)))]\n        return [(x, y) for x, y in c if 0<=x<=cap_a and 0<=y<=cap_b]\n    start = (0, 0)\n    if target == 0: return [start]\n    q = deque([(start, [start], set())])\n    visited = set([start])\n    while q:\n        (a, b), path, seen = q.popleft()\n        for na, nb in neighbors(a, b):\n            if (na, nb) == (0, 0): continue\n            if (na, nb) == (target, 0) or (na, nb) == (0, target):\n                path.append((na, nb))\n                return path\n            if (na, nb) not in seen:\n                seen.add((na, nb))\n                q.append(((na, nb), path + [(na, nb)], seen))\n    return None"
+    },
+    {
+      "id": "logic_puzzle",
+      "desc": "Multi-step logic reasoning",
+      "prompt": "Solve this step by step: A, B, and C each have a different favorite color among red, blue, green. A does not like red. B does not like blue. The person who likes green is not B. What color does each person like? Show your reasoning briefly, then give the final answer as 'A: X, B: Y, C: Z'.",
+      "a": {
+        "content": "Let's analyze the statements:\n1. A does not like red.\n2. B does not like blue.\n3. The person who likes green is not B.\n\nFrom statement 1, A's favorite color is either blue or green.\nFrom statement 2, B's favorite color is either red or green.\nFrom statement 3, since B does not like green, B must like red.\nSince B likes red, A cannot like red (already assigned to B), so A must like blue.\nThat leaves C with green.\n\nFinal answer: A: blue, B: red, C: green.",
+        "elapsed": 2.0,
+        "tokens": 122
+      },
+      "a_code": "Let's analyze the statements:\n1. A does not like red.\n2. B does not like blue.\n3. The person who likes green is not B.\n\nFrom statement 1, A's favorite color is either blue or green.\nFrom statement 2, B's favorite color is either red or green.\nFrom statement 3, since B does not like green, B must like red.\nSince B likes red, A cannot like red (already assigned to B), so A must like blue.\nThat leaves C with green.\n\nFinal answer: A: blue, B: red, C: green.",
+      "b": {
+        "content": "Let's analyze the statements:\n1. A does not like red.\n2. B does not like blue.\n3. The person who likes green is not B.\n\nFrom statement 1, A's favorite color is either blue or green.\nFrom statement 2, B's favorite color is either red or green.\nFrom statement 3, since B does not like green, B's favorite color must be red.\n\nNow we know:\n- B: red\n- A: cannot be red (so A: blue or green)\n- C: cannot be red or blue (so C: green)\n\nTherefore, A: blue, B: red, C: green.\n\nA: blue, B: red, C: green",
+        "elapsed": 2.3,
+        "tokens": 145
+      },
+      "b_code": "Let's analyze the statements:\n1. A does not like red.\n2. B does not like blue.\n3. The person who likes green is not B.\n\nFrom statement 1, A's favorite color is either blue or green.\nFrom statement 2, B's favorite color is either red or green.\nFrom statement 3, since B does not like green, B's favorite color must be red.\n\nNow we know:\n- B: red\n- A: cannot be red (so A: blue or green)\n- C: cannot be red or blue (so C: green)\n\nTherefore, A: blue, B: red, C: green.\n\nA: blue, B: red, C: green"
+    },
+    {
+      "id": "instruction_follow",
+      "desc": "Strict instruction adherence",
+      "prompt": "Respond with EXACTLY one line: the word 'COMPLIANT' followed by the number 42. Nothing else, no explanation.",
+      "a": {
+        "content": "COMPLIANT42",
+        "elapsed": 0.1,
+        "tokens": 6
+      },
+      "a_code": "COMPLIANT42",
+      "b": {
+        "content": "COMPLIANT42",
+        "elapsed": 0.1,
+        "tokens": 6
+      },
+      "b_code": "COMPLIANT42"
+    },
+    {
+      "id": "module_contract",
+      "desc": "VACA-style module respecting a contract",
+      "prompt": "You are generating ONE module of a todo-list app: the module named `task_store`. The sibling module `data_store` sends it data via the contract `data_store -> task_store : data`. Implement task_store as a TypeScript module that exports exactly `addTask`, `listTasks`, and `deleteTask` using an in-memory array. Do NOT implement other modules. Just the code.",
+      "a": {
+        "content": "// ============= task_store.ts =============\nexport function addTask(task: string): void {\n  tasks.push(task);\n}\n\nexport function listTasks(): string[] {\n  return tasks.slice();\n}\n\nexport function deleteTask(index: number): void {\n  tasks.splice(index, 1);\n}\n\nconst tasks: string[] = [];",
+        "elapsed": 1.1,
+        "tokens": 64
+      },
+      "a_code": "// ============= task_store.ts =============\nexport function addTask(task: string): void {\n  tasks.push(task);\n}\n\nexport function listTasks(): string[] {\n  return tasks.slice();\n}\n\nexport function deleteTask(index: number): void {\n  tasks.splice(index, 1);\n}\n\nconst tasks: string[] = [];",
+      "b": {
+        "content": "// =============== task_store.ts ===============\nexport function addTask(task: string): void {\n  tasks.push(task);\n}\n\nexport function listTasks(): string[] {\n  return tasks.slice();\n}\n\nexport function deleteTask(index: number): void {\n  tasks.splice(index, 1);\n}\n\nconst tasks: string[] = [];",
+        "elapsed": 1.0,
+        "tokens": 64
+      },
+      "b_code": "// =============== task_store.ts ===============\nexport function addTask(task: string): void {\n  tasks.push(task);\n}\n\nexport function listTasks(): string[] {\n  return tasks.slice();\n}\n\nexport function deleteTask(index: number): void {\n  tasks.splice(index, 1);\n}\n\nconst tasks: string[] = [];"
+    }
+  ]
+}

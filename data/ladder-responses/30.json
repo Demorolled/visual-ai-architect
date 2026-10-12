@@ -1,0 +1,354 @@
+{
+ "success": true,
+ "projectId": "fbd57432-2dd5-4ee7-b173-861ae8a71e1d",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "space_invaders_2",
+  "description": "Classic space invaders with alien formations \u2014 Interactive space invaders with real-time visualization and analysis",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Game Controller",
+    "destination_module": "Game Engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Game Engine",
+    "destination_module": "Game State",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "Game State",
+    "destination_module": "AI Opponent",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "AI Opponent",
+    "destination_module": "Render View",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 GitHub - CleanCut/invaders: Open source terminal arcade game with audio ...\n    Invaders is an open source terminal arcade game with audio, based off of the &quot;Space Invaders&quot; classic arcade game. This game was initially developed for a presentation at OSCON Open Source S\n  \u2022 space-invaders \u00b7 GitHub Topics \u00b7 GitHub\n    game python open-source games game-development space-invaders python3 pygame atari pyinstaller hacktoberfest Updated on Aug 23, 2023 Python\n  \u2022 \u2b50216 kubowania/space-invaders: A vanilla JavaScript game with HTML and CSS\n  \u2022 \u2b50216 flxbe/asm-space-invaders: A small, bootable game written in x86 Assembly inspired by Space Invaders\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 10: TRAINING SYSTEM\n    10.1 LLM TRAINING APP (llm-training-app/) \u2014 LEGACY (superseded by 10.2 gui_trainer/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFrontend:     HTML + CSS + JS (custom UI, no framework)\nBackend:      Python FastAPI\nEngine:       Custom engine.py + mindspace_api.\n  \u2022 Section 59: SESSION UPDATE \u2014 August 14, 2026: VOID RAIDER GAME BUILDS + BLUEPRINT RESEARCH INJECTION (what it takes to build an arcade game)\n    Four full builds of the arcade space-shooter \"void raider\" ran through the\nblueprint pipeline this session. This section records what they taught.\n\n1. WHAT WAS BUILT\n   - space_shooter blueprint build \u2192 5 modules passed tsc except\n     game-renderer (truncated mid-class); world-state had 8 real type\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move "
+ },
+ "candidates": [
+  {
+   "app_type": "space_invaders_2",
+   "score": 1
+  },
+  {
+   "app_type": "space_invaders",
+   "score": 1
+  },
+  {
+   "app_type": "space_shooter",
+   "score": 1
+  },
+  {
+   "app_type": "void_raider",
+   "score": 1
+  },
+  {
+   "app_type": "asteroids_2",
+   "score": 0.8568645196271742
+  }
+ ],
+ "project": {
+  "id": "fbd57432-2dd5-4ee7-b173-861ae8a71e1d",
+  "name": "a space invaders game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "space_invaders_2 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "input",
+    "label": "Game Controller"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Game Engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "Game State"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "AI Opponent"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Render View"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 1,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 4,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "generated": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "matched": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "game-controller.ts",
+   "language": "typescript",
+   "code": "export function startGame(): void {\n  const gameBoard: number[][] = Array.from({ length: 10 }, () => Array(12).fill(0));\n  const playerShip: { x: number; y: number; health: number } = { x: 5, y: 9, health: 3 };\n  const enemies: { x: number; y: number; health: number; speed: number }[] = [];\n  const bullets: { x: number; y: number; direction: 'up' | 'down' }[] = [];\n  let isRunning: boolean = true;\n  let timer: number = 0;\n  let score: number = 0;\n\n  function init(): void {\n    timer = 0;\n    score = 0;\n    isRunning = true;\n    enemies.length = 0;\n    bullets.length = 0;\n    playerShip.x = 5;\n    playerShip.y = 9;\n    playerShip.health = 3;\n    for (let i = 0; i < 5; i++) {\n      const x = 1 + i * 2;\n      const y = 1;\n      enemies.push({ x, y, health: 1, speed: 1 });\n    }\n  }\n\n  function update(dt: number): void {\n    if (!isRunning) return;\n    timer += dt;\n    if (timer >= 0.5) {\n      timer = 0;\n      const enemy = enemies[0];\n      if (enemy) {\n        enemy.y++;\n        if (enemy.y >= 8) {\n          isRunning = false;\n          return;\n        }\n      }\n    }\n    for (let i = 0; i < bullets.length; i++) {\n      const b = bullets[i];\n      if (!b) continue;\n      b.y += (b.direction === 'up' ? 1 : -1) * 2;\n      if (b.y < 0 || b.y > 10) {\n        bullets.splice(i, 1);\n        continue;\n      }\n      const hit = enemies.find(e => e.x === b.x && e.y === b.y);\n      if (hit) {\n        hit.health--;\n        if (hit.health <= 0) {\n          enemies.splice(enemies.indexOf(hit), 1);\n          bullets.splice(i, 1);\n          score++;\n          continue;\n        }\n        bullets.splice(i, 1);\n        continue;\n      }\n    }\n  }\n\n  function render(): void {\n    const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;\n    if (!canvas) return;\n    const ctx = canvas.getContext('2d');\n    if (!ctx) return;\n    ctx.clearRect(0, 0, canvas.width, canvas.height);\n    for (let i = 0; i < 10; i++) {\n      for (let j = 0; j < 12; j++) {\n        ctx.fillStyle = gameBoard[i][j] ? '#000' : '#fff';\n        ctx.fillRect(j * 20, i * 20, 20, 20);\n      }\n    }\n    ctx.fillStyle = '#fff';\n    ctx.fillRect(playerShip.x * 20, playerShip.y * 20, 20, 20);\n    for (const enemy of enemies) {\n      ctx.fillStyle = '#f00';\n      ctx.fillRect(enemy.x * 20, enemy.y * 20, 20, 20);\n    }\n    for (const b of bullets) {\n      ctx.fillStyle = b.direction === 'up' ? '#0f0' : '#00f';\n      ctx.fillRect(b.x * 20, b.y * 20, 20, 20);\n    }\n    ctx.fillStyle = '#fff';\n    ctx.font = '12px Arial';\n    ctx.fillText(`Score: ${score}`, 10, 20);\n  }\n\n  function handleInput(event: KeyboardEvent): void {\n    if (!isRunning) return;\n    const key = event.key.toLowerCase();\n    if (key === 'w') {\n      bullets.push({ x: playerShip.x, y: playerShip.y, direction: 'up' });\n    } else if (key === 's') {\n      bullets.push({ x: playerShip.x, y: playerShip.y, direction: 'down' });\n    }\n  }\n\n  function main(): void {\n    const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;\n    if (!canvas) return;\n    canvas.width = 240;\n    canvas.height = 200;\n    const timer = setInterval(() => {\n      update(0.016);\n      render();\n      handleInput(event);\n    }, 16);\n  }\n\n  init();\n  main();\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Game Controller",
+   "dependencies": [],
+   "exports": [
+    "startGame"
+   ],
+   "errors": [
+    "TS2345: Argument of type 'Event' is not assignable to parameter of type 'KeyboardEvent'. (line 108)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "export function startGame(): void {\n    const gameBoard: number[][] = Array.from({ length: 10 }, () => Array(12).fill(0));\n    const playerShip: { x: number; y: number; health: number } = { x: 5, y: 9, health: 3 };\n    const enemies: { x: number; y: number; health: number; speed: number }[] = [];\n    const bullets: { x: number; y: number; direction: 'up' | 'down' }[] = [];\n    let isRunning: boolean = true;\n    let timer: number = 0;\n    let score: number = 0;\n\n    function init(): void {\n        timer = 0;\n        score = 0;\n        isRunning = true;\n        enemies.length = 0;\n        bullets.length = 0;\n        playerShip.x = 5;\n        playerShip.y = 9;\n        playerShip.health = 3;\n        for (let i = 0; i < 5; i++) {\n            const x = 1 + i * 2;\n            const y = 1;\n            enemies.push({ x, y, health: 1, speed: 1 });\n        }\n    }\n\n    function update(dt: number): void {\n        if (!isRunning) return;\n        timer += dt;\n        if (timer >= 0.5) {\n            timer = 0;\n            const enemy = enemies[0];\n            if (enemy) {\n                enemy.y++;\n                if (enemy.y >= 8) {\n                    isRunning = false;\n                    return;\n                }\n            }\n        }\n        for (let i = 0; i < bullets.length; i++) {\n            const b = bullets[i];\n            if (!b) continue;\n            b.y += (b.direction === 'up' ? 1 : -1) * 2;\n            if (b.y < 0 || b.y > 10) {\n                bullets.splice(i, 1);\n                continue;\n            }\n            const hit = enemies.find(e => e.x === b.x && e.y === b.y);\n            if (hit) {\n                hit.health--;\n                if (hit.health <= 0) {\n                    enemies.splice(enemies.indexOf(hit), 1);\n                    bullets.splice(i, 1);\n                    score++;\n                    continue;\n                }\n                bullets.splice(i, 1);\n                continue;\n            }\n        }\n    }\n\n    function render(): void {\n        const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;\n        if (!canvas) return;\n        const ctx = canvas.getContext('2d');\n        if (!ctx) return;\n        ctx.clearRect(0, 0, canvas.width, canvas.height);\n        for (let i = 0; i < 10; i++) {\n            for (let j = 0; j < 12; j++) {\n                ctx.fillStyle = gameBoard[i][j] ? '#000' : '#fff';\n                ctx.fillRect(j * 20, i * 20, 20, 20);\n            }\n        }\n        ctx.fillStyle = '#fff';\n        ctx.fillRect(playerShip.x * 20, playerShip.y * 20, 20, 20);\n        for (const enemy of enemies) {\n            ctx.fillStyle = '#f00';\n            ctx.fillRect(enemy.x * 20, enemy.y * 20, 20, 20);\n        }\n        for (const b of bullets) {\n            ctx.fillStyle = b.direction === 'up' ? '#0f0' : '#00f';\n            ctx.fillRect(b.x * 20, b.y * 20, 20, 20);\n        }\n        ctx.fillStyle = '#fff';\n        ctx.font = '12px Arial';\n        ctx.fillText(`Score: ${score}`, 10, 20);\n    }\n\n    function handleInput(event: KeyboardEvent): void {\n        if (!isRunning) return;\n        const key = event.key.toLowerCase();\n        if (key === 'w') {\n            bullets.push({ x: playerShip.x, y: playerShip.y, direction: 'up' });\n        } else if (key === 's') {\n            bullets.push({ x: playerShip.x, y: playerShip.y, direction: 'down' });\n        }\n    }\n\n    function main(): void {\n        const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;\n        if (!canvas) return;\n        canvas.width = 240;\n        canvas.height = 200;\n        const timer = setInterval(() => {\n            update(0.016);\n            render();\n            handleInput(event);\n        }, 16);\n    }\n\n    init();\n    main();\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "Game Engine",
+   "dependencies": [],
+   "exports": [
+    "startGame"
+   ],
+   "errors": [
+    "TS2345: Argument of type 'Event' is not assignable to parameter of type 'KeyboardEvent'. (line 108)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-state.ts",
+   "language": "typescript",
+   "code": "import { startGame } from '../game-engine/game-engine.ts';\n\nexport interface GameState {\n  playerShip: { health: number; position: { x: number; y: number } };\n  enemies: { health: number; position: { x: number; y: number } }[];\n  bullets: { type: 'player' | 'enemy'; position: { x: number; y: number } }[];\n  score: number;\n  lives: number;\n  level: number;\n  gameRunning: boolean;\n  gameOver: boolean;\n}\n\nexport function initializeGameState(): GameState {\n  return {\n    playerShip: { health: 100, position: { x: 400, y: 600 } },\n    enemies: Array.from({ length: 10 }, () => ({\n      health: 100,\n      position: { x: Math.random() * 700, y: 50 + Math.random() * 100 },\n    })),\n    bullets: [],\n    score: 0,\n    lives: 3,\n    level: 1,\n    gameRunning: true,\n    gameOver: false,\n  };\n}\n\nexport function updateGameState(state: GameState, deltaTime: number): void {\n  if (!state.gameRunning) return;\n\n  // Player bullet logic\n  state.bullets.forEach((bullet, index) => {\n    if (bullet.type === 'player') {\n      bullet.position.y -= 5 * deltaTime;\n      if (bullet.position.y < 0) {\n        state.bullets.splice(index, 1);\n      } else {\n        // Check for enemy collision\n        state.enemies.forEach((enemy, enemyIndex) => {\n          if (enemy.position.y > 650) {\n            state.enemies.splice(enemyIndex, 1);\n            state.score += 10;\n            state.bullets.splice(index, 1);\n          }\n        });\n      }\n    } else if (bullet.type === 'enemy') {\n      bullet.position.y += 3 * deltaTime;\n      if (bullet.position.y > 700) {\n        state.bullets.splice(index, 1);\n      } else {\n        // Check for player collision\n        if (Math.abs(bullet.position.x - state.playerShip.position.x) < 30 && bullet.position.y > state.playerShip.position.y - 20) {\n          state.playerShip.health -= 20;\n          state.bullets.splice(index, 1);\n          if (state.playerShip.health <= 0) {\n            state.gameRunning = false;\n            state.gameOver = true;\n          }\n        }\n      }\n    }\n  });\n\n  // Enemy movement\n  state.enemies.forEach((enemy, index) => {\n    enemy.position.y += 2 * deltaTime;\n    if (enemy.position.y > 650) {\n      state.enemies.splice(index, 1);\n    } else {\n      // Check for edge collision\n      if (enemy.position.x < 0 || enemy.position.x > 700) {\n        enemy.position.x = enemy.position.x < 0 ? 0 : 700;\n        enemy.position.x += 2 * deltaTime;\n      }\n    }\n  });\n\n  // Player ship input\n  const ship = state.playerShip;\n  if (input.keyboardDown('ArrowUp')) {\n    ship.position.y -= 5 * deltaTime;\n  }\n  if (input.keyboardDown('ArrowDown')) {\n    ship.position.y += 5 * deltaTime;\n  }\n  if (input.keyboardDown('ArrowLeft')) {\n    ship.position.x -= 5 * deltaTime;\n  }\n  if (input.keyboardDown('ArrowRight')) {\n    ship.position.x += 5 * deltaTime;\n  }\n  if (input.keyboardDown(' ')) {\n    state.bullets.push({ type: 'player', position: { x: ship.position.x + 20, y: ship.position.y } });\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "Game State",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState",
+    "initializeGameState",
+    "updateGameState"
+   ],
+   "errors": [
+    "TS2552: Cannot find name 'input'. Did you mean 'oninput'? (line 83)",
+    "TS2552: Cannot find name 'input'. Did you mean 'oninput'? (line 86)",
+    "TS2552: Cannot find name 'input'. Did you mean 'oninput'? (line 89)",
+    "TS2552: Cannot find name 'input'. Did you mean 'oninput'? (line 92)",
+    "TS2552: Cannot find name 'input'. Did you mean 'oninput'? (line 95)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ai-opponent.ts",
+   "language": "typescript",
+   "code": "import { GameState, initializeGameState, updateGameState } from '../game-state/game-state.ts';\n\nexport function aiOpponentStrategy(state: GameState, deltaTime: number): void {\n  const aiShip = { health: 100, position: { x: 350, y: 200 } };\n  const aiBullets: { type: 'ai'; position: { x: number; y: number } }[] = [];\n\n  // Enemy movement\n  state.enemies.forEach((enemy, index) => {\n    enemy.position.y += 2 * deltaTime;\n    if (enemy.position.y > 650) {\n      state.enemies.splice(index, 1);\n    } else {\n      // Check for edge collision\n      if (enemy.position.x < 0 || enemy.position.x > 700) {\n        enemy.position.x = enemy.position.x < 0 ? 0 : 700;\n        enemy.position.x += 2 * deltaTime;\n      }\n    }\n  });\n\n  // Player ship input\n  const ship = state.playerShip;\n  if (ship.position.y < 100) ship.position.y = 100;\n  if (ship.position.y > 600) ship.position.y = 600;\n\n  // AI bullet logic\n  if (Math.random() < 0.1) {\n    aiBullets.push({ type: 'ai', position: { x: aiShip.position.x + 20, y: aiShip.position.y } });\n  }\n\n  // Player bullet logic\n  state.bullets.forEach((bullet, index) => {\n    if (bullet.type === 'player') {\n      bullet.position.y -= 5 * deltaTime;\n      if (bullet.position.y < 0) {\n        state.bullets.splice(index, 1);\n      } else {\n        // Check for enemy collision\n        state.enemies.forEach((enemy, enemyIndex) => {\n          if (enemy.position.y > 650) {\n            state.enemies.splice(enemyIndex, 1);\n            state.score += 10;\n            state.bullets.splice(index, 1);\n          } else if (Math.abs(bullet.position.x - enemy.position.x) < 30 && bullet.position.y > enemy.position.y - 20) {\n            enemy.health -= 20;\n            state.bullets.splice(index, 1);\n            if (enemy.health <= 0) {\n              state.enemies.splice(enemyIndex, 1);\n              state.score += 50;\n            }\n          }\n        });\n      }\n    } else if (bullet.type === 'ai') {\n      bullet.position.y += 3 * deltaTime;\n      if (bullet.position.y > 700) {\n        state.bullets.splice(index, 1);\n      } else {\n        // Check for player collision\n        if (Math.abs(bullet.position.x - ship.position.x) < 30 && bullet.position.y > ship.position.y - 20) {\n          ship.health -= 20;\n          state.bullets.splice(index, 1);\n          if (ship.health <= 0) {\n            state.gameRunning = false;\n            state.gameOver = true;\n          }\n        }\n      }\n    }\n  });\n\n  // Update the state\n  state.playerShip = ship;\n  state.bullets = aiBullets;\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "AI Opponent",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "aiOpponentStrategy"
+   ],
+   "errors": [
+    "TS2367: This comparison appears to be unintentional because the types '\"enemy\"' and '\"ai\"' have no overlap. (line 54)",
+    "TS2322: Type '{ type: \"ai\"; position: { x: number; y: number; }; }[]' is not assignable to type '{ type: \"player\" | \"enemy\"; position: { x: number; y: number; }; }[]'. (line 74)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "render-view.ts",
+   "language": "typescript",
+   "code": "import { aiOpponentStrategy } from '../ai-opponent/ai-opponent.ts';\n\nexport function render(container: HTMLElement) {\n  const appContainer = document.createElement('div');\n  appContainer.className = 'app';\n  container.appendChild(appContainer);\n\n  const displayScoreElement = document.createElement('div');\n  displayScoreElement.textContent = 'Score: 0';\n  displayScoreElement.style.display = 'flex';\n  displayScoreElement.style.justifyContent = 'space-between';\n  displayScoreElement.style.width = '100%';\n  appContainer.appendChild(displayScoreElement);\n\n  const startGameButton = document.createElement('button');\n  startGameButton.textContent = 'Start Game';\n  startGameButton.onclick = () => {\n    // Implement game start logic\n  };\n  displayScoreElement.appendChild(startGameButton);\n\n  const alienFleetElement = document.createElement('div');\n  alienFleetElement.className = 'col grid';\n  alienFleetElement.style.display = 'flex';\n  alienFleetElement.style.gap = '12px';\n  appContainer.appendChild(alienFleetElement);\n  alienFleetElement.textContent = 'Alien Fleet';\n\n  const shootButton = document.createElement('button');\n  shootButton.textContent = 'Shoot!';\n  shootButton.onclick = () => {\n    // Implement shoot logic\n  };\n  displayScoreElement.appendChild(shootButton);\n\n  const alienWaveProgressElement = document.createElement('div');\n  alienWaveProgressElement.className = 'row';\n  alienWaveProgressElement.style.display = 'flex';\n  alienWaveProgressElement.style.alignItems = 'center';\n  appContainer.appendChild(alienWaveProgressElement);\n\n  const livesDisplayElement = document.createElement('div');\n  livesDisplayElement.className = 'row';\n  livesDisplayElement.style.display = 'flex';\n  livesDisplayElement.style.justifyContent = 'space-between';\n  appContainer.appendChild(livesDisplayElement);\n\n  const livesItemElements: HTMLElement[] = [];\n  for (let i = 0; i < 3; i++) {\n    const lifeItemElement = document.createElement('div');\n    lifeItemElement.className = 'circle';\n    if (i === 1) {\n      lifeItemElement.style.backgroundColor = '#68b5f0'; // Red: Player lives\n    } else {\n      lifeItemElement.style.backgroundColor = '#327baa'; // Blue: Opponent lives\n    }\n    livesDisplayElement.appendChild(lifeItemElement);\n    livesItemElements.push(lifeItemElement);\n  }\n\n  // Add the generated UI components to the container\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "Render View",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a space invaders game</title>\n  <meta name=\"description\" content=\"a space invaders game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a space invaders game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-qpO1Eu/game-controller/game-controller.ts\n  function startGame() {\n    const gameBoard = Array.from({ length: 10 }, () => Array(12).fill(0));\n    const playerShip = { x: 5, y: 9, health: 3 };\n    const enemies = [];\n    const bullets = [];\n    let isRunning = true;\n    let timer = 0;\n    let score = 0;\n    function init() {\n      timer = 0;\n      score = 0;\n      isRunning = true;\n      enemies.length = 0;\n      bullets.length = 0;\n      playerShip.x = 5;\n      playerShip.y = 9;\n      playerShip.health = 3;\n      for (let i = 0; i < 5; i++) {\n        const x = 1 + i * 2;\n        const y = 1;\n        enemies.push({ x, y, health: 1, speed: 1 });\n      }\n    }\n    function update(dt) {\n      if (!isRunning) return;\n      timer += dt;\n      if (timer >= 0.5) {\n        timer = 0;\n        const enemy = enemies[0];\n        if (enemy) {\n          enemy.y++;\n          if (enemy.y >= 8) {\n            isRunning = false;\n            return;\n          }\n        }\n      }\n      for (let i = 0; i < bullets.length; i++) {\n        const b = bullets[i];\n        if (!b) continue;\n        b.y += (b.direction === \"up\" ? 1 : -1) * 2;\n        if (b.y < 0 || b.y > 10) {\n          bullets.splice(i, 1);\n          continue;\n        }\n        const hit = enemies.find((e) => e.x === b.x && e.y === b.y);\n        if (hit) {\n          hit.health--;\n          if (hit.health <= 0) {\n            enemies.splice(enemies.indexOf(hit), 1);\n            bullets.splice(i, 1);\n            score++;\n            continue;\n          }\n          bullets.splice(i, 1);\n          continue;\n        }\n      }\n    }\n    function render2() {\n      const canvas = document.getElementById(\"gameCanvas\");\n      if (!canvas) return;\n      const ctx = canvas.getContext(\"2d\");\n      if (!ctx) return;\n      ctx.clearRect(0, 0, canvas.width, canvas.height);\n      for (let i = 0; i < 10; i++) {\n        for (let j = 0; j < 12; j++) {\n          ctx.fillStyle = gameBoard[i][j] ? \"#000\" : \"#fff\";\n          ctx.fillRect(j * 20, i * 20, 20, 20);\n        }\n      }\n      ctx.fillStyle = \"#fff\";\n      ctx.fillRect(playerShip.x * 20, playerShip.y * 20, 20, 20);\n      for (const enemy of enemies) {\n        ctx.fillStyle = \"#f00\";\n        ctx.fillRect(enemy.x * 20, enemy.y * 20, 20, 20);\n      }\n      for (const b of bullets) {\n        ctx.fillStyle = b.direction === \"up\" ? \"#0f0\" : \"#00f\";\n        ctx.fillRect(b.x * 20, b.y * 20, 20, 20);\n      }\n      ctx.fillStyle = \"#fff\";\n      ctx.font = \"12px Arial\";\n      ctx.fillText(`Score: ${score}`, 10, 20);\n    }\n    function handleInput(event2) {\n      if (!isRunning) return;\n      const key = event2.key.toLowerCase();\n      if (key === \"w\") {\n        bullets.push({ x: playerShip.x, y: playerShip.y, direction: \"up\" });\n      } else if (key === \"s\") {\n        bullets.push({ x: playerShip.x, y: playerShip.y, direction: \"down\" });\n      }\n    }\n    function main() {\n      const canvas = document.getElementById(\"gameCanvas\");\n      if (!canvas) return;\n      canvas.width = 240;\n      canvas.height = 200;\n      const timer2 = setInterval(() => {\n        update(0.016);\n        render2();\n        handleInput(event);\n      }, 16);\n    }\n    init();\n    main();\n  }\n\n  // ../../../../../tmp/vaca-preview-qpO1Eu/game-engine/game-engine.ts\n  function startGame2() {\n    const gameBoard = Array.from({ length: 10 }, () => Array(12).fill(0));\n    const playerShip = { x: 5, y: 9, health: 3 };\n    const enemies = [];\n    const bullets = [];\n    let isRunning = true;\n    let timer = 0;\n    let score = 0;\n    function init() {\n      timer = 0;\n      score = 0;\n      isRunning = true;\n      enemies.length = 0;\n      bullets.length = 0;\n      playerShip.x = 5;\n      playerShip.y = 9;\n      playerShip.health = 3;\n      for (let i = 0; i < 5; i++) {\n        const x = 1 + i * 2;\n        const y = 1;\n        enemies.push({ x, y, health: 1, speed: 1 });\n      }\n    }\n    function update(dt) {\n      if (!isRunning) return;\n      timer += dt;\n      if (timer >= 0.5) {\n        timer = 0;\n        const enemy = enemies[0];\n        if (enemy) {\n          enemy.y++;\n          if (enemy.y >= 8) {\n            isRunning = false;\n            return;\n          }\n        }\n      }\n      for (let i = 0; i < bullets.length; i++) {\n        const b = bullets[i];\n        if (!b) continue;\n        b.y += (b.direction === \"up\" ? 1 : -1) * 2;\n        if (b.y < 0 || b.y > 10) {\n          bullets.splice(i, 1);\n          continue;\n        }\n        const hit = enemies.find((e) => e.x === b.x && e.y === b.y);\n        if (hit) {\n          hit.health--;\n          if (hit.health <= 0) {\n            enemies.splice(enemies.indexOf(hit), 1);\n            bullets.splice(i, 1);\n            score++;\n            continue;\n          }\n          bullets.splice(i, 1);\n          continue;\n        }\n      }\n    }\n    function render2() {\n      const canvas = document.getElementById(\"gameCanvas\");\n      if (!canvas) return;\n      const ctx = canvas.getContext(\"2d\");\n      if (!ctx) return;\n      ctx.clearRect(0, 0, canvas.width, canvas.height);\n      for (let i = 0; i < 10; i++) {\n        for (let j = 0; j < 12; j++) {\n          ctx.fillStyle = gameBoard[i][j] ? \"#000\" : \"#fff\";\n          ctx.fillRect(j * 20, i * 20, 20, 20);\n        }\n      }\n      ctx.fillStyle = \"#fff\";\n      ctx.fillRect(playerShip.x * 20, playerShip.y * 20, 20, 20);\n      for (const enemy of enemies) {\n        ctx.fillStyle = \"#f00\";\n        ctx.fillRect(enemy.x * 20, enemy.y * 20, 20, 20);\n      }\n      for (const b of bullets) {\n        ctx.fillStyle = b.direction === \"up\" ? \"#0f0\" : \"#00f\";\n        ctx.fillRect(b.x * 20, b.y * 20, 20, 20);\n      }\n      ctx.fillStyle = \"#fff\";\n      ctx.font = \"12px Arial\";\n      ctx.fillText(`Score: ${score}`, 10, 20);\n    }\n    function handleInput(event2) {\n      if (!isRunning) return;\n      const key = event2.key.toLowerCase();\n      if (key === \"w\") {\n        bullets.push({ x: playerShip.x, y: playerShip.y, direction: \"up\" });\n      } else if (key === \"s\") {\n        bullets.push({ x: playerShip.x, y: playerShip.y, direction: \"down\" });\n      }\n    }\n    function main() {\n      const canvas = document.getElementById(\"gameCanvas\");\n      if (!canvas) return;\n      canvas.width = 240;\n      canvas.height = 200;\n      const timer2 = setInterval(() => {\n        update(0.016);\n        render2();\n        handleInput(event);\n      }, 16);\n    }\n    init();\n    main();\n  }\n\n  // ../../../../../tmp/vaca-preview-qpO1Eu/ai-opponent/ai-opponent.ts\n  function aiOpponentStrategy(state, deltaTime) {\n    const aiShip = { health: 100, position: { x: 350, y: 200 } };\n    const aiBullets = [];\n    state.enemies.forEach((enemy, index) => {\n      enemy.position.y += 2 * deltaTime;\n      if (enemy.position.y > 650) {\n        state.enemies.splice(index, 1);\n      } else {\n        if (enemy.position.x < 0 || enemy.position.x > 700) {\n          enemy.position.x = enemy.position.x < 0 ? 0 : 700;\n          enemy.position.x += 2 * deltaTime;\n        }\n      }\n    });\n    const ship = state.playerShip;\n    if (ship.position.y < 100) ship.position.y = 100;\n    if (ship.position.y > 600) ship.position.y = 600;\n    if (Math.random() < 0.1) {\n      aiBullets.push({ type: \"ai\", position: { x: aiShip.position.x + 20, y: aiShip.position.y } });\n    }\n    state.bullets.forEach((bullet, index) => {\n      if (bullet.type === \"player\") {\n        bullet.position.y -= 5 * deltaTime;\n        if (bullet.position.y < 0) {\n          state.bullets.splice(index, 1);\n        } else {\n          state.enemies.forEach((enemy, enemyIndex) => {\n            if (enemy.position.y > 650) {\n              state.enemies.splice(enemyIndex, 1);\n              state.score += 10;\n              state.bullets.splice(index, 1);\n            } else if (Math.abs(bullet.position.x - enemy.position.x) < 30 && bullet.position.y > enemy.position.y - 20) {\n              enemy.health -= 20;\n              state.bullets.splice(index, 1);\n              if (enemy.health <= 0) {\n                state.enemies.splice(enemyIndex, 1);\n                state.score += 50;\n              }\n            }\n          });\n        }\n      } else if (bullet.type === \"ai\") {\n        bullet.position.y += 3 * deltaTime;\n        if (bullet.position.y > 700) {\n          state.bullets.splice(index, 1);\n        } else {\n          if (Math.abs(bullet.position.x - ship.position.x) < 30 && bullet.position.y > ship.position.y - 20) {\n            ship.health -= 20;\n            state.bullets.splice(index, 1);\n            if (ship.health <= 0) {\n              state.gameRunning = false;\n              state.gameOver = true;\n            }\n          }\n        }\n      }\n    });\n    state.playerShip = ship;\n    state.bullets = aiBullets;\n  }\n\n  // ../../../../../tmp/vaca-preview-qpO1Eu/render-view/render-view.ts\n  function render(container) {\n    const appContainer = document.createElement(\"div\");\n    appContainer.className = \"app\";\n    container.appendChild(appContainer);\n    const displayScoreElement = document.createElement(\"div\");\n    displayScoreElement.textContent = \"Score: 0\";\n    displayScoreElement.style.display = \"flex\";\n    displayScoreElement.style.justifyContent = \"space-between\";\n    displayScoreElement.style.width = \"100%\";\n    appContainer.appendChild(displayScoreElement);\n    const startGameButton = document.createElement(\"button\");\n    startGameButton.textContent = \"Start Game\";\n    startGameButton.onclick = () => {\n    };\n    displayScoreElement.appendChild(startGameButton);\n    const alienFleetElement = document.createElement(\"div\");\n    alienFleetElement.className = \"col grid\";\n    alienFleetElement.style.display = \"flex\";\n    alienFleetElement.style.gap = \"12px\";\n    appContainer.appendChild(alienFleetElement);\n    alienFleetElement.textContent = \"Alien Fleet\";\n    const shootButton = document.createElement(\"button\");\n    shootButton.textContent = \"Shoot!\";\n    shootButton.onclick = () => {\n    };\n    displayScoreElement.appendChild(shootButton);\n    const alienWaveProgressElement = document.createElement(\"div\");\n    alienWaveProgressElement.className = \"row\";\n    alienWaveProgressElement.style.display = \"flex\";\n    alienWaveProgressElement.style.alignItems = \"center\";\n    appContainer.appendChild(alienWaveProgressElement);\n    const livesDisplayElement = document.createElement(\"div\");\n    livesDisplayElement.className = \"row\";\n    livesDisplayElement.style.display = \"flex\";\n    livesDisplayElement.style.justifyContent = \"space-between\";\n    appContainer.appendChild(livesDisplayElement);\n    const livesItemElements = [];\n    for (let i = 0; i < 3; i++) {\n      const lifeItemElement = document.createElement(\"div\");\n      lifeItemElement.className = \"circle\";\n      if (i === 1) {\n        lifeItemElement.style.backgroundColor = \"#68b5f0\";\n      } else {\n        lifeItemElement.style.backgroundColor = \"#327baa\";\n      }\n      livesDisplayElement.appendChild(lifeItemElement);\n      livesItemElements.push(lifeItemElement);\n    }\n  }\n\n  // ../../../../../tmp/vaca-preview-qpO1Eu/_preview_entry.ts\n  try {\n    if (typeof startGame === \"function\" && !/^class\\s/.test(String(startGame))) {\n      startGame(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-controller.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Controller.startGame:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof startGame2 === \"function\" && !/^class\\s/.test(String(startGame2))) {\n      startGame2(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Engine.startGame:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-state.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_State.GameState:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof aiOpponentStrategy === \"function\" && !/^class\\s/.test(String(aiOpponentStrategy))) {\n      aiOpponentStrategy(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ai-opponent.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling AI_Opponent.aiOpponentStrategy:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"render-view.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Render_View.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a space invaders game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a space invaders game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 32258,
+ "totalErrors": 9,
+ "validatedCount": 2,
+ "failedCount": 4,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "game-controller.ts",
+   "dependencies": [],
+   "exports": [
+    "startGame"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "startGame"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "game-state.ts",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState",
+    "initializeGameState",
+    "updateGameState"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "ai-opponent.ts",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "aiOpponentStrategy"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "render-view.ts",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 1,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 32258,
+  "totalErrors": 9,
+  "validated": 2,
+  "failed": 4,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 237685
+ }
+}

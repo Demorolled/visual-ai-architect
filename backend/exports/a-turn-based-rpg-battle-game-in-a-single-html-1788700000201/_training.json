@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:30:00.000Z",
+  "request": "Build a turn-based RPG battle game in a single HTML file. The hero fights random enemies that scale with level (goblin, skeleton, orc, dark knight), turn-based actions are Attack, Fireball that costs MP, Potion heal, and Flee with a success roll, the enemy counterattacks after a delay, defeating enemies grants gold and XP with a level-up system that raises HP MP attack and defense, enemy death screens and hero defeat states are handled, and saving progress to localStorage with a new-game reset.",
+  "intent": {
+    "goal": "build a turn-based rpg battle game in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Dungeon Duel HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a turn-based RPG battle game in a single HTML file. The hero fights random enemies that scale with level (goblin, skeleton, orc, dark knight), turn-based actions are Attack, Fireball that costs MP, Potion heal, and Flee with a success roll, the enemy counterattacks after a delay, defeating enemies grants gold and XP with a level-up system that raises HP MP attack and defense, enemy death screens and hero defeat states are handled, and saving progress to localStorage with a new-game reset.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

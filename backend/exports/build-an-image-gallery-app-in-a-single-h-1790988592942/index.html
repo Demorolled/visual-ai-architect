@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Gallery</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+    .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; }
+    .lightbox img { max-width: 90%; max-height: 80%; }
+    .filter { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="filter">
+    <label for="tags">Filter by tags:</label>
+    <input type="text" id="tags" placeholder="e.g., travel, portrait">
+  </div>
+  <div class="gallery" id="gallery"></div>
+  <div class="lightbox" id="lightbox"><img src="" alt="Preview" id="preview"></div>
+  <script>
+    const gallery = document.getElementById('gallery');
+    const lightbox = document.getElementById('lightbox');
+    const preview = document.getElementById('preview');
+    const tagsInput = document.getElementById('tags');
+    const images = [
+      { src: 'img1.jpg', tags: ['travel'] }, { src: 'img2.jpg', tags: ['portrait'] }, { src: 'img3.jpg', tags: ['city'] }
+    ];
+    const filterGallery = (query) => {
+      gallery.innerHTML = '';
+      images.forEach(img => {
+        if (!query || tags.some(t => img.tags.includes(t))) {
+          const imgEl = document.createElement('img');
+          imgEl.src = 'images/' + img.src;
+          imgEl.onclick = () => { preview.src = 'images/' + img.src; lightbox.style.display = 'flex'; };
+          gallery.appendChild(imgEl);
+        }
+      });
+    };
+    tagsInput.addEventListener('input', (e) => { filterGallery(e.currentTarget.value); });
+    filterGallery();
+  </script>
+</body>
+</html>

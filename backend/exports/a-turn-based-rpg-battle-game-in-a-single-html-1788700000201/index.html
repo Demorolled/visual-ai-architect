@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dungeon Duel</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .wrap { width: 640px; text-align: center; }
+  h2 { color: #00d9ff; margin: 0 0 8px 0; }
+  .hud { display: flex; justify-content: center; gap: 20px; margin: 8px 0; font-size: 13px; flex-wrap: wrap; }
+  .hud b { color: #ffb454; }
+  .battle { display: flex; gap: 16px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
+  .card { background: #14141f; border: 1px solid #2a2a3a; border-radius: 12px; padding: 14px; min-width: 170px; }
+  .card .name { font-weight: 700; margin-bottom: 6px; }
+  .card .hpbar { background: #222; height: 10px; border-radius: 5px; overflow: hidden; margin: 6px 0; }
+  .card .hpbar .fill { height: 100%; background: #3ddc84; transition: width .2s; }
+  .bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+  .bar button { background: #2a2a3a; color: #e6e6e6; border: 1px solid #3a3a4a; border-radius: 8px;
+                padding: 8px 14px; cursor: pointer; }
+  .bar button.primary { background: #00d9ff; color: #04141a; border: none; }
+  .log { text-align: left; background: #0b0b14; border: 1px solid #2a2a3a; border-radius: 10px;
+         padding: 10px 14px; height: 120px; overflow-y: auto; font-size: 13px; }
+  .log p { margin: 3px 0; }
+  .hit { color: #ff8c5c; } .crit { color: #ffd166; } .heal { color: #3ddc84; } .dim { color: #777; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2>⚔️ Dungeon Duel</h2>
+  <div class="hud"><span>⚡ <b id="xp">0/100</b></span><span>⬆ Lv <b id="lvl">1</b></span>
+    <span>💰 <b id="gold">0</b></span><span>Enemies slain <b id="kills">0</b></span></div>
+  <div class="battle" id="battle"></div>
+  <div class="bar" id="actions"></div>
+  <div class="log" id="log"></div>
+  <div class="hud" style="margin-top:10px">
+    <button class="primary" id="saveBtn">💾 Save</button>
+    <button id="newBtn">New game</button>
+    <span style="color:#666;font-size:11px">turn-based: Attack · Fireball (costs MP) · Heal · Flee</span></div>
+</div>
+<script>
+  const ENEMIES = [
+    { name: 'Goblin', hp: 30, atk: 6, gold: 12, xp: 20 },
+    { name: 'Skeleton', hp: 45, atk: 9, gold: 18, xp: 30 },
+    { name: 'Orc', hp: 70, atk: 12, gold: 28, xp: 45 },
+    { name: 'Dark Knight', hp: 110, atk: 16, gold: 45, xp: 70 }
+  ];
+  const LEVELS = [0, 100, 260, 480, 780, 1200, 1800, 2600, 3700, 5200];
+  let hero = null;
+  let enemy = null;
+  let turnLock = false;
+
+  function newHero() {
+    return { name: 'Hero', lvl: 1, hp: 60, maxHp: 60, mp: 20, maxMp: 20,
+             atk: 8, def: 3, xp: 0, gold: 0, kills: 0, potions: 3 };
+  }
+
+  function makeEnemy() {
+    const pool = Math.min(hero.lvl, ENEMIES.length) - 1;
+    const idx = Math.floor(Math.random() * (pool + 1));
+    const base = ENEMIES[idx];
+    const scale = 1 + (hero.lvl - 1) * 0.18;
+    return { name: base.name, hp: Math.round(base.hp * scale), maxHp: Math.round(base.hp * scale),
+             atk: Math.round(base.atk * scale), gold: Math.round(base.gold * scale),
+             xp: Math.round(base.xp * scale) };
+  }
+
+  function addLog(text, cls) {
+    const log = document.getElementById('log');
+    const p = document.createElement('p');
+    p.textContent = text;
+    if (cls) p.className = cls;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function xpNeeded(lvl) {
+    if (lvl >= LEVELS.length) return LEVELS[LEVELS.length - 1] - LEVELS[LEVELS.length - 2];
+    return LEVELS[lvl] - LEVELS[lvl - 1];
+  }
+
+  function gainXp(amount) {
+    hero.xp += amount;
+    let leveled = false;
+    while (hero.lvl < LEVELS.length && hero.xp >= LEVELS[hero.lvl]) leveled = levelUp();
+    if (leveled) draw();
+    updateHud();
+  }
+
+  function levelUp() {
+    hero.lvl += 1;
+    hero.maxHp += 14;
+    hero.maxMp += 6;
+    hero.atk += 3;
+    hero.def += 2;
+    hero.hp = hero.maxHp;
+    hero.mp = hero.maxMp;
+    addLog('⬆ Level up! Now level ' + hero.lvl + ' — HP and power increased.', 'heal');
+    return true;
+  }
+
+  function heroAttack() {
+    const dmg = Math.max(1, Math.round(hero.atk + Math.random() * 6 - enemy.def / 2));
+    enemy.hp -= dmg;
+    addLog('You strike the ' + enemy.name + ' for ' + dmg + ' damage.', 'hit');
+    if (enemy.hp <= 0) { enemyDown(); return true; }
+    return false;
+  }
+
+  function heroFireball() {
+    if (hero.mp < 8) { addLog('Not enough MP for Fireball!', 'dim'); return false; }
+    hero.mp -= 8;
+    const dmg = Math.round(18 + hero.lvl * 3 + Math.random() * 10);
+    enemy.hp -= dmg;
+    addLog('🔥 Fireball blasts the ' + enemy.name + ' for ' + dmg + '!', 'crit');
+    if (enemy.hp <= 0) { enemyDown(); return true; }
+    return false;
+  }
+
+  function heroHeal() {
+    if (hero.potions <= 0) { addLog('No potions left!', 'dim'); return false; }
+    if (hero.hp >= hero.maxHp) { addLog('HP is already full.', 'dim'); return false; }
+    hero.potions -= 1;
+    const amount = Math.round(18 + hero.lvl * 4);
+    hero.hp = Math.min(hero.maxHp, hero.hp + amount);
+    addLog('🧪 You drink a potion and recover ' + amount + ' HP.', 'heal');
+    return true;
+  }
+
+  function enemyDown() {
+    hero.gold += enemy.gold;
+    hero.kills += 1;
+    gainXp(enemy.xp);
+    addLog('💀 ' + enemy.name + ' defeated! +' + enemy.gold + ' gold, +' + enemy.xp + ' XP', 'heal');
+    enemy = null;
+    turnLock = false;
+    updateHud();
+    draw();
+    nextEnemy();
+  }
+
+  function heroFlee() {
+    if (Math.random() < 0.5) {
+      addLog('You slip away and the battlefield resets.', 'dim');
+      enemy = null;
+      turnLock = false;
+      nextEnemy();
+    } else {
+      addLog('You fail to flee — the enemy attacks!', 'dim');
+      enemyTurn();
+    }
+  }
+
+  function enemyTurn() {
+    const dmg = Math.max(1, Math.round(enemy.atk + Math.random() * 4 - hero.def));
+    hero.hp -= dmg;
+    addLog(enemy.name + ' hits you for ' + dmg + ' damage.', 'hit');
+    if (hero.hp <= 0) {
+      hero.hp = 0;
+      addLog('☠️ You have been defeated... Restart to try again.', 'crit');
+      turnLock = true;
+      draw();
+      updateHud();
+      return;
+    }
+    turnLock = false;
+    draw();
+    updateHud();
+  }
+
+  function act(kind) {
+    if (turnLock || !enemy) return;
+    let enemyDead = false;
+    if (kind === 'attack') enemyDead = heroAttack();
+    else if (kind === 'fireball') enemyDead = heroFireball();
+    else if (kind === 'heal') { if (!heroHeal()) return; }
+    else if (kind === 'flee') { heroFlee(); return; }
+    if (enemyDead) return;
+    turnLock = true;
+    setTimeout(enemyTurn, 700);
+    draw();
+    updateHud();
+  }
+
+  function nextEnemy() {
+    if (enemy) return;
+    setTimeout(() => {
+      if (hero.hp <= 0) return;
+      enemy = makeEnemy();
+      addLog('A wild ' + enemy.name + ' appears!', 'crit');
+      turnLock = false;
+      draw();
+      updateHud();
+    }, 900);
+  }
+
+  function updateHud() {
+    document.getElementById('xp').textContent =
+      Math.min(hero.xp, LEVELS[LEVELS.length - 1]) + '/' + LEVELS[Math.min(hero.lvl, LEVELS.length - 1)];
+    document.getElementById('lvl').textContent = hero.lvl;
+    document.getElementById('gold').textContent = hero.gold;
+    document.getElementById('kills').textContent = hero.kills;
+  }
+
+  function draw() {
+    const battle = document.getElementById('battle');
+    battle.innerHTML = '';
+    for (const who of [hero, enemy]) {
+      if (!who) continue;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML =
+        '<div class="name">' + who.name + (who === hero ? ' 🛡️' : ' 👹') +
+        (who !== hero && who.potions !== undefined ? '' : '') + '</div>';
+      const bar = document.createElement('div');
+      bar.className = 'hpbar';
+      const fill = document.createElement('div');
+      fill.className = 'fill';
+      const pct = Math.max(0, Math.round(100 * who.hp / who.maxHp));
+      fill.style.width = pct + '%';
+      if (pct < 30) fill.style.background = '#ff5c5c';
+      bar.appendChild(fill);
+      card.appendChild(bar);
+      const hpText = document.createElement('div');
+      hpText.textContent = 'HP ' + Math.max(0, who.hp) + '/' + who.maxHp +
+        (who === hero ? '  ·  MP ' + hero.mp + '/' + hero.maxMp +
+         '  ·  Potions ' + hero.potions : '');
+      card.appendChild(hpText);
+      battle.appendChild(card);
+    }
+    const actions = document.getElementById('actions');
+    actions.innerHTML = '';
+    if (enemy && !turnLock && hero.hp > 0) {
+      const labels = [['⚔ Attack', 'attack'], ['🔥 Fireball', 'fireball'],
+                      ['🧪 Potion', 'heal'], ['🏃 Flee', 'flee']];
+      for (const [label, kind] of labels) {
+        const b = document.createElement('button');
+        b.textContent = label;
+        if (kind === 'attack') b.className = 'primary';
+        b.addEventListener('click', () => act(kind));
+        actions.appendChild(b);
+      }
+    } else if (!enemy) {
+      const b = document.createElement('button');
+      b.textContent = '⏳ awaiting next foe…';
+      b.className = 'primary';
+      b.disabled = true;
+      actions.appendChild(b);
+    }
+  }
+
+  function save() {
+    try {
+      localStorage.setItem('dd-hero', JSON.stringify(hero));
+      if (enemy) localStorage.setItem('dd-enemy', JSON.stringify(enemy));
+      else localStorage.removeItem('dd-enemy');
+      addLog('💾 Progress saved.', 'heal');
+    } catch (e) { addLog('Save failed.', 'dim'); }
+  }
+
+  function load() {
+    try {
+      const h = JSON.parse(localStorage.getItem('dd-hero'));
+      if (h && h.hp !== undefined) hero = h;
+    } catch (e) { /* fresh hero */ }
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', save);
+  document.getElementById('newBtn').addEventListener('click', () => {
+    hero = newHero();
+    enemy = null;
+    document.getElementById('log').innerHTML = '';
+    addLog('A new adventure begins. Welcome, hero!', 'dim');
+    nextEnemy();
+    updateHud();
+    draw();
+  });
+
+  load();
+  if (!hero) hero = newHero();
+  addLog('You enter the dungeon. A new adventure begins!', 'dim');
+  nextEnemy();
+  updateHud();
+  draw();
+</script>
+</body>
+</html>

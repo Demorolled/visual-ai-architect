@@ -1,0 +1,438 @@
+{
+ "success": true,
+ "projectId": "3942b840-862f-4a89-b95a-e057a94f0560",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "analytics_dashboard",
+  "description": "Admin analytics dashboard with charts, metrics, KPI cards, and data visualization over collected events and usage data.",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "event_models",
+   "event_store",
+   "aggregation_logic",
+   "api_routes",
+   "export_service"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "api_routes",
+    "data_passed": "dashboard_queries"
+   },
+   {
+    "source_module": "api_routes",
+    "destination_module": "aggregation_logic",
+    "data_passed": "metric_requests"
+   },
+   {
+    "source_module": "aggregation_logic",
+    "destination_module": "event_store",
+    "data_passed": "aggregate_queries"
+   },
+   {
+    "source_module": "event_models",
+    "destination_module": "event_store",
+    "data_passed": "schemas"
+   },
+   {
+    "source_module": "api_routes",
+    "destination_module": "export_service",
+    "data_passed": "report_requests"
+   },
+   {
+    "source_module": "event_models",
+    "destination_module": "aggregation_logic",
+    "data_passed": "type_definitions"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 10 KPI Dashboard Tools - Free List of the Top Products\n    \n  \u2022 Open Source Dashboards: 9 Best Tools (2026) | MetricFire\n    An open\u2011source dashboard is a self\u2011hosted, extensible UI for visualizing metrics, logs, and other data without license fees. These tools let you customize, integrate, and scale dashboards to your stac\n  \u2022 \u2b50911 hoangsonww/Claude-Code-Agent-Monitor: \ud83d\ude80 A real-time monitoring dashboard for Claude Code & Codex, built with SQLite3, Node.js, Express, React, Vite, TailwindCSS, & WebSockets. It tracks s\n  \u2022 \u2b50174 veronikakurth/django-dashboard-app: This project shows how to create an analytical dashboard in a Django application. \n  \u2022 clickhouse (analytics): Real-time analytics DBMS\n  \u2022 matomo (analytics): Ethical Web Analytics Solution\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 0,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 4: FRONTEND APPLICATION\n    4.1 PACKAGE DETAILS\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nFramework:  React 18.2.0\nBuild Tool: Vite 8.x\nLanguage:   TypeScript 5.3.3\nState:      Zustand 4.4.7\n3D:         Three.js 0.184.0, @react-three/fiber 8.18.0, @react-three/drei 9.122.0\nFlow:       ReactFlow 11.10.1\nHTTP:       Axios 1.6.2\nPWA:        vite-plug\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS"
+ },
+ "candidates": [
+  {
+   "app_type": "analytics_dashboard",
+   "score": 1
+  },
+  {
+   "app_type": "synapse_analytics",
+   "score": 0.8829982843991256
+  },
+  {
+   "app_type": "analytics-ts",
+   "score": 0.8730321350514957
+  },
+  {
+   "app_type": "columnar_analytics",
+   "score": 0.8367971136113539
+  },
+  {
+   "app_type": "parquet_inspector_2",
+   "score": 0.8206045378311054
+  }
+ ],
+ "project": {
+  "id": "3942b840-862f-4a89-b95a-e057a94f0560",
+  "name": "an analytics dashboard app",
+  "targetOS": "linux",
+  "nodeCount": 7,
+  "edgeCount": 6,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "analytics_dashboard blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "database",
+    "label": "event_models"
+   },
+   {
+    "id": "mod_2",
+    "type": "database",
+    "label": "event_store"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "aggregation_logic"
+   },
+   {
+    "id": "mod_4",
+    "type": "api",
+    "label": "api_routes"
+   },
+   {
+    "id": "mod_5",
+    "type": "api",
+    "label": "export_service"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_4",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_4",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_3",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_4",
+    "source": "mod_4",
+    "target": "mod_5"
+   },
+   {
+    "id": "edge_5",
+    "source": "mod_1",
+    "target": "mod_3"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 5,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 1,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "event_models",
+   "event_store",
+   "aggregation_logic",
+   "api_routes",
+   "export_service"
+  ],
+  "generated": [
+   "api_routes",
+   "event_models",
+   "ui_screens",
+   "aggregation_logic",
+   "export_service",
+   "event_store"
+  ],
+  "matched": [
+   "ui_screens",
+   "event_models",
+   "event_store",
+   "aggregation_logic",
+   "api_routes",
+   "export_service"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "api-routes.ts",
+   "language": "typescript",
+   "code": "export function getDashboardData() {\n    const mockData = {\n        totalUsers: 5200,\n        activeSessions: 345,\n        revenueThisMonth: 45000,\n        conversionRate: 23.4,\n        averageSessionTime: 15.2,\n        newUsersThisWeek: 280,\n        topActions: [\n            { name: 'Action A', count: 12500 },\n            { name: 'Action B', count: 8750 },\n            { name: 'Action C', count: 7200 },\n            { name: 'Action D', count: 6500 },\n            { name: 'Action E', count: 5800 },\n            { name: 'Action F', count: 5200 },\n        ],\n    };\n    return mockData;\n}\n\nexport function getMetrics() {\n    const mockMetrics = [\n        { name: 'Active Users', value: 5200, trend: 'up', color: '#4ade80' },\n        { name: 'Active Sessions', value: 345, trend: 'up', color: '#60a5fa' },\n        { name: 'Revenue', value: 45000, trend: 'up', color: '#f87171' },\n        { name: 'Conversion Rate', value: 23.4, trend: 'up', color: '#f472b6' },\n        { name: 'Avg. Session Time', value: 15.2, trend: 'up', color: '#a78bfa' },\n    ];\n    return mockMetrics;\n}\n\nexport function getKPIs() {\n    const mockKPIs = [\n        { name: 'Total Users', value: 5200, trend: 'up', color: '#4ade80' },\n        { name: 'Active Sessions', value: 345, trend: 'up', color: '#60a5fa' },\n        { name: 'Revenue', value: 45000, trend: 'up', color: '#f87171' },\n        { name: 'Conversion Rate', value: 23.4, trend: 'up', color: '#f472b6' },\n        { name: 'Avg. Session Time', value: 15.2, trend: 'up', color: '#a78bfa' },\n    ];\n    return mockKPIs;\n}\n\nexport function getTopActions() {\n    const mockActions = [\n        { name: 'Action A', count: 12500 },\n        { name: 'Action B', count: 8750 },\n        { name: 'Action C', count: 7200 },\n        { name: 'Action D', count: 6500 },\n        { name: 'Action E', count: 5800 },\n        { name: 'Action F', count: 5200 },\n    ];\n    return mockActions;\n}\n\nexport function getAnalyticsData() {\n    const mockData = {\n        totalUsers: 5200,\n        activeSessions: 345,\n        revenueThisMonth: 45000,\n        conversionRate: 23.4,\n        averageSessionTime: 15.2,\n        newUsersThisWeek: 280,\n        topActions: [\n            { name: 'Action A', count: 12500 },\n            { name: 'Action B', count: 8750 },\n            { name: 'Action C', count: 7200 },\n            { name: 'Action D', count: 6500 },\n            { name: 'Action E', count: 5800 },\n            { name: 'Action F', count: 5200 },\n        ],\n    };\n    return mockData;\n}\n\nexport function getTopUsers() {\n    const mockUsers = [\n        { name: 'User A', actions: 12500, totalActions: 25000 },\n        { name: 'User B', actions: 8750, totalActions: 18000 },\n        { name: 'User C', actions: 7200, totalActions: 14000 },\n        { name: 'User D', actions: 6500, totalActions: 12000 },\n        { name: 'User E', actions: 5800, totalActions: 10000 },\n        { name: 'User F', actions: 5200, totalActions: 8000 },\n    ];\n    return mockUsers;\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "api_routes",
+   "dependencies": [],
+   "exports": [
+    "getDashboardData",
+    "getMetrics",
+    "getKPIs",
+    "getTopActions",
+    "getAnalyticsData",
+    "getTopUsers"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "event-models.ts",
+   "language": "typescript",
+   "code": "export interface Event {\n  id: number;\n  type: string;\n  timestamp: Date;\n  data: any;\n}\n\nexport interface MetricRequest {\n  name: string;\n  aggregationType?: 'average' | 'sum' | 'count';\n  timeframe?: 'hourly' | 'daily' | 'weekly' | 'monthly';\n  queryParams?: {\n    userId?: number;\n    productCode?: string;\n  };\n}\n\nexport interface AggregateQuery {\n  itemId: number;\n  metricName: string;\n  aggregationType: 'average' | 'sum' | 'count' | undefined;\n  timeframe: 'hourly' | 'daily' | 'weekly' | 'monthly';\n}\n\nexport enum EventStoreError {\n  DatabaseError = 'DATABASE_ERROR',\n  SchemaValidationFailed = 'SCHEMA_VALIDATION_FAILED',\n}\n\nexport type EventStoreResult<T> = T | null | Error | Promise<EventStoreResult<T>>;\n\nexport function storeEvent(event: Event): EventStoreResult<void> {\n  const events: Event[] = [];\n  events.push(event);\n  return null;\n}\n\nexport function getMetricRequest(request: MetricRequest): EventStoreResult<MetricRequest> {\n  const requests: MetricRequest[] = [];\n  const foundRequest = requests.find((req) => req.name === request.name);\n  return foundRequest !== undefined ? foundRequest : null;\n}\n\nexport function aggregateEvents(query: AggregateQuery): EventStoreResult<number> {\n  const events: Event[] = [];\n  const filteredEvents = events.filter((e) => e.type === query.metricName);\n  const avgActivityTime = filteredEvents.reduce((acc, evt) => acc + (evt.timestamp.getTime() - 1000), 0) / filteredEvents.length;\n  return avgActivityTime;\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "event_models",
+   "dependencies": [],
+   "exports": [
+    "Event",
+    "MetricRequest",
+    "AggregateQuery",
+    "EventStoreError",
+    "EventStoreResult",
+    "storeEvent",
+    "getMetricRequest",
+    "aggregateEvents"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { getDashboardData, getMetrics, getKPIs, getTopActions, getAnalyticsData, getTopUsers } from '../api-routes/api-routes.ts';\n\nexport function render(container: HTMLElement) {\n    const kpiCards = [\n        { title: 'Total Users', value: 5200, trend: 'up', color: '#4ade80' },\n        { title: 'Active Sessions', value: 345, trend: 'up', color: '#60a5fa' },\n        { title: 'Revenue', value: '$45,000', trend: 'up', color: '#f87171' },\n        { title: 'Conversion Rate', value: '23.4%', trend: 'up', color: '#f472b6' },\n        { title: 'Avg. Session Time', value: '15.2 min', trend: 'up', color: '#a78bfa' },\n    ];\n\n    const kpiContainer = document.createElement('div');\n    kpiContainer.style.display = 'flex';\n    kpiContainer.style.flexDirection = 'column';\n    kpiContainer.style.gap = '8px';\n\n    kpiCards.forEach(card => {\n        const cardEl = document.createElement('div');\n        cardEl.style.background = '#151524';\n        cardEl.style.border = '1px solid rgba(255,255,255,0.1)';\n        cardEl.style.borderRadius = '8px';\n        cardEl.style.padding = '12px 16px';\n        cardEl.style.fontSize = '0.85rem';\n        cardEl.style.color = '#e0e0f0';\n        cardEl.style.minHeight = '60px';\n\n        cardEl.innerHTML = `\n            <div style=\"font-weight: 600; font-size: 0.9rem\">${card.title}</div>\n            <div style=\"font-size: 1.2rem; font-weight: 700\">${card.value}</div>\n            <div style=\"font-size: 0.7rem; margin-top: 4px\">${card.trend === 'up' ? '\u25b2' : '\u25bc'} ${card.trend}</div>\n        `;\n\n        kpiContainer.appendChild(cardEl);\n    });\n\n    const overview = document.createElement('div');\n    overview.style.display = 'flex';\n    overview.style.flexDirection = 'column';\n    overview.style.alignItems = 'center';\n    overview.style.gap = '16px';\n    overview.style.padding = '24px';\n\n    const title = document.createElement('div');\n    title.style.fontSize = '1.2rem';\n    title.style.fontWeight = '600';\n    title.style.color = '#00d9ff';\n    title.textContent = '\ud83d\udcca Analytics Dashboard';\n\n    const summary = document.createElement('div');\n    summary.style.display = 'flex';\n    summary.style.gap = '16px';\n    summary.style.flexWrap = 'wrap';\n\n    kpiCards.forEach(card => {\n        const badge = document.createElement('div');\n        badge.style.background = card.color;\n        badge.style.color = '#00d9ff';\n        badge.style.padding = '4px 12px';\n        badge.style.borderRadius = '4px';\n        badge.style.fontSize = '0.8rem';\n        badge.style.fontWeight = '600';\n        badge.style.display = 'flex';\n        badge.style.alignItems = 'center';\n        badge.style.gap = '4px';\n        badge.textContent = `${card.value} ${card.title}`;\n        summary.appendChild(badge);\n    });\n\n    overview.appendChild(title);\n    overview.appendChild(summary);\n    overview.appendChild(kpiContainer);\n\n    container.appendChild(overview);\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "aggregation-logic.ts",
+   "language": "typescript",
+   "code": "import { getDashboardData, getMetrics, getKPIs, getTopActions, getAnalyticsData, getTopUsers } from '../api-routes/api-routes.ts';\nimport { Event, MetricRequest, AggregateQuery, EventStoreError, EventStoreResult, storeEvent, getMetricRequest, aggregateEvents } from '../event-models/event-models.ts';\n\nexport function aggregateData(items: { name: string; value: number }[]): number {\n    let total = 0;\n    for (const item of items) {\n        total += item.value;\n    }\n    return total;\n}\n\nexport function getTopItems(items: { name: string; value: number }[], limit: number): { name: string; value: number }[] {\n    return items.sort((a, b) => b.value - a.value).slice(0, limit);\n}\n\nexport function calculateKPIs(data: { [key: string]: number }, metrics: { name: string; formula: string }[]): { [key: string]: number } {\n    const kpis: { [key: string]: number } = {};\n    for (const metric of metrics) {\n        kpis[metric.name] = evaluateFormula(metric.formula, data);\n    }\n    return kpis;\n}\n\nfunction evaluateFormula(formula: string, data: { [key: string]: number }): number {\n    try {\n        const tokens = tokenizeFormula(formula);\n        return evaluateTokens(tokens, data);\n    } catch (error) {\n        console.error('Failed to evaluate formula:', formula, error);\n        return 0;\n    }\n}\n\nfunction tokenizeFormula(formula: string): string[] {\n    return formula.split(' ').filter(token => token);\n}\n\nfunction evaluateTokens(tokens: string[], data: { [key: string]: number }): number {\n    if (tokens.length === 0) return 0;\n    let result = parseFloat(tokens[0]);\n    for (let i = 1; i < tokens.length; i += 2) {\n        const operator = tokens[i];\n        const value = parseFloat(tokens[i + 1]);\n        if (operator === '+') result += value;\n        else if (operator === '-') result -= value;\n        else if (operator === '*') result *= value;\n        else if (operator === '/') result /= value;\n    }\n    return result;\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "aggregation_logic",
+   "dependencies": [
+    "api_routes",
+    "event_models"
+   ],
+   "exports": [
+    "aggregateData",
+    "getTopItems",
+    "calculateKPIs"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "export-service.ts",
+   "language": "typescript",
+   "code": "import { getDashboardData, getMetrics, getKPIs, getTopActions, getAnalyticsData, getTopUsers } from '../api-routes/api-routes.ts';\n\nexport function exportReport() {\n    const report = {\n        totalUsers: 5200,\n        activeSessions: 345,\n        revenueThisMonth: 45000,\n        conversionRate: 23.4,\n        averageSessionTime: 15.2,\n        newUsersThisWeek: 280,\n        topActions: [\n            { name: 'Action A', count: 12500 },\n            { name: 'Action B', count: 8750 },\n            { name: 'Action C', count: 7200 },\n            { name: 'Action D', count: 6500 },\n            { name: 'Action E', count: 5800 },\n            { name: 'Action F', count: 5200 },\n        ],\n        metrics: [\n            { name: 'Active Users', value: 5200, trend: 'up', color: '#4ade80' },\n            { name: 'Active Sessions', value: 345, trend: 'up', color: '#60a5fa' },\n            { name: 'Revenue', value: 45000, trend: 'up', color: '#f87171' },\n            { name: 'Conversion Rate', value: 23.4, trend: 'up', color: '#f472b6' },\n            { name: 'Avg. Session Time', value: 15.2, trend: 'up', color: '#a78bfa' },\n        ],\n        kpis: [\n            { name: 'Total Users', value: 5200, trend: 'up', color: '#4ade80' },\n            { name: 'Active Sessions', value: 345, trend: 'up', color: '#60a5fa' },\n            { name: 'Revenue', value: 45000, trend: 'up', color: '#f87171' },\n            { name: 'Conversion Rate', value: 23.4, trend: 'up', color: '#f472b6' },\n            { name: 'Avg. Session Time', value: 15.2, trend: 'up', color: '#a78bfa' },\n        ],\n        topActions: [\n            { name: 'Action A', count: 12500 },\n            { name: 'Action B', count: 8750 },\n            { name: 'Action C', count: 7200 },\n            { name: 'Action D', count: 6500 },\n            { name: 'Action E', count: 5800 },\n            { name: 'Action F', count: 5200 },\n        ],\n        analyticsData: {\n            totalUsers: 5200,\n            activeSessions: 345,\n            revenueThisMonth: 45000,\n            conversionRate: 23.4,\n            averageSessionTime: 15.2,\n            newUsersThisWeek: 280,\n            topActions: [\n                { name: 'Action A', count: 12500 },\n                { name: 'Action B', count: 8750 },\n                { name: 'Action C', count: 7200 },\n                { name: 'Action D', count: 6500 },\n                { name: 'Action E', count: 5800 },\n                { name: 'Action F', count: 5200 },\n            ],\n        },\n        topUsers: [\n            { name: 'User A', actions: 12500, totalActions: 25000 },\n            { name: 'User B', actions: 8750, totalActions: 18000 },\n            { name: 'User C', actions: 7200, totalActions: 14000 },\n            { name: 'User D', actions: 6500, totalActions: 12000 },\n            { name: 'User E', actions: 5800, totalActions: 10000 },\n            { name: 'User F', actions: 5200, totalActions: 8000 },\n        ],\n    };\n    return report;\n}",
+   "nodeId": "mod_5",
+   "nodeLabel": "export_service",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "exportReport"
+   ],
+   "errors": [
+    "TS1117: An object literal cannot have multiple properties with the same name. (line 33)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "event-store.ts",
+   "language": "typescript",
+   "code": "import { aggregateData, getTopItems, calculateKPIs } from '../aggregation-logic/aggregation-logic.ts';\n\nexport interface Event {\n  id: number;\n  type: string;\n  timestamp: Date;\n  data: any;\n}\n\nexport interface MetricRequest {\n  name: string;\n  aggregationType?: 'average' | 'sum' | 'count';\n  timeframe?: 'hourly' | 'daily' | 'weekly' | 'monthly';\n  queryParams?: {\n    userId?: number;\n    productCode?: string;\n  };\n}\n\nexport interface AggregateQuery {\n  itemId: number;\n  metricName: string;\n  aggregationType: 'average' | 'sum' | 'count' | undefined;\n  timeframe: 'hourly' | 'daily' | 'weekly' | 'monthly';\n}\n\nexport enum EventStoreError {\n  DatabaseError = 'DATABASE_ERROR',\n  SchemaValidationFailed = 'SCHEMA_VALIDATION_FAILED',\n}\n\nexport type EventStoreResult<T> = T | null | Error | Promise<EventStoreResult<T>>;\n\nexport function storeEvent(event: Event): EventStoreResult<void> {\n  const events: Event[] = [];\n  events.push(event);\n  return null;\n}\n\nexport function getMetricRequest(request: MetricRequest): EventStoreResult<MetricRequest> {\n  const requests: MetricRequest[] = [];\n  const foundRequest = requests.find((req) => req.name === request.name);\n  return foundRequest !== undefined ? foundRequest : null;\n}\n\nexport function aggregateEvents(query: AggregateQuery): EventStoreResult<number> {\n  const events: Event[] = [];\n  const filteredEvents = events.filter((e) => e.type === query.metricName);\n  const avgActivityTime = filteredEvents.reduce((acc, evt) => acc + (evt.timestamp.getTime() - 1000), 0) / filteredEvents.length;\n  return avgActivityTime;\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "event_store",
+   "dependencies": [
+    "aggregation_logic"
+   ],
+   "exports": [
+    "Event",
+    "MetricRequest",
+    "AggregateQuery",
+    "EventStoreError",
+    "EventStoreResult",
+    "storeEvent",
+    "getMetricRequest",
+    "aggregateEvents"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>an analytics dashboard app</title>\n  <meta name=\"description\" content=\"an analytics dashboard app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading an analytics dashboard app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-Cm7RPC/api-routes/api-routes.ts\n  function getDashboardData() {\n    const mockData = {\n      totalUsers: 5200,\n      activeSessions: 345,\n      revenueThisMonth: 45e3,\n      conversionRate: 23.4,\n      averageSessionTime: 15.2,\n      newUsersThisWeek: 280,\n      topActions: [\n        { name: \"Action A\", count: 12500 },\n        { name: \"Action B\", count: 8750 },\n        { name: \"Action C\", count: 7200 },\n        { name: \"Action D\", count: 6500 },\n        { name: \"Action E\", count: 5800 },\n        { name: \"Action F\", count: 5200 }\n      ]\n    };\n    return mockData;\n  }\n\n  // ../../../../../tmp/vaca-preview-Cm7RPC/ui-screens/ui-screens.ts\n  function render(container) {\n    const kpiCards = [\n      { title: \"Total Users\", value: 5200, trend: \"up\", color: \"#4ade80\" },\n      { title: \"Active Sessions\", value: 345, trend: \"up\", color: \"#60a5fa\" },\n      { title: \"Revenue\", value: \"$45,000\", trend: \"up\", color: \"#f87171\" },\n      { title: \"Conversion Rate\", value: \"23.4%\", trend: \"up\", color: \"#f472b6\" },\n      { title: \"Avg. Session Time\", value: \"15.2 min\", trend: \"up\", color: \"#a78bfa\" }\n    ];\n    const kpiContainer = document.createElement(\"div\");\n    kpiContainer.style.display = \"flex\";\n    kpiContainer.style.flexDirection = \"column\";\n    kpiContainer.style.gap = \"8px\";\n    kpiCards.forEach((card) => {\n      const cardEl = document.createElement(\"div\");\n      cardEl.style.background = \"#151524\";\n      cardEl.style.border = \"1px solid rgba(255,255,255,0.1)\";\n      cardEl.style.borderRadius = \"8px\";\n      cardEl.style.padding = \"12px 16px\";\n      cardEl.style.fontSize = \"0.85rem\";\n      cardEl.style.color = \"#e0e0f0\";\n      cardEl.style.minHeight = \"60px\";\n      cardEl.innerHTML = `\n            <div style=\"font-weight: 600; font-size: 0.9rem\">${card.title}</div>\n            <div style=\"font-size: 1.2rem; font-weight: 700\">${card.value}</div>\n            <div style=\"font-size: 0.7rem; margin-top: 4px\">${card.trend === \"up\" ? \"\\u25B2\" : \"\\u25BC\"} ${card.trend}</div>\n        `;\n      kpiContainer.appendChild(cardEl);\n    });\n    const overview = document.createElement(\"div\");\n    overview.style.display = \"flex\";\n    overview.style.flexDirection = \"column\";\n    overview.style.alignItems = \"center\";\n    overview.style.gap = \"16px\";\n    overview.style.padding = \"24px\";\n    const title = document.createElement(\"div\");\n    title.style.fontSize = \"1.2rem\";\n    title.style.fontWeight = \"600\";\n    title.style.color = \"#00d9ff\";\n    title.textContent = \"\\u{1F4CA} Analytics Dashboard\";\n    const summary = document.createElement(\"div\");\n    summary.style.display = \"flex\";\n    summary.style.gap = \"16px\";\n    summary.style.flexWrap = \"wrap\";\n    kpiCards.forEach((card) => {\n      const badge = document.createElement(\"div\");\n      badge.style.background = card.color;\n      badge.style.color = \"#00d9ff\";\n      badge.style.padding = \"4px 12px\";\n      badge.style.borderRadius = \"4px\";\n      badge.style.fontSize = \"0.8rem\";\n      badge.style.fontWeight = \"600\";\n      badge.style.display = \"flex\";\n      badge.style.alignItems = \"center\";\n      badge.style.gap = \"4px\";\n      badge.textContent = `${card.value} ${card.title}`;\n      summary.appendChild(badge);\n    });\n    overview.appendChild(title);\n    overview.appendChild(summary);\n    overview.appendChild(kpiContainer);\n    container.appendChild(overview);\n  }\n\n  // ../../../../../tmp/vaca-preview-Cm7RPC/aggregation-logic/aggregation-logic.ts\n  function aggregateData(items) {\n    let total = 0;\n    for (const item of items) {\n      total += item.value;\n    }\n    return total;\n  }\n\n  // ../../../../../tmp/vaca-preview-Cm7RPC/export-service/export-service.ts\n  function exportReport() {\n    const report = {\n      totalUsers: 5200,\n      activeSessions: 345,\n      revenueThisMonth: 45e3,\n      conversionRate: 23.4,\n      averageSessionTime: 15.2,\n      newUsersThisWeek: 280,\n      topActions: [\n        { name: \"Action A\", count: 12500 },\n        { name: \"Action B\", count: 8750 },\n        { name: \"Action C\", count: 7200 },\n        { name: \"Action D\", count: 6500 },\n        { name: \"Action E\", count: 5800 },\n        { name: \"Action F\", count: 5200 }\n      ],\n      metrics: [\n        { name: \"Active Users\", value: 5200, trend: \"up\", color: \"#4ade80\" },\n        { name: \"Active Sessions\", value: 345, trend: \"up\", color: \"#60a5fa\" },\n        { name: \"Revenue\", value: 45e3, trend: \"up\", color: \"#f87171\" },\n        { name: \"Conversion Rate\", value: 23.4, trend: \"up\", color: \"#f472b6\" },\n        { name: \"Avg. Session Time\", value: 15.2, trend: \"up\", color: \"#a78bfa\" }\n      ],\n      kpis: [\n        { name: \"Total Users\", value: 5200, trend: \"up\", color: \"#4ade80\" },\n        { name: \"Active Sessions\", value: 345, trend: \"up\", color: \"#60a5fa\" },\n        { name: \"Revenue\", value: 45e3, trend: \"up\", color: \"#f87171\" },\n        { name: \"Conversion Rate\", value: 23.4, trend: \"up\", color: \"#f472b6\" },\n        { name: \"Avg. Session Time\", value: 15.2, trend: \"up\", color: \"#a78bfa\" }\n      ],\n      topActions: [\n        { name: \"Action A\", count: 12500 },\n        { name: \"Action B\", count: 8750 },\n        { name: \"Action C\", count: 7200 },\n        { name: \"Action D\", count: 6500 },\n        { name: \"Action E\", count: 5800 },\n        { name: \"Action F\", count: 5200 }\n      ],\n      analyticsData: {\n        totalUsers: 5200,\n        activeSessions: 345,\n        revenueThisMonth: 45e3,\n        conversionRate: 23.4,\n        averageSessionTime: 15.2,\n        newUsersThisWeek: 280,\n        topActions: [\n          { name: \"Action A\", count: 12500 },\n          { name: \"Action B\", count: 8750 },\n          { name: \"Action C\", count: 7200 },\n          { name: \"Action D\", count: 6500 },\n          { name: \"Action E\", count: 5800 },\n          { name: \"Action F\", count: 5200 }\n        ]\n      },\n      topUsers: [\n        { name: \"User A\", actions: 12500, totalActions: 25e3 },\n        { name: \"User B\", actions: 8750, totalActions: 18e3 },\n        { name: \"User C\", actions: 7200, totalActions: 14e3 },\n        { name: \"User D\", actions: 6500, totalActions: 12e3 },\n        { name: \"User E\", actions: 5800, totalActions: 1e4 },\n        { name: \"User F\", actions: 5200, totalActions: 8e3 }\n      ]\n    };\n    return report;\n  }\n\n  // ../../../../../tmp/vaca-preview-Cm7RPC/_preview_entry.ts\n  try {\n    if (typeof getDashboardData === \"function\" && !/^class\\s/.test(String(getDashboardData))) {\n      getDashboardData(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"api-routes.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling api_routes.getDashboardData:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"event-models.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling event_models.Event:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof aggregateData === \"function\" && !/^class\\s/.test(String(aggregateData))) {\n      aggregateData(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"aggregation-logic.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling aggregation_logic.aggregateData:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof exportReport === \"function\" && !/^class\\s/.test(String(exportReport))) {\n      exportReport(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"export-service.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling export_service.exportReport:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"event-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling event_store.Event:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (6) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 6 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">an analytics dashboard app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 an analytics dashboard app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "api_routes",
+    "event_models",
+    "ui_screens",
+    "aggregation_logic",
+    "export_service",
+    "event_store"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 26934,
+ "totalErrors": 1,
+ "validatedCount": 6,
+ "failedCount": 1,
+ "importGraph": {
+  "mod_4": {
+   "entryFile": "api-routes.ts",
+   "dependencies": [],
+   "exports": [
+    "getDashboardData",
+    "getMetrics",
+    "getKPIs",
+    "getTopActions",
+    "getAnalyticsData",
+    "getTopUsers"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "event-models.ts",
+   "dependencies": [],
+   "exports": [
+    "Event",
+    "MetricRequest",
+    "AggregateQuery",
+    "EventStoreError",
+    "EventStoreResult",
+    "storeEvent",
+    "getMetricRequest",
+    "aggregateEvents"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "aggregation-logic.ts",
+   "dependencies": [
+    "api_routes",
+    "event_models"
+   ],
+   "exports": [
+    "aggregateData",
+    "getTopItems",
+    "calculateKPIs"
+   ]
+  },
+  "mod_5": {
+   "entryFile": "export-service.ts",
+   "dependencies": [
+    "api_routes"
+   ],
+   "exports": [
+    "exportReport"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "event-store.ts",
+   "dependencies": [
+    "aggregation_logic"
+   ],
+   "exports": [
+    "Event",
+    "MetricRequest",
+    "AggregateQuery",
+    "EventStoreError",
+    "EventStoreResult",
+    "storeEvent",
+    "getMetricRequest",
+    "aggregateEvents"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "api_routes",
+    "event_models",
+    "ui_screens",
+    "aggregation_logic",
+    "export_service",
+    "event_store"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 1,
+ "summary": {
+  "totalFiles": 7,
+  "totalChars": 26934,
+  "totalErrors": 1,
+  "validated": 6,
+  "failed": 1,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 188628
+ }
+}

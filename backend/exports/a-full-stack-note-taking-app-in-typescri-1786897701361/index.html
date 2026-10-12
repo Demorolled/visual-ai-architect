@@ -1,0 +1,48 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note-Taking App</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; }
+    .card h3 { margin: 0 0 8px; }
+    .card p { margin: 0 0 12px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    class App {
+      constructor() {
+        this.element = document.createElement('div');
+        this.element.className = 'app';
+        this.element.innerHTML = `<div class="grid" id="notesGrid"></div>
+        <button id="addNoteBtn" class="btn btn-primary" onclick="addNote()">➕ Add Note</button>`;
+
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        if (addNoteBtn) {
+          addNoteBtn.addEventListener('click', addNote);
+        }
+      }
+    }
+
+    function addNote() {
+      const notesGrid = document.getElementById('notesGrid');
+      if (notesGrid) {
+        const noteCard = document.createElement('div');
+        noteCard.className = 'card';
+        noteCard.innerHTML = `<h3>New Note</h3><p>Content here.</p>`;
+        notesGrid.appendChild(noteCard);
+      }
+    }
+
+    const app = new App();
+    const root = document.getElementById('root');
+    if (root) {
+      root.appendChild(app.element);
+    }
+  </script>
+</body>
+</html>

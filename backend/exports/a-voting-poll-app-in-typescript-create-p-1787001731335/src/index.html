@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voting Poll App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    #poll-container {
+      margin-bottom: 20px;
+    }
+    .poll {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .poll h2 {
+      margin: 0 0 10px 0;
+    }
+    .poll p {
+      margin: 0;
+    }
+    .poll-options {
+      display: flex;
+      flex-direction: column;
+    }
+    .poll-option {
+      margin: 5px 0;
+    }
+    .poll-option label {
+      margin-right: 10px;
+    }
+    .poll-results {
+      margin-top: 10px;
+    }
+    .poll-results h3 {
+      margin: 0 0 5px 0;
+    }
+    .poll-results .result {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Voting Poll App</h1>
+  <div id="poll-container">
+    <div class="poll">
+      <h2>What is your favorite color?</h2>
+      <div class="poll-options">
+        <div class="poll-option">
+          <label>
+            <input type="radio" name="color" value="Red"> Red
+          </label>
+        </div>
+        <div class="poll-option">
+          <label>
+            <input type="radio" name="color" value="Blue"> Blue
+          </label>
+        </div>
+        <div class="poll-option">
+          <label>
+            <input type="radio" name="color" value="Green"> Green
+          </label>
+        </div>
+        <div class="poll-option">
+          <label>
+            <input type="radio" name="color" value="Other"> Other
+          </label>
+        </div>
+      </div>
+      <button id="vote-btn">Vote</button>
+      <div class="poll-results" id="poll-results"></div>
+    </div>
+  </div>
+  <script>
+    const polls = [];
+
+    function createPoll(question, options) {
+      const id = Date.now();
+      polls.push({ id, question, options, votes: options.map(() => 0) });
+      return id;
+    }
+
+    function castVote(pollId, option) {
+      const poll = polls.find(p => p.id === pollId);
+      if (poll) {
+        const index = poll.options.indexOf(option);
+        if (index !== -1) {
+          poll.votes[index]++;
+        }
+      }
+    }
+
+    function getResults(pollId) {
+      const poll = polls.find(p => p.id === pollId);
+      if (poll) {
+        const totalVotes = poll.votes.reduce((a, b) => a + b, 0);
+        return poll.options.map((option, index) => ({
+          option,
+          votes: poll.votes[index],
+          percentage: (totalVotes === 0) ? 0 : (poll.votes[index] / totalVotes) * 100,
+        }));
+      }
+      return [];
+    }
+
+    const pollId = createPoll('What is your favorite color?', ['Red', 'Blue', 'Green', 'Other']);
+    const voteBtn = document.getElementById('vote-btn');
+    const pollResults = document.getElementById('poll-results');
+
+    voteBtn.addEventListener('click', () => {
+      const radios = document.getElementsByName('color');
+      let selectedOption = null;
+      for (const radio of radios) {
+        if (radio.checked) {
+          selectedOption = radio.value;
+          break;
+        }
+      }
+      if (selectedOption) {
+        castVote(pollId, selectedOption);
+        const results = getResults(pollId);
+        pollResults.innerHTML = '';
+        pollResults.innerHTML += '<h3>Results</h3>';
+        for (const result of results) {
+          pollResults.innerHTML += `<div class="result">${result.option}: ${result.percentage.toFixed(1)}% (${result.votes} votes)</div>`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

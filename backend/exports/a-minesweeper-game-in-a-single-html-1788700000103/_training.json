@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:00:00.000Z",
+  "request": "Build a minesweeper game in a single HTML file. Three difficulty levels (9x9 with 10 mines, 16x16 with 40, 16x30 with 99), the first click is always safe with mines placed after it, left click reveals a cell with flood-fill on empty cells, right click flags cells, number hints count adjacent mines, double-click chording reveals around a completed number, a live timer, best-time persistence per difficulty in localStorage, and win and lose states that reveal all mines.",
+  "intent": {
+    "goal": "build a minesweeper game in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Minesweeper HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a minesweeper game in a single HTML file. Three difficulty levels (9x9 with 10 mines, 16x16 with 40, 16x30 with 99), the first click is always safe with mines placed after it, left click reveals a cell with flood-fill on empty cells, right click flags cells, number hints count adjacent mines, double-click chording reveals around a completed number, a live timer, best-time persistence per difficulty in localStorage, and win and lose states that reveal all mines.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

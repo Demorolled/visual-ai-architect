@@ -13,7 +13,12 @@ class KnowledgeStore {
   private filePath: string;
 
   constructor() {
-    const baseDir = path.join(process.cwd(), KNOWLEDGE_DIR);
+    // `VACA_KNOWLEDGE_DIR` redirects the store to a throwaway directory. Set it
+    // (before this singleton is constructed) in any TEST that writes patterns,
+    // so a test run never mutates the real `knowledge/patterns.json` — a test
+    // isolation hazard observed live (a run truncated the committed store).
+    const override = process.env.VACA_KNOWLEDGE_DIR;
+    const baseDir = override ? path.resolve(override) : path.join(process.cwd(), KNOWLEDGE_DIR);
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir, { recursive: true });
     }
@@ -100,18 +105,58 @@ class KnowledgeStore {
       results = results.filter(p => p.targetOS === query.targetOS);
     }
 
+    // Token hits per pattern, when a searchText was given. Kept alongside the
+    // results so the final sort can rank by relevance with quality as the
+    // TIEBREAK (see below).
+    const hitsByPattern = new Map<PatternEntry, number>();
+
     if (query.searchText) {
+      // Tokenized matching: split the query into words and require at least
+      // one token to hit, ranking by how many tokens hit. A whole-phrase
+      // substring still matches (strongest signal), but natural multi-word
+      // queries like "what do you know about building arcade games" no longer
+      // fall through empty — "arcade" alone would match the game patterns.
       const text = query.searchText.toLowerCase();
-      results = results.filter(p =>
-        p.title.toLowerCase().includes(text) ||
-        p.description.toLowerCase().includes(text) ||
-        p.code.toLowerCase().includes(text) ||
-        p.tags.some(t => t.toLowerCase().includes(text))
-      );
+      const stopwords = new Set([
+        'the', 'and', 'for', 'with', 'about', 'what', 'do', 'you', 'your',
+        'have', 'has', 'are', 'this', 'that', 'from', 'how', 'why', 'does',
+        'any', 'some', 'tell', 'me', 'know', 'building', 'apps', 'app',
+      ]);
+      const tokens = text
+        .split(/[^a-z0-9]+/)
+        .filter(t => t.length >= 3 && !stopwords.has(t));
+
+      const haystack = (p: PatternEntry): string =>
+        `${p.title} ${p.description} ${p.code} ${p.tags.join(' ')}`.toLowerCase();
+
+      const phraseHit = (p: PatternEntry): boolean =>
+        text.length > 0 && haystack(p).includes(text);
+
+      const tokenHits = (p: PatternEntry): number =>
+        tokens.filter(t => haystack(p).includes(t)).length;
+
+      const scored = results
+        .map(p => ({ p, hits: phraseHit(p) ? tokens.length + 1 : tokenHits(p) }))
+        .filter(({ hits }) => hits > 0);
+      for (const { p, hits } of scored) hitsByPattern.set(p, hits);
+      results = scored.map(({ p }) => p);
     }
 
-    // Sort by quality score (higher = better) and usage count
+    // Relevance ranks ABOVE quality; quality is the tiebreak.
+    //
+    // This used to be two sequential sorts — relevance, then an unconditional
+    // quality sort. Since Array.sort is stable, that only preserved relevance
+    // on exact quality ties, so a merely higher-scored pattern buried a more
+    // relevant one: for the goal "compute the factorial of a number", the
+    // hand-curated C++ interactive-loop pattern (qualityScore 8) came back
+    // ahead of `Factorial (java)` (7). Quality is now a tiebreak inside
+    // relevance, where it belongs. With no searchText this is the same pure
+    // quality/usage ordering as before.
     results.sort((a, b) => {
+      if (query.searchText) {
+        const hitDelta = (hitsByPattern.get(b) ?? 0) - (hitsByPattern.get(a) ?? 0);
+        if (hitDelta !== 0) return hitDelta;
+      }
       const scoreA = a.qualityScore + (a.usageCount * 0.1);
       const scoreB = b.qualityScore + (b.usageCount * 0.1);
       return scoreB - scoreA;
@@ -244,8 +289,22 @@ class KnowledgeStore {
     return false;
   }
 
-  getRelevantContext(nodeType: string, language: string, targetOS: string, limit: number = 5): string {
-    const results = this.query({ nodeType, language, targetOS, limit });
+  getRelevantContext(
+    nodeType: string,
+    language: string,
+    targetOS: string,
+    limit: number = 5,
+    searchText?: string,
+  ): string {
+    // Goal-aware when a goal is supplied: prefer patterns that actually match
+    // it. Falls back to the plain top-N so a goal sharing no tokens with any
+    // pattern never strips a language's examples away entirely.
+    let results = searchText
+      ? this.query({ nodeType, language, targetOS, limit, searchText })
+      : [];
+    if (results.length === 0) {
+      results = this.query({ nodeType, language, targetOS, limit });
+    }
     if (results.length === 0) return '';
 
     let context = '\n\n--- Learned Patterns from Previous Projects ---\n';

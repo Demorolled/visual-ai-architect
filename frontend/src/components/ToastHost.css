@@ -1,0 +1,63 @@
+/* ── Global toast (see utils/toast.ts) ──
+   Bottom-centered so it clears the tree bar / wire bar at the top and the
+   rework bar at the bottom edge, sitting just above the camera D-pad. */
+.app-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #e0f2fe;
+  background: rgba(14, 40, 66, 0.95);
+  border: 1px solid rgba(74, 158, 255, 0.45);
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  animation: app-toast-slidein 0.22s ease-out;
+}
+
+.app-toast-success {
+  color: #d1fae5;
+  background: rgba(6, 46, 34, 0.95);
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.app-toast-message {
+  line-height: 1.4;
+}
+
+.app-toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  border-radius: 4px;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.app-toast-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  opacity: 1;
+}
+
+@keyframes app-toast-slidein {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

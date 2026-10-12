@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VACA Micro Code-Mentor
+Comment=Build micro-apps, verify, grade with a 2nd LLM, reward improvements
+Exec=bash -c "cd %k/.. && bash scripts/micro-mentor-desktop.sh --status"
+Icon=applications-science
+Terminal=true
+Categories=Development;Science;AI;
+
+[Desktop Action RunOne]
+Name=Run one experiment
+Exec=bash -c "cd %k/.. && bash scripts/micro-mentor-desktop.sh --one"
+
+[Desktop Action BuildCatalog]
+Name=Build full catalog
+Exec=bash -c "cd %k/.. && bash scripts/micro-mentor-desktop.sh --catalog"

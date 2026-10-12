@@ -1,0 +1,22 @@
+{
+  "name": "veronica",
+  "productName": "Veronica",
+  "version": "1.0.0",
+  "description": "Veronica (VACA) — AI Code Architect desktop app",
+  "main": "main.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "demorolled <demorolled@users.noreply.github.com>",
+  "homepage": "https://github.com/demorolled/visual-ai-architect",
+  "desktopName": "veronica.desktop",
+  "scripts": {
+    "stage": "bash stage-payload.sh",
+    "start": "electron .",
+    "dist:linux": "electron-builder --linux --config electron-builder.yml",
+    "dist:win": "electron-builder --win --config electron-builder.yml"
+  },
+  "devDependencies": {
+    "electron": "^44.6.0",
+    "electron-builder": "^26.15.3"
+  }
+}

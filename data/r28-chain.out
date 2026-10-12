@@ -1,0 +1,71 @@
+[2026-08-29 17:32:46] 👀 chain started — waiting for 27B distillation to finish...
+[2026-08-29 17:32:46]    distillation running — 92 rows so far
+[2026-08-29 17:33:46]    distillation running — 93 rows so far
+[2026-08-29 17:34:46]    distillation running — 93 rows so far
+[2026-08-29 17:35:46]    distillation running — 95 rows so far
+[2026-08-29 17:36:46]    distillation running — 95 rows so far
+[2026-08-29 17:37:46]    distillation running — 96 rows so far
+[2026-08-29 17:38:46]    distillation running — 96 rows so far
+[2026-08-29 17:39:47]    distillation running — 98 rows so far
+[2026-08-29 17:40:47]    distillation running — 98 rows so far
+[2026-08-29 17:41:47]    distillation running — 100 rows so far
+[2026-08-29 17:42:47]    distillation running — 100 rows so far
+[2026-08-29 17:43:47]    distillation running — 103 rows so far
+[2026-08-29 17:44:47]    distillation running — 105 rows so far
+[2026-08-29 17:45:47]    distillation running — 105 rows so far
+[2026-08-29 17:46:47]    distillation running — 107 rows so far
+[2026-08-29 17:47:47]    distillation running — 107 rows so far
+[2026-08-29 17:48:47]    distillation running — 109 rows so far
+[2026-08-29 17:49:47]    distillation running — 109 rows so far
+[2026-08-29 17:50:47]    distillation running — 110 rows so far
+[2026-08-29 17:51:47]    distillation running — 111 rows so far
+[2026-08-29 17:52:47]    distillation running — 111 rows so far
+[2026-08-29 17:53:47]    distillation running — 112 rows so far
+[2026-08-29 17:54:47]    distillation running — 113 rows so far
+[2026-08-29 17:55:47]    distillation running — 113 rows so far
+[2026-08-29 17:56:47]    distillation running — 115 rows so far
+[2026-08-29 17:57:47]    distillation running — 118 rows so far
+[2026-08-29 17:58:47]    distillation running — 118 rows so far
+[2026-08-29 17:59:47]    distillation running — 120 rows so far
+[2026-08-29 18:00:47]    distillation running — 120 rows so far
+[2026-08-29 18:01:47]    distillation running — 121 rows so far
+[2026-08-29 18:02:47]    distillation running — 121 rows so far
+[2026-08-29 18:03:47]    distillation running — 123 rows so far
+[2026-08-29 18:04:47]    distillation running — 123 rows so far
+[2026-08-29 18:05:47]    distillation running — 126 rows so far
+[2026-08-29 18:06:47]    distillation running — 126 rows so far
+[2026-08-29 18:07:48]    distillation running — 127 rows so far
+[2026-08-29 18:08:48]    distillation running — 127 rows so far
+[2026-08-29 18:09:48]    distillation running — 128 rows so far
+[2026-08-29 18:10:48]    distillation running — 128 rows so far
+[2026-08-29 18:11:48]    distillation running — 129 rows so far
+[2026-08-29 18:12:48]    distillation running — 129 rows so far
+[2026-08-29 18:13:48] ✅ distillation process finished — 132 rows captured.
+[2026-08-29 18:13:48] 🛑 Stopping DSpark to free VRAM (it holds the 27B on GPUs 0/1)...
+No DSpark server running.
+[2026-08-29 18:13:48]    Port 8000 held by: 1157803 — killing...
+[2026-08-29 18:13:56] ✨ DSpark stopped. GPU memory now:
+[2026-08-29 18:13:56]    0, 123 MiB, 0 %
+[2026-08-29 18:13:56]    1, 44 MiB, 0 %
+[2026-08-29 18:13:56]    2, 15 MiB, 0 %
+[2026-08-29 18:13:56] 📚 Recompiling Round-28 corpus (catch-up + distilled)...
+  round25-all      total= 2769 kept= 2769
+  distill-27b      total=  132 kept=  132
+
+  → round28-train.jsonl: 2901 rows
+[2026-08-29 18:13:56]    round28-train.jsonl = 2901 rows
+[2026-08-29 18:13:56] 🚀 Launching 14B QLoRA training on all 3 GPUs (/home/llmlab/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13 scripts/train_r28_14b.py)
+[2026-08-29 18:14:16]    20s in — training log tail:
+[2026-08-29 18:14:16]      File "/home/llmlab/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/transformers/utils/hub.py", line 143, in _get_cache_file_to_return
+[2026-08-29 18:14:16]      resolved_file = try_to_load_from_cache(
+[2026-08-29 18:14:16]      path_or_repo_id, full_filename, cache_dir=cache_dir, revision=revision, repo_type=repo_type
+[2026-08-29 18:14:16]      )
+[2026-08-29 18:14:16]      File "/home/llmlab/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+[2026-08-29 18:14:16]      validate_repo_id(arg_value)
+[2026-08-29 18:14:16]      ~~~~~~~~~~~~~~~~^^^^^^^^^^^
+[2026-08-29 18:14:16]      File "/home/llmlab/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+[2026-08-29 18:14:16]      raise HFValidationError(
+[2026-08-29 18:14:16]      ...<2 lines>...
+[2026-08-29 18:14:16]      )
+[2026-08-29 18:14:16]      huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/home/llmlab/.cache/huggingface/hub/models--BlossomsAI--Qwen2.5-Coder-14B-Instruct-Uncensored/snapshots/main'. Use `repo_type` argument if needed.
+[2026-08-29 18:14:16]    (monitor: tail -f data/r28-train.log)

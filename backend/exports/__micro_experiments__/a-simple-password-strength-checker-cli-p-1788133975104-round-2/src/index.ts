@@ -1,0 +1,1 @@
+import{rate}from'./password-strength';const args=process.argv.slice(2);if(args.length!==1){console.error('Usage: node src/index.ts <password>');process.exit(1);}const password=args[0];console.log(`Password strength: ${rate(password)}`);

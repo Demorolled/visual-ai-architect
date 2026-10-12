@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Taking App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        .notes {
+            margin-top: 20px;
+        }
+        .note {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Note Taking App</h1>
+        <input type="text" id="title" placeholder="Title">
+        <textarea id="content" placeholder="Content"></textarea>
+        <button id="addNote">Add Note</button>
+        <div class="notes" id="notes"></div>
+    </div>
+
+    <script>
+        const notesContainer = document.getElementById('notes');
+        const titleInput = document.getElementById('title');
+        const contentInput = document.getElementById('content');
+        const addNoteButton = document.getElementById('addNote');
+
+        addNoteButton.addEventListener('click', () => {
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+
+            if (title && content) {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note';
+                noteElement.innerHTML = `<h3>${title}</h3><p>${content}</p>`;
+                notesContainer.appendChild(noteElement);
+
+                titleInput.value = '';
+                contentInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

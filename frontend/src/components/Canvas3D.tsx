@@ -17,7 +17,9 @@ export interface UIDragData {
 
 interface Canvas3DProps {
   selectedNodeId: string | null;
-  onSelectNode: (id: string | null) => void;
+  /** All selected node ids (multi-select). `selectedNodeId` stays the primary. */
+  selectedNodeIds?: string[];
+  onSelectNode: (id: string | null, additive?: boolean) => void;
   onDoubleClickNode: (id: string) => void;
   onDragNode: (id: string, x: number, y: number) => void;
   onDropNode: (type: NodeType, x: number, y: number, uiData?: UIDragData) => void;
@@ -103,7 +105,7 @@ export function centerOnNodes(
   sharedControls.update();
 }
 
-export default function Canvas3D({ selectedNodeId, onSelectNode, onDoubleClickNode, onDragNode, onDropNode }: Canvas3DProps) {
+export default function Canvas3D({ selectedNodeId, selectedNodeIds, onSelectNode, onDoubleClickNode, onDragNode, onDropNode }: Canvas3DProps) {
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   // Handle DnD from palette
@@ -207,6 +209,7 @@ export default function Canvas3D({ selectedNodeId, onSelectNode, onDoubleClickNo
         {/* 3D Scene Content */}
         <SceneContent
           selectedNodeId={selectedNodeId}
+          selectedNodeIds={selectedNodeIds}
           onSelectNode={onSelectNode}
           onDoubleClickNode={onDoubleClickNode}
           onDragNode={onDragNode}

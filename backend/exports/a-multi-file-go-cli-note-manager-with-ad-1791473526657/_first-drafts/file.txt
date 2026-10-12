@@ -1,0 +1,12 @@
+import { readFileSync } from 'fs';
+import path from 'path';
+
+export function loadConfig() {
+  const configPath = path.join(__dirname, '../', 'config.json');
+  try {
+    return JSON.parse(readFileSync(configPath).toString());
+  } catch (err) {
+    console.error('Error reading config file:', err);
+    process.exit(1);
+  }
+}

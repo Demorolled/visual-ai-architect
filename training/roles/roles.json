@@ -1,0 +1,72 @@
+{
+  "$comment": [
+    "One LoRA adapter per VACA band role (see LLM_ORIENTATION.md). Each role trains",
+    "sequentially against the same base and is saved to its own adapter directory, then",
+    "registered with LLM Training Studio so it shows up in the model dropdown as",
+    "local/<output_name>. Trained with llm-training-app's own trainer:",
+    "  python3 training/roles/train_roles.py --dry-run      # validate this file",
+    "  python3 training/roles/train_roles.py                # train every role in order",
+    "  python3 training/roles/train_roles.py --role guiBuild --role fastChat",
+    "'data' entries are repo-relative paths; each must exist, or the run refuses.",
+    "",
+    "DATA SOURCE (changed): the previously-collected corpora were purged so that the",
+    "dataset describes only the current build. Every path below now points into",
+    "training/dataset/, which is generated from the live source by",
+    "training/vacalatest/build.py — see training/vacalatest/README.md.",
+    "",
+    "FIT PER ROLE — read before training:",
+    "  reasoning       good fit: how-vaca-works.jsonl IS this role's subject",
+    "  codeGeneration  good fit: languages.jsonl is the per-language contract +",
+    "                  verified exemplars for the files this role writes",
+    "  guiBuild        partial: the interface layer is TypeScript/HTML/CSS, which",
+    "                  languages.jsonl covers, but there is no dedicated GUI",
+    "                  blueprint corpus in the new dataset",
+    "  fastChat        NO CORPUS YET: the new dataset contains no conversational",
+    "                  data. It is pointed at the system corpus purely so the config",
+    "                  validates. Do not train this role until a conversation corpus",
+    "                  exists — training it here would teach the wrong voice."
+  ],
+  "base_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+  "epochs": 2,
+  "learning_rate": 5e-05,
+  "batch_size": 1,
+  "gradient_accumulation_steps": 8,
+  "max_length": 512,
+  "use_mixed_precision": true,
+  "roles": [
+    {
+      "role": "reasoning",
+      "output_name": "role-reasoning",
+      "why": "Lead vocalist: knows VACA's blueprint, pipeline and triage, not general trivia.",
+      "data": [
+        "training/dataset/how-vaca-works.jsonl"
+      ]
+    },
+    {
+      "role": "codeGeneration",
+      "output_name": "role-codeGeneration",
+      "why": "Rhythm guitar: writes the file it is handed, to the scaffold contract.",
+      "data": [
+        "training/dataset/languages.jsonl"
+      ]
+    },
+    {
+      "role": "guiBuild",
+      "output_name": "role-guiBuild",
+      "why": "Drummer: builds the interface layer the plan asks for.",
+      "data": [
+        "training/dataset/languages.jsonl",
+        "training/dataset/how-vaca-works.jsonl"
+      ]
+    },
+    {
+      "role": "fastChat",
+      "output_name": "role-fastChat",
+      "why": "Backing vocals: short, warm conversation so the lead stays free. NO CORPUS YET — see $comment.",
+      "needs_corpus": true,
+      "data": [
+        "training/dataset/how-vaca-works.jsonl"
+      ]
+    }
+  ]
+}

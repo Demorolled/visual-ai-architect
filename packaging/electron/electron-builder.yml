@@ -1,0 +1,68 @@
+appId: com.veronica.aicodearchitect
+productName: Veronica
+copyright: Copyright © 2026
+
+# asar is OFF on purpose: the bundled backend is spawned as a real child process
+# and reads its own files from disk (payload/**, then the writable userData copy).
+asar: false
+
+files:
+  - main.js
+  - preload.js
+  - settings.html
+  - package.json
+  - payload/**/*
+
+directories:
+  buildResources: build
+
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Development
+  icon: build/icon-512.png
+  syncDesktopName: true
+  synopsis: AI code architect — build software visually
+  description: >
+    Veronica (VACA) is an AI code architect: describe what you want in plain
+    English and it builds the app. This desktop build bundles its own backend
+    and runs connected to a Qwen2.5 14B model.
+  maintainer: demorolled <demorolled@users.noreply.github.com>
+  desktop:
+    entry:
+      Name: Veronica
+      GenericName: AI Code Architect
+      Comment: Build software visually with an AI code architect
+      Categories: Development;IDE;ArtificialIntelligence;
+      Keywords: ai;code;architect;vaca;
+
+deb:
+  depends:
+    - libgtk-3-0
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libatspi2.0-0
+    - libsecret-1-0
+
+appImage:
+  artifactName: ${productName}-${version}.${ext}
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Veronica
+  artifactName: ${productName}-Setup-${version}.${ext}

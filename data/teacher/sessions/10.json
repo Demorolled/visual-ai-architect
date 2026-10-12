@@ -1,0 +1,207 @@
+{
+ "success": true,
+ "projectId": "99a59f30-cbeb-40f6-97f2-736422b98875",
+ "matchedBy": "semantic",
+ "matchScore": 0.9244849896214261,
+ "blueprint": {
+  "app_type": "a_simple_calculator_app",
+  "description": "A simple calculator app \u2014 Add, subtract, multiply, divide numbers",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Data Storage",
+    "destination_module": "User Interface",
+    "data_passed": "requests"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 6,
+  "web": 4,
+  "github": 0,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 GitHub - Hritik113/calculator: Modern Calculator: A sleek web app built ...\n    Modern Calculator: A sleek web app built with HTML, CSS, &amp; JS for basic arithmetic (add, subtract, multiply, divide). Features a responsive design, animations, &amp; real-time updates.\n  \u2022 Qalculate! - the ultimate desktop calculator\n    Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple to use but provides power and versatility normally reserved for complicated math packages, as well as useful tools for eve\n  \u2022 gitea (developer-tools): Accelerate DevOps with Gitea\n  \u2022 neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n  \u2022 Section 34: SESSION UPDATE \u2014 July 26, 2026: SECURITY FIXES \u2014 Function() REPLACEMENT\n    34.1 OVERVIEW\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTwo remaining apps using new Function() for expression evaluation were\nreplaced with safe recursive descent parsers. Total new Function() usage\nacross 92 apps reduced from 3 \u2192 1 (the remaining one in code-playground.html\nis intentional \u2014 user-written JS in a sandboxed ifr\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/\n  \u2022 git_status \u2014 development tool\n    Get the current git repository status (branch, changed files, staged/unstaged)\n    Code: // Tool: git_status\n// Category: development\n// Risk: readonly\n// Get the current git repository status (branch, changed files, staged/unstaged)"
+ },
+ "candidates": [
+  {
+   "app_type": "a_simple_calculator_app",
+   "score": 0.9244849896214261
+  },
+  {
+   "app_type": "calculator",
+   "score": 0.7323595564509363
+  },
+  {
+   "app_type": "scientific_calculator",
+   "score": 0.6147643160652818
+  },
+  {
+   "app_type": "ip_address_calculator",
+   "score": 0.5789342732478151
+  },
+  {
+   "app_type": "financial_calc",
+   "score": 0.35
+  }
+ ],
+ "project": {
+  "id": "99a59f30-cbeb-40f6-97f2-736422b98875",
+  "name": "a calculator app",
+  "targetOS": "linux",
+  "nodeCount": 3,
+  "edgeCount": 1,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "a_simple_calculator_app blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "database",
+    "label": "Data Storage"
+   },
+   {
+    "id": "mod_1",
+    "type": "ui",
+    "label": "User Interface"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 2,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "generated": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "matched": [
+   "Data Storage",
+   "User Interface"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "data-storage.ts",
+   "language": "typescript",
+   "code": "export class DataStorage {\n  private memory: Record<string, unknown>;\n\n  constructor() {\n    this.memory = {};\n  }\n\n  save(name: string, data: unknown): void {\n    this.memory[name] = data;\n  }\n\n  retrieve(name: string): unknown | undefined {\n    return this.memory[name];\n  }\n\n  delete(name: string): void {\n    delete this.memory[name];\n  }\n\n  list(): string[] {\n    return Object.keys(this.memory);\n  }\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "Data Storage",
+   "dependencies": [],
+   "exports": [
+    "DataStorage"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "user-interface.ts",
+   "language": "typescript",
+   "code": "import { DataStorage } from '../data-storage/data-storage.ts';\n\nexport function render(container: HTMLElement) {\n  const title = document.createElement('h1');\n  title.textContent = 'Simple Calculator';\n  container.appendChild(title);\n\n  const resetBtn = document.createElement('button');\n  resetBtn.textContent = 'Reset';\n  resetBtn.className = 'btn';\n  resetBtn.style.marginBottom = '10px';\n  resetBtn.onclick = () => {\n    const display = container.querySelector('#display');\n    if (display) {\n      display.textContent = '0';\n    }\n  };\n  container.appendChild(resetBtn);\n\n  const display = document.createElement('div');\n  display.id = 'display';\n  display.className = 'display';\n  display.textContent = '0';\n  container.appendChild(display);\n\n  const buttons = [\n    { text: '7', value: '7' },\n    { text: '8', value: '8' },\n    { text: '9', value: '9' },\n    { text: '+', value: '+' },\n    { text: '4', value: '4' },\n    { text: '5', value: '5' },\n    { text: '6', value: '6' },\n    { text: '-', value: '-' },\n    { text: '1', value: '1' },\n    { text: '2', value: '2' },\n    { text: '3', value: '3' },\n    { text: '*', value: '*' },\n    { text: '0', value: '0' },\n    { text: '.', value: '.' },\n    { text: '=', value: '=' },\n  ];\n\n  buttons.forEach(btn => {\n    const button = document.createElement('button');\n    button.className = 'btn';\n    button.textContent = btn.text;\n    button.onclick = () => {\n      const display = container.querySelector('#display');\n      if (display) {\n        if (btn.text === '=') {\n          try {\n            display.textContent = eval(display.textContent);\n          } catch {\n            display.textContent = 'Error';\n          }\n        } else {\n          display.textContent += btn.value;\n        }\n      }\n    };\n    container.appendChild(button);\n  });\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "User Interface",
+   "dependencies": [
+    "Data Storage"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m29\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../data-storage/data-storage.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import { DataStorage } from '../data-storage/data-storage.ts';\n\u001b[7m \u001b[0m \u001b[91m                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a calculator app</title>\n  <meta name=\"description\" content=\"a calculator app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a calculator app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-wmLzLM/data-storage/data-storage.ts\n  var DataStorage = class {\n    constructor() {\n      __publicField(this, \"memory\");\n      this.memory = {};\n    }\n    save(name, data) {\n      this.memory[name] = data;\n    }\n    retrieve(name) {\n      return this.memory[name];\n    }\n    delete(name) {\n      delete this.memory[name];\n    }\n    list() {\n      return Object.keys(this.memory);\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-wmLzLM/user-interface/user-interface.ts\n  function render(container) {\n    const title = document.createElement(\"h1\");\n    title.textContent = \"Simple Calculator\";\n    container.appendChild(title);\n    const resetBtn = document.createElement(\"button\");\n    resetBtn.textContent = \"Reset\";\n    resetBtn.className = \"btn\";\n    resetBtn.style.marginBottom = \"10px\";\n    resetBtn.onclick = () => {\n      const display2 = container.querySelector(\"#display\");\n      if (display2) {\n        display2.textContent = \"0\";\n      }\n    };\n    container.appendChild(resetBtn);\n    const display = document.createElement(\"div\");\n    display.id = \"display\";\n    display.className = \"display\";\n    display.textContent = \"0\";\n    container.appendChild(display);\n    const buttons = [\n      { text: \"7\", value: \"7\" },\n      { text: \"8\", value: \"8\" },\n      { text: \"9\", value: \"9\" },\n      { text: \"+\", value: \"+\" },\n      { text: \"4\", value: \"4\" },\n      { text: \"5\", value: \"5\" },\n      { text: \"6\", value: \"6\" },\n      { text: \"-\", value: \"-\" },\n      { text: \"1\", value: \"1\" },\n      { text: \"2\", value: \"2\" },\n      { text: \"3\", value: \"3\" },\n      { text: \"*\", value: \"*\" },\n      { text: \"0\", value: \"0\" },\n      { text: \".\", value: \".\" },\n      { text: \"=\", value: \"=\" }\n    ];\n    buttons.forEach((btn) => {\n      const button = document.createElement(\"button\");\n      button.className = \"btn\";\n      button.textContent = btn.text;\n      button.onclick = () => {\n        const display = container.querySelector(\"#display\");\n        if (display) {\n          if (btn.text === \"=\") {\n            try {\n              display.textContent = eval(display.textContent);\n            } catch (e) {\n              display.textContent = \"Error\";\n            }\n          } else {\n            display.textContent += btn.value;\n          }\n        }\n      };\n      container.appendChild(button);\n    });\n  }\n\n  // ../../../../../tmp/vaca-preview-wmLzLM/_preview_entry.ts\n  try {\n    if (typeof DataStorage === \"function\" && !/^class\\s/.test(String(DataStorage))) {\n      DataStorage(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-storage.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Data_Storage.DataStorage:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"user-interface.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling User_Interface.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (2) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 2 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a calculator app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a calculator app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Data Storage",
+    "User Interface"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 10171,
+ "totalErrors": 1,
+ "validatedCount": 2,
+ "failedCount": 1,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "data-storage.ts",
+   "dependencies": [],
+   "exports": [
+    "DataStorage"
+   ]
+  },
+  "mod_1": {
+   "entryFile": "user-interface.ts",
+   "dependencies": [
+    "Data Storage"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Data Storage",
+    "User Interface"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": true,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 3,
+  "totalChars": 10171,
+  "totalErrors": 1,
+  "validated": 2,
+  "failed": 1,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 127455
+ }
+}

@@ -1,0 +1,960 @@
+{
+  "schema": "vaca-latest-manifest/1",
+  "generated_at": "2026-10-12T02:30:39.580Z",
+  "repo_rev": "8064ce623bfb2ef00406b9cded0de93ebf8c1925",
+  "repo_dirty": true,
+  "node_version": "v24.18.0",
+  "sources": {
+    "backend/src/ai/languageInference.ts": {
+      "sha256": "aefa5af428868e3c39927997b1eb8599f80a932841a4f71270e31f98e66c6c5d",
+      "bytes": 6045
+    },
+    "backend/src/ai/languageGuidance.ts": {
+      "sha256": "bf65f4a5965923fefe89ae235b7f7bcd433f88d86381422ce7e6102ed0fc2d57",
+      "bytes": 13681
+    },
+    "backend/src/utils/languageFromPath.ts": {
+      "sha256": "cb73a9bd3c6a45ce79c0c01994aea8b7813b9c7779e12176b1e8fc441f5a34a1",
+      "bytes": 1507
+    },
+    "backend/src/sandbox/nonTsCompileGate.ts": {
+      "sha256": "19980a43837837f0f9637244f7974eb1fbeb31be04fbc68418f473072f403272",
+      "bytes": 54616
+    },
+    "frontend/src/types.ts": {
+      "sha256": "150982c6146d26e21babbc6af6cb688ac2e2099ef72155074e36a6118e7c26e7",
+      "bytes": 19365
+    },
+    "backend/src/index.ts": {
+      "sha256": "2526053cb60343516d3fa879e7e625db2963a8dfa02aa652e770225f142359e1",
+      "bytes": 41942
+    },
+    "backend/blueprints/analytics_dashboard.json": {
+      "sha256": "ad75b5ae69330d83b51bc749306f46af3c795ed7d91aa988f65527f1f7d605ca"
+    },
+    "backend/blueprints/blog_cms.json": {
+      "sha256": "0fecbb0f820b1c78e3f7dda096ef9a80a79ad25ec8383908ef483ee1015926d9"
+    },
+    "backend/blueprints/chat_app.json": {
+      "sha256": "ff818b9858752dce02abfbbab43ac64d6eab0f8b6baca355445f95432d2be651"
+    },
+    "backend/blueprints/ecommerce_store.json": {
+      "sha256": "e45ebbb27143ffc1a0579585136765b02c82a645c1e251b2dc9b7c572ae4b704"
+    },
+    "backend/blueprints/generic_fullstack_app.json": {
+      "sha256": "a6bd38517a43a80f31a1635032f9db533f17f57d8af6c8f8c6031b38bfd1feac"
+    },
+    "backend/blueprints/home_media_server.json": {
+      "sha256": "f17c80472f31f655535ea06dc8a4789af5c978b0505e170c3fc1c3adbc1c5548"
+    },
+    "backend/blueprints/todo_app.json": {
+      "sha256": "11c08755d474051521c2cca35765de57ff26240309c6b0abe9c9874122ba39e7"
+    },
+    "backend/blueprints/url_shortener.json": {
+      "sha256": "f1de47d1263e7072d4aa5777258624efd2b44a0630610fa58dbfc5695f7d6b68"
+    }
+  },
+  "languages": {
+    "coding": [
+      "typescript",
+      "javascript",
+      "python",
+      "go",
+      "rust",
+      "java",
+      "csharp",
+      "swift",
+      "kotlin",
+      "php",
+      "ruby",
+      "cpp",
+      "c"
+    ],
+    "natural_formats": [
+      "html",
+      "css",
+      "sql",
+      "json",
+      "yaml",
+      "yml",
+      "xml",
+      "md",
+      "txt",
+      "sh",
+      "bash",
+      "dockerfile",
+      "env",
+      "ini",
+      "toml",
+      "csv",
+      "svg"
+    ],
+    "gate": [
+      "go",
+      "python",
+      "rust",
+      "c",
+      "cpp",
+      "java",
+      "csharp",
+      "swift",
+      "kotlin",
+      "php",
+      "ruby",
+      "javascript"
+    ],
+    "tsc_gated": [
+      "typescript"
+    ],
+    "aliases": {
+      "ts": "typescript",
+      "js": "javascript",
+      "py": "python",
+      "golang": "go",
+      "c++": "cpp",
+      "cxx": "typescript",
+      "cplusplus": "typescript",
+      "c#": "typescript",
+      "cs": "typescript",
+      "dotnet": "typescript",
+      "rs": "typescript",
+      "rb": "typescript",
+      "kt": "typescript",
+      "kts": "typescript",
+      "jsx": "typescript",
+      "tsx": "typescript"
+    },
+    "path_language": {
+      "ts": "typescript",
+      "tsx": "typescript",
+      "js": "javascript",
+      "jsx": "javascript",
+      "py": "python",
+      "go": "go",
+      "rs": "rust",
+      "java": "java",
+      "c": "c",
+      "h": "c",
+      "cpp": "cpp",
+      "cc": "cpp",
+      "cxx": "cpp",
+      "hpp": "cpp",
+      "hh": "cpp",
+      "cs": "csharp",
+      "kt": "kotlin",
+      "kts": "kotlin",
+      "swift": "swift",
+      "php": "php",
+      "rb": "ruby",
+      "html": "html",
+      "css": "css",
+      "json": "json",
+      "md": "markdown",
+      "sh": "bash",
+      "sql": "sql",
+      "dockerfile": "dockerfile"
+    },
+    "gate_language_by_ext": {
+      "dockerfile": null,
+      "ts": null,
+      "tsx": null,
+      "js": "javascript",
+      "jsx": null,
+      "py": "python",
+      "go": "go",
+      "rs": "rust",
+      "java": "java",
+      "c": "c",
+      "h": null,
+      "cpp": "cpp",
+      "cc": "cpp",
+      "cxx": "cpp",
+      "hpp": "cpp",
+      "hh": "cpp",
+      "cs": "csharp",
+      "kt": "kotlin",
+      "kts": "kotlin",
+      "swift": "swift",
+      "php": "php",
+      "rb": "ruby",
+      "html": null,
+      "css": null,
+      "json": null,
+      "md": null,
+      "sh": null,
+      "sql": null
+    },
+    "guidance": {
+      "typescript": {
+        "name": "TypeScript (Node, ESM)",
+        "lines": [
+          "Node built-in modules ONLY \u2014 no npm packages (the sandbox installs nothing).",
+          "For a CLI: read `process.stdin` / use `readline`; write with `console.log`.",
+          "For a script entry, define `main()` and actually CALL it."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (TypeScript (Node, ESM)) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Node built-in modules ONLY \u2014 no npm packages (the sandbox installs nothing).\n  \u2022 For a CLI: read `process.stdin` / use `readline`; write with `console.log`.\n  \u2022 For a script entry, define `main()` and actually CALL it."
+      },
+      "javascript": {
+        "name": "JavaScript (Node, ESM)",
+        "lines": [
+          "Node built-in modules ONLY \u2014 no npm packages (the sandbox installs nothing).",
+          "For a CLI: read `process.stdin` / use `readline`; write with `console.log`.",
+          "Define and actually CALL the entry function."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (JavaScript (Node, ESM)) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Node built-in modules ONLY \u2014 no npm packages (the sandbox installs nothing).\n  \u2022 For a CLI: read `process.stdin` / use `readline`; write with `console.log`.\n  \u2022 Define and actually CALL the entry function."
+      },
+      "python": {
+        "name": "Python 3.10+",
+        "lines": [
+          "Standard library ONLY \u2014 no `pip install` (no requests, numpy, pandas).",
+          "Input: `input()` or `sys.stdin`. Output: `print(...)`.",
+          "Guard the entry: `if __name__ == \"__main__\": main()`.",
+          "Use f-strings, `dataclasses`, `pathlib`, `json`, `argparse` from the stdlib where useful."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (Python 3.10+) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 no `pip install` (no requests, numpy, pandas).\n  \u2022 Input: `input()` or `sys.stdin`. Output: `print(...)`.\n  \u2022 Guard the entry: `if __name__ == \"__main__\": main()`.\n  \u2022 Use f-strings, `dataclasses`, `pathlib`, `json`, `argparse` from the stdlib where useful."
+      },
+      "go": {
+        "name": "Go 1.21",
+        "lines": [
+          "Standard library ONLY. No third-party modules and no guessed import paths: NEVER write `github.com/...`, `gopkg.in/...`, `example.com/...`, or a `yourusername` placeholder \u2014 nothing is downloadable (`go get` fails offline), so any such import makes `go build` fail.",
+          "There is NO YAML package anywhere in the Go standard library. `gopkg.in/yaml.v2`, `gopkg.in/yaml.v3`, `yaml`, `encoding/yaml`, `os/yaml` and `io/yaml` ALL do not exist \u2014 importing any of them fails with `package ... is not in std`. When YAML output is requested, WRITE a minimal YAML emitter by hand with `fmt.Fprintf`/`strings.Builder` (2-space indent, `key: value`, `- item`), or emit JSON instead.",
+          "The file that declares `func main()` MUST be `package main`, and it is the ONLY file allowed to be `package main`. Every other file in the project is a SEPARATE package named after the DIRECTORY it lives in (e.g. `conversion/converter.go` \u2192 `package conversion`). Never give a non-entry file `package main` and never give the entry file the directory name.",
+          "PREFER keeping everything in ONE `package main` spread over several files (same package, no imports between them). Only split into a sibling package when the plan explicitly asks for it.",
+          "A file the plan places at the project ROOT (e.g. `hasher.go`, `utils.go`) is part of `package main`: declare NO package of its own and NEVER import it \u2014 call its functions directly. Only a file inside a SUBDIRECTORY (e.g. `fileutil/file.go`) may have its own package, named after that subdirectory, and it is imported as `<module>/fileutil`.",
+          "If (and only if) the plan splits code into a sibling package, import it via the go.mod module path (`module <name>` is declared in your guidance) \u2014 e.g. `import \"<module>/conversion\"`. NEVER import a bare relative path such as `app/conversion`, `conversion`, `./conversion`, or `src/foo`: `go build` treats those as standard-library paths and fails with `package app/conversion is not in std`.",
+          "Imports in parentheses: `import (\"fmt\"; \"os\"; \"bufio\"; \"strings\")`. EVERY import must be used or `go build` fails.",
+          "Input: `bufio.NewScanner(os.Stdin)`. Output: `fmt.Println` / `fmt.Printf`. Command-line args: `os.Args` (>= 2) or the `flag` package.",
+          "Handle errors explicitly (`if err != nil { ... }`) \u2014 no ignored returns. `ioutil` is deprecated; use `os.ReadFile` / `os.WriteFile`."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (Go 1.21) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY. No third-party modules and no guessed import paths: NEVER write `github.com/...`, `gopkg.in/...`, `example.com/...`, or a `yourusername` placeholder \u2014 nothing is downloadable (`go get` fails offline), so any such import makes `go build` fail.\n  \u2022 There is NO YAML package anywhere in the Go standard library. `gopkg.in/yaml.v2`, `gopkg.in/yaml.v3`, `yaml`, `encoding/yaml`, `os/yaml` and `io/yaml` ALL do not exist \u2014 importing any of them fails with `package ... is not in std`. When YAML output is requested, WRITE a minimal YAML emitter by hand with `fmt.Fprintf`/`strings.Builder` (2-space indent, `key: value`, `- item`), or emit JSON instead.\n  \u2022 The file that declares `func main()` MUST be `package main`, and it is the ONLY file allowed to be `package main`. Every other file in the project is a SEPARATE package named after the DIRECTORY it lives in (e.g. `conversion/converter.go` \u2192 `package conversion`). Never give a non-entry file `package main` and never give the entry file the directory name.\n  \u2022 PREFER keeping everything in ONE `package main` spread over several files (same package, no imports between them). Only split into a sibling package when the plan explicitly asks for it.\n  \u2022 A file the plan places at the project ROOT (e.g. `hasher.go`, `utils.go`) is part of `package main`: declare NO package of its own and NEVER import it \u2014 call its functions directly. Only a file inside a SUBDIRECTORY (e.g. `fileutil/file.go`) may have its own package, named after that subdirectory, and it is imported as `<module>/fileutil`.\n  \u2022 If (and only if) the plan splits code into a sibling package, import it via the go.mod module path (`module <name>` is declared in your guidance) \u2014 e.g. `import \"<module>/conversion\"`. NEVER import a bare relative path such as `app/conversion`, `conversion`, `./conversion`, or `src/foo`: `go build` treats those as standard-library paths and fails with `package app/conversion is not in std`.\n  \u2022 Imports in parentheses: `import (\"fmt\"; \"os\"; \"bufio\"; \"strings\")`. EVERY import must be used or `go build` fails.\n  \u2022 Input: `bufio.NewScanner(os.Stdin)`. Output: `fmt.Println` / `fmt.Printf`. Command-line args: `os.Args` (>= 2) or the `flag` package.\n  \u2022 Handle errors explicitly (`if err != nil { ... }`) \u2014 no ignored returns. `ioutil` is deprecated; use `os.ReadFile` / `os.WriteFile`."
+      },
+      "rust": {
+        "name": "Rust (2021 edition)",
+        "lines": [
+          "Standard library ONLY \u2014 no external crates (no serde, rand, clap, tokio). Everything must compile with `rustc` alone.",
+          "Entry point is `fn main()`. Keep the program a single binary crate; do not rely on Cargo features.",
+          "Input: `std::io::stdin().read_line(&mut s)` (handle the `Result`). Output: `println!` / `print!`.",
+          "Use `std` types: `String`/`&str`, `Vec`, `Option`, `Result`, `HashMap`, `std::collections`, `std::io`.",
+          "Do not use `async`/`await` or the `?` operator in `main` unless `main` returns `Result<(), Box<dyn Error>>`.",
+          "Randomness without `rand`: implement a tiny LCG/PRNG with `u64` arithmetic from `std::time` if needed."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (Rust (2021 edition)) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 no external crates (no serde, rand, clap, tokio). Everything must compile with `rustc` alone.\n  \u2022 Entry point is `fn main()`. Keep the program a single binary crate; do not rely on Cargo features.\n  \u2022 Input: `std::io::stdin().read_line(&mut s)` (handle the `Result`). Output: `println!` / `print!`.\n  \u2022 Use `std` types: `String`/`&str`, `Vec`, `Option`, `Result`, `HashMap`, `std::collections`, `std::io`.\n  \u2022 Do not use `async`/`await` or the `?` operator in `main` unless `main` returns `Result<(), Box<dyn Error>>`.\n  \u2022 Randomness without `rand`: implement a tiny LCG/PRNG with `u64` arithmetic from `std::time` if needed."
+      },
+      "java": {
+        "name": "Java 17",
+        "lines": [
+          "Standard library ONLY \u2014 `java.util`, `java.io`, `java.nio`, `java.lang`. No third-party jars.",
+          "The public class name MUST match its file name (`Main.java` \u2192 `public class Main`).",
+          "Entry point: `public static void main(String[] args)`.",
+          "Input: use `new java.util.Scanner(System.in)` or `BufferedReader(new InputStreamReader(System.in))`. NEVER use `System.console()` \u2014 it returns null when stdin is piped/non-interactive and throws NullPointerException.",
+          "Output: `System.out.println`. Use `Scanner.nextInt()`/`hasNextInt()` (or `nextLine()`) rather than reading raw bytes.",
+          "Keep prefix/package-less classes in the default package; sibling classes resolve when compiled together."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (Java 17) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 `java.util`, `java.io`, `java.nio`, `java.lang`. No third-party jars.\n  \u2022 The public class name MUST match its file name (`Main.java` \u2192 `public class Main`).\n  \u2022 Entry point: `public static void main(String[] args)`.\n  \u2022 Input: use `new java.util.Scanner(System.in)` or `BufferedReader(new InputStreamReader(System.in))`. NEVER use `System.console()` \u2014 it returns null when stdin is piped/non-interactive and throws NullPointerException.\n  \u2022 Output: `System.out.println`. Use `Scanner.nextInt()`/`hasNextInt()` (or `nextLine()`) rather than reading raw bytes.\n  \u2022 Keep prefix/package-less classes in the default package; sibling classes resolve when compiled together."
+      },
+      "csharp": {
+        "name": "C# (.NET 8)",
+        "lines": [
+          "Standard library ONLY \u2014 `System`, `System.Collections.Generic`, `System.Linq`, `System.IO`. No NuGet packages.",
+          "Entry point: `class Program { static void Main(string[] args) { ... } }`.",
+          "Input: `Console.ReadLine()`; output: `Console.WriteLine(...)`.",
+          "One top-level class per file; keep program files in the project root so `dotnet build` picks them up."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (C# (.NET 8)) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 `System`, `System.Collections.Generic`, `System.Linq`, `System.IO`. No NuGet packages.\n  \u2022 Entry point: `class Program { static void Main(string[] args) { ... } }`.\n  \u2022 Input: `Console.ReadLine()`; output: `Console.WriteLine(...)`.\n  \u2022 One top-level class per file; keep program files in the project root so `dotnet build` picks them up."
+      },
+      "swift": {
+        "name": "Swift 5 (single module, swiftc)",
+        "lines": [
+          "Standard library ONLY \u2014 no SPM dependencies (no Vapor, Alamofire, swift-argument-parser). The whole set is type-checked by `swiftc` alone.",
+          "Entry point: put TOP-LEVEL statements in a file named `main.swift`. The `@main` attribute is FORBIDDEN in `main.swift` \u2014 the compiler rejects it with \"'main' attribute cannot be used in a module that contains top-level code\". Use `@main` ONLY in a file NOT named `main.swift`, and at most once in the whole set.",
+          "NEVER mix the two: if you wrote `@main`, the file must not be `main.swift` and must contain no top-level statements; if the file is `main.swift`, use plain top-level code and no `@main`.",
+          "All files in the set compile as ONE module: every type, function and global must be declared EXACTLY ONCE across all files. Do not repeat a declaration that a sibling file already makes.",
+          "`String.characters` was REMOVED from Swift \u2014 `input.characters` fails with \"'characters' is unavailable\". Iterate the String directly (`for ch in input.lowercased()`) or use `input.count` / `input.filter { ... }.count`.",
+          "`CommandLine.arguments` is `[String]`; `CommandLine.argc` is `Int32`. Convert before arithmetic/comparison (`Int(CommandLine.argc)`) \u2014 mixing `Int32` and `Int` is a compile error.",
+          "Input: `CommandLine.arguments` or `readLine()`. Output: `print(...)`.",
+          "Indent with 4 spaces; no markdown fences, no explanatory prose in the file."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (Swift 5 (single module, swiftc)) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 no SPM dependencies (no Vapor, Alamofire, swift-argument-parser). The whole set is type-checked by `swiftc` alone.\n  \u2022 Entry point: put TOP-LEVEL statements in a file named `main.swift`. The `@main` attribute is FORBIDDEN in `main.swift` \u2014 the compiler rejects it with \"'main' attribute cannot be used in a module that contains top-level code\". Use `@main` ONLY in a file NOT named `main.swift`, and at most once in the whole set.\n  \u2022 NEVER mix the two: if you wrote `@main`, the file must not be `main.swift` and must contain no top-level statements; if the file is `main.swift`, use plain top-level code and no `@main`.\n  \u2022 All files in the set compile as ONE module: every type, function and global must be declared EXACTLY ONCE across all files. Do not repeat a declaration that a sibling file already makes.\n  \u2022 `String.characters` was REMOVED from Swift \u2014 `input.characters` fails with \"'characters' is unavailable\". Iterate the String directly (`for ch in input.lowercased()`) or use `input.count` / `input.filter { ... }.count`.\n  \u2022 `CommandLine.arguments` is `[String]`; `CommandLine.argc` is `Int32`. Convert before arithmetic/comparison (`Int(CommandLine.argc)`) \u2014 mixing `Int32` and `Int` is a compile error.\n  \u2022 Input: `CommandLine.arguments` or `readLine()`. Output: `print(...)`.\n  \u2022 Indent with 4 spaces; no markdown fences, no explanatory prose in the file."
+      },
+      "kotlin": {
+        "name": "Kotlin/JVM (kotlinc)",
+        "lines": [
+          "Standard library ONLY \u2014 no external dependencies (no kotlinx.*, ktor, Gradle-only artifacts). The set is compiled by `kotlinc` alone.",
+          "Entry point: `fun main(args: Array<String>)` (or `fun main()`) declared EXACTLY ONCE in the WHOLE project. A second `fun main` in another file is a compile error.",
+          "All files compile as ONE module: every top-level function, class and property is a single global. Declare each name EXACTLY ONCE across every file \u2014 re-declaring a function with the same signature (e.g. two `fun factorial(n: Int): Long`) fails with `conflicting overloads`. Put a shared helper in ONE file and CALL it from the others.",
+          "The file named `main.kt` contains ONLY `fun main(args: Array<String>)` plus the code it calls \u2014 do NOT copy a helper into `main.kt` that the plan already assigns to another file. If a helper is planned in BOTH the entry file and a sibling, implement it in the sibling and call it; a second identical definition in `main.kt` is the `conflicting overloads` error above.",
+          "Kotlin has NO `isDigitsOnly`/`isNumeric` helper: use `s.all { it.isDigit() }` or `s.matches(Regex(\"\\d+\"))`.",
+          "Input: `args` (check `args.isNotEmpty()`) or `readln()`. Output: `println(...)`. Use `explicit` integer types \u2014 prefer `Long` for factorial/fibonacci-style accumulation and convert with `.toLong()`.",
+          "Return ONLY the raw `.kt` source: no ``` fences, no trailing \"Note:\"/explanation text after the code \u2014 any non-code text is a syntax error."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (Kotlin/JVM (kotlinc)) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 no external dependencies (no kotlinx.*, ktor, Gradle-only artifacts). The set is compiled by `kotlinc` alone.\n  \u2022 Entry point: `fun main(args: Array<String>)` (or `fun main()`) declared EXACTLY ONCE in the WHOLE project. A second `fun main` in another file is a compile error.\n  \u2022 All files compile as ONE module: every top-level function, class and property is a single global. Declare each name EXACTLY ONCE across every file \u2014 re-declaring a function with the same signature (e.g. two `fun factorial(n: Int): Long`) fails with `conflicting overloads`. Put a shared helper in ONE file and CALL it from the others.\n  \u2022 The file named `main.kt` contains ONLY `fun main(args: Array<String>)` plus the code it calls \u2014 do NOT copy a helper into `main.kt` that the plan already assigns to another file. If a helper is planned in BOTH the entry file and a sibling, implement it in the sibling and call it; a second identical definition in `main.kt` is the `conflicting overloads` error above.\n  \u2022 Kotlin has NO `isDigitsOnly`/`isNumeric` helper: use `s.all { it.isDigit() }` or `s.matches(Regex(\"\\d+\"))`.\n  \u2022 Input: `args` (check `args.isNotEmpty()`) or `readln()`. Output: `println(...)`. Use `explicit` integer types \u2014 prefer `Long` for factorial/fibonacci-style accumulation and convert with `.toLong()`.\n  \u2022 Return ONLY the raw `.kt` source: no ``` fences, no trailing \"Note:\"/explanation text after the code \u2014 any non-code text is a syntax error."
+      },
+      "php": {
+        "name": "PHP 8",
+        "lines": [
+          "Standard library ONLY \u2014 no Composer packages.",
+          "Every file starts with `<?php` (no closing `?>` needed at EOF).",
+          "Input: `fgets(STDIN)` / `trim(fgets(STDIN))`; output: `echo` / `print`.",
+          "Functions must be defined before use OR declared in a file that is `require_once`d first."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (PHP 8) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 no Composer packages.\n  \u2022 Every file starts with `<?php` (no closing `?>` needed at EOF).\n  \u2022 Input: `fgets(STDIN)` / `trim(fgets(STDIN))`; output: `echo` / `print`.\n  \u2022 Functions must be defined before use OR declared in a file that is `require_once`d first."
+      },
+      "ruby": {
+        "name": "Ruby 3",
+        "lines": [
+          "Standard library ONLY \u2014 no external gems.",
+          "Input: `$stdin.gets` / `gets.chomp`; output: `puts` / `print`.",
+          "Use `require_relative` for sibling files. Guard the entry with `if __FILE__ == $0`.",
+          "Prefer `attr_reader`, blocks, and `Enumerable` methods over manual loops."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (Ruby 3) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 no external gems.\n  \u2022 Input: `$stdin.gets` / `gets.chomp`; output: `puts` / `print`.\n  \u2022 Use `require_relative` for sibling files. Guard the entry with `if __FILE__ == $0`.\n  \u2022 Prefer `attr_reader`, blocks, and `Enumerable` methods over manual loops."
+      },
+      "cpp": {
+        "name": "C++17",
+        "lines": [
+          "Standard library ONLY \u2014 no third-party headers. Include only real headers (`<iostream>`, `<vector>`, `<string>`, `<algorithm>`, `<sstream>`, `<random>`, `<chrono>`).",
+          "Entry point is `int main()` (or `int main(int argc, char** argv)`).",
+          "Use the `std::` namespace explicitly; never `#include <bits/stdc++.h>` (GCC-only and not portable).",
+          "Input: `std::cin >> x` or `std::getline(std::cin, s)`. Output: `std::cout << ... << std::endl` (or `\\n`).",
+          "Prefer `std::vector` / `std::string` / `std::unordered_map` over raw arrays and `new`/`delete`."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (C++17) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY \u2014 no third-party headers. Include only real headers (`<iostream>`, `<vector>`, `<string>`, `<algorithm>`, `<sstream>`, `<random>`, `<chrono>`).\n  \u2022 Entry point is `int main()` (or `int main(int argc, char** argv)`).\n  \u2022 Use the `std::` namespace explicitly; never `#include <bits/stdc++.h>` (GCC-only and not portable).\n  \u2022 Input: `std::cin >> x` or `std::getline(std::cin, s)`. Output: `std::cout << ... << std::endl` (or `\\n`).\n  \u2022 Prefer `std::vector` / `std::string` / `std::unordered_map` over raw arrays and `new`/`delete`."
+      },
+      "c": {
+        "name": "C11",
+        "lines": [
+          "Standard library ONLY. Include only real headers (`<stdio.h>`, `<stdlib.h>`, `<string.h>`, `<math.h>`, `<time.h>`, `<stdbool.h>`).",
+          "Entry point is `int main(void)` (or `int main(int argc, char** argv)`); `return 0;` at the end.",
+          "Input: `fgets`/`scanf`; output: `printf`. Declare functions before use (prototype or define first).",
+          "No C++ constructs \u2014 no `std::`, no `//`-only assumptions, no `<iostream>`; compile as C11."
+        ],
+        "block": "\u2501\u2501\u2501 LANGUAGE GUIDANCE (C11) \u2501\u2501\u2501\nVACA supplies the scaffold and the toolchain; you must write code this toolchain can compile and run:\n  \u2022 Standard library ONLY. Include only real headers (`<stdio.h>`, `<stdlib.h>`, `<string.h>`, `<math.h>`, `<time.h>`, `<stdbool.h>`).\n  \u2022 Entry point is `int main(void)` (or `int main(int argc, char** argv)`); `return 0;` at the end.\n  \u2022 Input: `fgets`/`scanf`; output: `printf`. Declare functions before use (prototype or define first).\n  \u2022 No C++ constructs \u2014 no `std::`, no `//`-only assumptions, no `<iostream>`; compile as C11."
+      }
+    },
+    "toolchains": {
+      "go": {
+        "bins": [
+          "go"
+        ],
+        "versionArgs": [
+          "version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y golang-go",
+          "windows": "winget install GoLang.Go",
+          "macos": "brew install go"
+        }
+      },
+      "python": {
+        "bins": [
+          "python3",
+          "python"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y python3",
+          "windows": "winget install Python.Python.3.12",
+          "macos": "brew install python"
+        }
+      },
+      "rust": {
+        "bins": [
+          "rustc"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
+          "windows": "winget install Rustlang.Rustup",
+          "macos": "brew install rust"
+        }
+      },
+      "c": {
+        "bins": [
+          "gcc",
+          "clang",
+          "cc"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y build-essential",
+          "windows": "winget install BrechtSanders.WinLibs.POSIX.UCRT",
+          "macos": "xcode-select --install"
+        }
+      },
+      "cpp": {
+        "bins": [
+          "g++",
+          "clang++",
+          "c++"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y build-essential",
+          "windows": "winget install BrechtSanders.WinLibs.POSIX.UCRT",
+          "macos": "xcode-select --install"
+        }
+      },
+      "java": {
+        "bins": [
+          "javac"
+        ],
+        "versionArgs": [
+          "-version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y openjdk-17-jdk-headless",
+          "windows": "winget install Microsoft.OpenJDK.17",
+          "macos": "brew install openjdk@17"
+        }
+      },
+      "csharp": {
+        "bins": [
+          "dotnet",
+          "csc",
+          "mcs"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y dotnet-sdk-8.0",
+          "windows": "winget install Microsoft.DotNet.SDK.8",
+          "macos": "brew install dotnet"
+        }
+      },
+      "swift": {
+        "bins": [
+          "swiftc"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz && tar zxf swiftly-$(uname -m).tar.gz && ./swiftly init --quiet-shell-followup",
+          "windows": "winget install --id Swift.Toolchain -e",
+          "macos": "xcode-select --install"
+        }
+      },
+      "kotlin": {
+        "bins": [
+          "kotlinc",
+          "kotlinc-jvm"
+        ],
+        "versionArgs": [
+          "-version"
+        ],
+        "install": {
+          "linux": "sudo snap install kotlin --classic",
+          "windows": "winget install JetBrains.Kotlin",
+          "macos": "brew install kotlin"
+        }
+      },
+      "php": {
+        "bins": [
+          "php"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y php-cli",
+          "windows": "winget install PHP.PHP",
+          "macos": "brew install php"
+        }
+      },
+      "ruby": {
+        "bins": [
+          "ruby"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y ruby-full",
+          "windows": "winget install RubyInstallerTeam.Ruby",
+          "macos": "brew install ruby"
+        }
+      },
+      "javascript": {
+        "bins": [
+          "node",
+          "nodejs"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "sudo apt-get install -y nodejs",
+          "windows": "winget install OpenJS.NodeJS.LTS",
+          "macos": "brew install node"
+        }
+      },
+      "typescript": {
+        "bins": [
+          "tsc"
+        ],
+        "versionArgs": [
+          "--version"
+        ],
+        "install": {
+          "linux": "npm install --save-dev typescript",
+          "windows": "npm install --save-dev typescript",
+          "macos": "npm install --save-dev typescript"
+        },
+        "gate": "tsc"
+      }
+    }
+  },
+  "selection": {
+    "os_language_map": {
+      "linux": "go",
+      "windows": "csharp",
+      "mac": "swift",
+      "ios": "swift",
+      "android": "kotlin"
+    },
+    "web_domain_keywords": [
+      "web app",
+      "webpage",
+      "web page",
+      "website",
+      "landing page",
+      "frontend",
+      "front end",
+      "single page",
+      "single-page",
+      "spa",
+      "browser",
+      "gui app",
+      "dashboard",
+      "widget",
+      "countdown",
+      "timer",
+      "calculator",
+      "todo app",
+      "todo list",
+      "notepad",
+      "note pad",
+      "note taking",
+      "quiz",
+      "game",
+      "interface",
+      "html",
+      "pomodoro",
+      "stopwatch",
+      "desktop app",
+      "app with a ui",
+      "online store",
+      "e-commerce",
+      "shop",
+      "web store"
+    ],
+    "cli_domain_keywords": [
+      "cli",
+      "command line",
+      "command-line",
+      "terminal",
+      "console tool",
+      "cli tool",
+      "shell tool",
+      "command line tool"
+    ],
+    "cases": [
+      {
+        "goal": "a countdown timer web app",
+        "purpose": "",
+        "targetOS": "linux",
+        "uiPreference": "web",
+        "domain": "web",
+        "explicitLanguage": null,
+        "language": "typescript"
+      },
+      {
+        "goal": "a command line todo list manager",
+        "purpose": "",
+        "targetOS": "linux",
+        "uiPreference": "cli",
+        "domain": "cli",
+        "explicitLanguage": null,
+        "language": "typescript"
+      },
+      {
+        "goal": "a pomodoro timer",
+        "purpose": "",
+        "targetOS": "linux",
+        "uiPreference": null,
+        "domain": "web",
+        "explicitLanguage": null,
+        "language": "typescript"
+      },
+      {
+        "goal": "a REST API in Go",
+        "purpose": "",
+        "targetOS": "linux",
+        "uiPreference": null,
+        "domain": "native",
+        "explicitLanguage": "go",
+        "language": "go"
+      },
+      {
+        "goal": "a file renamer using Python",
+        "purpose": "",
+        "targetOS": "linux",
+        "uiPreference": null,
+        "domain": "native",
+        "explicitLanguage": "python",
+        "language": "python"
+      },
+      {
+        "goal": "a native desktop utility",
+        "purpose": "",
+        "targetOS": "linux",
+        "uiPreference": null,
+        "domain": "native",
+        "explicitLanguage": null,
+        "language": "go"
+      },
+      {
+        "goal": "a native desktop utility",
+        "purpose": "",
+        "targetOS": "windows",
+        "uiPreference": null,
+        "domain": "native",
+        "explicitLanguage": null,
+        "language": "csharp"
+      },
+      {
+        "goal": "a native desktop utility",
+        "purpose": "",
+        "targetOS": "mac",
+        "uiPreference": null,
+        "domain": "native",
+        "explicitLanguage": null,
+        "language": "swift"
+      },
+      {
+        "goal": "a native desktop utility",
+        "purpose": "",
+        "targetOS": "android",
+        "uiPreference": null,
+        "domain": "native",
+        "explicitLanguage": null,
+        "language": "kotlin"
+      },
+      {
+        "goal": "a Rust CLI",
+        "purpose": "",
+        "targetOS": "linux",
+        "uiPreference": null,
+        "domain": "cli",
+        "explicitLanguage": "rust",
+        "language": "rust"
+      }
+    ]
+  },
+  "app": {
+    "node_types": [
+      "input",
+      "output",
+      "logic",
+      "api",
+      "database",
+      "ui",
+      "master",
+      "ui-functions",
+      "gui-layout"
+    ],
+    "node_type_options": [
+      {
+        "type": "input",
+        "label": "Input",
+        "icon": "\u2b05",
+        "description": "Data entry point"
+      },
+      {
+        "type": "output",
+        "label": "Output",
+        "icon": "\u27a1",
+        "description": "Result display"
+      },
+      {
+        "type": "logic",
+        "label": "Logic",
+        "icon": "\u2699",
+        "description": "Processing/conditions"
+      },
+      {
+        "type": "api",
+        "label": "API",
+        "icon": "\ud83c\udf10",
+        "description": "External service call"
+      },
+      {
+        "type": "database",
+        "label": "Database",
+        "icon": "\ud83d\udce6",
+        "description": "Data storage"
+      },
+      {
+        "type": "ui",
+        "label": "UI",
+        "icon": "\ud83d\udda5",
+        "description": "User interface element"
+      },
+      {
+        "type": "ui-functions",
+        "label": "UI Functions",
+        "icon": "\ud83c\udf9b",
+        "description": "Generates button/control list for the UI canvas"
+      },
+      {
+        "type": "gui-layout",
+        "label": "GUI Layout",
+        "icon": "\u26ed",
+        "description": "Imported GUI widget layout"
+      }
+    ],
+    "routes": [
+      {
+        "mount": "/api/projects",
+        "binding": "projectRoutes"
+      },
+      {
+        "mount": "/api/generate",
+        "binding": "generationRoutes"
+      },
+      {
+        "mount": "/api/tts",
+        "binding": "ttsRoutes"
+      },
+      {
+        "mount": "/api/config",
+        "binding": "configRoutes"
+      },
+      {
+        "mount": "/api/reason",
+        "binding": "reasoningRoutes"
+      },
+      {
+        "mount": "/api/reason",
+        "binding": "codePlannerRoutes"
+      },
+      {
+        "mount": "/api/training",
+        "binding": "trainingRoutes"
+      },
+      {
+        "mount": "/api/export",
+        "binding": "exportRoutes"
+      },
+      {
+        "mount": "/api/knowledge",
+        "binding": "knowledgeRoutes"
+      },
+      {
+        "mount": "/api/neural",
+        "binding": "neuralRoutes"
+      },
+      {
+        "mount": "/api/venorica",
+        "binding": "neuralRoutes"
+      },
+      {
+        "mount": "/api/user",
+        "binding": "userRoutes"
+      },
+      {
+        "mount": "/api/emotion",
+        "binding": "emotionRoutes"
+      },
+      {
+        "mount": "/api/desktop",
+        "binding": "desktopRoutes"
+      },
+      {
+        "mount": "/api/architect",
+        "binding": "architectRoutes"
+      },
+      {
+        "mount": "/api/tools",
+        "binding": "toolRoutes"
+      },
+      {
+        "mount": "/api/designs",
+        "binding": "designRoutes"
+      },
+      {
+        "mount": "/api/nodes",
+        "binding": "nodeStoreRoutes"
+      },
+      {
+        "mount": "/api/memory",
+        "binding": "memoryRoutes"
+      },
+      {
+        "mount": "/api/plans",
+        "binding": "planRoutes"
+      },
+      {
+        "mount": "/api/merge",
+        "binding": "mergeRoutes"
+      },
+      {
+        "mount": "/api/voice-action",
+        "binding": "voiceActionRoutes"
+      },
+      {
+        "mount": "/api/scan",
+        "binding": "scannerRoutes"
+      },
+      {
+        "mount": "/api/mindspace",
+        "binding": "mindspaceRoutes"
+      },
+      {
+        "mount": "/api/auto-learn",
+        "binding": "autoLearnRoutes"
+      },
+      {
+        "mount": "/api/ui-functions",
+        "binding": "uiFunctionsRoutes"
+      },
+      {
+        "mount": "/api/context",
+        "binding": "contextRoutes"
+      },
+      {
+        "mount": "/api/session",
+        "binding": "sessionRoutes"
+      },
+      {
+        "mount": "/api/system-monitor",
+        "binding": "systemMonitorRoutes"
+      },
+      {
+        "mount": "/api/design-research",
+        "binding": "designResearchRoutes"
+      },
+      {
+        "mount": "/api/manifesto",
+        "binding": "manifestoRoutes"
+      },
+      {
+        "mount": "/api/library",
+        "binding": "libraryRoutes"
+      },
+      {
+        "mount": "/api/llm",
+        "binding": "llmRoutes"
+      },
+      {
+        "mount": "/api/sandbox",
+        "binding": "sandboxRoutes"
+      },
+      {
+        "mount": "/api/preview",
+        "binding": "sitePreviewRoutes"
+      },
+      {
+        "mount": "/api/soul",
+        "binding": "soulRoutes"
+      },
+      {
+        "mount": "/api/review",
+        "binding": "reviewRoutes"
+      },
+      {
+        "mount": "/api/ui-preference",
+        "binding": "uiPreferenceRoutes"
+      },
+      {
+        "mount": "/api/fast-preview-preference",
+        "binding": "fastPreviewPreferenceRoutes"
+      },
+      {
+        "mount": "/api/reactions",
+        "binding": "reactionsRoutes"
+      },
+      {
+        "mount": "/api/benchmark",
+        "binding": "benchmarkRoutes"
+      },
+      {
+        "mount": "/api/wiki",
+        "binding": "wikiRoutes"
+      },
+      {
+        "mount": "/api/todo",
+        "binding": "todoRoutes"
+      },
+      {
+        "mount": "/api/build-ladder",
+        "binding": "buildLadderRoutes"
+      },
+      {
+        "mount": "/api/experiments",
+        "binding": "experimentRoutes"
+      }
+    ],
+    "blueprints": [
+      {
+        "file": "analytics_dashboard.json",
+        "name": "analytics_dashboard",
+        "description": "Admin analytics dashboard with charts, metrics, KPI cards, and data visualization over collected events and usage data.",
+        "nodeCount": null
+      },
+      {
+        "file": "blog_cms.json",
+        "name": "blog_cms",
+        "description": "Content management system with articles, categories, tags, comments, author editing workflows, and publishing controls.",
+        "nodeCount": null
+      },
+      {
+        "file": "chat_app.json",
+        "name": "chat_app",
+        "description": "Real-time messaging app with chat rooms, direct messages, online presence, and persistent message history.",
+        "nodeCount": null
+      },
+      {
+        "file": "ecommerce_store.json",
+        "name": "ecommerce_store",
+        "description": "Online store with product catalog, search, shopping cart, checkout flow, order management, and inventory tracking.",
+        "nodeCount": null
+      },
+      {
+        "file": "generic_fullstack_app.json",
+        "name": "generic_fullstack_app",
+        "description": "A flexible full-stack web application with a user interface, an API layer, business logic, and persistent storage. Serves as the safe default when no specific blueprint matches.",
+        "nodeCount": null
+      },
+      {
+        "file": "home_media_server.json",
+        "name": "home_media_server",
+        "description": "A local media streaming server that indexes the movies, shows, and music on your home network, lets users browse the library, and streams media to devices on the LAN.",
+        "nodeCount": null
+      },
+      {
+        "file": "todo_app.json",
+        "name": "todo_app",
+        "description": "A task management app with lists, priorities, due dates, categories, and local persistence. Users create, edit, complete, and filter tasks.",
+        "nodeCount": null
+      },
+      {
+        "file": "url_shortener.json",
+        "name": "url_shortener",
+        "description": "Shorten long URLs into compact links, redirect visitors to the original destination, and track per-link click statistics.",
+        "nodeCount": null
+      }
+    ],
+    "route_mount_count": 45,
+    "blueprint_count": 8
+  }
+}

@@ -238,6 +238,7 @@ export default function LivePreviewPanel() {
         targetOS: state.targetOS || 'linux',
         nodes: state.nodes.filter((n: any) => n.type !== 'master'),
         edges: state.edges,
+        trees: state.trees,
       });
     } catch (err: any) {
       setConsoleOutput(prev => [...prev, `❌ Could not prepare server project: ${err.message}`]);

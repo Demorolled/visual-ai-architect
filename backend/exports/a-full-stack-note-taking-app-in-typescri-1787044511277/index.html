@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note Taking App</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #0a0a14; color: #ccc; }
+h1 { color: #00d9ff; }
+.container { max-width: 800px; margin: 0 auto; }
+input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; background: #1a1a2e; border: 1px solid #333; color: #ccc; }
+button { padding: 8px 16px; background: #00d9ff; border: none; color: #0a0a14; cursor: pointer; }
+ul { list-style: none; padding: 0; }
+li { background: #1a1a2e; border: 1px solid #333; padding: 10px; margin-bottom: 5px; border-radius: 6px; }
+li.completed { text-decoration: line-through; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Note Taking App</h1>
+  <input type="text" id="titleInput" placeholder="Title">
+  <textarea id="contentInput" rows="4" placeholder="Content"></textarea>
+  <button onclick="addNote()">Add Note</button>
+  <ul id="notesList"></ul>
+</div>
+<script>
+  let notes = [];
+
+  function addNote() {
+    const title = document.getElementById('titleInput').value;
+    const content = document.getElementById('contentInput').value;
+    if (title && content) {
+      notes.push({ title, content, completed: false });
+      document.getElementById('titleInput').value = '';
+      document.getElementById('contentInput').value = '';
+      renderNotes();
+    }
+  }
+
+  function renderNotes() {
+    const list = document.getElementById('notesList');
+    list.innerHTML = '';
+    notes.forEach((note, index) => {
+      const li = document.createElement('li');
+      li.textContent = `${index + 1}. ${note.title}\n${note.content}`;
+      if (note.completed) li.classList.add('completed');
+      li.onclick = () => { note.completed = !note.completed; renderNotes(); };
+      list.appendChild(li);
+    });
+  }
+</script>
+</body>
+</html>

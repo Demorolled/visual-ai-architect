@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note-Taking App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Note-Taking App</h1>
+        <input type="text" id="title" placeholder="Title">
+        <textarea id="content" placeholder="Content"></textarea>
+        <button onclick="addNote()">Add Note</button>
+        <ul id="notesList"></ul>
+    </div>
+
+    <script>
+        const notesList = document.getElementById('notesList');
+
+        function addNote() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            if (title && content) {
+                const noteItem = document.createElement('li');
+                noteItem.textContent = `${title}: ${content}`;
+                notesList.appendChild(noteItem);
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+            }
+        }
+    </script>
+</body>
+</html>

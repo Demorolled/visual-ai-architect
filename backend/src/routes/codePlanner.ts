@@ -13,24 +13,87 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { AITranslator } from '../ai/translator.js';
+import { AITranslator, askOtherLlm, askConductor } from '../ai/translator.js';
 import { cleanLLMResponse } from '../utils/responseCleaner.js';
 import { loadPreference, type UiPreference } from './uiPreference.js';
 import { getManifestoContext } from '../ai/manifesto.js';
-import { getLibraryContext, getLibraryContextForNodeType } from '../ai/libraryContext.js';
-import { getScaleSection, normalizeScale, type AppScale } from '../ai/prompts.js';
+import { getLibraryContext, getLibraryContextDense, getLibraryContextForNodeType } from '../ai/libraryContext.js';
+import { gatherInternalKnowledge } from '../knowledge/internalKnowledge.js';
+import type { KnowledgeQuery, PatternEntry } from '../knowledge/knowledgeTypes.js';
+import { learningEngine } from '../knowledge/learningEngine.js';
+import { getScaleSection, normalizeScale, VACA_BRAIN_DOCTRINE, type AppScale } from '../ai/prompts.js';
 import { extractIntent, formatIntentSection, isLowConfidenceIntent, mergeIntentSpecs, type IntentSpec } from '../ai/intentExtractor.js';
 import { captureVerifiedSidecar } from '../training/verifiedGenerationCapture.js';
 import { broadcastGenerationProgress } from '../socket/socketManager.js';
 // Shared GUI helpers (intent detection, widget templates, GUI-entry guarantee) —
 // live in ../ai/guiShared.ts (neutral module); re-exported here so existing
 // importers (tests, routes) keep working unchanged.
-import { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, type PlannedFile, type FileUse } from '../ai/guiShared.js';
+import { isGuiRequest, ensureGuiEntryFile, ensureDeploymentArtifacts, ensureDockerfileArtifact, ensureTestFiles, ensureTestArtifact, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, type PlannedFile, type FileUse } from '../ai/guiShared.js';
+import { languageGuidanceBlock } from '../ai/languageGuidance.js';
+import { sanitizeGoModuleName } from '../sandbox/nonTsCompileGate.js';
+import { repairAndParseJSON } from './architect.js';
 export { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports } from '../ai/guiShared.js';
 export type { PlannedFile, FileUse } from '../ai/guiShared.js';
 import fs from 'fs';
+import os from 'os';
 import pathModule from 'path';
 import { spawn } from 'child_process';
+import { findTruncation } from '../layers/fileGenerator.js';
+import { type LanguageGate } from '../sandbox/nonTsCompileGate.js';
+// The ONE verification path shared with the canvas pipeline (layers/fileGenerator.ts).
+import { runTscGate, deriveBuildVerdict, type TscEntry, type TscStatus, type SmokeVerdict } from '../sandbox/buildVerification.js';
+import {
+  isNonTsGateFile,
+  sanitizeNonTsSource,
+  braceBalance,
+  findUnimplementedPlannedExports,
+  groupGateErrorsByFile,
+  groupStubFailuresByFile,
+  pathFromGateFailure,
+  runProjectGates,
+  runNonTsGatesWithRepair,
+} from '../sandbox/nonTsRepair.js';
+// Re-export the shared non-TS helpers so existing importers (tests, routes) keep
+// working — they now live in sandbox/nonTsRepair.ts, shared with the canvas path.
+export { sanitizeNonTsSource, braceBalance, findUnimplementedPlannedExports, groupGateErrorsByFile, groupStubFailuresByFile, pathFromGateFailure } from '../sandbox/nonTsRepair.js';
+import { runRuntimeSmokeTest } from '../sandbox/runtimeSmokeTest.js';
+// The behavioral smoke gate (render + CLI probes, deterministic fixes, repair
+// prompts, bounded repair loop) now lives in the SHARED sandbox module so the
+// canvas path can run the same verification. Re-exported below so existing
+// importers (tests, routes) keep working unchanged.
+import {
+  runBehavioralSmokeGates as runBehavioralSmokeGatesShared,
+  runRenderSmoke,
+  runCliSmoke,
+  pickCliEntryFile,
+  detectHtmlTruncation,
+  applyDeterministicHtmlRuntimeFixes,
+  buildRenderSmokeRepairPrompt,
+  buildCliSmokeRepairPrompt,
+  buildTruncationCompletionPrompt,
+  buildErrorFocusedNumberedSource,
+  fixUninvokedEntryMain,
+  addDeterministicHelpHandler,
+  applyDeterministicCliFixes,
+} from '../sandbox/behavioralSmoke.js';
+export {
+  runRenderSmoke,
+  runCliSmoke,
+  pickCliEntryFile,
+  detectHtmlTruncation,
+  applyDeterministicHtmlRuntimeFixes,
+  buildRenderSmokeRepairPrompt,
+  buildCliSmokeRepairPrompt,
+  buildTruncationCompletionPrompt,
+  buildErrorFocusedNumberedSource,
+  fixUninvokedEntryMain,
+  addDeterministicHelpHandler,
+} from '../sandbox/behavioralSmoke.js';
+// Tree Mode (app boundaries) — the chat path plans from text, so it derives app
+// membership from the project's trees + the planned file paths. Shared with the
+// canvas path (layers/fileGenerator.ts) so both export the same layout.
+import { resolveTreeScopes, planExportLayout, buildPlanTreeSection, buildCrossTreeBoundarySection, partitionPlanByTrees, slugify, bridgeFileName, BRIDGE_SYSTEM_PROMPT, buildBridgePrompt, parseBridgeResponse } from '../utils/treeScope.js';
+import { projects } from '../db/projects.js';
 
 export const codePlannerRoutes = Router();
 const translator = new AITranslator();
@@ -39,8 +102,8 @@ const translator = new AITranslator();
 // A runaway LLM generation must never hang the route handler. These are passed
 // to translator.reason(), which aborts the in-flight HTTP request via
 // AbortSignal.timeout (also freeing the model slot) and surfaces a clean error.
-const PLAN_TIMEOUT_MS = 180_000;   // plan reasoning is small (~2k tokens) — 3 min cap
-const WRITE_TIMEOUT_MS = 600_000;  // per-call cap — a full one-shot at 12288 tokens takes ~4-6 min at ~30-50 tok/s (measured 364s at 33.7 tok/s); per-file calls are far smaller
+const PLAN_TIMEOUT_MS = 360_000;   // plan reasoning is small (≤4k tokens) — 6 min cap; the live R20 14B measures ~33 tok/s idle / ~8-16 under voice contention, so 4k tokens needs up to ~8 min worst-case but typically 1-2 min
+const WRITE_TIMEOUT_MS = 1_500_000; // per-call cap — the one-shot budget is 8192 tokens, and the live R20 14B measures ~33 tok/s idle / ~8-16 tok/s under voice contention, so a full-budget generation takes ~4-17 min (a 900s cap 504'd builds mid-generation — the budget and the timeout must stay consistent); per-file calls are far smaller
 
 // ─── Export-dir helpers ────────────────────────────────────────
 
@@ -69,7 +132,7 @@ function safeJoin(exportDir: string, relPath: string): string {
 // ─── User-context injection (profile + manifesto + library) ──────────────
 // Part 2 of the intent upgrade: the WRITE path finally sees who the user is
 // and what they want. Mirrors the injection pattern already used by the
-// architect path (prompts.ts enrichWithKnowledge / getArchitectPrompt).
+// architect path (prompts.ts getArchitectPrompt).
 
 // Module-anchored (mirrors manifesto.ts / libraryContext.ts / user.ts) so the
 // paths stay correct regardless of the process working directory.
@@ -206,6 +269,32 @@ function capInjection(text: string, maxChars: number): string {
 }
 
 /**
+ * VACA's own internal-knowledge block (patterns + wiki sections) for the
+ * request — the same gather the blueprint /build route injects, so the chat
+ * codePlanner also consults what VACA already knows before writing code
+ * (was: only the library context). Capped to keep local-model prompts small;
+ * empty when nothing matches.
+ */
+export function getInternalKnowledgeBlock(
+  request: string,
+  language?: string,
+  /** Test seam; forwarded to gatherInternalKnowledge (defaults to the live store). */
+  query?: (q: KnowledgeQuery) => PatternEntry[],
+): string {
+  try {
+    const internal = gatherInternalKnowledge(request, { language, query });
+    if (!internal.context) return '';
+    return (
+      `\n\n━━━ VACA INTERNAL KNOWLEDGE (patterns + wiki — consult before implementing) ━━━\n` +
+      capInjection(internal.context, 1200)
+    );
+  } catch (err: any) {
+    console.warn('[codePlanner] Internal knowledge injection failed (non-fatal):', err.message);
+    return '';
+  }
+}
+
+/**
  * The one-shot node-type context is drawn from the 'logic' | 'master' buckets
  * ONLY — the literal Part-2 contract (getLibraryContextForNodeType('logic'|'master')).
  * 'master' when the plan is dominated by master/blueprint files, otherwise
@@ -255,15 +344,19 @@ function normalizeLibraryMode(v: unknown): LibraryMode {
  * chunk's user-prompt instruction ("only THIS CHUNK") — otherwise a weak model
  * obeys the system prompt and writes everything, reintroducing the token cap.
  */
-function getWritePromptWithContext(
+async function getWritePromptWithContext(
   request: string,
   dominant?: { type: string; language: string } | null,
   mode: LibraryMode = 'hybrid',
   basePrompt: string = WRITE_PROMPT
-): string {
+): Promise<string> {
   const parts: string[] = [basePrompt, ...getUserContextSections()];
-  const library = getLibraryContextBlock(request, dominant, mode);
+  const library = await getLibraryContextBlock(request, dominant, mode);
   if (library) parts.push(`\n\n${library}`);
+  // Prefer patterns in the plan's dominant language (e.g. a Go build should
+  // see Go examples, not Java ones).
+  const internal = getInternalKnowledgeBlock(request, dominant?.language);
+  if (internal) parts.push(internal);
   return parts.join('\n');
 }
 
@@ -275,11 +368,11 @@ function getWritePromptWithContext(
  * block for the training sidecar (fidelity: the LoRA learns from exactly what
  * the model saw), while getWritePromptWithContext injects the same block.
  */
-function getLibraryContextBlock(
+async function getLibraryContextBlock(
   request: string,
   dominant?: { type: string; language: string } | null,
   mode: LibraryMode = 'hybrid'
-): string {
+): Promise<string> {
   const hasDominant = !!(dominant && dominant.type);
   if (mode === 'dominant' && hasDominant) {
     return capInjection(
@@ -288,24 +381,28 @@ function getLibraryContextBlock(
     );
   }
   if (mode === 'hybrid' && hasDominant) {
-    const goalLib = capInjection(getLibraryContext(request), 900);
+    const goalLib = capInjection(await getLibraryContextDense(request), 900);
     const nodeLib = capInjection(
       getLibraryContextForNodeType(resolveOneShotNodeType(dominant), dominant!.language),
       900
     );
     return [goalLib, nodeLib].filter(Boolean).join('\n\n');
   }
-  return capInjection(getLibraryContext(request), 1800);
+  return capInjection(await getLibraryContextDense(request), 1800);
 }
 
 /**
  * Compose the per-file FILE_WRITE system prompt with user context for THAT
  * file: profile + manifesto + getLibraryContextForNodeType(nodeType, language).
  */
-function getFileWritePromptWithContext(file: PlannedFile): string {
+function getFileWritePromptWithContext(file: PlannedFile, request?: string): string {
   const parts: string[] = [FILE_WRITE_PROMPT, ...getUserContextSections()];
   const library = capInjection(getLibraryContextForNodeType(inferNodeTypeFromPath(file.path), file.language), 1500);
   if (library) parts.push(`\n\n${library}`);
+  if (request) {
+    const internal = getInternalKnowledgeBlock(request, file.language);
+    if (internal) parts.push(internal);
+  }
   return parts.join('\n');
 }
 
@@ -359,6 +456,8 @@ function getPlanPromptWithContext(request: string, preference: UiPreference, sca
   if (scaleSection) parts.push(scaleSection);
   const library = capInjection(getLibraryContext(request), 1500);
   if (library) parts.push(`\n\n${library}`);
+  const internal = getInternalKnowledgeBlock(request);
+  if (internal) parts.push(internal);
   return parts.join('\n');
 }
 
@@ -434,6 +533,180 @@ function normalizeQuestions(questions: unknown): ClarifyingQuestion[] {
  * `src/game.ts` (and vice versa). Used by dependency ordering, the consistency
  * checker, and the chunked repair matcher.
  */
+/**
+ * Tree Mode on the CHAT path — the layout half.
+ *
+ * `generatePlanFiles` plans ONE flat file list, but a multi-app project must
+ * export each app as its own program. When a `projectId` names a project with
+ * 2+ app trees, remap every planned file into its app directory (`apps/<app>/`),
+ * collect the app-boundary info the writer prompts need, and return the bridge
+ * modules to generate. A single-tree project returns `null` and NOTHING below
+ * changes — the ordinary flat build is byte-identical to before.
+ *
+ * The canvas path already does this in layers/fileGenerator.ts; this is the
+ * chat path's counterpart, reusing the same utils/treeScope primitives.
+ */
+function applyTreePlanLayout(
+  projectId: string | undefined,
+  contractFiles: PlannedFile[],
+): {
+  project: any;
+  files: PlannedFile[];
+  separateApps: boolean;
+  planSection: string;
+  boundaryByPath: Map<string, string>;
+  bridges: ReturnType<typeof partitionPlanByTrees>['bridges'];
+  appDirByPath: Map<string, string>;
+} | null {
+  if (!projectId || typeof projectId !== 'string') return null;
+  const project = projects.getById(projectId);
+  if (!project) return null;
+  const resolved = resolveTreeScopes(project as any);
+  if (resolved.trees.length <= 1) return null; // single app: flat build unchanged
+
+  const scope = partitionPlanByTrees(project as any, contractFiles.map(f => f.path));
+  const treeByFilePath = new Map<string, (typeof scope.trees)[number]>();
+  for (const t of scope.trees) {
+    for (const p of t.filePaths) treeByFilePath.set(p, t);
+  }
+
+  const files = contractFiles.map((f) => {
+    const t = treeByFilePath.get(f.path);
+    if (!t) return f;
+    // Root the file under its app directory. A file the plan already placed
+    // under `apps/<dir>/` is left exactly where it is (no double-prefix).
+    const already = /^apps\//.test(f.path);
+    const path = already ? f.path : `apps/${t.appDir}/${f.path}`;
+    return { ...f, path };
+  });
+
+  // Boundary prompt section for a file = the cross-app boundary it sits on.
+  // Membership is by the plan file's ROOT NODE id (a path segment) when the
+  // plan used node ids, else by the app directory — so a writer that keeps the
+  // plan's own paths still gets the "talk through the bridge" instruction.
+  const boundaryByPath = new Map<string, string>();
+  for (const f of files) {
+    const segs = f.path.split('/');
+    const dir = segs[0] === 'apps' ? segs[1] : '';
+    const tree = scope.trees.find((t) => t.appDir === dir);
+    if (!tree) continue;
+    // Every node id in this tree is a candidate "boundary node"; the writer
+    // gets the section when its file's tree participates in a bridge.
+    const participates = scope.bridges.some((b) => b.sourceTreeId === tree.id || b.targetTreeId === tree.id);
+    if (!participates) continue;
+    const section = buildCrossTreeBoundarySection('', { trees: resolved.trees, intraEdges: [], links: scope.links, treeIdByNode: resolved.treeIdByNode } as any, scope.bridges);
+    // buildCrossTreeBoundarySection('') returns '' (no node match) — build the
+    // tree-level section directly from the bridges instead.
+    const lines: string[] = [];
+    for (const b of scope.bridges) {
+      if (b.sourceTreeId === tree.id) lines.push(`  • This app SUPPLIES "${b.payloadLabel}" to the separate app "${b.targetTreeName}" — export a plain, serializable way to hand it out; the bridge module "${b.name}" carries it.`);
+      if (b.targetTreeId === tree.id) lines.push(`  • This app RECEIVES "${b.payloadLabel}" from the separate app "${b.sourceTreeName}" — consume it through the bridge module "${b.name}"; expect a plain data object, never an import of the other app.`);
+    }
+    if (lines.length === 0) continue;
+    boundaryByPath.set(f.path, '\n\n━━━ CROSS-APP BOUNDARY (Tree Mode) ━━━\n' +
+      'This app is a SEPARATE program from the others in this project: never import another app\'s source files. Data crosses only through the named bridge module.\n' +
+      lines.join('\n') +
+      '\nExport/consume PLAIN data (primitives, arrays, plain objects) so the bridge can move it between apps.');
+  }
+
+  const appDirByPath = new Map<string, string>();
+  for (const f of files) {
+    const segs = f.path.split('/');
+    appDirByPath.set(f.path, segs[0] === 'apps' ? segs[1] : '');
+  }
+
+  return {
+    project,
+    files,
+    separateApps: true,
+    planSection: buildPlanTreeSection(project as any),
+    boundaryByPath,
+    bridges: scope.bridges,
+    appDirByPath,
+  };
+}
+
+/**
+ * Generate ONE cross-app bridge module for the chat path (Tree Mode). Mirrors
+ * fileGenerator.generateBridgeModule: the bridge carries a single payload
+ * between two SEPARATE apps, so it lives in the shared `bridge/` directory and
+ * is never imported by either app's own source as a sibling module.
+ * Returns null when the model produced nothing usable.
+ */
+async function generateBridgeFileForPlan(
+  request: string,
+  project: any,
+  bridge: { key: string; name: string; sourceTreeId: string; targetTreeId: string; sourceTreeName: string; targetTreeName: string; payloadType: string; payloadLabel: string; links: Array<{ sourceNodeId: string; targetNodeId: string; description?: string; relation?: string }> },
+  timeoutMs: number,
+): Promise<{ path: string; content: string } | null> {
+  const byId = new Map((project.nodes || []).map((n: any) => [n.id, n]));
+  const describe = (id: string) => {
+    const n: any = byId.get(id);
+    if (!n) return null;
+    return { label: n.data?.label || n.id, type: n.data?.type || n.type, description: n.data?.description, language: n.data?.language };
+  };
+  const sourceNodes = bridge.links.map((l) => describe(l.sourceNodeId)).filter(Boolean) as any[];
+  const targetNodes = bridge.links.map((l) => describe(l.targetNodeId)).filter(Boolean) as any[];
+  const language = sourceNodes.find((n) => n.language)?.language || 'typescript';
+  const prompt = buildBridgePrompt({
+    bridge: bridge as any,
+    projectName: project.name || request,
+    targetOS: project.targetOS,
+    sourceNodes,
+    targetNodes,
+  });
+  try {
+    const raw = await translator.reason(prompt, BRIDGE_SYSTEM_PROMPT, { maxTokens: 2048, timeoutMs: Math.min(timeoutMs, 180_000) });
+    const code = parseBridgeResponse(raw);
+    if (!code || code.trim().length < 20) return null;
+    return { path: `bridge/${bridgeFileName(bridge as any, language)}`, content: code };
+  } catch (err: any) {
+    console.warn(`[codePlanner] bridge "${bridge.name}" failed (non-fatal):`, err?.message || err);
+    return null;
+  }
+}
+
+/**
+ * Generate + attach the cross-app bridge modules for a Tree-Mode chat build.
+ *
+ * Bridges carry a payload between two SEPARATE apps, so they live in the
+ * shared `bridge/` directory and are never imported as a sibling module. They
+ * are generated AFTER the app files are finalized (matching the canvas path's
+ * ordering intent): the app compile/repair loop never regenerates a file with
+ * no node behind it, so a bridge that does not compile surfaces honestly in
+ * the returned file list instead of shipping silently under a green build.
+ * Non-fatal: a bridge the model cannot produce is skipped with a warning.
+ */
+async function appendTreeBridges<
+  T extends { files: Array<{ path: string; content: string }>; exportDir?: string } | null,
+>(
+  request: string,
+  treeLayout: ReturnType<typeof applyTreePlanLayout>,
+  gen: T,
+  timeoutMs: number,
+): Promise<T> {
+  if (!gen || !treeLayout || !treeLayout.bridges.length) return gen;
+  const bridgeFiles: Array<{ path: string; content: string }> = [];
+  for (const b of treeLayout.bridges) {
+    const bf = await generateBridgeFileForPlan(request, treeLayout.project, b, timeoutMs);
+    if (bf) bridgeFiles.push(bf);
+  }
+  if (!bridgeFiles.length) return gen;
+  if (gen.exportDir) {
+    for (const bf of bridgeFiles) {
+      try {
+        const full = safeJoin(gen.exportDir, bf.path);
+        fs.mkdirSync(pathModule.dirname(full), { recursive: true });
+        fs.writeFileSync(full, bf.content, 'utf-8');
+      } catch (err: any) {
+        console.warn(`[codePlanner] bridge "${bf.path}" write failed (non-fatal):`, err?.message || err);
+      }
+    }
+  }
+  console.log(`[codePlanner] Tree Mode: attached ${bridgeFiles.length} bridge module(s) — ${bridgeFiles.map(b => b.path).join(', ')}`);
+  return { ...gen, files: [...gen.files, ...bridgeFiles] } as T;
+}
+
 function normalizeContractPath(p: string): string {
   return (p || '')
     .replace(/^\.\//, '')
@@ -446,6 +719,31 @@ function normalizeContractPath(p: string): string {
  * without a path (can't be planned/written), keeps only string exports and
  * well-formed uses. Never throws on malformed JSON shapes.
  */
+/**
+ * Is this a member name the contract can actually be verified against?
+ *
+ * The plan prompt asks for SYMBOL names, but the model sometimes emits a
+ * placeholder SENTENCE instead — measured live, a Python temperature converter
+ * was rejected with "planned export '<optional error handling functions or
+ * constants>' is not implemented in the generated code" while its code was
+ * perfectly correct. The contract gate builds a regex from the name and looks
+ * for a declaration with that literal name (see memberImplementationState), so
+ * a non-identifier can NEVER be satisfied — the build is failed by a phantom
+ * requirement. Every supported language requires identifiers, so drop such
+ * names at plan-normalization time rather than failing on them later.
+ *
+ * Dotted / `::`-qualified names (Foo.bar, Class::method) are kept: the verifier
+ * escapes and matches those literally.
+ */
+export function isValidContractMemberName(name: string): boolean {
+  return /^[A-Za-z_$][A-Za-z0-9_$]*(?:(?:\.|::)[A-Za-z_$][A-Za-z0-9_$]*)*$/.test(name);
+}
+
+/** A module specifier a real import could name (rejects placeholder prose). */
+function isPlausibleModuleSpecifier(from: string): boolean {
+  return from.length > 0 && !/[<>\s"'`|]/.test(from);
+}
+
 function normalizeFileContracts(files: unknown): PlannedFile[] {
   if (!Array.isArray(files)) return [];
   const out: PlannedFile[] = [];
@@ -457,7 +755,12 @@ function normalizeFileContracts(files: unknown): PlannedFile[] {
     const summary = typeof obj.summary === 'string' ? obj.summary : '';
     const language = typeof obj.language === 'string' ? obj.language : '';
     const exportsArr = Array.isArray(obj.exports)
-      ? [...new Set(obj.exports.filter((m): m is string => typeof m === 'string' && m.trim().length > 0).map(m => m.trim()))]
+      ? [...new Set(
+          obj.exports
+            .filter((m): m is string => typeof m === 'string' && m.trim().length > 0)
+            .map(m => m.trim())
+            .filter(isValidContractMemberName),
+        )]
       : [];
     const usesArr = Array.isArray(obj.uses)
       ? obj.uses
@@ -465,9 +768,14 @@ function normalizeFileContracts(files: unknown): PlannedFile[] {
           .map(u => {
             const from = typeof u.from === 'string' ? u.from.trim() : '';
             const members = Array.isArray(u.members)
-              ? u.members.filter((m): m is string => typeof m === 'string' && m.trim().length > 0).map(m => m.trim())
+              ? [...new Set(
+                  u.members
+                    .filter((m): m is string => typeof m === 'string' && m.trim().length > 0)
+                    .map(m => m.trim())
+                    .filter(isValidContractMemberName),
+                )]
               : [];
-            return from && members.length ? { from, members } : null;
+            return from && isPlausibleModuleSpecifier(from) && members.length ? { from, members } : null;
           })
           .filter((u): u is FileUse => u !== null)
       : [];
@@ -955,13 +1263,26 @@ export function isSafeNonRelativeImport(spec: string): boolean {
  * specifier is neither a Node builtin nor an installed package (phantom npm
  * dependencies the writer invented). Zero LLM calls; never touches the body.
  * Handles binding imports (incl. multi-line), side-effect imports
- * (`import 'pkg'`), and re-exports (`export { a } from 'pkg'` / `export *`).
+ * (`import 'pkg'`), re-exports (`export { a } from 'pkg'` / `export *`), AND
+ * CJS `require()` phantoms (`const fetch = require('node-fetch')`, destructured
+ * `const { render, screen } = require('@testing-library/react')`, and bare
+ * side-effect `require('pkg');`) — same policy: builtins (`fs`, `node:path`)
+ * and installed packages stay, invented npm packages go.
  * If the removed members were used in the body, the resulting TS2304
  * undefined-symbol errors route to the tsc gate's import repair, which
  * implements them locally or imports from a planned file. Returns the stripped
  * content or null when nothing matched.
  */
-export function stripPhantomPackageImports(content: string): string | null {
+const PHANTOM_STRIP_EXTS = /\.(?:ts|tsx|js|jsx|mjs|cjs|html?)$/i;
+
+export function stripPhantomPackageImports(content: string, relPath?: string): string | null {
+  // This gate removes PHANTOM npm dependencies from JS/TS sources. Non-JS
+  // languages must never be touched: Go's `import "fmt"` matches the
+  // side-effect-import regex below and was being DELETED from generated Go
+  // files (a real `go build` then failed with `undefined: fmt`). When the
+  // caller knows the file path, only strip for JS/TS/HTML; a missing path keeps
+  // the legacy behavior so direct unit calls are unaffected.
+  if (relPath !== undefined && !PHANTOM_STRIP_EXTS.test(relPath)) return null;
   let changed = false;
   const dropIfPhantom = (whole: string, spec: string): string => {
     if (spec.startsWith('.') || spec.startsWith('/') || isSafeNonRelativeImport(spec)) return whole;
@@ -976,7 +1297,14 @@ export function stripPhantomPackageImports(content: string): string | null {
     // Side-effect imports: import 'pkg';
     .replace(/^\s*import\s+['"]([^'"]+)['"]\s*;?\s*$/gm, dropIfPhantom)
     // Re-exports: export * from 'pkg' / export { a } from 'pkg' / export a from 'pkg'
-    .replace(/^\s*export\s+(?:\*|\{[^}]*\}|[A-Za-z_$][\w$]*)\s+from\s*['"]([^'"]+)['"]\s*;?\s*$/gm, dropIfPhantom);
+    .replace(/^\s*export\s+(?:\*|\{[^}]*\}|[A-Za-z_$][\w$]*)\s+from\s*['"]([^'"]+)['"]\s*;?\s*$/gm, dropIfPhantom)
+    // CJS binding: const fetch = require('pkg') — the node-fetch phantom observed
+    // live on the full-stack write probe (a require shadowing the global fetch).
+    .replace(/^\s*(?:const|let|var)\s+[A-Za-z_$][\w$]*\s*=\s*require\s*\(\s*['"]([^'"]+)['"]\s*\)\s*;?\s*$/gm, dropIfPhantom)
+    // CJS destructured binding: const { render, screen } = require('pkg')
+    .replace(/^\s*(?:const|let|var)\s*\{[^}]*\}\s*=\s*require\s*\(\s*['"]([^'"]+)['"]\s*\)\s*;?\s*$/gm, dropIfPhantom)
+    // CJS side-effect require: require('pkg');
+    .replace(/^\s*require\s*\(\s*['"]([^'"]+)['"]\s*\)\s*;?\s*$/gm, dropIfPhantom);
   return changed ? out : null;
 }
 
@@ -1018,6 +1346,9 @@ export function verifyGeneratedContracts(
     const key = normalizeContractPath(f.path);
     const planned = declaredByPath.get(key);
     if (!planned) continue; // unplanned generated file (e.g. preview wrapper) — not contract-checked
+    // Non-TS languages (Java/Go/Python/…): the whole JS import/export contract
+    // alphabet is inapplicable — their compiles are the non-TS gate's job.
+    if (isNonTsGateFile(planned.language, f.path)) continue;
     const declared = new Set(planned.exports || []);
     const actual = actualByPath.get(key) || new Set();
     // 1. Declared exports that never materialize in the code.
@@ -1257,6 +1588,10 @@ export function applyDeterministicImportPatch(
   file: PlannedFile,
   allFiles: PlannedFile[]
 ): string | null {
+  // Non-TS languages (Java/Go/Python/…) have their own import semantics — the
+  // JS-style import lines this builds (`import { X } from './y';`) are invalid
+  // there. Never patch them; the non-TS compile gate judges their imports.
+  if (isNonTsGateFile(file.language, file.path)) return null;
   const lines = computeRequiredImportLines(file, allFiles);
   if (!lines.length) return null;
   // Parse the required imports into {specifier, resolved target key, members}.
@@ -1428,6 +1763,490 @@ export function applyDeterministicNameDriftFix(
   }
   if (!changed) return null;
   const out = lines.join('\n');
+  return out !== content ? out : null;
+}
+
+/**
+ * Snapshot each file's FIRST-DRAFT content into `<exportDir>/_first-drafts/`
+ * (idempotent: never overwrites an existing snapshot, so later repair-round
+ * mutations can't clobber it). This is the "rejected" side of an ORPO
+ * preference pair: the draft as the model FIRST wrote it (usually broken —
+ * the tsc gate repairs it after), vs. the final tsc-clean file that ships.
+ * Every converged write therefore yields a genuine (chosen, rejected) pair
+ * from the model's OWN work — the self-improvement loop made trainable.
+ * Only .ts/.tsx files are snapshotted (the only ones the tsc gate can judge);
+ * the `_first-drafts/` dir is never listed in the sidecar's `files`, so the
+ * capture gate and tsc runs (which take explicit file lists) never see them.
+ */
+export function snapshotFirstDrafts(exportDir: string, files: Array<{ path: string; content: string }>): void {
+  const draftsRoot = safeJoin(exportDir, '_first-drafts');
+  for (const f of files) {
+    if (!/\.(ts|tsx)$/i.test(f.path)) continue;
+    const dest = safeJoin(draftsRoot, f.path);
+    if (fs.existsSync(dest)) continue; // first draft already captured — keep it
+    fs.mkdirSync(pathModule.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, f.content, 'utf-8');
+  }
+}
+
+/**
+ * Bucket raw tsc error lines by TS error class → counts (e.g. { TS2304: 2,
+ * TS2451: 1, TS2339: 3 }). Used for error-class telemetry: the capture pipeline
+ * records WHICH classes a write's residual errors belong to (TS2304 missing
+ * name vs TS2451 redeclared vs TS2339 wrong member) instead of a bare count,
+ * so a regression in one class is visible run-to-run. Pure — unit-testable.
+ */
+export function bucketTscClasses(errors: string[]): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const e of errors) {
+    const m = e.match(/error\s+(TS\d+)/);
+    if (!m) continue;
+    out[m[1]] = (out[m[1]] || 0) + 1;
+  }
+  return out;
+}
+
+/**
+ * Scan a file's ACTUAL exported names from its written content (the drift fix
+ * and the content-driven import fix share this). Returns the declared names of
+ * `export function/const/class/interface/type/enum X` and `export { X }`
+ * blocks. Best-effort regex — never a gate, only feeds deterministic fixes.
+ */
+function scanFileExports(src: string): Set<string> {
+  const names = new Set<string>();
+  const BANNED = new Set(['default', 'async', 'declare', 'abstract', 'function', 'const', 'let', 'var', 'interface', 'class', 'type', 'enum', 'readonly', 'import', 'export', 'from']);
+  for (const m of src.matchAll(/export\s+(?:type\s+|interface\s+|class\s+|function\s+|const\s+|enum\s+|abstract\s+class\s+)?([A-Za-z_$][\w$]*)/g)) {
+    const name = m[1];
+    if (!BANNED.has(name)) names.add(name);
+  }
+  for (const m of src.matchAll(/export\s*\{([^}]*)\}/g)) {
+    for (const nm of m[1].matchAll(/[A-Za-z_$][\w$]*/g)) names.add(nm[0]);
+  }
+  return names;
+}
+
+/**
+ * CONTENT-DRIVEN missing-import fix (zero LLM): the plan-driven
+ * `applyDeterministicImportPatch` only inserts imports the PLAN declared in
+ * `uses` — when the model references a symbol the plan never declared (the
+ * observed TS2304 class on full-stack writes: `Cannot find name 'X'` where X
+ * IS exported by a sibling but was never in the plan's contract), nothing gets
+ * inserted and the error survives to the LLM repair prompts. This scans the
+ * ACTUAL sibling file contents for an export of the missing name; when exactly
+ * ONE sibling exports it (unambiguous), insert the import deterministically.
+ * Returns patched content or null (ambiguous / not exported anywhere → the
+ * caller falls through to the LLM prompts).
+ */
+export function applyContentDrivenImportFix(
+  content: string,
+  selfPath: string,
+  allFiles: Array<{ path: string; content?: string }>,
+  errs: string[]
+): string | null {
+  // Collect missing names: TS2304 "Cannot find name 'X'" / TS2503 namespace.
+  const missing = new Set<string>();
+  for (const e of errs) {
+    const m = e.match(/Cannot find (?:name|namespace) '([A-Za-z_$][\w$]*)'/);
+    if (m) missing.add(m[1]);
+  }
+  if (!missing.size) return null;
+
+  // Names the file already imports (don't re-add) or declares locally (the
+  // model may have inlined the type/value — a local declaration wins).
+  const alreadyImported = new Set<string>();
+  for (const imp of extractImports(content)) {
+    for (const mm of imp.members) alreadyImported.add(mm);
+    if (imp.hasDefault) alreadyImported.add('default');
+  }
+  const localDecls = new Set<string>();
+  for (const m of content.matchAll(/\b(?:function|class|interface|type|enum|const|let|var)\s+([A-Za-z_$][\w$]*)\b/g)) {
+    localDecls.add(m[1]);
+  }
+
+  // Map each missing name → siblings that ACTUALLY export it.
+  const selfKey = normalizeContractPath(selfPath);
+  const ownerBy = new Map<string, string[]>(); // missing name -> sibling keys
+  for (const f of allFiles) {
+    if (!f?.path || !f.content) continue;
+    const key = normalizeContractPath(f.path);
+    if (key === selfKey) continue;
+    const exports = scanFileExports(f.content);
+    for (const name of missing) {
+      if (!exports.has(name)) continue;
+      if (!ownerBy.has(name)) ownerBy.set(name, []);
+      ownerBy.get(name)!.push(key);
+    }
+  }
+
+  // Unambiguous: exactly ONE sibling exports the name, not already imported,
+  // not declared locally. Resolve the sibling's actual path for the specifier.
+  const pathByKey = new Map(allFiles.filter(f => f?.path).map(f => [normalizeContractPath(f.path), f.path] as [string, string]));
+  const newLines: string[] = [];
+  for (const name of missing) {
+    if (alreadyImported.has(name) || localDecls.has(name)) continue;
+    const owners = ownerBy.get(name);
+    if (!owners || owners.length !== 1) continue; // ambiguous or missing everywhere
+    const ownerPath = pathByKey.get(owners[0]);
+    if (!ownerPath) continue;
+    const spec = relativeImportSpecifier(selfPath, ownerPath);
+    newLines.push(`import { ${name} } from '${spec}';`);
+  }
+  if (!newLines.length) return null;
+  const out = insertImportLines(content, newLines);
+  return out !== content ? out : null;
+}
+
+/**
+ * Deterministic TS2307 sibling-path resolver (zero LLM): tsc reports "Cannot
+ * find module '../controllers'" when the import's RELATIVE PATH is wrong for
+ * the actual sibling layout — the observed probe classes: a `../` specifier
+ * for a file in the SAME directory (`src/controllers.test.ts` importing
+ * `'../controllers'` while `src/controllers.ts` is its sibling), a `.ts`
+ * extension on a sibling path (`'../database/database.ts'` → `'./database'`),
+ * or a wrong directory. For each failing relative specifier, resolve its
+ * basename against the ACTUAL files in the project (extension-tolerant,
+ * case-insensitive, directory-index aware); when exactly ONE file matches,
+ * rewrite the import path to the correct relative specifier. Ambiguous
+ * (multiple basename matches) or unresolved → null, so the caller falls
+ * through to the LLM repair prompts. Idempotent and zero LLM calls — never
+ * touches the file body.
+ */
+export function applyDeterministicSiblingPathFix(
+  content: string,
+  selfPath: string,
+  allFiles: Array<{ path: string }>,
+  errs: string[]
+): string | null {
+  // Failing RELATIVE module specifiers from TS2307 lines:
+  //   src/a.test.ts(1,62): error TS2307: Cannot find module '../controllers'.
+  const failing = new Set<string>();
+  for (const e of errs) {
+    const m = e.match(/error TS2307: Cannot find module '([^']+)'/);
+    if (!m) continue;
+    const spec = m[1];
+    // Relative specifiers only (./x and ../x) — non-relative phantoms (npm
+    // packages) are stripPhantomPackageImports' class, and absolute /x paths
+    // are never generated.
+    if (spec.startsWith('.')) failing.add(spec);
+  }
+  if (!failing.size) return null;
+
+  const selfKey = normalizeContractPath(selfPath);
+  // basename (extension-stripped) -> every sibling file whose basename or
+  // directory-index matches it (case-insensitive).
+  const pathByKey = new Map(allFiles.filter(f => f?.path).map(f => [normalizeContractPath(f.path), f.path] as [string, string]));
+  const baseOf = (p: string): string => (p.split(/[\\/]/).pop() || '').replace(/\.(ts|tsx|js|jsx)$/i, '');
+  const dirLast = (p: string): string => {
+    const segs = p.split(/[\\/]/);
+    segs.pop();
+    return segs[segs.length - 1] || '';
+  };
+
+  const rewrites: Array<{ from: string; to: string }> = [];
+  for (const spec of failing) {
+    const base = baseOf(spec);
+    if (!base) continue;
+    const matches: string[] = [];
+    for (const f of allFiles) {
+      if (!f?.path) continue;
+      const key = normalizeContractPath(f.path);
+      if (key === selfKey) continue;
+      const fileBase = baseOf(f.path);
+      if (fileBase.toLowerCase() === base.toLowerCase()) {
+        matches.push(f.path);
+      } else if (fileBase.toLowerCase() === 'index' && dirLast(f.path).toLowerCase() === base.toLowerCase()) {
+        matches.push(f.path); // directory-style: 'components' → components/index.ts
+      }
+    }
+    if (matches.length !== 1) continue; // ambiguous or unresolved → LLM
+    // Directory-index matches ('components' → components/index.ts) use the
+    // conventional directory specifier ('./components', not './components/index').
+    const target = baseOf(matches[0]).toLowerCase() === 'index'
+      ? matches[0].replace(/[\\/]index\.(ts|tsx|js|jsx)$/i, '')
+      : matches[0];
+    let correct = relativeImportSpecifier(selfPath, target);
+    if (correct === './') correct = './index'; // same-dir edge: '../components' from inside components/
+    if (correct === spec) continue; // already the correct specifier
+    rewrites.push({ from: spec, to: correct });
+  }
+  if (!rewrites.length) return null;
+
+  // Rewrite ONLY inside import/export/require statements (`from 'SPEC'`,
+  // `import 'SPEC'`, `require('SPEC')`) — a body string literal that happens
+  // to equal the spec is never touched. Handles single + double quotes and
+  // multi-line import statements (the `from 'SPEC'` tail is a plain substring).
+  let out = content;
+  for (const { from, to } of rewrites) {
+    const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const anyQuote = `['"]`;
+    const replaced = out
+      .replace(new RegExp(`from\\s*${anyQuote}${escaped}${anyQuote}`, 'g'), `from '${to}'`)
+      .replace(new RegExp(`\\bimport\\s*${anyQuote}${escaped}${anyQuote}`, 'g'), `import '${to}'`)
+      .replace(new RegExp(`require\\s*\\(\\s*${anyQuote}${escaped}${anyQuote}\\s*\\)`, 'g'), `require('${to}')`);
+    out = replaced;
+  }
+  return out !== content ? out : null;
+}
+
+/**
+ * Placeholder value for a primitive member type (the TS2345 partial-object
+ * patcher inserts these for missing members). Only exact primitives + arrays:
+ * a complex type (Date, a custom interface) can't take a placeholder without
+ * risking a NEW compile error, so those return null and the caller skips.
+ */
+function primitivePlaceholder(type: string): string | null {
+  const t = type.trim();
+  if (t === 'string') return "''";
+  if (t === 'number') return '0';
+  if (t === 'boolean') return 'false';
+  if (t.endsWith('[]')) return '[]';
+  return null;
+}
+
+/**
+ * Extract the REQUIRED (non-optional) members of a named interface/class/type
+ * from a source file: member name -> declared type. Returns null when the type
+ * is not declared in this source (caller scans siblings). Shared shape source
+ * with the TS2345 patcher.
+ */
+function extractRequiredInterfaceMembers(src: string, typeName: string): Map<string, string> | null {
+  let m = new RegExp(`(?:interface|class)\\s+${typeName}\\b[^{]*\\{([\\s\\S]*?)\\n\\}`).exec(src);
+  if (!m) {
+    m = new RegExp(`type\\s+${typeName}\\s*=\\s*\\{([\\s\\S]*?)\\n\\}`).exec(src);
+  }
+  if (!m) return null;
+  const out = new Map<string, string>();
+  for (const line of m[1].split('\n')) {
+    const mm = line.match(/^\s*([A-Za-z_$][\w$]*)(\??)\s*:\s*([^;]+);/);
+    if (mm && !mm[2]) out.set(mm[1], mm[3].trim()); // required members only
+  }
+  return out.size ? out : null;
+}
+
+/**
+ * Deterministic TS2345 partial-object call-site patcher (zero LLM): the
+ * dominant assignability sub-class — a call passes a PARTIAL object literal
+ * (`addNote({ content: 'x' })`) where a full interface is required
+ * (`addNote(note: Note)` with `interface Note { id; title; content }`). The
+ * R20 probe's write-6 class (7× in app.test.ts; the tsc "missing the following
+ * properties" detail line never reaches the errors array, so the missing
+ * members are derived from the REAL sibling declaration of the target type).
+ * For each TS2345 error whose argument is an object literal, insert the
+ * missing members at the single-line call site with type-appropriate
+ * placeholders. Safety guards: a member is only inserted when its type is
+ * primitive (a placeholder for a complex type would not compile) AND the file
+ * never references it as a member (`.id` / `['id']` — its value then matters
+ * and the LLM must choose it). Multi-line or ambiguous lines fall through.
+ * Idempotent, zero LLM calls, touches nothing but the call arguments.
+ */
+export function applyDeterministicPartialObjectFix(
+  content: string,
+  selfPath: string,
+  allFiles: Array<{ path: string; content?: string }>,
+  errs: string[]
+): string | null {
+  // tests/app.test.ts(10,11): error TS2345: Argument of type '{ content: string; }' is not assignable to parameter of type 'Note'.
+  const targets: Array<{ line: number; type: string; present: string[] }> = [];
+  for (const e of errs) {
+    const m = e.match(/\((\d+),\d+\): error TS2345: Argument of type '\{([^}]*)\}' is not assignable to parameter of type '([A-Za-z_$][\w$]*)'/);
+    if (!m) continue;
+    const present = [...m[2].matchAll(/([A-Za-z_$][\w$]*)\s*:/g)].map(x => x[1]);
+    targets.push({ line: Number(m[1]), type: m[3], present });
+  }
+  if (!targets.length) return null;
+
+  // Required members of each target type from the ACTUAL sibling declarations.
+  // Prefer the files THIS file imports from (the type reaches the call site
+  // through them) — a same-named interface declared elsewhere (e.g. a
+  // component's local `interface Note`) may be a DIFFERENT, smaller shape.
+  const selfKey = normalizeContractPath(selfPath);
+  const selfDir = pathModule.posix.dirname((selfPath || 'x.ts').replace(/\\/g, '/'));
+  const importedKeys: string[] = [];
+  for (const m of content.matchAll(/(?:from\s+|import\s*|require\s*\(\s*)(['"]?)(\.{1,2}\/[^'")\s]+)/g)) {
+    const spec = m[2];
+    if (!spec.startsWith('.')) continue;
+    const resolved = normalizeContractPath(pathModule.posix.join(selfDir, spec));
+    if (resolved && resolved !== selfKey && !importedKeys.includes(resolved)) importedKeys.push(resolved);
+  }
+  const ordered: typeof allFiles = [];
+  for (const key of importedKeys) {
+    const hit = allFiles.find(f => f?.content && normalizeContractPath(f.path) === key);
+    if (hit) ordered.push(hit);
+  }
+  for (const f of allFiles) {
+    if (!f?.content) continue;
+    if (normalizeContractPath(f.path) === selfKey) continue;
+    if (ordered.includes(f)) continue;
+    ordered.push(f);
+  }
+
+  const requiredBy = new Map<string, Map<string, string>>();
+  for (const t of targets) {
+    if (requiredBy.has(t.type)) continue;
+    for (const f of ordered) {
+      if (!f?.content) continue;
+      const members = extractRequiredInterfaceMembers(f.content, t.type);
+      if (members) { requiredBy.set(t.type, members); break; }
+    }
+  }
+
+  const lines = content.split('\n');
+  let changed = false;
+  for (const t of targets) {
+    const idx = t.line - 1;
+    if (idx < 0 || idx >= lines.length) continue;
+    const line = lines[idx];
+    // Only a SINGLE {..} pair on the line — an unambiguous object-literal arg.
+    const pairs = [...line.matchAll(/\{[^{}]*\}/g)];
+    if (pairs.length !== 1) continue;
+    const lit = pairs[0][0];
+    const required = requiredBy.get(t.type);
+    if (!required) continue;
+    const placeholders: string[] = [];
+    let safe = true;
+    for (const [name, type] of required) {
+      if (t.present.includes(name)) continue;
+      if (new RegExp(`\\b${name}\\s*:`).test(lit)) { safe = false; break; }
+      const ph = primitivePlaceholder(type);
+      if (ph === null) { safe = false; break; }
+      if (new RegExp(`\\.${name}\\b|\\['${name}'\\]|\\["${name}"\\]`).test(content)) { safe = false; break; }
+      placeholders.push(`${name}: ${ph}`);
+    }
+    if (!safe || !placeholders.length) continue;
+    const newLit = lit.slice(0, -1).trimEnd() + ', ' + placeholders.join(', ') + ' }';
+    lines[idx] = line.replace(lit, newLit);
+    changed = true;
+  }
+  if (!changed) return null;
+  const out = lines.join('\n');
+  return out !== content ? out : null;
+}
+
+/**
+ * Deterministic TS5097 extension-strip (zero LLM): tsc flags "An import path
+ * can only end with a '.ts' extension when 'allowImportingTsExtensions' is
+ * enabled" when the model writes `from '../src/note.ts'` — a RESOLVABLE path
+ * with an explicit TS/JS extension (the observed write-6/rerun class). The
+ * error message carries no specifier, so this is a CONTENT-based pass: rewrite
+ * every relative import/export/require specifier that ends in .ts/.tsx/.js/.jsx
+ * IF the extension-stripped path resolves to an actual file in the project.
+ * Only ever touches resolvable paths — never removes an extension that would
+ * break resolution — and never touches the body. Idempotent, zero LLM calls.
+ * Returns patched content or null when nothing changed.
+ */
+export function normalizeImportExtensions(
+  content: string,
+  selfPath: string,
+  allFiles: Array<{ path: string }>
+): string | null {
+  const selfDir = pathModule.posix.dirname(selfPath || 'x.ts');
+  const keyOf = (p: string): string => normalizeContractPath(pathModule.posix.normalize(p));
+  const byKey = new Map(allFiles.filter(f => f?.path).map(f => [normalizeContractPath(f.path), f.path] as [string, string]));
+  let changed = false;
+  const fixSpec = (spec: string): string => {
+    if (!spec.startsWith('.')) return spec; // non-relative: never a .ts-extension issue
+    const stripped = spec.replace(/\.(ts|tsx|js|jsx)$/i, '');
+    if (stripped === spec) return spec;
+    if (byKey.has(keyOf(pathModule.posix.join(selfDir, stripped)))) { changed = true; return stripped; }
+    return spec; // stripping would break resolution — leave it
+  };
+  const out = content
+    .replace(/(\bfrom\s*['"])([^'"]+)(['"])/g, (m, pre: string, spec: string, post: string) => pre + fixSpec(spec) + post)
+    .replace(/(\bimport\s*['"])([^'"]+)(['"])/g, (m, pre: string, spec: string, post: string) => pre + fixSpec(spec) + post)
+    .replace(/(\brequire\s*\(\s*['"])([^'"]+)(['"]\s*\))/g, (m, pre: string, spec: string, post: string) => pre + fixSpec(spec) + post);
+  return changed ? out : null;
+}
+
+/**
+ * Deterministic TS2459 missing-export fix (zero LLM): a file IMPORTS a name
+ * that another file DECLARES locally but never exports ("Module './note'
+ * declares 'Note' locally, but it is not exported") — the root cause of the
+ * R20 probe write-6 cascade: note.ts's non-exported `interface Note` broke
+ * server.ts/storage.ts (TS2459) AND made App.tsx's `Note` reference
+ * unimportable (TS2304, no sibling exports it). The per-file repair loop
+ * never fixes the CAUSING file (it has no errors of its own), so the cascade
+ * survives every round. This resolves the target module + name from the
+ * error, finds the local declaration in the target's ACTUAL content, and adds
+ * `export` — zero LLM calls. Ambiguous (multiple declarations), already
+ * exported, or unresolved target → null (caller falls through). Returns the
+ * TARGET file's path + patched content so the caller can update a DIFFERENT
+ * file than the one being repaired.
+ */
+export function applyDeterministicMissingExportFix(
+  selfPath: string,
+  allFiles: Array<{ path: string; content?: string }>,
+  errs: string[]
+): { path: string; content: string } | null {
+  // src/server.ts(1,10): error TS2459: Module '"./note"' declares 'Note' locally, but it is not exported.
+  const wanted: Array<{ spec: string; name: string }> = [];
+  for (const e of errs) {
+    const m = e.match(/error TS2459: Module '([^']+)' declares '([A-Za-z_$][\w$]*)' locally, but it is not exported/);
+    if (m) wanted.push({ spec: m[1].replace(/^"|"$/g, ''), name: m[2] }); // tsc quotes the specifier: '"./note"'
+  }
+  if (!wanted.length) return null;
+
+  // Resolve each module spec against selfPath's dir (extension-tolerant),
+  // and match against the ACTUAL files in the project.
+  const selfDir = pathModule.posix.dirname(selfPath || 'x.ts');
+  const keyOf = (p: string): string => normalizeContractPath(pathModule.posix.normalize(p));
+  const pathByKey = new Map(allFiles.filter(f => f?.path).map(f => [normalizeContractPath(f.path), f.path] as [string, string]));
+
+  for (const { spec, name } of wanted) {
+    const targetPath = pathByKey.get(keyOf(pathModule.posix.join(selfDir, spec)));
+    if (!targetPath) continue; // target not in the project — the LLM's problem
+    const target = allFiles.find(f => f?.path === targetPath);
+    const content = target?.content;
+    if (!content) continue;
+    // Exactly ONE declaration of the name, and it is NOT already exported.
+    const re = new RegExp(`^(\\s*)(export\\s+)?(?:abstract\\s+class|async\\s+function|interface|class|type|enum|function|const|let|var)\\s+${name}\\b`, 'gm');
+    const matches = [...content.matchAll(re)];
+    const unexported = matches.filter(mx => !mx[2]);
+    if (matches.length !== 1 || unexported.length !== 1) continue; // ambiguous or already exported
+    const patched = content.replace(re, (m: string, ws: string) => `${ws}export ${m.trimStart()}`);
+    if (patched === content) continue;
+    return { path: targetPath, content: patched };
+  }
+  return null;
+}
+
+/**
+ * Deterministic TS2451 local-collision fix (zero LLM): a file that IMPORTS a
+ * name AND also declares it locally (the model inlined the type/value instead
+ * of importing it — the observed TS2451 class "Cannot redeclare block-scoped
+ * variable 'X'") trips tsc. The local declaration wins: drop the imported
+ * member so the redeclare vanishes (the file clearly defines its own copy).
+ * Returns patched content or null when no collision was found.
+ */
+export function applyDeterministicLocalCollisionFix(content: string, errs: string[]): string | null {
+  const colliding = new Set<string>();
+  for (const e of errs) {
+    const m = e.match(/Cannot redeclare block-scoped (?:variable|function|class|const) '([A-Za-z_$][\w$]*)'/);
+    if (m) colliding.add(m[1]);
+  }
+  if (!colliding.size) return null;
+  // Only touch members that ARE imported (a local-only redeclare between two
+  // local declarations is a real model bug the LLM must fix, not a collision
+  // with an import).
+  const lines = content.split('\n');
+  let changed = false;
+  for (let i = 0; i < lines.length; i++) {
+    const im = lines[i].match(/^(\s*import\s*(?:type\s+)?\{)([^}]*)(\}\s*from\s*['"][^'"]+['"]\s*;?\s*)$/);
+    if (!im) continue;
+    const members = im[2].split(',').map((s: string) => s.trim()).filter(Boolean);
+    const kept = members.filter((mm) => {
+      const binding = mm.split(/\s+as\s+/)[0]?.trim();
+      return !colliding.has(binding);
+    });
+    if (kept.length === members.length) continue;
+    if (!kept.length) {
+      lines[i] = ''; // whole import line gone — collapse below
+    } else {
+      lines[i] = `${im[1]} ${kept.join(', ')} ${im[3]}`;
+    }
+    changed = true;
+  }
+  if (!changed) return null;
+  const out = lines.filter(l => l.trim() !== '' || true).join('\n').replace(/\n{3,}/g, '\n\n');
   return out !== content ? out : null;
 }
 
@@ -1720,7 +2539,9 @@ export function applyDeterministicVoidReturnFix(content: string, errors: string[
 // the model instead of shipping broken. Probes are injectable for tests.
 
 /** A smoke-gate verdict shared by the render and CLI probes. */
-export type SmokeVerdict = { status: 'passed' | 'failed' | 'skipped' | 'unavailable'; errors: string[]; detail: string };
+// SmokeVerdict now lives in the shared verification module; re-exported here so
+// existing importers (tests, routes) keep working unchanged.
+export type { SmokeVerdict };
 
 /**
  * Run the render gate (HTML entries) and, when no HTML entry exists, the CLI
@@ -1729,6 +2550,20 @@ export type SmokeVerdict = { status: 'passed' | 'failed' | 'skipped' | 'unavaila
  * smoke phase can never starve (or be starved by) other phases; `tag` prefixes
  * logs so finalize vs chunked runs are distinguishable. Mutates `files` in
  * place when a repair rewrites the failing entry.
+ */
+/**
+ * Run the render gate (HTML entries) and, when no HTML entry exists, the CLI
+ * gate — each with a bounded repair loop (up to 2 rounds per gate). `canRepair`
+ * / `consumeRepair` hook into the caller's shared LLM-repair budget so the
+ * smoke phase can never starve (or be starved by) other phases; `tag` prefixes
+ * logs so finalize vs chunked runs are distinguishable. Mutates `files` in
+ * place when a repair rewrites the failing entry.
+ *
+ * The GATES and the repair loop now live in `sandbox/behavioralSmoke.ts` so the
+ * canvas path can run the same verification (it previously could not — the
+ * whole gate lived here in a routes module). This wrapper supplies the default
+ * chat-path repair call (an LLM rewrite with the raw-code contract) and stays
+ * exported so existing importers/tests keep working unchanged.
  */
 export async function runBehavioralSmokeGates(opts: {
   request: string;
@@ -1744,90 +2579,51 @@ export async function runBehavioralSmokeGates(opts: {
   /** Injectable for tests: returns the rewritten file content (or '' / unchanged to abort). */
   repairCall?: (prompt: string) => Promise<string>;
 }): Promise<{ renderSmoke: SmokeVerdict; cliSmoke: SmokeVerdict }> {
-  const { request, files, contractFiles, exportDir, timeoutMs, tag } = opts;
-  const canRepair = opts.canRepair;
-  const consumeRepair = opts.consumeRepair;
-  const renderProbe = opts.renderProbe ?? runRenderSmoke;
-  const cliProbe = opts.cliProbe ?? runCliSmoke;
   // Default repair call: LLM rewrite of the failing file (raw-code contract —
   // strip fences/JSON wrappers exactly like the write paths do).
   const repairCall = opts.repairCall
     ?? (async (prompt: string): Promise<string> => {
-        const raw = await translator.reason(prompt, FILE_WRITE_PROMPT, { maxTokens: 8192, timeoutMs });
+        const raw = await translator.reason(prompt, FILE_WRITE_PROMPT, { maxTokens: 8192, timeoutMs: opts.timeoutMs });
         let content = cleanLLMResponse(raw);
         const wrapped = extractJSON<{ content?: string }>(content);
         if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
         else content = content.replace(/^```(?:\w+)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
         return content;
       });
-
-  // Render gate: smoke-test HTML entries in headless Chrome. A FAILED verdict
-  // (console/page errors, interaction-crash, or blank page) feeds back into a
-  // bounded repair loop — the "loads but doesn't work" class is only fixable
-  // when the model sees the actual runtime errors.
-  let renderSmoke = await renderProbe(exportDir, files);
-  const MAX_SMOKE_REPAIR_ROUNDS = 2;
-  let smokeRounds = 0;
-  while (renderSmoke.status === 'failed' && smokeRounds < MAX_SMOKE_REPAIR_ROUNDS && canRepair()) {
-    smokeRounds += 1;
-    const htmlEntry = files.find(f => /\.html?$/i.test(f.path) && (f.content || '').trim().length > 0);
-    if (!htmlEntry) break;
-    const planned = contractFiles.find(t => normalizeContractPath(t.path) === normalizeContractPath(htmlEntry.path))
-      || { path: htmlEntry.path, summary: 'HTML app', language: 'html' };
-    consumeRepair();
-    console.warn(`[codePlanner] ${tag} render smoke: FAILED (${renderSmoke.detail}) — behavioral repair round ${smokeRounds}`);
-    emitCodegenProgress({ phase: 'validating', percent: 90 + smokeRounds * 3, message: `Fixing ${renderSmoke.errors.length} runtime error(s) in ${htmlEntry.path}…` });
-    const prompt = buildRenderSmokeRepairPrompt(request, planned, htmlEntry.content, renderSmoke.errors, renderSmoke.detail);
-    const content = await repairCall(prompt);
-    if (!content || content === htmlEntry.content) {
-      console.warn(`[codePlanner] ${tag} render smoke: repair round ${smokeRounds} produced no usable rewrite — stopping`);
-      break;
-    }
-    htmlEntry.content = content;
-    // Re-apply the self-containment pass: a repair that introduces external
-    // <script src> refs must still yield a single-file preview-ready entry.
-    inlineExternalScriptRefs(files);
-    fs.writeFileSync(safeJoin(exportDir, htmlEntry.path), htmlEntry.content, 'utf-8');
-    renderSmoke = await renderProbe(exportDir, files);
-  }
-  if (renderSmoke.status !== 'skipped') {
-    console.log(`[codePlanner] ${tag} render smoke: ${renderSmoke.status} (${renderSmoke.detail})${smokeRounds ? ` after ${smokeRounds} repair round(s)` : ''}`);
-  }
-
-  // CLI gate: for non-HTML projects, execute the entry under tsx and feed a
-  // FAILED verdict into the same bounded repair loop — the "compiles but
-  // doesn't work" class for CLIs (type-only imports erased at runtime,
-  // undefined symbols, stub bodies that print nothing).
-  let cliSmoke = renderSmoke.status !== 'skipped'
-    ? { status: 'skipped' as const, errors: [], detail: 'HTML entry present — render gate used' }
-    : await cliProbe(exportDir, files);
-  const MAX_CLI_SMOKE_REPAIR_ROUNDS = 2;
-  let cliSmokeRounds = 0;
-  while (cliSmoke.status === 'failed' && cliSmokeRounds < MAX_CLI_SMOKE_REPAIR_ROUNDS && canRepair()) {
-    cliSmokeRounds += 1;
-    const entryPath = pickCliEntryFile(files);
-    const entry = entryPath ? files.find(f => f.path === entryPath) : undefined;
-    if (!entry) break;
-    const planned = contractFiles.find(t => normalizeContractPath(t.path) === normalizeContractPath(entry.path))
-      || { path: entry.path, summary: 'CLI app', language: 'typescript' };
-    consumeRepair();
-    console.warn(`[codePlanner] ${tag} cli smoke: FAILED (${cliSmoke.detail}) — behavioral repair round ${cliSmokeRounds}`);
-    emitCodegenProgress({ phase: 'validating', percent: 90 + cliSmokeRounds * 3, message: `Fixing ${cliSmoke.errors.length} runtime error(s) in ${entry.path}…` });
-    const prompt = buildCliSmokeRepairPrompt(request, planned, entry.content || '', cliSmoke.errors, cliSmoke.detail);
-    const content = await repairCall(prompt);
-    if (!content || content === entry.content) {
-      console.warn(`[codePlanner] ${tag} cli smoke: repair round ${cliSmokeRounds} produced no usable rewrite — stopping`);
-      break;
-    }
-    entry.content = content;
-    fs.writeFileSync(safeJoin(exportDir, entry.path), content, 'utf-8');
-    cliSmoke = await cliProbe(exportDir, files);
-  }
-  if (cliSmoke.status !== 'skipped') {
-    console.log(`[codePlanner] ${tag} cli smoke: ${cliSmoke.status} (${cliSmoke.detail})${cliSmokeRounds ? ` after ${cliSmokeRounds} repair round(s)` : ''}`);
-  }
-  return { renderSmoke, cliSmoke };
+  return runBehavioralSmokeGatesShared({ ...opts, repairCall });
 }
+
+/**
+ * Planner build gates — the honest verification the chat write path used to
+ * skip relative to the canvas pipeline.
+ *
+ *  - `languageGates`: the SAME whole-project non-TS compile gate the canvas path
+ *    runs (`runNonTsProjectGates`: `go build ./...` / `py_compile`). tsc is
+ *    blind to Go/Python, so without this a Go build reports compileStatus
+ *    'skipped' / 0 errors and the summary prints a green checkmark with
+ *    NOTHING compiled (the "tsCompileClean:true while 8/9 files failed" bug).
+ *  - `stubFailures`: the shared deterministic stub/placeholder/prompt-artifact
+ *    gate (`isStubBody`) — a body that compiles but never implements its
+ *    contract (`// TODO: Implement`, echoed `REAL FILE CONTENT`) must not ship.
+ */
+async function runPlannerBuildGates(
+  request: string,
+  files: Array<{ path: string; content: string }>,
+  contractFiles: PlannedFile[],
+): Promise<{ languageGates: LanguageGate[]; stubFailures: string[] }> {
+  // Shared with the canvas path (sandbox/nonTsRepair.ts): whole-project non-TS
+  // compile gates + the file-level stub gate + the contract-aware implementation
+  // gate. Thin logging wrapper so the chat path's log lines stay stable.
+  const { languageGates, stubFailures } = await runProjectGates(request, files, contractFiles);
+  if (languageGates.length) {
+    console.log(`[codePlanner] non-TS compile gates: ${languageGates.map((g) => `${g.language}=${g.clean ? 'PASS' : 'FAIL'}`).join(', ')}`);
+  }
+  if (stubFailures.length) {
+    console.warn(`[codePlanner] ${stubFailures.length} stub/placeholder body(ies) rejected: ${stubFailures.slice(0, 5).join(', ')}`);
+  }
+  return { languageGates, stubFailures };
+}
+
 
 async function finalizeGeneratedFiles(
   request: string,
@@ -1842,11 +2638,22 @@ async function finalizeGeneratedFiles(
   exportDir: string;
   repairRounds: number;
   tscErrors: number;
+  /** Residual error-class breakdown ({TS2304: 2, ...}) for telemetry. */
+  tscClasses?: Record<string, number>;
   contractViolations: number;
-  /** True when the independent tsc gate actually ran and gave a verdict. */
-  tscVerified: boolean;
+  /**
+   * True when the independent tsc gate actually RAN and gave a verdict.
+   * NOTE: this is NOT "the code compiles" — it is true for status 'errors'
+   * too. Read `compileStatus`/`tscErrors` for the real verdict. (Renamed from
+   * `tscVerified`, whose name read as "verified clean" but meant "gate ran".)
+   */
+  tscGateRan: boolean;
   /** The independent tsc gate's verdict: 'clean' | 'errors' | 'skipped' | 'unavailable'. */
   compileStatus: 'clean' | 'errors' | 'skipped' | 'unavailable';
+  /** Whole-project non-TS compile gates (go build / py_compile). Empty = none needed. */
+  languageGates: LanguageGate[];
+  /** Paths whose body is a stub/placeholder/prompt-artifact (never shippable). */
+  stubFailures: string[];
   /** Headless-Chrome render smoke-test verdict for HTML entries (3D gate). */
   renderSmoke: { status: 'passed' | 'failed' | 'skipped' | 'unavailable'; errors: string[]; detail: string };
   /** tsx-execution behavioral gate verdict for non-HTML (CLI/script) entries. */
@@ -1871,8 +2678,8 @@ async function finalizeGeneratedFiles(
       });
       const contractBlock = buildPerFileContractBlock(f, contractFiles);
       const isHtmlFile = f.language?.toLowerCase() === 'html' || /\.html?$/i.test(f.path);
-      const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n\nImport from the other planned files ONLY the members declared in this file's contract above. NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES above.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
-      const raw = await translator.reason(prompt, getFileWritePromptWithContext(f), { maxTokens: 4096, timeoutMs });
+      const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n${languageGuidanceBlock(f.language, { goModuleName: sanitizeGoModuleName(request) })}\nImport from the other planned files ONLY the members declared in this file's contract above. NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES above.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+      const raw = await translator.reason(prompt, getFileWritePromptWithContext(f, request), { maxTokens: 4096, timeoutMs });
       let content = cleanLLMResponse(raw);
       const wrapped = extractJSON<{ content?: string }>(content);
       if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
@@ -1949,7 +2756,7 @@ async function finalizeGeneratedFiles(
       // The tsc gate picks up any now-undefined symbols (TS2304) if the
       // removed members were used.
       if (errs.some(e => e.startsWith('[IMPORT]'))) {
-        const stripped = stripPhantomPackageImports(cf.content);
+        const stripped = stripPhantomPackageImports(cf.content, cf.path);
         if (stripped && stripped !== cf.content) {
           cf.content = stripped;
           changed = true;
@@ -1983,11 +2790,29 @@ async function finalizeGeneratedFiles(
   // Mirrors the chunked loop so "compiles" is a gate on every write path.
   const exportDir = getExportDir(request);
   inlineExternalScriptRefs(working); // GUI entry must be self-contained for preview
+  // Deployment-artifact guarantee (Layer 2 — output, deterministic, zero LLM):
+  // when the request asks for deployment and the writer still omitted a
+  // Dockerfile (stochastic writes skip files even when the PLAN had them),
+  // inject a stack-appropriate scaffold so the export always ships the deploy
+  // artifact the request asked for. Runs BEFORE the write-to-disk + tsc gate
+  // so the artifact is on disk like any other generated file (Dockerfile is
+  // not TS/JS, so the gate ignores it).
+  working = ensureDockerfileArtifact(working, request);
+  // Test-artifact guarantee (Layer 2 — output, deterministic, zero LLM): same
+  // chokepoint as the Dockerfile — when the request asks for unit tests and
+  // the writer still omitted a test file, inject a self-contained smoke test
+  // that always compiles, so the export always ships the test artifact.
+  working = ensureTestArtifact(working, request);
   for (const f of working) {
     const fullPath = safeJoin(exportDir, f.path);
     fs.mkdirSync(pathModule.dirname(fullPath), { recursive: true });
     fs.writeFileSync(fullPath, f.content, 'utf-8');
   }
+  // First-draft snapshot (ORPO pair source): capture each .ts/.tsx file as the
+  // model FIRST wrote it, BEFORE the tsc gate + repair loop mutate it. The
+  // final file ships tsc-clean; this snapshot is the "rejected" side of a
+  // genuine (chosen, rejected) preference pair from the model's own work.
+  snapshotFirstDrafts(exportDir, working);
   let repairRounds = 0;
   let tscVerdict = await runTscCheck(exportDir, working);
   emitCodegenProgress({ phase: 'validating', percent: 76, message: tscVerdict.errors.length ? `Compiling with tsc — ${tscVerdict.errors.length} error(s)…` : 'Compiling with tsc…' });
@@ -2064,6 +2889,25 @@ async function finalizeGeneratedFiles(
       const cfPathKey = normalizeContractPath(cf.path);
       const cfBaseKey = normalizeContractPath(cf.path.split('/').pop() || '');
       const fileErrs = errByFile.get(cfPathKey) || errByFile.get(cfBaseKey);
+      // Truncation lint (TS-side sibling of the HTML check in
+      // runBehavioralSmokeGates): a file cut off mid-generation (output token
+      // cap) ends with unbalanced braces — more `{` than `}`. tsc reports only
+      // TS1005 "'}' expected" on the LAST line, which does NOT tell the model
+      // the file was TRUNCATED, so blind repair re-emits the same truncated
+      // file. Append an explicit TRUNCATION note to this file's error list so
+      // whichever repair prompt runs (import / regenerate) tells the model to
+      // FINISH the file instead of patching the last line. A truncated file
+      // always has at least one tsc error (unbalanced braces), so this rides
+      // the existing per-file repair path — no new loop needed.
+      if (fileErrs && fileErrs.length) {
+        const trunc = findTruncation(cf.content);
+        if (trunc && !fileErrs.some(e => e.startsWith('TRUNCATION'))) {
+          fileErrs.push(
+            `TRUNCATION: this file is INCOMPLETE — it was cut off mid-generation (${trunc.open} opening braces vs ${trunc.close} closing braces; it ends without closing its outermost blocks). The generation hit the output token limit. RE-GENERATE the COMPLETE file: every function, statement, and closing brace must be present. Do NOT leave the code mid-expression — finish the file to its natural end.`
+          );
+          console.warn(`[codePlanner] tsc gate: ${cf.path} TRUNCATION lint — unbalanced braces ${trunc.open}/${trunc.close} (file ends mid-block)`);
+        }
+      }
       if (!fileErrs || !fileErrs.length) continue;
       // Per-file stall: a file whose error set is UNCHANGED after 2 repaired
       // rounds is unfixable by the current prompts — give up on IT (so one
@@ -2109,13 +2953,83 @@ async function finalizeGeneratedFiles(
       // LLM calls, no body changes. Remaining undefined symbols route to the
       // import repair below.
       if (fileErrs.some(e => /error TS2307/.test(e))) {
-        const stripped = stripPhantomPackageImports(cf.content);
+        const stripped = stripPhantomPackageImports(cf.content, cf.path);
         if (stripped && stripped !== cf.content) {
           cf.content = stripped;
           fs.writeFileSync(safeJoin(exportDir, cf.path), stripped, 'utf-8');
           roundChanged = true;
           noteStall(cfPathKey, true, fileErrs);
           console.warn(`[codePlanner] tsc gate: ${cf.path} phantom npm-dependency imports removed deterministically (no LLM call)`);
+          continue; // re-check after the loop — no repair call spent
+        }
+        // TS2307 sibling-path resolver (zero LLM): tsc reports "Cannot find
+        // module '../controllers'" when the import's RELATIVE PATH is wrong
+        // for the actual sibling layout (../X for a same-dir file, a .ts
+        // extension on a sibling, a wrong directory — the probe's dominant
+        // residual class). Resolve each failing specifier's basename against
+        // the ACTUAL files in the export; when exactly one file matches,
+        // rewrite the path deterministically — before any LLM repair round.
+        const pathFixed = applyDeterministicSiblingPathFix(cf.content, cf.path, working, fileErrs);
+        if (pathFixed && pathFixed !== cf.content) {
+          cf.content = pathFixed;
+          fs.writeFileSync(safeJoin(exportDir, cf.path), pathFixed, 'utf-8');
+          roundChanged = true;
+          noteStall(cfPathKey, true, fileErrs);
+          console.warn(`[codePlanner] tsc gate: ${cf.path} TS2307 sibling import paths fixed deterministically (no LLM call)`);
+          continue; // re-check after the loop — no repair call spent
+        }
+      }
+      // TS2459 missing-export fix (zero LLM): a sibling DECLARES the imported
+      // name locally but never exports it — the root cause of write-6's
+      // cascade (note.ts's non-exported Note broke its importers AND made the
+      // name unimportable elsewhere, so the TS2304/TS2345 repairs could never
+      // converge). Patch the CAUSING file with `export` added to its local
+      // declaration — the per-file loop never selects that file on its own
+      // (it carries no errors), so without this the cascade survives every
+      // round.
+      if (fileErrs.some(e => /error TS2459/.test(e))) {
+        const exportFix = applyDeterministicMissingExportFix(cf.path, working, fileErrs);
+        if (exportFix) {
+          const target = working.find(f => normalizeContractPath(f.path) === normalizeContractPath(exportFix.path));
+          if (target) {
+            target.content = exportFix.content;
+            fs.writeFileSync(safeJoin(exportDir, target.path), exportFix.content, 'utf-8');
+            roundChanged = true;
+            noteStall(cfPathKey, true, fileErrs);
+            console.warn(`[codePlanner] tsc gate: ${exportFix.path} TS2459 missing-export fixed deterministically (export added)`);
+            continue; // re-check after the loop — no repair call spent
+          }
+        }
+      }
+      // TS5097 extension-strip (zero LLM): a relative import ending in a
+      // .ts/.tsx extension on a RESOLVABLE path trips tsc (the error names no
+      // specifier, so this is a content-based pass) — strip the extension when
+      // the extension-less path resolves to an actual sibling.
+      if (fileErrs.some(e => /error TS5097/.test(e))) {
+        const extFixed = normalizeImportExtensions(cf.content, cf.path, working);
+        if (extFixed && extFixed !== cf.content) {
+          cf.content = extFixed;
+          fs.writeFileSync(safeJoin(exportDir, cf.path), extFixed, 'utf-8');
+          roundChanged = true;
+          noteStall(cfPathKey, true, fileErrs);
+          console.warn(`[codePlanner] tsc gate: ${cf.path} TS5097 import extensions stripped deterministically (no LLM call)`);
+          continue; // re-check after the loop — no repair call spent
+        }
+      }
+      // TS2345 partial-object call-site patcher (zero LLM): a call passes a
+      // PARTIAL object literal where a full interface is required (probe
+      // write-6: addNote({ content }) vs interface Note { id; title; content })
+      // — insert the missing primitive-typed members with placeholders at the
+      // single-line call sites, guarded (never when a missing member is
+      // referenced — its value then matters — or complex-typed).
+      if (fileErrs.some(e => /error TS2345/.test(e))) {
+        const partialFixed = applyDeterministicPartialObjectFix(cf.content, cf.path, working, fileErrs);
+        if (partialFixed && partialFixed !== cf.content) {
+          cf.content = partialFixed;
+          fs.writeFileSync(safeJoin(exportDir, cf.path), partialFixed, 'utf-8');
+          roundChanged = true;
+          noteStall(cfPathKey, true, fileErrs);
+          console.warn(`[codePlanner] tsc gate: ${cf.path} TS2345 partial-object call sites fixed deterministically (no LLM call)`);
           continue; // re-check after the loop — no repair call spent
         }
       }
@@ -2146,7 +3060,34 @@ async function finalizeGeneratedFiles(
           continue;
         }
       }
-      if (fileErrs.length > 0 && fileErrs.every(e => /error TS(2304|2503|2552|2307)/.test(e))) {
+      if (fileErrs.length > 0 && fileErrs.some(e => /error TS(2304|2503|2552|2307)/.test(e))) {
+        // CONTENT-DRIVEN import insert (zero LLM): the plan-driven patch below
+        // only inserts imports the PLAN declared in `uses` — a symbol the model
+        // references that IS exported by a sibling but was never in the plan's
+        // contract survives plan-driven repair and falls to the LLM prompts.
+        // Scan the ACTUAL sibling contents; when exactly one sibling exports
+        // the missing name, the import is unambiguous — insert it here.
+        const contentPatched = applyContentDrivenImportFix(cf.content, cf.path, working, fileErrs);
+        if (contentPatched && contentPatched !== cf.content) {
+          cf.content = contentPatched;
+          fs.writeFileSync(safeJoin(exportDir, cf.path), contentPatched, 'utf-8');
+          roundChanged = true;
+          noteStall(cfPathKey, true, fileErrs);
+          console.warn(`[codePlanner] tsc gate: ${cf.path} missing-import errors fixed by CONTENT-DRIVEN import insert (no LLM call)`);
+          continue; // re-check after the loop — no repair call spent
+        }
+        // TS2451 local-collision dedup (zero LLM): a file that imports a name
+        // AND declares it locally trips "Cannot redeclare block-scoped
+        // variable" — the local declaration wins, drop the imported member.
+        const collisionFixed = applyDeterministicLocalCollisionFix(cf.content, fileErrs);
+        if (collisionFixed && collisionFixed !== cf.content) {
+          cf.content = collisionFixed;
+          fs.writeFileSync(safeJoin(exportDir, cf.path), collisionFixed, 'utf-8');
+          roundChanged = true;
+          noteStall(cfPathKey, true, fileErrs);
+          console.warn(`[codePlanner] tsc gate: ${cf.path} TS2451 local-collision fixed deterministically (no LLM call)`);
+          continue; // re-check after the loop — no repair call spent
+        }
         const patched = applyDeterministicImportPatch(cf.content, planned, contractFiles);
         if (patched && patched !== cf.content) {
           cf.content = patched;
@@ -2171,7 +3112,7 @@ async function finalizeGeneratedFiles(
           // either define it locally or import it, and the numbered source
           // makes the undeclared-reference sites impossible to miss).
           repairCalls += 1; // this is a real LLM repair call — count it against the budget
-          const regeneratePrompt = buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles);
+          const regeneratePrompt = buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles, working);
           const raw = await translator.reason(regeneratePrompt, FILE_WRITE_PROMPT, { maxTokens: 4096, timeoutMs });
           let c = cleanLLMResponse(raw);
           const wrapped = extractJSON<{ content?: string }>(c);
@@ -2229,9 +3170,9 @@ async function finalizeGeneratedFiles(
       // full numbered rewrite).
       const repairPrompt = missingNameClass
         ? (mixedNameClass && round >= 2)
-          ? buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles)
+          ? buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles, working)
           : buildMissingImportRepairPrompt(request, planned, cf.content, fileErrs, contractFiles)
-        : buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles);
+        : buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles, working);
       const raw = await translator.reason(repairPrompt, FILE_WRITE_PROMPT, { maxTokens: 4096, timeoutMs });
       let content = cleanLLMResponse(raw);
       const wrapped = extractJSON<{ content?: string }>(content);
@@ -2269,8 +3210,31 @@ async function finalizeGeneratedFiles(
   // strategy — stop instead of re-running the same passes on the same bytes.
   if (contentSignature(working) === sigBeforeRound) break;
   } // end macro round — alternation of per-file and whole-project repair
-  const remainingErrors = tscVerdict.errors.length;
-  const verdictMsg = remainingErrors
+  // FINAL deterministic safety net: the whole-project repair regenerates files
+  // via LLM and its output goes straight to the verdict — so it can
+  // RE-INTRODUCE phantom npm-dependency imports AFTER the per-file strip ran
+  // (observed live in the audit's full-stack write: the whole-project pass
+  // rewrote client/src/App.test.tsx with `import { render, screen } from
+  // '@testing-library/react'` again — a package that is never installed — and
+  // the final export shipped with the TS2307). Strip EVERY file one last time
+  // so the written export and the reported verdict are phantom-free;
+  // idempotent and zero LLM calls. Re-run tsc so the final error count
+  // reflects the stripped state (removed symbols surface honestly as TS2304).
+  let finalStripped = 0;
+  for (const f of working) {
+    const stripped = stripPhantomPackageImports(f.content, f.path);
+    if (stripped && stripped !== f.content) {
+      f.content = stripped;
+      fs.writeFileSync(safeJoin(exportDir, f.path), stripped, 'utf-8');
+      finalStripped += 1;
+    }
+  }
+  if (finalStripped > 0) {
+    console.warn(`[codePlanner] final pass: ${finalStripped} file(s) phantom npm-dependency imports stripped before verdict (no LLM call)`);
+    tscVerdict = await runTscCheck(exportDir, working);
+  }
+  let remainingErrors = tscVerdict.errors.length;
+  let verdictMsg = remainingErrors
     ? `Generated ${working.length} file(s) — ${remainingErrors} compile error(s) remain`
     : tscVerdict.status === 'clean'
       ? `Generated ${working.length} file(s), tsc-clean`
@@ -2284,6 +3248,30 @@ async function finalizeGeneratedFiles(
   // fixable when the model sees the actual runtime errors. Non-HTML projects
   // get the CLI gate instead (executes the entry under tsx). Shared helper so
   // the chunked path gets identical repair treatment.
+  // Non-TS compile gate FIRST, then the behavioral smoke. The scripted CLI
+  // probe COMPILES the program itself; running it before this gate means it
+  // judges un-repaired source and reports a bare "compile failed" (observed
+  // live: java gate then PASSED two repair rounds later, but the summary still
+  // said "cli smoke FAILED — compile failed"). Compile-repair first so the
+  // behavioral verdict is about RUNTIME behavior, not missing braces.
+  const nonTsGate = await runNonTsGatesWithRepair({
+    request,
+    files: working,
+    contractFiles,
+    exportDir,
+    timeoutMs,
+    canRepair: () => repairCalls < MAX_REPAIR_CALLS,
+    consumeRepair: () => { repairCalls += 1; },
+    repairCall: async (prompt: string): Promise<string> => {
+      const raw = await translator.reason(prompt, FILE_WRITE_PROMPT, { maxTokens: 4096, timeoutMs });
+      let content = cleanLLMResponse(raw);
+      const wrapped = extractJSON<{ content?: string }>(content);
+      if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
+      else content = content.replace(/^```(?:\w+)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+      return content;
+    },
+    onProgress: emitCodegenProgress,
+  });
   const { renderSmoke, cliSmoke } = await runBehavioralSmokeGates({
     request,
     files: working,
@@ -2294,9 +3282,75 @@ async function finalizeGeneratedFiles(
     canRepair: () => repairCalls < MAX_REPAIR_CALLS,
     consumeRepair: () => { repairCalls += 1; },
   });
-  console.log(`[codePlanner] finalize: ${working.length} file(s), ${repairRounds} tsc repair round(s), ${remainingErrors} remaining tsc error(s) [gate: ${tscVerdict.status}], ${contractViolations} contract violation(s)`);
+  // FINAL deterministic safety net (round 2): the smoke gate's bounded repair
+  // loop rewrites failing entries via the LLM AFTER the strip above ran — so a
+  // repaired file can re-introduce a phantom npm-dependency import (observed
+  // live: the render/CLI smoke repair rewrote a test file with `import {
+  // render, screen } from '@testing-library/react'` again, and the export
+  // shipped with the TS2307). Strip EVERY file once more so the written
+  // export and the reported verdict are phantom-free; idempotent, zero LLM
+  // calls. Re-run tsc so the final error count reflects the stripped state
+  // (removed symbols surface honestly as TS2304).
+  let smokeStripped = 0;
+  for (const f of working) {
+    const stripped = stripPhantomPackageImports(f.content, f.path);
+    if (stripped && stripped !== f.content) {
+      f.content = stripped;
+      fs.writeFileSync(safeJoin(exportDir, f.path), stripped, 'utf-8');
+      smokeStripped += 1;
+    }
+  }
+  if (smokeStripped > 0) {
+    console.warn(`[codePlanner] smoke-final pass: ${smokeStripped} file(s) phantom npm-dependency imports stripped after smoke repair (no LLM call)`);
+    tscVerdict = await runTscCheck(exportDir, working);
+    remainingErrors = tscVerdict.errors.length;
+    verdictMsg = remainingErrors
+      ? `Generated ${working.length} file(s) — ${remainingErrors} compile error(s) remain`
+      : tscVerdict.status === 'clean'
+        ? `Generated ${working.length} file(s), tsc-clean`
+        : `Generated ${working.length} file(s) — WARNING: tsc gate unavailable, compile NOT verified`;
+  }
+  // F3 + F5/F6/F11 gates (shared with the canvas pipeline): a non-TS build gets
+  // a real whole-project compile verdict, and a stub/placeholder body is
+  // rejected — deterministically, before the build is reported.
+  // Non-TS compile gate: unlike tsc (which owns its own repair loop above), this
+  // verdict used to be computed AFTER all repair and merely reported — a javac/
+  // go/py FAIL never triggered a fix. Now it shares a bounded repair helper so
+  // the model sees the REAL compiler errors and fixes them.
+  // Re-verify the non-TS gate on the FINAL code. The behavioral smoke's repair
+  // loop rewrites files AFTER the compile gate ran and can re-introduce a
+  // compile error (observed live: the CLI smoke repair added a second
+  // `class Board` inside TicTacToe.java → `javac: duplicate class: Board`).
+  // Without this, the response reports `java=PASS` for code that does not
+  // compile. Repair is DISABLED here — this is a verdict refresh, not a new
+  // repair round.
+  const postSmokeGate = await runNonTsGatesWithRepair({
+    request,
+    files: working,
+    contractFiles,
+    exportDir,
+    timeoutMs,
+    canRepair: () => false,
+    consumeRepair: () => {},
+    repairCall: async () => '',
+  });
+  const { languageGates, stubFailures } = postSmokeGate;
+  const nonTsRounds = nonTsGate.rounds + postSmokeGate.rounds;
+  const tscClasses = bucketTscClasses(tscVerdict.errors);
+  const failingLangs = languageGates.filter((g) => !g.clean).map((g) => g.language);
+  if (failingLangs.length) {
+    verdictMsg = `Generated ${working.length} file(s) — ${failingLangs.join('/')} compile FAILED`;
+  }
+  console.log(`[codePlanner] finalize: ${working.length} file(s), ${repairRounds} tsc repair round(s), ${remainingErrors} remaining tsc error(s) [gate: ${tscVerdict.status}], ${contractViolations} contract violation(s)${nonTsRounds ? `, ${nonTsRounds} non-TS repair round(s)` : ''}${failingLangs.length ? `, non-TS gate FAILED: ${failingLangs.join('/')}` : ''}${Object.keys(tscClasses).length ? ` — classes: ${JSON.stringify(tscClasses)}` : ''}`);
+  // The non-TS repair loop above is a REAL repair (it re-prompts the model with
+  // the compiler errors, up to MAX_NONTS_REPAIR_ROUNDS). Its rounds were only
+  // ever printed in the line above and then dropped from the return value, so
+  // every non-TS-only build reported `repairRounds: 0` no matter how much
+  // repair it did — which reads as "no repair was attempted" when diagnosing a
+  // failed row. Fold them in; the log line above keeps the tsc/non-TS split.
+  repairRounds += nonTsRounds;
   emitCodegenProgress({ phase: 'validating', percent: 95, message: verdictMsg });
-  return { files: working, exportDir, repairRounds, tscErrors: remainingErrors, contractViolations, tscVerified: tscVerdict.status === 'clean' || tscVerdict.status === 'errors', compileStatus: tscVerdict.status, renderSmoke, cliSmoke };
+  return { files: working, exportDir, repairRounds, tscErrors: remainingErrors, tscClasses, contractViolations, languageGates, stubFailures, tscGateRan: tscVerdict.status === 'clean' || tscVerdict.status === 'errors', compileStatus: tscVerdict.status, renderSmoke, cliSmoke };
 }
 
 // ─── Live progress broadcast (P2: a one-shot call is silent for minutes) ──
@@ -2475,214 +3529,131 @@ export function estimateAutoChunkSize(files: PlannedFile[]): number | undefined 
  * (e.g. `import fs from 'fs'`) from false-failing with TS1259 — a harness
  * artifact, not a code error (same class as the filtered TS5112).
  */
-export function runTscCheck(exportDir: string, files: Array<{ path: string }>): Promise<{ errors: string[]; status: 'clean' | 'errors' | 'skipped' | 'unavailable' }> {
-  const tsFiles = files.filter(f => f.path.endsWith('.ts') || f.path.endsWith('.tsx'));
-  if (!tsFiles.length) return Promise.resolve({ errors: [], status: 'skipped' });
-  const tscBin = pathModule.join(PROJECT_ROOT, 'node_modules', '.bin', 'tsc');
-  const absPaths = tsFiles.map(f => safeJoin(exportDir, f.path));
-  return new Promise((resolve) => {
-    const proc = spawn(tscBin, ['--noEmit', '--target', 'ES2020', '--module', 'ESNext', '--moduleResolution', 'bundler', '--esModuleInterop', '--skipLibCheck', ...absPaths]);
-    let out = '';
-    let timedOut = false;
-    const killTimer = setTimeout(() => {
-      timedOut = true;
-      proc.kill('SIGKILL');
-    }, 60_000);
-    proc.stdout.on('data', (d: Buffer) => { out += String(d); });
-    proc.stderr.on('data', (d: Buffer) => { out += String(d); });
-    proc.on('error', (err) => {
-      clearTimeout(killTimer);
-      console.warn('[codePlanner] tsc check unavailable:', (err as Error)?.message || err);
-      resolve({ errors: [], status: 'unavailable' });
-    });
-    proc.on('close', () => {
-      clearTimeout(killTimer);
-      if (timedOut) {
-        console.warn('[codePlanner] tsc check timed out after 60s — compile NOT verified');
-        resolve({ errors: [], status: 'unavailable' });
-      }
-      // Killed by a signal other than our 60s timer (e.g. the OS reaping it):
-      // partial output must never be reported as a verdict.
-      if (proc.signalCode !== null) {
-        console.warn(`[codePlanner] tsc check killed by signal ${proc.signalCode} — compile NOT verified`);
-        resolve({ errors: [], status: 'unavailable' });
-      }
-      // TS5112 (config-present-with-explicit-files) is a harness artifact, never a code error.
-      const errors = out.split('\n').filter(l => l.includes('error TS') && !l.includes('TS5112'));
-      resolve({ errors, status: errors.length ? 'errors' : 'clean' });
-    });
-  });
-}
-
-/**
- * Render smoke-test for generated HTML/GUI entries (behavioral + 3D gate).
- *
- * tsc can only see TypeScript — a single-file HTML app (vanilla JS + Three.js
- * via CDN) is invisible to it, so wrong CDN paths, undefined THREE, a broken
- * render loop, OR a page that crashes when the user actually clicks it all
- * pass the type gate. This spawns scripts/smoke-test-html.py (Playwright +
- * system Chrome, headless) to actually OPEN the file and report console/page
- * errors, WebGL canvas presence, the 3D-fallback banner, AND (behavioral mode)
- * new errors triggered by primary interactions (fill first input + Enter,
- * click primary control, click secondary control) plus blank-page detection.
- *
- * The gate fires for any HTML entry that carries interactive markers (inline
- * script, onclick/onkeydown/addEventListener, button/input/form) — the
- * behavioral "compiles but doesn't work" class — in addition to the 3D class.
- * A purely static info page with zero JS/controls is skipped (nothing to
- * behave).
- *
- * Best-effort by design: never blocks or fails generation — the verdict is
- * reported in the response (renderSmoke) and logged. Status:
- *   'passed' | 'failed' | 'skipped' (no HTML) | 'unavailable' (no playwright/chrome)
- */
-export function runRenderSmoke(exportDir: string, files: Array<{ path: string; content?: string }>, timeoutMs = 35_000): Promise<{ status: 'passed' | 'failed' | 'skipped' | 'unavailable'; errors: string[]; detail: string }> {
-  const html = files.find(f => /\.html?$/i.test(f.path) && (f.content || '').trim().length > 0);
-  if (!html) return Promise.resolve({ status: 'skipped', errors: [], detail: 'no HTML entry file' });
-  const content = html.content || '';
-  // Cost + relevance guard: headless Chrome costs ~8-10s, so only fire for
-  // entries with something to BEHAVE — 3D/graphics markers (three.js/WebGL)
-  // or interactive markers (inline script, event handlers, form controls).
-  // A static info page with zero JS and zero controls is skipped.
-  const is3D = /new\s+THREE\.|THREE\.[A-Z]|three(?:\.min)?\.js|from\s+['"]three['"]|webgl|getContext\s*\(\s*['"]webgl/i.test(content);
-  const isInteractive = /<script|on(?:click|keydown|keyup|change|input|submit)\s*=|addEventListener|\b<(?:button|input|form|select|textarea)\b/i.test(content);
-  if (!is3D && !isInteractive) {
-    return Promise.resolve({ status: 'skipped', errors: [], detail: 'no interactive or 3D markers in HTML' });
+export async function runTscCheck(exportDir: string, files: Array<{ path: string }>): Promise<{ errors: string[]; status: 'clean' | 'errors' | 'skipped' | 'unavailable' }> {
+  // Delegate to the SHARED compiler gate (sandbox/buildVerification.ts) so the
+  // chat and canvas pipelines compile against one implementation — same
+  // tsconfig, same ambient globals, same JSX handling, same diagnostics.
+  const entries: TscEntry[] = [];
+  for (const f of files) {
+    if (!/\.tsx?$/i.test(f.path)) continue;
+    try {
+      entries.push({ label: f.path, relPath: f.path, code: fs.readFileSync(safeJoin(exportDir, f.path), 'utf-8') });
+    } catch {
+      // Unreadable/missing on disk — the gate only ever sees files that exist.
+    }
   }
-  const absPath = safeJoin(exportDir, html.path);
-  if (!fs.existsSync(absPath)) return Promise.resolve({ status: 'skipped', errors: [], detail: 'HTML file not on disk' });
-  const script = pathModule.join(PROJECT_ROOT, 'scripts', 'smoke-test-html.py');
-  if (!fs.existsSync(script)) return Promise.resolve({ status: 'skipped', errors: [], detail: 'smoke-test-html.py missing' });
-  return new Promise((resolve) => {
-    const proc = spawn('python3', [script, absPath, '--behavioral', '--wait', '4000', '--out', `${absPath}.smoke.png`], { stdio: ['ignore', 'pipe', 'pipe'] });
-    let out = '';
-    let timedOut = false;
-    const killTimer = setTimeout(() => { timedOut = true; proc.kill('SIGKILL'); }, timeoutMs);
-    proc.stdout.on('data', (d: Buffer) => { out += String(d); });
-    proc.stderr.on('data', (d: Buffer) => { out += String(d); });
-    proc.on('error', (err) => {
-      clearTimeout(killTimer);
-      console.warn('[codePlanner] render smoke unavailable:', (err as Error)?.message || err);
-      resolve({ status: 'unavailable', errors: [], detail: (err as Error)?.message || 'spawn failed' });
-    });
-    proc.on('close', (code) => {
-      clearTimeout(killTimer);
-      if (timedOut) {
-        console.warn('[codePlanner] render smoke timed out — HTML render NOT verified');
-        resolve({ status: 'unavailable', errors: [], detail: 'timeout' });
-        return;
-      }
-      try {
-        const parsed = JSON.parse(out);
-        // Infra failure (chrome/playwright missing, launch crash) is NOT a
-        // model verdict — report 'unavailable' so the model isn't blamed.
-        if (parsed.error) {
-          resolve({ status: 'unavailable', errors: [], detail: String(parsed.error).slice(0, 160) });
-          return;
-        }
-        // Behavioral gate failures carry interaction-triggered errors — the
-        // "loads fine but crashes on click" class. Surface them so the repair
-        // loop (and the UI) sees the real behavioral failure, not just a
-        // generic "failed".
-        const behavioral = parsed.behavioral;
-        const interactionErrors = Array.isArray(behavioral?.interactionErrors)
-          ? (behavioral.interactionErrors as string[])
-          : [];
-        const errors = [
-          ...(parsed.pageErrors || []),
-          ...(parsed.consoleErrors || []),
-          ...interactionErrors,
-        ];
-        const passed = parsed.pass === true;
-        let detail: string;
-        if (behavioral && Array.isArray(behavioral.interactions)) {
-          const n = (behavioral.interactions as string[]).length;
-          detail = interactionErrors.length
-            ? `${interactionErrors.length} interaction-triggered error(s): ${interactionErrors[0].slice(0, 120)}`
-            : `interactions=${n}, bodyText=${behavioral.bodyTextLength ?? '?'}`;
-        } else if (parsed.fallbackVisible) {
-          detail = '3D fallback banner visible (CDN blocked?)';
-        } else {
-          detail = `canvas=${parsed.canvas?.found}`;
-        }
-        resolve({ status: passed ? 'passed' : 'failed', errors: errors.slice(0, 8), detail });
-      } catch {
-        resolve({ status: 'unavailable', errors: [], detail: `unparsable smoke output: ${String(out).slice(0, 160)}` });
-      }
-    });
-  });
+  const res = await runTscGate(entries, { timeoutMs: 60_000 });
+  return { errors: res.errors, status: res.status };
 }
 
+
+
+
+
+
+
 /**
- * Pick the runnable entry file of a generated non-HTML project (the file the
- * user would launch): prefers main/index/cli/app/server/start.* then falls
- * back to the first TS/JS file. Pure function — unit-testable.
+ * Build a compact, deterministic "what does this file do" summary from written
+ * source content — the relay that lets the NEXT chunk's writer (a different
+ * LLM, e.g. LLM 2) see what the previous chunks actually BUILT, not just the
+ * export names. Pure regex/line scan (zero LLM cost): purpose comment, imports,
+ * exported + top-level declarations, line count. Bounded output so the prompt
+ * never blows the token cap.
  */
-export function pickCliEntryFile(files: Array<{ path: string }>): string | null {
-  const runnable = files.filter(f => /\.(?:ts|tsx|js|mjs|cjs)$/i.test(f.path));
-  if (!runnable.length) return null;
-  const order = ['main', 'index', 'cli', 'app', 'server', 'start'];
-  for (const name of order) {
-    const hit = runnable.find(f => {
-      const base = f.path.split('/').pop() || '';
-      return new RegExp(`^${name}\.(?:ts|tsx|js|mjs|cjs)$`, 'i').test(base);
-    });
-    if (hit) return hit.path;
+export function buildWrittenFileSummary(
+  path: string,
+  content: string,
+  opts?: { maxChars?: number; maxExports?: number; maxImports?: number }
+): string {
+  const maxChars = opts?.maxChars ?? 600;
+  const maxExports = opts?.maxExports ?? 8;
+  const maxImports = opts?.maxImports ?? 6;
+  const lines = content.split('\n');
+  const lang = (path.match(/\.(\w+)$/) || [])[1] || '?';
+
+  // Purpose: first non-empty comment line (docstring / banner) before code.
+  let purpose = '';
+  const exportsFound: string[] = [];
+  const declsFound: string[] = [];
+  const importsFound: string[] = [];
+  const seen = new Set<string>();
+  const push = (arr: string[], v: string, cap: number) => {
+    if (arr.length >= cap) return;
+    const key = v.replace(/\s+/g, ' ').trim();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    arr.push(key);
+  };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (!purpose && (line.startsWith('//') || line.startsWith('*') || line.startsWith('/*'))) {
+      purpose = line.replace(/^[/*\s]+/, '').replace(/\s*[/*]+\s*$/, '').slice(0, 120);
+      continue;
+    }
+    // import lines
+    const im = line.match(/^import\s+(?:type\s+)?.*?\s+from\s+['"]([^'"]+)['"]/);
+    if (im) { push(importsFound, im[1], maxImports); continue; }
+    const req = line.match(/^import\s*\(\s*['"]([^'"]+)['"]\s*\)/);
+    if (req) { push(importsFound, req[1], maxImports); continue; }
+    // exported declarations: export function/class/interface/type/const/enum Name
+    const ex = line.match(/^export\s+(?:default\s+)?(?:async\s+)?(?:abstract\s+)?(?:function|class|interface|type|const|let|var|enum)\s+([A-Za-z_$][\w$]*)/);
+    if (ex) { push(exportsFound, ex[1], maxExports); continue; }
+    // top-level (non-exported) declarations
+    const dc = line.match(/^(?:async\s+)?(?:abstract\s+)?(?:function|class|interface|type|enum)\s+([A-Za-z_$][\w$]*)/);
+    if (dc) { push(declsFound, dc[1], maxExports); continue; }
   }
-  return runnable[0].path;
+
+  const out: string[] = [`[${path}] (${lang}, ${lines.length} lines)`];
+  if (purpose) out[0] += ` — ${purpose}`;
+  const parts: string[] = [];
+  if (importsFound.length) parts.push(`imports: ${importsFound.join(', ')}`);
+  if (exportsFound.length) parts.push(`exports: ${exportsFound.join(', ')}`);
+  if (declsFound.length) parts.push(`declares: ${declsFound.join(', ')}`);
+  if (parts.length) out.push('  ' + parts.join('\n  '));
+  let text = out.join('\n');
+  if (text.length > maxChars) text = text.slice(0, maxChars) + '…';
+  return text;
 }
 
 /**
- * CLI behavioral gate for non-HTML (terminal/script) apps. tsc can only see
- * types — a CLI that imports a type-only member as a value (erased at runtime),
- * references an undefined symbol at module scope, or is a stub body
- * (loadHabits = () => []) passes the type gate but crashes or prints NOTHING
- * when executed. This spawns scripts/smoke-test-cli.py which runs the entry
- * under tsx with --help / -h and reports the verdict + captured errors.
- *
- * Status: 'passed' | 'failed' | 'skipped' (no runnable entry) | 'unavailable'
- * (tsx/python missing — infra, never the model's fault).
+ * Build the ALREADY-WRITTEN block for a chunk prompt. Unlike the compact
+ * WORK-SO-FAR summary, this hands the next writer the FULL SOURCE of every
+ * file already on disk — it can see exact signatures, real types, and
+ * implementation choices instead of guessing from export names. Bounded so it
+ * can never blow the token budget:
+ *  - per-file cap (files over it fall back to their compact summary),
+ *  - total budget across all files (once exhausted, the rest fall back to
+ *    summaries), and
+ *  - files with no captured content fall back to their export-name line.
+ * Each entry is wrapped in a markdown fence labeled with its path so the
+ * writer can tell files apart and import from them precisely.
  */
-export function runCliSmoke(exportDir: string, files: Array<{ path: string; content?: string }>, timeoutMs = 45_000): Promise<{ status: 'passed' | 'failed' | 'skipped' | 'unavailable'; errors: string[]; detail: string }> {
-  const entry = pickCliEntryFile(files);
-  if (!entry) return Promise.resolve({ status: 'skipped', errors: [], detail: 'no runnable entry file' });
-  const absPath = safeJoin(exportDir, entry);
-  if (!fs.existsSync(absPath)) return Promise.resolve({ status: 'skipped', errors: [], detail: `entry not on disk: ${entry}` });
-  const script = pathModule.join(PROJECT_ROOT, 'scripts', 'smoke-test-cli.py');
-  if (!fs.existsSync(script)) return Promise.resolve({ status: 'unavailable', errors: [], detail: 'smoke-test-cli.py missing' });
-  return new Promise((resolve) => {
-    const proc = spawn('python3', [script, exportDir, '--entry', entry], { stdio: ['ignore', 'pipe', 'pipe'] });
-    let out = '';
-    let timedOut = false;
-    const killTimer = setTimeout(() => { timedOut = true; proc.kill('SIGKILL'); }, timeoutMs);
-    proc.stdout.on('data', (d: Buffer) => { out += String(d); });
-    proc.stderr.on('data', (d: Buffer) => { out += String(d); });
-    proc.on('error', (err) => {
-      clearTimeout(killTimer);
-      console.warn('[codePlanner] cli smoke unavailable:', (err as Error)?.message || err);
-      resolve({ status: 'unavailable', errors: [], detail: (err as Error)?.message || 'spawn failed' });
-    });
-    proc.on('close', () => {
-      clearTimeout(killTimer);
-      if (timedOut) {
-        console.warn('[codePlanner] cli smoke timed out — CLI run NOT verified');
-        resolve({ status: 'unavailable', errors: [], detail: 'timeout' });
-        return;
-      }
-      try {
-        const parsed = JSON.parse(out);
-        if (parsed.error) {
-          resolve({ status: 'unavailable', errors: [], detail: String(parsed.error).slice(0, 160) });
-          return;
-        }
-        const status = parsed.status === 'passed' ? 'passed' : parsed.status === 'failed' ? 'failed' : 'skipped';
-        const errors = Array.isArray(parsed.errors) ? (parsed.errors as string[]).slice(0, 8) : [];
-        resolve({ status, errors, detail: String(parsed.detail || '').slice(0, 240) });
-      } catch {
-        resolve({ status: 'unavailable', errors: [], detail: `unparsable cli smoke output: ${String(out).slice(0, 160)}` });
-      }
-    });
-  });
+function buildWrittenFilesBlock(
+  alreadyWritten: Array<{ path: string; exports?: string[]; content?: string }>
+): string {
+  if (!alreadyWritten.length) return '(none yet — this is the first chunk)';
+  const PER_FILE_CAP = 8000;
+  const TOTAL_BUDGET = 48000;
+  const parts: string[] = [];
+  let budgetLeft = TOTAL_BUDGET;
+  for (const f of alreadyWritten) {
+    if (!f.content) {
+      parts.push(`[${f.path}] exports: ${f.exports?.length ? f.exports.join(', ') : '(none)'}`);
+      continue;
+    }
+    const header = `━━━ FILE: ${f.path} (${f.content.length} chars) — FULL SOURCE BELOW ━━━`;
+    if (f.content.length <= PER_FILE_CAP && f.content.length <= budgetLeft) {
+      budgetLeft -= f.content.length;
+      parts.push(`${header}\n\`\`\`\n${f.content}\n\`\`\``);
+    } else {
+      // Over the per-file cap OR out of total budget — compact summary instead
+      // (still carries purpose/imports/exports/declares so imports stay safe).
+      parts.push(`${buildWrittenFileSummary(f.path, f.content)}`);
+    }
+  }
+  return parts.join('\n\n');
 }
 
 /** Build the per-chunk generation prompt (only THIS chunk's files are written). */
@@ -2692,14 +3663,15 @@ function buildChunkPrompt(
   fileList: string,
   contractsSection: string,
   answersText: string,
-  alreadyWritten: Array<{ path: string; exports?: string[] }>,
+  alreadyWritten: Array<{ path: string; exports?: string[]; content?: string }>,
   chunk: PlannedFile[],
   chunkIndex: number,
-  totalChunks: number
+  totalChunks: number,
+  relayThread?: Array<{ question: string; answer: string; toRole?: string }>,
+  designBrief?: string,
+  conductorFindings?: Array<{ chunkNo: number; findings: string[]; note: string }>
 ): string {
-  const writtenBlock = alreadyWritten.length
-    ? alreadyWritten.map(f => `[${f.path}] exports: ${f.exports?.length ? f.exports.join(', ') : '(none)'}`).join('\n')
-    : '(none yet — this is the first chunk)';
+  const writtenBlock = buildWrittenFilesBlock(alreadyWritten);
   const chunkBlock = chunk.map((f, i) => {
     const uses = f.uses?.length ? '\n  uses: ' + f.uses.map(u => `from ${u.from}: ${u.members.join(', ')}`).join('; ') : '';
     return `[${i + 1}] ${f.path} (${f.language}) — ${f.summary}\n  exports: ${f.exports?.length ? f.exports.join(', ') : '(none)'}${uses}`;
@@ -2711,63 +3683,24 @@ function buildChunkPrompt(
   const guiHint = chunkHasHtml
     ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim — use native <video>/<audio> for media, never a <div> placeholder.'
     : '';
-  return `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN (ALL FILES) ━━━\n${fileList}\n\n${contractsSection}\n\n━━━ ALREADY-WRITTEN FILES (ON DISK — import from these using their declared exports) ━━━\n${writtenBlock}\n\n━━━ CHUNK ${chunkIndex}/${totalChunks} — FILES TO WRITE NOW ━━━\n${chunkBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}${widgetSection}\n\n━━━ TASK ━━━\nWrite COMPLETE, working code ONLY for the ${chunk.length} file(s) listed in THIS CHUNK. Files in the ALREADY-WRITTEN list exist on disk — import from them ONLY the members in their declared exports. NEVER import from a file that is neither in the ALREADY-WRITTEN list nor in THIS CHUNK — it does not exist. HONOR the FILE CONTRACTS: never reference an undeclared member. Every member this chunk's files use from ALREADY-WRITTEN files or other files in THIS CHUNK MUST be imported at the top of the file — a missing import is a compile failure.${guiHint}\n\nCOMPACTNESS: Write DENSE code — no boilerplate comments, no verbose docstrings, minimal whitespace. Keep every file tight but complete.\n\nIMPORTANT: Write the ACTUAL file content. Not stubs, not placeholders — real working code.\n\nReturn ONLY valid JSON with a "files" array, where each entry has "path" and "content".`;
+  // RELAY block: questions this chunk's writer (or an earlier writer) asked the
+  // OTHER LLM mid-build, with the answers it got back. The current writer can
+  // read these to align with decisions the other voice already made.
+  const relayBlock = relayThread?.length
+    ? `\n\n━━━ RELAYED Q&A (answers the OTHER LLM gave to earlier chunks) ━━━\n${relayThread.map((r, i) => `Q${i + 1} (asked by ${r.toRole ?? 'a band member'}): ${r.question}\nA${i + 1}: ${r.answer}`).join('\n\n')}`
+    : '';
+  // CONDUCTOR block: the architect's design brief (planned before chunk 1) plus
+  // the review findings it gave for earlier chunks. The writer reads these to
+  // build to the conductor's design intent, not just the raw contracts.
+  const designBriefBlock = designBrief
+    ? `\n\n━━━ DESIGN BRIEF (from the conductor — the band's architecture) ━━━\n${designBrief}`
+    : '';
+  const conductorBlock = conductorFindings?.length
+    ? `\n\n━━━ CONDUCTOR REVIEW (what the conductor flagged in earlier chunks) ━━━\n${conductorFindings.map(f => `Chunk ${f.chunkNo}: ${f.findings.join('; ')}${f.note ? ` (${f.note})` : ''}`).join('\n')}`
+    : '';
+  return `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN (ALL FILES) ━━━\n${fileList}\n\n${contractsSection}${designBriefBlock}${conductorBlock}\n\n━━━ ALREADY-WRITTEN FILES (FULL SOURCE — import from these using their declared exports) ━━━\n${writtenBlock}\n\n━━━ CHUNK ${chunkIndex}/${totalChunks} — FILES TO WRITE NOW ━━━\n${chunkBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}${widgetSection}${relayBlock}\n\n━━━ TASK ━━━\nWrite COMPLETE, working code ONLY for the ${chunk.length} file(s) listed in THIS CHUNK. The ALREADY-WRITTEN block above contains the FULL SOURCE of every file previous chunks already wrote (a file whose source was too large or the budget ran out shows a compact summary instead). Read that source carefully — match its exact function signatures, parameter names, type shapes, and exported members so this chunk's code compiles against what already exists. Files in the ALREADY-WRITTEN list exist on disk — import from them ONLY the members their source actually exports. NEVER import from a file that is neither in the ALREADY-WRITTEN list nor in THIS CHUNK — it does not exist. HONOR the FILE CONTRACTS: never reference an undeclared member. Every member this chunk's files use from ALREADY-WRITTEN files or other files in THIS CHUNK MUST be imported at the top of the file — a missing import is a compile failure.${guiHint}\n\nCOMPACTNESS: Write DENSE code — no boilerplate comments, no verbose docstrings, minimal whitespace. Keep every file tight but complete.\n\nIMPORTANT: Write the ACTUAL file content. Not stubs, not placeholders — real working code.\n\nReturn ONLY valid JSON with a "files" array, where each entry has "path" and "content".`;
 }
 
-/**
- * Build a LINE-NUMBERED source view for repair prompts that is FOCUSED on the
- * compiler errors instead of a blind prefix. Small files are shown whole;
- * large files (past `maxChars`) keep the header region (imports/exports —
- * where most cross-file errors live) plus a ±window around every error's line,
- * with an ellipsis marker for the omitted middle. This closes the old
- * `substring(0, 8000)` hole where an error past ~line 200 was literally
- * invisible to the model and could only be "fixed" by guessing.
- *
- * tsc line numbers are 1-based; error locations are parsed from the standard
- * `file(line,col)` prefix. Returns { source, truncated } — `truncated` is true
- * when lines were omitted, so callers can add a NOTE the model reads.
- */
-export function buildErrorFocusedNumberedSource(
-  content: string,
-  errors: string[],
-  opts?: { maxChars?: number; window?: number; headerLines?: number }
-): { source: string; truncated: boolean } {
-  const maxChars = opts?.maxChars ?? 8000;
-  const window = opts?.window ?? 12;
-  const headerLines = opts?.headerLines ?? 30;
-  const numberize = (lines: string[]): string =>
-    lines.map((l, i) => `${String(i + 1).padStart(4)} | ${l}`).join('\n');
-  if (content.length <= maxChars) return { source: numberize(content.split('\n')), truncated: false };
-  const lines = content.split('\n');
-  const keep = new Set<number>();
-  // Always keep the header (imports/exports region) — drift lives there.
-  for (let i = 0; i < Math.min(headerLines, lines.length); i++) keep.add(i);
-  // Keep a window around every error line (1-based in output → 0-based idx).
-  // Two locator formats are parsed: tsc's `file(line,col)` and Chrome
-  // console's `file:///...html:line:col` — the smoke/behavioral gate reports
-  // the latter ("Uncaught TypeError ... at app.html:123:45").
-  for (const e of errors) {
-    const tscLoc = e.match(/\((\d+),(\d+)\)/);
-    const chromeLoc = !tscLoc ? e.match(/:\s*(\d+):(\d+)\b/) : null;
-    const lineNo = tscLoc ? Number(tscLoc[1]) : chromeLoc ? Number(chromeLoc[1]) : null;
-    if (!lineNo) continue;
-    for (let i = Math.max(0, lineNo - 1 - window); i < Math.min(lines.length, lineNo + window); i++) keep.add(i);
-  }
-  const kept = [...keep].sort((a, b) => a - b);
-  const out: string[] = [];
-  let prev = -1;
-  for (const idx of kept) {
-    if (prev >= 0 && idx > prev + 1) out.push(`… (${idx - prev - 1} line(s) omitted) …`);
-    out.push(`${String(idx + 1).padStart(4)} | ${lines[idx]}`);
-    prev = idx;
-  }
-  // Mark the tail when lines after the last kept line were omitted too —
-  // otherwise a header-only view silently drops the whole file body.
-  if (prev >= 0 && prev < lines.length - 1) {
-    out.push(`… (${lines.length - 1 - prev} line(s) omitted) …`);
-  }
-  return { source: out.join('\n'), truncated: true };
-}
 
 /**
  * REGENERATE-with-errors-in-context prompt (round-2+ escalation): the generic
@@ -2783,7 +3716,9 @@ export function buildRegenerateWithErrorsPrompt(
   file: PlannedFile,
   currentContent: string,
   errors: string[],
-  allFiles: PlannedFile[]
+  allFiles: PlannedFile[],
+  realContents?: Array<{ path: string; content?: string }>,
+  relayThread?: Array<{ question: string; answer: string; toRole?: string }>
 ): string {
   const { source: numbered, truncated: contentTruncated } = buildErrorFocusedNumberedSource(currentContent, errors);
   const targets = (file.uses || []).map(u => {
@@ -2793,10 +3728,106 @@ export function buildRegenerateWithErrorsPrompt(
   const targetBlock = targets.length
     ? `\n\n━━━ IMPORT TARGETS (may ONLY reference these declared members) ━━━\n${targets.join('\n')}`
     : '';
+  // REAL declared members of the types referenced in TS2339/TS2305/TS2345/
+  // TS2322 errors ("Property 'push' does not exist on type 'Task'",
+  // "Argument of type '{...}' is not assignable to parameter of type 'Task'"):
+  // the PLAN's `exports` list only names top-level members — the model codes
+  // against guessed SHAPES (Task.push when Task only has id/description, or a
+  // partial { content } when addNote requires a full Note). Scan the actual
+  // generated sibling contents for the interface/class/type declaration and
+  // list its REAL members so the rewrite aligns with what the type actually
+  // has instead of re-inventing members every round.
+  const shapeBlock = buildRealTypeShapeBlock(file.path, errors, realContents);
   const truncated = contentTruncated
     ? `\n\nNOTE: the file is large — the numbered view shows the header plus a window around each error line (omitted regions are marked with ellipses). Every error below points at a visible line — fix it exactly there.`
     : '';
-  return `User request: ${request}\n\nThe file ${file.path} STILL does not compile after a previous repair attempt. Rewrite the ENTIRE file so it compiles — do not patch, rewrite.\n\n━━━ CURRENT CONTENT (LINE-NUMBERED) ━━━\n${numbered}${truncated}\n\n━━━ COMPILER ERRORS (line:col point into the numbered content above) ━━━\n${errors.join('\n')}${targetBlock}\n\n━━━ TASK ━━━\nProduce a COMPLETE rewritten ${file.path} that compiles cleanly. For every error above: find the exact line it points to, fix the actual cause (missing import, wrong member name, wrong argument count, undeclared symbol, shape mismatch), and keep the file's purpose intact. Cross-file members MUST come from an import backed by the IMPORT TARGETS declared exports — never invent a member a target does not export, and never import from a file that does not exist (TS2307).\n\n  Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+  // RELAY block: answers the OTHER LLM gave to mid-build questions earlier in
+  // this build (or the question this very chunk asked before hitting errors).
+  // The repair writer can lean on these answers instead of guessing.
+  const relayBlock = relayThread?.length
+    ? `\n\n━━━ RELAYED Q&A (answers the OTHER LLM gave mid-build) ━━━\n${relayThread.map((r, i) => `Q${i + 1} (asked by ${r.toRole ?? 'a band member'}): ${r.question}\nA${i + 1}: ${r.answer}`).join('\n\n')}`
+    : '';
+  return `User request: ${request}\n\nThe file ${file.path} STILL does not compile after a previous repair attempt. Rewrite the ENTIRE file so it compiles — do not patch, rewrite.\n\n━━━ CURRENT CONTENT (LINE-NUMBERED) ━━━\n${numbered}${truncated}\n\n━━━ COMPILER ERRORS (line:col point into the numbered content above) ━━━\n${errors.join('\n')}${targetBlock}${shapeBlock}${relayBlock}\n\n━━━ TASK ━━━\nProduce a COMPLETE rewritten ${file.path} that compiles cleanly. For every error above: find the exact line it points to, fix the actual cause (missing import, wrong member name, wrong argument count, undeclared symbol, shape mismatch), and keep the file's purpose intact. Cross-file members MUST come from an import backed by the IMPORT TARGETS declared exports — never invent a member a target does not export, and never import from a file that does not exist (TS2307). When a TS2339/TS2305 error names a type, call ONLY the members the REAL TYPE SHAPE lists — the compiler error means the member you used does not exist on that type.\n\n  Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+}
+
+/**
+ * Build the "REAL TYPE SHAPE" prompt block for TS2339/TS2305/TS2345/TS2322
+ * errors: for each "Property 'X' does not exist on type 'Y'" (or "has no
+ * exported member 'Y'", "Argument of type '{...}' is not assignable to
+ * parameter of type 'Y'", "missing the following properties from type 'Y'"),
+ * find the interface/class/type declaration of Y in the ACTUAL generated
+ * sibling contents and list its real members. Returns '' when nothing can be
+ * resolved (caller's prompt just omits the block).
+ */
+function buildRealTypeShapeBlock(
+  selfPath: string,
+  errors: string[],
+  realContents?: Array<{ path: string; content?: string }>
+): string {
+  if (!realContents?.length) return '';
+  // Collect the type names referenced by the assignability/property errors.
+  const typeNames = new Set<string>();
+  for (const e of errors) {
+    const m = e.match(/does not exist on type '([A-Za-z_$][\w$]*)'/);
+    if (m) typeNames.add(m[1]);
+    const n = e.match(/has no exported member '([A-Za-z_$][\w$]*)'\s+in\s+module/);
+    if (n) typeNames.add(n[1]);
+    // TS2345/TS2322 assignability ("Argument of type '{ content: string; }'
+    // is not assignable to parameter of type 'Note'" / "not assignable to
+    // type 'Note'") — the caller passed a GUESSED SHAPE; show the real
+    // interface so the rewrite aligns instead of re-inventing the partial
+    // object every round (the R20 probe's write-6 class: 7× addNote({ content })
+    // against interface Note { id; title; content }).
+    const p = e.match(/not assignable to (?:parameter of )?type '([A-Za-z_$][\w$]*)'/);
+    if (p) typeNames.add(p[1]);
+    // The precise "missing fields" signal of the partial-object sub-class.
+    const miss = e.match(/missing the following properties from type '([A-Za-z_$][\w$]*)'/);
+    if (miss) typeNames.add(miss[1]);
+  }
+  if (!typeNames.size) return '';
+  const selfKey = normalizeContractPath(selfPath);
+  const lines: string[] = [];
+  for (const f of realContents) {
+    if (!f?.content) continue;
+    if (normalizeContractPath(f.path) === selfKey) continue; // shape lives in a SIBLING
+    for (const t of typeNames) {
+      // interface Task { ... } / class Task { ... } / type Task = { ... } —
+      // capture the member lines (strip comments, cap the block).
+      const re = new RegExp(`(?:interface|class)\\s+${t}\\b[^{]*\\{([\\s\\S]*?)\\n\\}`);
+      let m = re.exec(f.content);
+      if (!m) {
+        const re2 = new RegExp(`type\\s+${t}\\s*=\\s*\\{([\\s\\S]*?)\\n\\}`);
+        m = re2.exec(f.content);
+      }
+      if (!m) continue;
+      const members = m[1]
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l && !l.startsWith('//') && !l.startsWith('*'))
+        .slice(0, 20)
+        .join('\n    ');
+      if (members.trim()) {
+        lines.push(`  ${f.path} declares type '${t}':\n    ${members}`);
+      }
+    }
+  }
+  return lines.length
+    ? `\n\n━━━ REAL TYPE SHAPES (the actual members the compiler says are wrong) ━━━\n${lines.join('\n')}`
+    : '';
+}
+
+/**
+ * Build the "REAL TYPE SHAPE" prompt block for the missing-import repair
+ * prompt too (its import targets list only names top-level exports; the shape
+ * block gives the referenced type's members so a TS2339 inside the same file
+ * gets fixed in the same pass). Thin wrapper over buildRealTypeShapeBlock.
+ */
+function buildMissingImportShapeBlock(
+  selfPath: string,
+  errors: string[],
+  realContents?: Array<{ path: string; content?: string }>
+): string {
+  return buildRealTypeShapeBlock(selfPath, errors, realContents);
 }
 
 /**
@@ -2807,40 +3838,29 @@ export function buildRegenerateWithErrorsPrompt(
  * that no type gate can see. The model rewrites the ENTIRE HTML file against
  * a line-numbered copy with every smoke error in context.
  */
-export function buildRenderSmokeRepairPrompt(
-  request: string,
-  file: PlannedFile,
-  currentContent: string,
-  smokeErrors: string[],
-  detail: string
-): string {
-  const { source: numbered, truncated: contentTruncated } = buildErrorFocusedNumberedSource(currentContent, smokeErrors);
-  const truncated = contentTruncated
-    ? `\n\nNOTE: the file is large — the numbered view shows the header plus a window around each error line (omitted regions are marked with ellipses). Every error below points at a visible line — fix it exactly there.`
-    : '';
-  return `User request: ${request}\n\nThe generated HTML app ${file.path} LOADS but FAILS behavioral checks in headless Chrome — it is the "compiles but doesn't work" class: an error, a crash on interaction, or a blank page. Rewrite the ENTIRE file so it both renders AND behaves.\n\n━━━ SMOKE-GATE FAILURE (what Chrome saw) ━━━\n${detail || '(no detail)'}${smokeErrors.length ? `\n${smokeErrors.join('\n')}` : ''}\n\n━━━ CURRENT CONTENT (LINE-NUMBERED) ━━━\n${numbered}${truncated}\n\n━━━ TASK ━━━\nProduce a COMPLETE rewritten ${file.path} that: (1) loads with ZERO console/page errors, (2) actually WORKS when used — the primary action (form submit, button click, search, add, send) must do something visible with no thrown exception, and (3) is not a blank page (real rendered content). Common root causes to check: a function referenced by an inline onclick/onkeydown that is never defined, calling a DOM method on null (element missing because the JS runs before the DOM or the id is wrong), an unguarded undefined variable, a missing closing tag that breaks the whole script section, or an event listener attached to an element that doesn't exist.\n\n  Return ONLY the file's raw HTML — no markdown fences, no JSON wrapper, no commentary.`;
-}
-
 /**
- * Repair prompt for the CLI behavioral gate (non-HTML apps). The generated
- * program passed tsc but crashed or produced no output when actually executed
- * — the "compiles but doesn't work" class for terminal apps. The model gets
- * the runtime error (SyntaxError/ReferenceError/exit-code) with line context
- * and rewrites the ENTRY file.
+ * Deterministic runtime fixes for generated HTML/JS — the JS-side sibling of
+ * the TS deterministic fixes (#64-#69). The render smoke gate catches "loads
+ * but crashes when used" classes the 14B often fails to repair by rewrite;
+ * these patterns are mechanical and get fixed BEFORE the LLM repair call.
+ * All zero-LLM and idempotent; the smoke re-run after a repair round is the
+ * arbiter (a wrong fix simply keeps the gate red and the LLM still runs).
+ *
+ * Patterns (observed in live board-game builds):
+ *  A) dataset-string vs number comparison — `el.dataset.row === row` where
+ *     `row` is a number and `dataset.row` is a string: `"0" === 0` is false,
+ *     so the element lookup returns undefined and `.querySelector` crashes on
+ *     the FIRST user click. Fix: coerce the dataset side (`+el.dataset.row`).
+ *  B) use-after-null timing — `selected = null;` then a LATER line reads
+ *     `selected.something`: reorder so the read happens before the null.
+ *  C) unguarded computed lookup — `squares.find(...).querySelector(...)`: a
+ *     computed/derived row/col (e.g. a capture midpoint) may not exist, making
+ *     `.find()` return undefined. Fix: assign + null-guard.
  */
-export function buildCliSmokeRepairPrompt(
-  request: string,
-  file: PlannedFile,
-  currentContent: string,
-  smokeErrors: string[],
-  detail: string
-): string {
-  const { source: numbered, truncated: contentTruncated } = buildErrorFocusedNumberedSource(currentContent, smokeErrors);
-  const truncated = contentTruncated
-    ? `\n\nNOTE: the file is large — the numbered view shows the header plus a window around each error line (omitted regions are marked with ellipses). Every error below points at a visible line — fix it exactly there.`
-    : '';
-  return `User request: ${request}\n\nThe generated CLI app ${file.path} COMPILES but FAILS when actually executed — it is the "compiles but doesn't work" class for terminal apps: it crashes at startup, or runs and prints NOTHING (a stub). Rewrite the ENTIRE file so the program actually runs and does the job the request describes.\n\n━━━ CLI SMOKE-GATE FAILURE (what happened when it was executed) ━━━\n${detail || '(no detail)'}${smokeErrors.length ? `\n${smokeErrors.join('\n')}` : ''}\n\n━━━ CURRENT CONTENT (LINE-NUMBERED) ━━━\n${numbered}${truncated}\n\n━━━ TASK ━━━\nProduce a COMPLETE rewritten ${file.path} that when executed: (1) starts with ZERO thrown errors, (2) handles its CLI arguments / reads its input, (3) produces REAL output — it must print the results of the user's request, never exit silently. Common root causes to check: importing a TYPE-ONLY member (interface/type/class as a value) from a sibling file — types are erased at runtime, so import only real values or use \"import type\"; referencing an undefined symbol; a stub body that returns an empty array / does nothing; unguarded null/undefined dereference. If another generated file must export a runtime value this file imports, keep the import AND make sure the symbol is actually exported there, or adjust the import to what the other file really exports.\n\n  Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
-}
+
+
+
+
 
 // ─── GAP #5: whole-project repair pass (cross-file interface drift) ─────────
 // Per-file repair rewrites each erroring file in isolation — it can NEVER
@@ -3095,9 +4115,11 @@ interface WrittenFile {
 
 // ─── System Prompts ──────────────────────────────────────────────────────
 
-const PLAN_PROMPT = `You are an expert software architect working in an interactive CLI mode.
+const PLAN_PROMPT = `You are the scaffold assistant inside VACA, working in an interactive CLI mode. VACA owns the app's architecture; your job is to express the file plan in VACA's schema so VACA's deterministic scaffold can consume it — not to invent a competing structure. When VACA already supplies a scaffold (blueprint / MODULE CONTRACT / PLANNED FILES), it is authoritative and you follow it exactly.
 
-Your job is to plan what code needs to be written for the user's request.
+${VACA_BRAIN_DOCTRINE}
+
+Your job is to lay out what code needs to be written for the user's request, in VACA's file-plan format.
 
 RULES:
 1. First, think through what the user needs step by step
@@ -3106,6 +4128,7 @@ RULES:
 4. Be specific about file paths, languages, and what each file does
 5. If the user hasn't specified important details (language, framework), ask
 6. CRITICAL: the "reasoning" field must contain YOUR OWN step-by-step analysis of THIS SPECIFIC request, written in your own words. NEVER copy the example text below verbatim — it is only a structural example, not content to repeat.
+7. STATEFUL FILES MUST EXPOSE MUTATION + INSPECTION. If the app holds mutable state (a game board, editor buffer, cart, todo list, score, queue), the file that OWNS that state MUST declare a public member that CHANGES it (e.g. placeMark/makeMove/applyMove, addItem/removeItem, setCell) and, where the app needs it, a member that INSPECTS it (e.g. isWin/isDraw/isGameOver, count, snapshot). A state holder that can only be READ/printed is an incomplete contract: the driving file will call a mutation method that does not exist and the build fails to compile. Every member a driver file calls MUST appear in the owner's "exports" — and that member's name must be identical in both files.
 
 OUTPUT FORMAT — Return ONLY valid JSON (no markdown, no code fences):
 {
@@ -3145,6 +4168,8 @@ IMPORTANT: If the request is clear enough that no questions are needed, set ques
 If you need answers before proceeding, put your structured questions in the array.`;
 
 const WRITE_PROMPT = `You are an expert software engineer writing dense, production-quality code. The user wants to build something, and we've already planned the files and answered any questions.
+
+${VACA_BRAIN_DOCTRINE}
 
 Now, generate the actual COMPLETE code for EVERY file in the plan.
 
@@ -3206,6 +4231,8 @@ If the user wants an interactive GUI app (game, drag-and-drop UI, tool, dashboar
 // model emit raw concatenated code instead.
 const WHOLE_PROJECT_SYSTEM_PROMPT = `You are an expert software engineer repairing a generated project whose files have drifted out of sync with each other (call sites disagree with signatures, types disagree across files).
 
+${VACA_BRAIN_DOCTRINE}
+
 You will be given a set of files with their current contents (line-numbered), the compiler errors, and the project's planned contracts.
 
 RULES:
@@ -3218,7 +4245,13 @@ RULES:
 
 const FILE_WRITE_PROMPT = `You are an expert software engineer. Write ONE complete file for a project.
 
+${VACA_BRAIN_DOCTRINE}
+
 Return ONLY the raw file content. NO markdown, NO code fences, NO JSON wrapper, NO explanations — just the code. The code itself must be complete and production-quality.
+
+Use ONLY built-in language/platform APIs and the standard library. NO third-party packages or frameworks (express, prisma, lodash, axios, react, better-sqlite3, node:assert, etc.) — nothing is installed and nothing can be imported.
+
+If this is a TEST file (*.test.ts / *.spec.ts / __tests__/): the test runner globals (describe, it, test, expect, beforeEach, afterEach, beforeAll, afterAll, vi) are ALREADY DECLARED by the platform — use them DIRECTLY as bare globals, never import or require a test framework or test-utility package (jest, vitest, mocha, node:test, @testing-library/*, sinon, chai, supertest, enzyme, react-test-renderer, @types/*) — nothing else is available, so write assertions with the declared globals and plain DOM/Node APIs only.
 
 COMPACTNESS: write DENSE code — no boilerplate comments, no verbose docstrings, minimal whitespace. Comment only where non-obvious. Prefer expressive identifiers over comments.`;
 
@@ -3229,14 +4262,19 @@ COMPACTNESS: write DENSE code — no boilerplate comments, no verbose docstrings
  */
 const CHUNK_WRITE_PROMPT = `You are an expert software engineer writing dense, production-quality code, one chunk at a time.
 
+${VACA_BRAIN_DOCTRINE}
+
 The project has already been planned, and other files may already exist on disk.
 
 RULES:
 1. Write COMPLETE, working code ONLY for the file(s) listed in THIS CHUNK — never other files of the plan, never new unplanned files.
 2. Every file must be COMPLETE — working code, no placeholders, no TODOs
-3. Import from already-written files ONLY the members listed in their declared exports (see ALREADY-WRITTEN FILES and the FILE CONTRACTS).
+2b. You are the SPECIALIST in a two-voice band. The user prompt carries a DESIGN BRIEF from the conductor (the band's architect) and any CONDUCTOR REVIEW findings from earlier chunks — build to that design intent, and address any findings the conductor raised for files you touch. Your part is the code; the conductor plans and reviews.
+3. Import from already-written files ONLY the members their source actually exports (see ALREADY-WRITTEN FILES and the FILE CONTRACTS). The ALREADY-WRITTEN block contains the FULL SOURCE of what earlier chunks built — read it so your code matches the EXACT signatures, parameter names, and type shapes already on disk (a file over the size cap or beyond the budget shows a compact summary instead).
 4. NEVER reference a member that isn't declared in the exporting file's exports, and NEVER import from a file that isn't listed as already-written or in THIS CHUNK — undeclared cross-file references are the #1 compile failure.
 5. Include proper error handling, input validation, and edge cases.
+5b. Use ONLY built-in language/platform APIs and the standard library. NO third-party packages or frameworks (express, prisma, lodash, axios, react, better-sqlite3, node:assert, etc.) — nothing is installed and nothing can be imported.
+5c. TEST files (*.test.ts / *.spec.ts / __tests__/): the test runner globals (describe, it, test, expect, beforeEach, afterEach, beforeAll, afterAll, vi) are ALREADY DECLARED by the platform — use them DIRECTLY as bare globals, never import or require a test framework or test-utility package (jest, vitest, mocha, node:test, @testing-library/*, sinon, chai, supertest, enzyme, react-test-renderer, @types/*) — nothing else is available, so write assertions with the declared globals and plain DOM/Node APIs only.
 
 COMPACTNESS (MANDATORY):
 6. Write DENSE, CONCISE code. NO boilerplate comments, NO verbose docstrings, NO explanatory comments, NO dead code.
@@ -3244,7 +4282,9 @@ COMPACTNESS (MANDATORY):
 8. Keep every file as compact as possible while COMPLETE (aim for ~80–300 lines).
 
 OUTPUT FORMAT — Return ONLY a single valid JSON object. NO markdown, NO code fences, NO commentary before or after:
-{"files":[{"path":"src/main.ts","content":"..."}]}
+{"files":[{"path":"src/main.ts","content":"..."}],"ask":{"question":"What does initDb() return?","toRole":"reasoning"}}
+
+OPTIONAL "ask" FIELD — you are part of a two-LLM band. If you need a fact another band member already knows (the exact shape/signature of something the OTHER LLM built earlier, or a design decision it made that you cannot see from the files alone), include an "ask" object with a concise direct question. The platform relays it to the other LLM and the answer will be visible to your repair rounds and later chunks. Use it ONLY when you genuinely cannot proceed confidently without the answer — do not ask questions you can answer from the ALREADY-WRITTEN summaries and contracts above.
 
 ⚠️ CRITICAL: The JSON must be COMPLETE — a truncated or unclosed JSON is a total failure. If you run low on space, TRIM ONLY comments and non-essential embellishments — NEVER drop core logic or leave the JSON unclosed.`;
 
@@ -3341,7 +4381,7 @@ async function refineIntentWithFastCoder(request: string, spec: IntentSpec, time
  * override (editable card, Phase 4) wins; otherwise the rule-based extractor, with
  * a fast-coder refinement pass filling gaps on low-confidence requests (Phase 3).
  */
-async function resolveIntent(request: string, intentOverride?: unknown): Promise<IntentSpec> {
+export async function resolveIntent(request: string, intentOverride?: unknown): Promise<IntentSpec> {
   const override = normalizeIntentOverride(intentOverride);
   if (override) return override;
   return refineIntentWithFastCoder(request, extractIntent(request));
@@ -3361,15 +4401,16 @@ async function resolveIntent(request: string, intentOverride?: unknown): Promise
  * its own request with raw-code output. Small responses always fit the window,
  * so this is the reliability net that stops "LLM response was not valid JSON".
  */
-async function generatePlanFiles(
+export async function generatePlanFiles(
   request: string,
   plan: CodePlan | null,
   answers: Record<string, string> | undefined,
   timeoutMs: number,
   libraryMode?: unknown,
   chunkSize?: unknown,
-  intentOverride?: unknown
-): Promise<{ files: Array<{ path: string; content: string }>; mode: 'one-shot' | 'per-file' | 'chunked'; exportDir?: string; repairRounds?: number; tscErrors?: number; tscVerified?: boolean; compileStatus?: string; tscFallback?: boolean; contractViolations?: number; intent?: IntentSpec; libraryContext?: string; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string } } | null> {
+  intentOverride?: unknown,
+  projectId?: unknown
+): Promise<{ files: Array<{ path: string; content: string }>; mode: 'one-shot' | 'per-file' | 'chunked'; exportDir?: string; repairRounds?: number; tscErrors?: number; tscClasses?: Record<string, number>; tscGateRan?: boolean; compileStatus?: string; languageGates?: LanguageGate[]; stubFailures?: string[]; tscFallback?: boolean; contractViolations?: number; intent?: IntentSpec; libraryContext?: string; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string } } | null> {
   // Resolve answer keys back to the original question text so the prompt reads
   // naturally ("Q: What interface? / A: Web") instead of raw keys ("Q: q1 / A: Web").
   const questionByKey = new Map((plan?.questions || []).map(q => [q.key, q.question]));
@@ -3382,10 +4423,37 @@ async function generatePlanFiles(
   // GUI-entry enforcement also runs here with the ANSWERS — a request that the
   // planner thought was CLI-only becomes GUI when the user answers "Graphical
   // user interface", so the write path still gets its index.html.
-  const contractFiles = ensureGuiEntryFile(normalizeFileContracts(plan?.files), request, answers);
+  // Deployment-artifact enforcement (Layer 1 — plan): when the request asks
+  // for deployment/packaging and the plan omits the Dockerfile (the audit's
+  // recurring workflow:deployment miss — stochastic planning), append a
+  // planned Dockerfile so the writer emits it. Mirrors ensureGuiEntryFile.
+  // Test enforcement (Layer 1 — plan): same pattern for unit tests — when the
+  // request asks for tests and the plan omits them (the audit's recurring
+  // workflow:testing miss), append a planned test file so the writer emits it.
+  let contractFiles = ensureTestFiles(ensureDeploymentArtifacts(ensureGuiEntryFile(normalizeFileContracts(plan?.files), request, answers), request, answers), request, answers);
+  // Tree Mode (CHAT path): when this build belongs to a multi-app project,
+  // remap every planned file into its app directory (`apps/<app>/`) so the
+  // export ships one program per app — exactly what the canvas path produces.
+  // A single-tree project (or an unknown projectId) returns null and NOTHING
+  // below changes: the ordinary flat build is byte-identical to before.
+  const treeLayout = applyTreePlanLayout(
+    typeof projectId === 'string' ? projectId : undefined,
+    contractFiles,
+  );
+  if (treeLayout) {
+    contractFiles = treeLayout.files;
+    // Fold the per-app boundary note into each boundary file's summary so it
+    // rides along in every prompt that renders file summaries (the plan list,
+    // per-file tasks) without threading a new parameter through each builder.
+    for (const f of contractFiles) {
+      const boundary = treeLayout.boundaryByPath.get(f.path);
+      if (boundary) f.summary = `${f.summary}${boundary}`;
+    }
+    console.log(`[codePlanner] Tree Mode: ${treeLayout.bridges.length} bridge(s), files remapped under apps/ (${contractFiles.length} file(s))`);
+  }
   const fileList = contractFiles.map((f: PlannedFile, i: number) =>
     `[${i + 1}] ${f.path} (${f.language}) — ${f.summary}`
-  ).join('\n');
+  ).join('\n') + (treeLayout?.planSection || '');
   const contractsSection = buildFileContractsSection(contractFiles);
   for (const violation of checkContractConsistency(contractFiles)) {
     console.warn(`[codePlanner] contract violation: ${violation}`);
@@ -3404,7 +4472,7 @@ async function generatePlanFiles(
   const libMode = normalizeLibraryMode(libraryMode); // 'goal' | 'hybrid' | 'dominant' (A/B switchable)
   // Phase 2b fidelity: capture the EXACT library block injected into the write
   // prompt (caps + strategy) so the training sidecar matches what the model saw.
-  const effectiveLibrary = getLibraryContextBlock(request, dominant, libMode);
+  const effectiveLibrary = await getLibraryContextBlock(request, dominant, libMode);
 
   // Chunked mode: when a chunkSize is requested, generate files in small groups
   // (each LLM call well under the one-shot cap), writing each chunk to disk and
@@ -3423,7 +4491,9 @@ async function generatePlanFiles(
   if (chunkSizeN) {
     if (!explicitChunk) console.log(`[codePlanner] Plan has ${contractFiles.length} files (~${estTokens} est. output tokens) — auto-chunking (${chunkSizeN}/chunk) to avoid one-shot truncation`);
     const chunked = await generateChunkedFiles(request, intentSection, fileList, contractsSection, answersText, contractFiles, dominant, libMode, timeoutMs, chunkSizeN);
-    return chunked ? { ...chunked, intent: effectiveIntent, libraryContext: effectiveLibrary } : null;
+    if (!chunked) return null;
+    const withBridges = await appendTreeBridges(request, treeLayout, chunked, timeoutMs);
+    return withBridges ? { ...withBridges, intent: effectiveIntent, libraryContext: effectiveLibrary } : null;
   }
 
   // Pass 1 — one-shot multi-file JSON. This single opaque LLM call can take
@@ -3440,7 +4510,7 @@ async function generatePlanFiles(
   const heartbeat = startProgressHeartbeat(15_000, 12, 35, allPaths, 'Still generating code…');
   let response: string;
   try {
-    response = await translator.reason(fullPrompt, getWritePromptWithContext(request, dominant, libMode), { maxTokens: 13000, timeoutMs });
+    response = await translator.reason(fullPrompt, await getWritePromptWithContext(request, dominant, libMode), { maxTokens: 8192, timeoutMs });
   } finally {
     clearInterval(heartbeat);
   }
@@ -3463,7 +4533,7 @@ async function generatePlanFiles(
       if (guiEntry) {
         console.warn('[codePlanner] one-shot omitted the GUI entry file — generating index.html per-file');
         const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ FILE CONTRACT ━━━\n${buildPerFileContractBlock(guiEntry, contractFiles)}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${guiEntry.path}\nLanguage: html\nPurpose: ${guiEntry.summary}\n\nThis is the app's ONLY GUI entry — the single self-contained HTML page the browser preview renders. Build the FULL interface here with inline CSS + JS, wired to the app's logic. Use the WIDGET TEMPLATES above verbatim — copy the exact element structure, never invent new element types. Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
-        const raw = await translator.reason(prompt, getFileWritePromptWithContext(guiEntry), { maxTokens: 4096, timeoutMs });
+        const raw = await translator.reason(prompt, getFileWritePromptWithContext(guiEntry, request), { maxTokens: 4096, timeoutMs });
         let content = cleanLLMResponse(raw);
         const wrapped = extractJSON<{ content?: string }>(content);
         if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
@@ -3501,11 +4571,13 @@ async function generatePlanFiles(
           const exportsRoot = pathModule.join(process.cwd(), 'exports');
           if (staleDir && staleDir.startsWith(exportsRoot)) fs.rmSync(staleDir, { recursive: true, force: true });
         } catch { /* non-fatal — an orphan export dir is harmless */ }
-        return { ...chunked, tscFallback: true, intent: effectiveIntent, libraryContext: effectiveLibrary };
+        const withBridges = await appendTreeBridges(request, treeLayout, chunked, timeoutMs);
+        return withBridges ? { ...withBridges, tscFallback: true, intent: effectiveIntent, libraryContext: effectiveLibrary } : null;
       }
       console.warn('[codePlanner] chunked fallback produced nothing — keeping the one-shot result (best effort)');
     }
-    return { files: finalOneShot.files, mode: 'one-shot', exportDir: finalOneShot.exportDir, repairRounds: finalOneShot.repairRounds, tscErrors: finalOneShot.tscErrors, tscVerified: finalOneShot.tscVerified, compileStatus: finalOneShot.compileStatus, contractViolations: finalOneShot.contractViolations, intent: effectiveIntent, libraryContext: effectiveLibrary, renderSmoke: finalOneShot.renderSmoke, cliSmoke: finalOneShot.cliSmoke };
+    const oneShotResult = { files: finalOneShot.files, mode: 'one-shot' as const, exportDir: finalOneShot.exportDir, repairRounds: finalOneShot.repairRounds, tscErrors: finalOneShot.tscErrors, tscClasses: finalOneShot.tscClasses, tscGateRan: finalOneShot.tscGateRan, compileStatus: finalOneShot.compileStatus, languageGates: finalOneShot.languageGates, stubFailures: finalOneShot.stubFailures, contractViolations: finalOneShot.contractViolations, intent: effectiveIntent, libraryContext: effectiveLibrary, renderSmoke: finalOneShot.renderSmoke, cliSmoke: finalOneShot.cliSmoke };
+    return appendTreeBridges(request, treeLayout, oneShotResult, timeoutMs);
   }
   console.warn('[codePlanner] One-shot JSON unparseable. Response sample:', JSON.stringify(cleaned).substring(0, 200));
 
@@ -3531,8 +4603,8 @@ async function generatePlanFiles(
     // Match html files by language OR path (case-insensitive) so GUI entries
     // always get the widget templates — consistent with the chunked path.
     const isHtmlFile = f.language?.toLowerCase() === 'html' || /\.html?$/i.test(f.path);
-    const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n\nImport from the other planned files ONLY the members declared in this file's contract above (from the exporting files' "exports"). NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES — use native <video>/<audio> for media, never a <div> placeholder.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
-    const raw = await translator.reason(prompt, getFileWritePromptWithContext(f), { maxTokens: 4096, timeoutMs });
+    const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n${languageGuidanceBlock(f.language, { goModuleName: sanitizeGoModuleName(request) })}\nImport from the other planned files ONLY the members declared in this file's contract above (from the exporting files' "exports"). NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES — use native <video>/<audio> for media, never a <div> placeholder.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+    const raw = await translator.reason(prompt, getFileWritePromptWithContext(f, request), { maxTokens: 4096, timeoutMs });
     let content = cleanLLMResponse(raw);
     const wrapped = extractJSON<{ content?: string }>(content);
     if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
@@ -3542,7 +4614,8 @@ async function generatePlanFiles(
   if (!files.length) return null;
   // Phase 1 closure + Phase 5 tsc gate on the per-file fallback path too.
   const finalPerFile = await finalizeGeneratedFiles(request, files, contractFiles, intentSection, answersText, fileList, timeoutMs);
-  return { files: finalPerFile.files, mode: 'per-file', exportDir: finalPerFile.exportDir, repairRounds: finalPerFile.repairRounds, tscErrors: finalPerFile.tscErrors, tscVerified: finalPerFile.tscVerified, compileStatus: finalPerFile.compileStatus, contractViolations: finalPerFile.contractViolations, intent: effectiveIntent, libraryContext: effectiveLibrary, renderSmoke: finalPerFile.renderSmoke, cliSmoke: finalPerFile.cliSmoke };
+  const perFileResult = { files: finalPerFile.files, mode: 'per-file' as const, exportDir: finalPerFile.exportDir, repairRounds: finalPerFile.repairRounds, tscErrors: finalPerFile.tscErrors, tscClasses: finalPerFile.tscClasses, tscGateRan: finalPerFile.tscGateRan, compileStatus: finalPerFile.compileStatus, languageGates: finalPerFile.languageGates, stubFailures: finalPerFile.stubFailures, contractViolations: finalPerFile.contractViolations, intent: effectiveIntent, libraryContext: effectiveLibrary, renderSmoke: finalPerFile.renderSmoke, cliSmoke: finalPerFile.cliSmoke };
+  return appendTreeBridges(request, treeLayout, perFileResult, timeoutMs);
 }
 
 /**
@@ -3566,13 +4639,37 @@ async function generateChunkedFiles(
   libMode: LibraryMode,
   timeoutMs: number,
   chunkSize: number
-): Promise<{ files: Array<{ path: string; content: string }>; mode: 'chunked'; exportDir: string; repairRounds: number; tscErrors: number; tscVerified: boolean; compileStatus: 'clean' | 'errors' | 'skipped' | 'unavailable'; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string } } | null> {
+): Promise<{ files: Array<{ path: string; content: string }>; mode: 'chunked'; exportDir: string; repairRounds: number; tscErrors: number; tscClasses?: Record<string, number>; tscGateRan: boolean; compileStatus: 'clean' | 'errors' | 'skipped' | 'unavailable'; languageGates: LanguageGate[]; stubFailures: string[]; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string }; designBrief?: string; conductorFindings?: Array<{ chunkNo: number; findings: string[]; note: string }>; conductorReport?: { verdict: string; findings: string[]; note: string } | null } | null> {
   const ordered = orderFilesByDependency(contractFiles);
   const chunks = chunkFiles(ordered, chunkSize);
   const exportDir = getExportDir(request);
   let files: Array<{ path: string; content: string }> = [];
   let repairRounds = 0;
   const total = chunks.length;
+  // RELAY thread: every question a chunk writer asks the OTHER LLM mid-build,
+  // plus the answer it got back. Carried forward so later chunks (and repair
+  // rounds) can read what the other voice already decided.
+  const relayThread: Array<{ question: string; answer: string; toRole?: string }> = [];
+  // CONDUCTOR state: the band-leader (reasoning role) plans the build (design
+  // brief), reviews each chunk after it compiles, and does a final integration
+  // review. The specialist (codeGeneration role) writes the chunks. Findings
+  // accumulate and are fed into later chunk prompts so the writer builds to
+  // the conductor's design intent.
+  let designBrief = '';
+  const conductorFindings: Array<{ chunkNo: number; findings: string[]; note: string }> = [];
+  // Kickoff — the conductor reviews the plan BEFORE any chunk is written and
+  // emits a compact design brief (architecture decisions + integration rules).
+  try {
+    const briefPrompt =
+      `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n━━━ CONTRACTS ━━━\n${contractsSection}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n\nTASK: Produce a compact DESIGN BRIEF for this build (max ~700 chars): the key architecture decisions, what each file must accomplish, and the integration rules every chunk writer must honor. Return ONLY the brief text — no preamble, no JSON.`;
+    const brief = await askConductor(briefPrompt, { stage: 'kickoff', context: contractsSection, maxTokens: 700, timeoutMs: Math.min(timeoutMs, 90_000) });
+    if (brief && brief.trim()) {
+      designBrief = brief.trim().slice(0, 1400);
+      console.warn(`[codePlanner] conductor design brief (${designBrief.length} chars) — chunks will build to it`);
+    }
+  } catch (kickErr: any) {
+    console.warn(`[codePlanner] conductor kickoff skipped: ${kickErr?.message || kickErr}`);
+  }
 
   for (let ci = 0; ci < total; ci++) {
     const chunk = chunks[ci];
@@ -3585,13 +4682,40 @@ async function generateChunkedFiles(
       percent: Math.min(80, Math.round(((ci + 1) / total) * 70)),
       message: `Generating chunk ${chunkNo}/${total} (${chunk.length} file(s))…`,
     });
-    const prompt = buildChunkPrompt(request, intentSection, fileList, contractsSection, answersText, files, chunk, chunkNo, total);
-    const response = await translator.reason(prompt, getWritePromptWithContext(request, dominant, libMode, CHUNK_WRITE_PROMPT), { maxTokens: 8192, timeoutMs });
+    const prompt = buildChunkPrompt(request, intentSection, fileList, contractsSection, answersText, files, chunk, chunkNo, total, relayThread, designBrief, conductorFindings);
+    // The SPECIALIST (codeGeneration role) writes the chunk; the conductor
+    // (reasoning role) reviews. Explicit role keeps the two voices separate.
+    const response = await translator.reason(prompt, await getWritePromptWithContext(request, dominant, libMode, CHUNK_WRITE_PROMPT), { maxTokens: 8192, timeoutMs, role: 'codeGeneration' });
     const cleaned = cleanLLMResponse(response);
-    const result = extractJSON<{ files: Array<{ path?: string; content?: string }> }>(cleaned);
+    const result = extractJSON<{ files: Array<{ path?: string; content?: string }>; ask?: { question?: string; toRole?: string } }>(cleaned);
     const chunkFiles = (result?.files || []).filter((f): f is { path: string; content: string } =>
       !!f && typeof f.path === 'string' && typeof f.content === 'string'
     );
+    // Mid-build RELAY: the chunk writer may include an "ask" field asking the
+    // OTHER LLM a direct question (e.g. "what does initDb() in chunk 1 return?").
+    // Relay it now, ground the answer in the work-so-far summary, and carry the
+    // Q&A forward so repair rounds and later chunks can read the answer.
+    let relayAnswer: { question: string; answer: string; toRole?: string } | null = null;
+    if (result?.ask?.question && typeof result.ask.question === 'string' && result.ask.question.trim()) {
+      const askQuestion = result.ask.question.trim().slice(0, 2000);
+      const toRole = (['reasoning', 'codeGeneration', 'guiBuild', 'fastChat'] as const).includes(result.ask.toRole as any)
+        ? (result.ask.toRole as string)
+        : 'reasoning';
+      try {
+        const relayContext = files.length
+          ? files.map(f => buildWrittenFileSummary(f.path, f.content)).join('\n')
+          : undefined;
+        console.warn(`[codePlanner] chunk ${chunkNo}/${total}: writer asked the OTHER LLM (${toRole}): ${askQuestion.slice(0, 140)}`);
+        const answer = await askOtherLlm(askQuestion, { toRole: toRole as any, fromRole: 'codeGeneration', context: relayContext, maxTokens: 1024, timeoutMs });
+        if (answer && answer.trim()) {
+          relayAnswer = { question: askQuestion, answer: answer.trim(), toRole };
+          relayThread.push(relayAnswer);
+          console.warn(`[codePlanner] chunk ${chunkNo}/${total}: relay answer (${answer.trim().length} chars) — will be visible to repair rounds + later chunks`);
+        }
+      } catch (relayErr: any) {
+        console.warn(`[codePlanner] chunk ${chunkNo}/${total}: relay to ${toRole} failed: ${relayErr?.message || relayErr}`);
+      }
+    }
 
     // This chunk's JSON failed -> per-file raw-code fallback for THIS chunk only.
     if (!chunkFiles.length) {
@@ -3599,7 +4723,7 @@ async function generateChunkedFiles(
       for (const f of chunk) {
         const contractBlock = buildPerFileContractBlock(f, contractFiles);
         const p = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n\nImport from the already-written files ONLY the members declared in their contracts above. NEVER reference an undeclared member or an unplanned file. Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
-        const raw = await translator.reason(p, getFileWritePromptWithContext(f), { maxTokens: 4096, timeoutMs });
+        const raw = await translator.reason(p, getFileWritePromptWithContext(f, request), { maxTokens: 4096, timeoutMs, role: 'codeGeneration' });
         let content = cleanLLMResponse(raw);
         const wrapped = extractJSON<{ content?: string }>(content);
         if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
@@ -3622,6 +4746,11 @@ async function generateChunkedFiles(
       fs.writeFileSync(fullPath, cf.content, 'utf-8');
       files.push(cf);
     }
+    // First-draft snapshot (ORPO pair source): capture this chunk's .ts/.tsx
+    // files as the model FIRST wrote them, BEFORE the chunk repair loop mutates
+    // them. The final file ships tsc-clean; the snapshot is the "rejected" side
+    // of a genuine (chosen, rejected) pair from the model's own work.
+    snapshotFirstDrafts(exportDir, acceptedChunkFiles);
 
     // Build/check -> repair -> RE-CHECK loop (capped rounds per chunk): tsc on
     // the ACCUMULATED files, feed errors back for the failing files, re-run tsc
@@ -3662,19 +4791,99 @@ async function generateChunkedFiles(
         const cfPathKey = normalizeContractPath(cf.path);
         const cfBaseKey = normalizeContractPath(cf.path.split('/').pop() || '');
         const fileErrs = errByFile.get(cfPathKey) || errByFile.get(cfBaseKey);
+        // Truncation lint (same policy as the finalize tsc gate): a file cut
+        // off mid-generation trips only TS1005 on its LAST line, which never
+        // tells the model the file was TRUNCATED — append the explicit note so
+        // the chunk repair prompt FINISHES the file instead of re-emitting it.
+        if (fileErrs && fileErrs.length) {
+          const trunc = findTruncation(cf.content);
+          if (trunc && !fileErrs.some(e => e.startsWith('TRUNCATION'))) {
+            fileErrs.push(
+              `TRUNCATION: this file is INCOMPLETE — it was cut off mid-generation (${trunc.open} opening braces vs ${trunc.close} closing braces; it ends without closing its outermost blocks). The generation hit the output token limit. RE-GENERATE the COMPLETE file: every function, statement, and closing brace must be present. Do NOT leave the code mid-expression — finish the file to its natural end.`
+            );
+            console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} TRUNCATION lint — unbalanced braces ${trunc.open}/${trunc.close} (file ends mid-block)`);
+          }
+        }
         if (!fileErrs || !fileErrs.length) continue;
         const planned = contractFiles.find(t => t.path === cf.path) || { path: cf.path, summary: '', language: '' };
+        // P2 name-drift fix (zero LLM) — TS2305 (import member not exported):
+        // same policy as the one-shot gate, align the import binding with the
+        // target's ACTUAL exports via an `as` alias.
+        const driftFixed = applyDeterministicNameDriftFix(cf.content, cf.path, files, fileErrs);
+        if (driftFixed && driftFixed !== cf.content) {
+          fs.writeFileSync(safeJoin(exportDir, cf.path), driftFixed, 'utf-8');
+          cf.content = driftFixed;
+          chunkRoundChanged = true;
+          console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} TS2305 name-drift fixed deterministically (import alias)`);
+          continue;
+        }
         // Deterministic first pass: drop phantom npm-dependency imports
         // (TS2307 for a package that isn't installed) — zero LLM calls, no
         // body changes. Remaining undefined symbols stay in the error list and
         // the regenerate round below fixes them.
-        const stripped = stripPhantomPackageImports(cf.content);
+        const stripped = stripPhantomPackageImports(cf.content, cf.path);
         if (stripped && stripped !== cf.content) {
           fs.writeFileSync(safeJoin(exportDir, cf.path), stripped, 'utf-8');
           cf.content = stripped;
           chunkRoundChanged = true;
           console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} phantom npm-dependency imports removed deterministically (no LLM call)`);
           continue;
+        }
+        // TS2307 sibling-path resolver (zero LLM) — same policy as the
+        // one-shot gate: a relative import whose path is wrong for the actual
+        // sibling layout (../X for a same-dir file, a .ts extension on a
+        // sibling, a wrong directory) is rewritten when exactly one file
+        // matches its basename. The probe's CHUNKED writes carried TS2307
+        // residuals that per-file mode (with this fix) resolved to clean.
+        const pathFixed = applyDeterministicSiblingPathFix(cf.content, cf.path, files, fileErrs);
+        if (pathFixed && pathFixed !== cf.content) {
+          fs.writeFileSync(safeJoin(exportDir, cf.path), pathFixed, 'utf-8');
+          cf.content = pathFixed;
+          chunkRoundChanged = true;
+          console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} TS2307 sibling import paths fixed deterministically (no LLM call)`);
+          continue;
+        }
+        // TS2459 missing-export fix (zero LLM) — same policy as the one-shot
+        // gate: the CAUSING file (a sibling that declares an imported name
+        // locally without exporting it) gets `export` added; the per-chunk
+        // loop would otherwise never select it (it has no errors of its own).
+        if (fileErrs.some(e => /error TS2459/.test(e))) {
+          const exportFix = applyDeterministicMissingExportFix(cf.path, files, fileErrs);
+          if (exportFix) {
+            const target = files.find(f => normalizeContractPath(f.path) === normalizeContractPath(exportFix.path));
+            if (target) {
+              target.content = exportFix.content;
+              fs.writeFileSync(safeJoin(exportDir, target.path), exportFix.content, 'utf-8');
+              chunkRoundChanged = true;
+              console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${exportFix.path} TS2459 missing-export fixed deterministically (export added)`);
+              continue;
+            }
+          }
+        }
+        // TS5097 extension-strip (zero LLM) — same policy as the one-shot
+        // gate: strip a resolvable relative import's .ts/.tsx extension.
+        if (fileErrs.some(e => /error TS5097/.test(e))) {
+          const extFixed = normalizeImportExtensions(cf.content, cf.path, files);
+          if (extFixed && extFixed !== cf.content) {
+            fs.writeFileSync(safeJoin(exportDir, cf.path), extFixed, 'utf-8');
+            cf.content = extFixed;
+            chunkRoundChanged = true;
+            console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} TS5097 import extensions stripped deterministically (no LLM call)`);
+            continue;
+          }
+        }
+        // TS2345 partial-object call-site patcher (zero LLM) — same policy as
+        // the one-shot gate: insert missing primitive-typed members at
+        // single-line partial-object call sites.
+        if (fileErrs.some(e => /error TS2345/.test(e))) {
+          const partialFixed = applyDeterministicPartialObjectFix(cf.content, cf.path, files, fileErrs);
+          if (partialFixed && partialFixed !== cf.content) {
+            fs.writeFileSync(safeJoin(exportDir, cf.path), partialFixed, 'utf-8');
+            cf.content = partialFixed;
+            chunkRoundChanged = true;
+            console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} TS2345 partial-object call sites fixed deterministically (no LLM call)`);
+            continue;
+          }
         }
         // Missing-return (TS2355/TS7030) and void-return (TS2322-void)
         // deterministic fixes — same zero-LLM policy as the one-shot gate.
@@ -3698,12 +4907,47 @@ async function generateChunkedFiles(
             continue;
           }
         }
+        // Content-driven import insert (zero LLM) — same policy as the
+        // one-shot gate: a symbol the model references that IS exported by
+        // exactly one sibling (even when the plan never declared the use) gets
+        // its import inserted deterministically before any LLM repair call.
+        if (fileErrs.some(e => /error TS(2304|2503|2552|2307)/.test(e))) {
+          const contentPatched = applyContentDrivenImportFix(cf.content, cf.path, files, fileErrs);
+          if (contentPatched && contentPatched !== cf.content) {
+            fs.writeFileSync(safeJoin(exportDir, cf.path), contentPatched, 'utf-8');
+            cf.content = contentPatched;
+            chunkRoundChanged = true;
+            console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} missing-import errors fixed by CONTENT-DRIVEN import insert (no LLM call)`);
+            continue;
+          }
+          // TS2451 local-collision dedup (zero LLM): imported name also
+          // declared locally — the local declaration wins, drop the import.
+          const collisionFixed = applyDeterministicLocalCollisionFix(cf.content, fileErrs);
+          if (collisionFixed && collisionFixed !== cf.content) {
+            fs.writeFileSync(safeJoin(exportDir, cf.path), collisionFixed, 'utf-8');
+            cf.content = collisionFixed;
+            chunkRoundChanged = true;
+            console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} TS2451 local-collision fixed deterministically (no LLM call)`);
+            continue;
+          }
+          // Deterministic plan-driven import insert (zero LLM) — the one-shot
+          // gate's fallback after content-driven: insert the plan-declared
+          // import lines for this file's declared uses.
+          const patched = applyDeterministicImportPatch(cf.content, planned, contractFiles);
+          if (patched && patched !== cf.content) {
+            fs.writeFileSync(safeJoin(exportDir, cf.path), patched, 'utf-8');
+            cf.content = patched;
+            chunkRoundChanged = true;
+            console.warn(`[codePlanner] chunk ${chunkNo}/${total}: ${cf.path} missing-import errors fixed by deterministic import insert (no LLM call)`);
+            continue;
+          }
+        }
         // Regenerate-with-errors-in-context from round 1 (same policy as the
         // one-shot gate): the model rewrites the whole file against a
         // line-numbered copy with each error at its exact line — never line-
         // patches a file that already failed once.
-        const repairPrompt = buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles);
-        const raw = await translator.reason(repairPrompt, FILE_WRITE_PROMPT, { maxTokens: 4096, timeoutMs });
+        const repairPrompt = buildRegenerateWithErrorsPrompt(request, planned, cf.content, fileErrs, contractFiles, files, relayThread);
+        const raw = await translator.reason(repairPrompt, FILE_WRITE_PROMPT, { maxTokens: 4096, timeoutMs, role: 'codeGeneration' });
         let content = cleanLLMResponse(raw);
         const wrapped = extractJSON<{ content?: string }>(content);
         if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
@@ -3720,6 +4964,63 @@ async function generateChunkedFiles(
       // unfixable by the current prompts — stop, don't burn the chunk cap.
       if (!chunkRoundChanged) break;
     }
+    // CONDUCTOR REVIEW (post-chunk): once this chunk compiles (or hits the
+    // repair cap), the conductor critiques the chunk's ACTUAL written files
+    // against the design brief. Bounded: one review per chunk, one refinement
+    // round if it flags fix-worthy issues. Findings feed forward into later
+    // chunk prompts via conductorFindings.
+    const conductorChunkFiles = acceptedChunkFiles.map(cf => ({ path: cf.path, content: cf.content }));
+    if (conductorChunkFiles.length) {
+      try {
+        const reviewContext = buildWrittenFilesBlock(conductorChunkFiles);
+        const reviewPrompt =
+          `Chunk ${chunkNo}/${total} of a build just finished. The design brief was:\n${designBrief || '(none — the conductor produced no brief)'}\n\nThis chunk's files (FULL SOURCE):\n${reviewContext}\n\nTASK: Review this chunk against the design intent. Reply with ONLY valid JSON: {\"verdict\": \"ok\" | \"fix\", \"findings\": [string], \"note\": string}. When verdict is \"fix\", findings must be CONCRETE and actionable (exact file paths, names, signatures, shapes, integration risks) — the specialist writer will act on them. When \"ok\", findings may be empty or advisory.`;
+        const reviewRaw = await askConductor(reviewPrompt, { stage: 'review', context: reviewContext, maxTokens: 800, timeoutMs: Math.min(timeoutMs, 90_000) });
+        const review = extractJSON<{ verdict?: string; findings?: string[]; note?: string }>(cleanLLMResponse(reviewRaw));
+        const findings = Array.isArray(review?.findings)
+          ? review.findings.filter((f: unknown): f is string => typeof f === 'string' && !!f.trim()).map((f: string) => f.trim().slice(0, 500))
+          : [];
+        const note = typeof review?.note === 'string' ? review.note.trim().slice(0, 300) : '';
+        if (findings.length) {
+          conductorFindings.push({ chunkNo, findings, note });
+          console.warn(`[codePlanner] conductor review chunk ${chunkNo}/${total}: ${findings.length} finding(s)${note ? ` — ${note}` : ''}`);
+          // ONE bounded refinement round: the specialist writer rewrites the
+          // flagged files with the conductor's findings in context, then tsc
+          // re-checks once. Only files the conductor named get rewritten.
+          if (review?.verdict === 'fix' && conductorChunkFiles.length <= 3) {
+            const namedPaths = new Set<string>();
+            for (const f of findings) {
+              const m = f.match(/([\w./-]+\.(?:ts|tsx|js|jsx|html|css|json|md))/i);
+              if (m) namedPaths.add(normalizeContractPath(m[1]));
+            }
+            const refineTargets = conductorChunkFiles.filter(cf => namedPaths.size === 0 || namedPaths.has(normalizeContractPath(cf.path)));
+            if (refineTargets.length) {
+              console.warn(`[codePlanner] conductor verdict=fix — refining ${refineTargets.length} file(s) (chunk ${chunkNo}/${total})`);
+              for (const target of refineTargets) {
+                const planned = contractFiles.find(t => normalizeContractPath(t.path) === normalizeContractPath(target.path)) || { path: target.path, summary: '', language: '' };
+                const refinePrompt =
+                  `The conductor flagged this file in chunk ${chunkNo}/${total}. Rewrite it to address the findings.\n\nFile: ${target.path}\nDesign brief: ${designBrief || '(none)'}\n\n━━━ CONDUCTOR FINDINGS ━━━\n${findings.join('\n')}\n\n━━━ CURRENT CONTENT ━━━\n${target.content}\n\nTASK: Rewrite the ENTIRE file so it satisfies the conductor's findings while keeping its purpose and its declared exports intact. Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+                const raw = await translator.reason(refinePrompt, FILE_WRITE_PROMPT, { maxTokens: 4096, timeoutMs, role: 'codeGeneration' });
+                let content = cleanLLMResponse(raw);
+                const wrapped = extractJSON<{ content?: string }>(content);
+                if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
+                else content = content.replace(/^```(?:\w+)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+                if (content && content !== target.content) {
+                  fs.writeFileSync(safeJoin(exportDir, target.path), content, 'utf-8');
+                  const live = files.find(g => normalizeContractPath(g.path) === normalizeContractPath(target.path));
+                  if (live) live.content = content;
+                }
+              }
+              chunkVerdict = await runTscCheck(exportDir, files);
+            }
+          }
+        } else {
+          console.warn(`[codePlanner] conductor review chunk ${chunkNo}/${total}: ok (no findings)`);
+        }
+      } catch (reviewErr: any) {
+        console.warn(`[codePlanner] conductor review chunk ${chunkNo}/${total} failed: ${reviewErr?.message || reviewErr}`);
+      }
+    }
   }
 
   let finalVerdict = await runTscCheck(exportDir, files);
@@ -3733,13 +5034,34 @@ async function generateChunkedFiles(
     finalVerdict = wholeProject.verdict;
     repairRounds += wholeProject.rounds;
   }
-  const tscErrors = finalVerdict.errors.length;
   // Behavioral gates (chunked path): one-shot auto-fallbacks land here, so the
   // app must be verified too — AND repaired, exactly like the one-shot path.
   // tsc can't see single-file HTML OR whether a CLI actually runs, so run the
   // appropriate probe and feed a FAILED verdict into the SAME bounded repair
   // loop the finalize path uses (previously chunked only REPORTED the verdict
   // and shipped a broken app with no retry — the reviewer-flagged gap).
+  // Non-TS compile gate FIRST, then the behavioral smoke (same reasoning as the
+  // finalize path): the scripted CLI probe compiles the program, so it must see
+  // source the compile-repair loop has already fixed, or it reports a bare
+  // "compile failed" for what the non-TS gate then makes compile.
+  const nonTsGate = await runNonTsGatesWithRepair({
+    request,
+    files,
+    contractFiles,
+    exportDir,
+    timeoutMs,
+    canRepair: () => true, // chunked keeps its own budgets; the gate gets its own 2-round cap
+    consumeRepair: () => {},
+    repairCall: async (prompt: string): Promise<string> => {
+      const raw = await translator.reason(prompt, FILE_WRITE_PROMPT, { maxTokens: 4096, timeoutMs });
+      let content = cleanLLMResponse(raw);
+      const wrapped = extractJSON<{ content?: string }>(content);
+      if (wrapped && typeof wrapped.content === 'string') content = wrapped.content;
+      else content = content.replace(/^```(?:\w+)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+      return content;
+    },
+    onProgress: emitCodegenProgress,
+  });
   const { renderSmoke, cliSmoke } = await runBehavioralSmokeGates({
     request,
     files,
@@ -3750,8 +5072,91 @@ async function generateChunkedFiles(
     canRepair: () => true, // chunked has its own per-chunk budgets; smoke gets its own 2-round cap
     consumeRepair: () => {},
   });
-  console.log(`[codePlanner] chunked: ${files.length} file(s) in ${total} chunk(s), ${repairRounds} repair round(s), ${tscErrors} remaining tsc error(s) [gate: ${finalVerdict.status}]`);
-  return files.length ? { files, mode: 'chunked', exportDir, repairRounds, tscErrors, tscVerified: finalVerdict.status === 'clean' || finalVerdict.status === 'errors', compileStatus: finalVerdict.status, renderSmoke, cliSmoke } : null;
+  // FINAL deterministic safety net (chunked path): the smoke gate's bounded
+  // repair loop rewrites failing entries via the LLM AFTER the last strip ran
+  // (same live-observed pattern as the one-shot path — a smoke-repaired file
+  // re-introduced `import { render, screen } from '@testing-library/react'`,
+  // a package that is never installed, shipping a TS2307). Strip EVERY file
+  // once more so the written export and the reported verdict are
+  // phantom-free; idempotent, zero LLM calls. Re-run tsc so the final error
+  // count reflects the stripped state (removed symbols surface honestly as
+  // TS2304).
+  let smokeStripped = 0;
+  for (const f of files) {
+    const stripped = stripPhantomPackageImports(f.content, f.path);
+    if (stripped && stripped !== f.content) {
+      f.content = stripped;
+      fs.writeFileSync(safeJoin(exportDir, f.path), stripped, 'utf-8');
+      smokeStripped += 1;
+    }
+  }
+  if (smokeStripped > 0) {
+    console.warn(`[codePlanner] chunked smoke-final pass: ${smokeStripped} file(s) phantom npm-dependency imports stripped after smoke repair (no LLM call)`);
+    finalVerdict = await runTscCheck(exportDir, files);
+  }
+  // Deployment-artifact guarantee (Layer 2 — output, deterministic, zero LLM):
+  // same as the finalize path — inject a Dockerfile when the request asks for
+  // deployment and the writer omitted it, and write it to the export dir so it
+  // ships like any other generated file (idempotent: no-op when present).
+  let withDeploy = ensureDockerfileArtifact(files, request);
+  // Test-artifact guarantee (Layer 2 — output, deterministic, zero LLM): same
+  // chokepoint — inject a self-contained smoke test when the request asks for
+  // tests and the writer omitted them (idempotent: no-op when present).
+  withDeploy = ensureTestArtifact(withDeploy, request);
+  if (withDeploy.length !== files.length) {
+    const added = withDeploy.find(f => !files.some(g => g.path === f.path));
+    if (added) fs.writeFileSync(safeJoin(exportDir, added.path), added.content, 'utf-8');
+    files = withDeploy;
+  }
+  const tscErrorsFinal = finalVerdict.errors.length;
+  // F3 + F5/F6/F11 gates (chunked path) — identical to the finalize path,
+  // including the bounded non-TS compile-repair loop.
+  // Re-verify the non-TS gate on the final code after the behavioral smoke's
+  // repair loop (same reasoning as the finalize path): a smoke repair can
+  // re-introduce a compile error, and the reported verdict must match the code
+  // that actually ships. Repair disabled — verdict refresh only.
+  const postSmokeGate = await runNonTsGatesWithRepair({
+    request,
+    files,
+    contractFiles,
+    exportDir,
+    timeoutMs,
+    canRepair: () => false,
+    consumeRepair: () => {},
+    repairCall: async () => '',
+  });
+  const { languageGates, stubFailures } = postSmokeGate;
+  const tscClasses = bucketTscClasses(finalVerdict.errors);
+  console.log(`[codePlanner] chunked: ${files.length} file(s) in ${total} chunk(s), ${repairRounds} repair round(s), ${tscErrorsFinal} remaining tsc error(s) [gate: ${finalVerdict.status}]${Object.keys(tscClasses).length ? ` — classes: ${JSON.stringify(tscClasses)}` : ''}`);
+  // Count the non-TS compile-repair rounds too (same reason as the finalize
+  // path): a non-TS-only chunked build otherwise reports 0 repair rounds.
+  repairRounds += nonTsGate.rounds + postSmokeGate.rounds;
+  // CONDUCTOR INTEGRATION REVIEW: after the whole build (incl. whole-project
+  // repair + smoke passes), the conductor does the final look across every
+  // file — cross-file wiring, contract drift, missing glue. Surfaced in the
+  // route response so the user sees what the bandleader concluded.
+  let conductorReport: { verdict: string; findings: string[]; note: string } | null = null;
+  if (files.length) {
+    try {
+      const wholeBlock = buildWrittenFilesBlock(files);
+      const integrationPrompt =
+        `The band finished the whole build (${files.length} file(s), ${total} chunk(s)). Design brief:\n${designBrief || '(none)'}\n\nConductor findings from earlier chunk reviews:\n${conductorFindings.length ? conductorFindings.map(f => `Chunk ${f.chunkNo}: ${f.findings.join('; ')}`).join('\n') : '(none)'}\n\n━━━ ALL FILES (FULL SOURCE) ━━━\n${wholeBlock}\n\nTASK: Do the final integration review. Reply with ONLY valid JSON: {\"verdict\": \"ok\" | \"fix\", \"findings\": [string], \"note\": string}. List concrete cross-file issues (wiring, contract mismatches, missing glue, consistency) and what the team should do about them.`;
+      const integrationRaw = await askConductor(integrationPrompt, { stage: 'integration', context: wholeBlock, maxTokens: 900, timeoutMs: Math.min(timeoutMs, 90_000) });
+      const parsed = extractJSON<{ verdict?: string; findings?: string[]; note?: string }>(cleanLLMResponse(integrationRaw));
+      const findings = Array.isArray(parsed?.findings)
+        ? parsed.findings.filter((f: unknown): f is string => typeof f === 'string' && !!f.trim()).map((f: string) => f.trim().slice(0, 500))
+        : [];
+      conductorReport = {
+        verdict: parsed?.verdict === 'fix' ? 'fix' : 'ok',
+        findings,
+        note: typeof parsed?.note === 'string' ? parsed.note.trim().slice(0, 400) : '',
+      };
+      console.warn(`[codePlanner] conductor integration review: ${conductorReport.verdict} (${findings.length} finding(s))`);
+    } catch (integErr: any) {
+      console.warn(`[codePlanner] conductor integration review failed: ${integErr?.message || integErr}`);
+    }
+  }
+  return files.length ? { files, mode: 'chunked', exportDir, repairRounds, tscErrors: tscErrorsFinal, tscClasses, tscGateRan: finalVerdict.status === 'clean' || finalVerdict.status === 'errors', compileStatus: finalVerdict.status, languageGates, stubFailures, renderSmoke, cliSmoke, designBrief, conductorFindings, conductorReport } : null;
 }
 
 /** Write generated files into a dedicated exports/<slug>-<ts>/ dir (path-safe). */
@@ -3806,6 +5211,8 @@ interface TrainingSidecarMeta {
   mode: string;
   repairRounds?: number;
   tscErrors?: number;
+  /** Residual error-class breakdown ({TS2304: 2, ...}) — telemetry + repair-pair signal. */
+  tscClasses?: Record<string, number>;
   /** The library context actually retrieved for this request (see getLibraryContext). */
   libraryContext?: string;
   files: string[];
@@ -3843,6 +5250,207 @@ function writeTrainingSidecar(exportDir: string, meta: TrainingSidecarMeta): voi
   }
 }
 
+/**
+ * Honest write summary shared by BOTH write routes (/write-code and
+ * /interactive). A tsc-clean build is NOT automatically a green ✅: for a
+ * single-file HTML app the tsc gate is 'skipped' (remainingTsc 0), so the
+ * render/cli smoke verdict is the only real check that the app works. A
+ * smoke-FAILED build (truncated file, crash on click, static board) surfaces
+ * as ⚠️ with the failing gate's detail — the chat never claims "successfully"
+ * for a broken app. Compile errors (remainingTsc > 0) stay ⚠️ as before.
+ */
+export function buildWriteSummary(opts: {
+  successCount: number;
+  remainingTsc: number;
+  modeSuffix: string;
+  fallbackNote: string;
+  contractViolations?: number;
+  /** The tsc gate verdict — distinguishes "compiled clean" from "no gate ran". */
+  compileStatus?: string;
+  /** Whole-project non-TS gates (go build / py_compile). Empty = none needed. */
+  languageGates?: LanguageGate[];
+  /** Paths rejected as stub/placeholder bodies. */
+  stubFailures?: string[];
+  renderSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string } | null;
+  cliSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string } | null;
+}): string {
+  const { successCount, remainingTsc, modeSuffix, fallbackNote, contractViolations, compileStatus, languageGates, stubFailures, renderSmoke, cliSmoke } = opts;
+  if (successCount <= 0) return '❌ Failed to write any files';
+  // #1 codegen-depth: a surviving compile error must be surfaced, never
+  // hidden behind a ✅ — the independent tsc gate is the authority.
+  if (remainingTsc > 0) {
+    return `⚠️ Wrote ${successCount} file${successCount > 1 ? 's' : ''} — ${remainingTsc} compile error(s) remain${modeSuffix}${contractViolations ? ` (${contractViolations} contract violation(s))` : ''}${fallbackNote}`;
+  }
+  // ONE shared verdict decides whether anything vouched for this build (see
+  // sandbox/buildVerification.ts) — the SAME decision learnFromWrite uses, so a
+  // build can never be ✅ in the summary while ineligible to teach the store
+  // (or vice versa) by the two checks drifting apart.
+  const verdict = deriveBuildVerdict({
+    tscStatus: compileStatus as TscStatus | undefined,
+    tscErrors: 0,
+    languageGates,
+    stubFailures,
+    renderSmoke,
+    cliSmoke,
+  });
+  const wrote = `Wrote ${successCount} file${successCount > 1 ? 's' : ''}`;
+  // tsc 'errors' with remainingTsc 0 (defensive) still surfaces as ⚠️.
+  if (verdict.failure) {
+    return `⚠️ ${wrote} — ${verdict.failure.detail}${modeSuffix}${fallbackNote}`;
+  }
+  return `✅ ${wrote} successfully${modeSuffix}${fallbackNote}`;
+}
+
+/**
+ * Phase 2c (shared learning loop — knowledge store): fold a tsc-clean verified
+ * write into VACA's pattern store so she learns "how to build this app" from
+ * her own chat writes. The write path previously NEVER called the learning
+ * engine (only the canvas/blueprint path did), so the pattern store stayed
+ * frozen at 26 while the capture sessions ran. Same verified gate as the
+ * training capture: broken output (remainingTsc > 0) or an unverifiable gate
+ * ('unavailable') never enters the store. Best-effort — learning must never
+ * fail a generation.
+ *
+ * tsc-clean is NOT enough: a single-file HTML app is invisible to tsc (the
+ * gate is 'skipped'), so a smoke-FAILED build (truncated file, crash on
+ * click, static board) would still be "learned" and poison the pattern store
+ * with the model's own failures — the exact self-poisoning observed (smoke-
+ * failed checkers builds stored as 'Full architecture' patterns). The
+ * behavioral-gate verdict is the arbiter for HTML/CLI apps: a 'failed'
+ * renderSmoke/cliSmoke never teaches the store.
+ */
+export function learnFromWrite(
+  exportDir: string,
+  request: string,
+  written: WrittenFile[],
+  opts: {
+    compileStatus?: string;
+    remainingTsc: number;
+    /** Whole-project non-TS gates (go build / py_compile) — see runPlannerBuildGates. */
+    languageGates?: LanguageGate[];
+    /** Paths rejected as stub/placeholder bodies. */
+    stubFailures?: string[];
+    // Widened on purpose: the generator's verdict is typed with a loose
+    // `status: string` (line 4421) — the union-narrowed SmokeVerdict is what
+    // the smoke gates produce, but the write path sees the loose shape.
+    renderSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string };
+    cliSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string };
+  },
+): void {
+  // Any FAILED gate disqualifies; any UNVERIFIED gate ALSO disqualifies —
+  // "not failed" is not "verified". This closes the self-poisoning window:
+  // a build whose smoke is 'unavailable'/'skipped'/absent was previously
+  // learned anyway (e.g. on a box without Python/Playwright, EVERY HTML build
+  // taught the store with no behavioral check).
+  // The SAME shared verdict the user-facing summary uses. "not failed" is not
+  // "verified": a build must have a gate that actually PASSED (tsc clean, a
+  // clean non-TS gate, or a passed behavioral smoke). Broken or unverified
+  // output never teaches the pattern store — the checkers/chess poisoning class.
+  const verdict = deriveBuildVerdict({
+    tscStatus: opts.compileStatus as TscStatus | undefined,
+    tscErrors: opts.remainingTsc,
+    languageGates: opts.languageGates,
+    stubFailures: opts.stubFailures,
+    renderSmoke: opts.renderSmoke,
+    cliSmoke: opts.cliSmoke,
+  });
+  if (!verdict.learnEligible) {
+    console.warn(`[codePlanner] knowledge-store learning skipped: ${verdict.failure?.detail || 'no verification gate PASSED'} — unverified/broken output never teaches the pattern store`);
+    return;
+  }
+  try {
+    const files = written
+      .filter((w) => w.status === 'written' && w.content.trim().length > 0)
+      .map((w) => ({ path: w.path, content: w.content }));
+    if (!files.length) return;
+    const entries = learningEngine.learnFromFiles({
+      projectName: request,
+      projectId: `write_${Date.now()}`,
+      targetOS: 'linux',
+      files,
+    });
+    if (entries.length > 0) {
+      console.log(`[codePlanner] Learned ${entries.length} pattern(s) from write "${request.slice(0, 60)}"`);
+    }
+  } catch (err) {
+    console.warn('[codePlanner] Knowledge-store learning failed (non-fatal):', err);
+  }
+}
+// ─── Programmatic entry point for autonomous/anonymous callers ───────────
+// The plan+write flow the /interactive route runs, factored into an exported
+// function so background services (the idle micro-app experimenter) can drive
+// real, fully-verified app generation without a network round-trip to our own
+// HTTP port. Mirrors the /plan-code route: structured intent, one truncation-
+// repair retry, GUI-entry enforcement + contract normalization.
+// Returns { plan, intent } or null when the model produced no usable plan.
+
+/**
+ * Last-resort parse for PLAN JSON.
+ *
+ * `extractJSON` only repairs raw newlines and unbalanced/truncated structure — it
+ * is strict about single-quoted strings, unquoted keys and trailing commas, which
+ * is exactly the shape the R20 14B emits (e.g. `"uses": [{ from: 'x.py',
+ * members: ['f'] }]` followed by a trailing comma). The architect path already
+ * owns a tolerant repair for this (`repairAndParseJSON`), so reuse it here as a
+ * FALLBACK only — after `extractJSON`, before the LLM retry.
+ *
+ * Safe to apply here because the plan wrapper holds no code bodies (paths,
+ * summaries, member names, question text), so the looser rewrites cannot
+ * corrupt generated source. A parse that keeps the `files` array intact wins;
+ * anything else returns null so the caller falls through to its retry.
+ */
+function repairPlanJSON(text: string): CodePlan | null {
+  if (!text) return null;
+  const repaired = repairAndParseJSON(text);
+  if (repaired && typeof repaired === 'object' && Array.isArray((repaired as CodePlan).files)) {
+    return repaired as CodePlan;
+  }
+  return null;
+}
+
+export async function planProject(
+  request: string,
+  scale?: AppScale | string
+): Promise<{ plan: CodePlan; intent: IntentSpec } | null> {
+  const scaleN = normalizeScale(scale);
+  const preference = loadPreference().preference;
+  const planSystemPrompt = getPlanPromptWithContext(request, preference, scaleN);
+  const spec = await resolveIntent(request);
+  const planPrompt = `User request: ${request}\n\n${formatIntentSection(spec)}\n\nPlan the files needed and ask any clarifying questions.`;
+  const response = await translator.reason(planPrompt, planSystemPrompt, { maxTokens: 4096, timeoutMs: PLAN_TIMEOUT_MS });
+  const first = cleanLLMResponse(response);
+  let parsed = extractJSON<CodePlan>(first) ?? repairPlanJSON(first);
+  if (!parsed) {
+    // One retry, ALWAYS — the failure has two distinct shapes and only the first
+    // used to be retried:
+    //   • JSON-shaped but malformed/truncated (the common 14B case)
+    //   • plain prose answering the question instead of the schema (vanilla
+    //     instruct models do this; the prompt's "ask any clarifying questions"
+    //     reads as an invitation to chat)
+    // Naming the actual failure in the retry is what makes the second attempt
+    // land; a prose reply told "your JSON was truncated" just tries again in prose.
+    const lookedLikeJson = first.trim().startsWith('{');
+    const retry = await translator.reason(
+      `${planPrompt}\n\n${lookedLikeJson
+        ? 'Your previous plan JSON was malformed or truncated. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no code fences, no commentary.'
+        : 'You replied with prose. Return ONLY the plan JSON object described in the system prompt — valid JSON, no markdown, no code fences, no commentary.'}`,
+      planSystemPrompt,
+      { maxTokens: 4096, timeoutMs: PLAN_TIMEOUT_MS },
+    );
+    const retryClean = cleanLLMResponse(retry);
+    parsed = extractJSON<CodePlan>(retryClean) ?? repairPlanJSON(retryClean);
+  }
+  if (!parsed || !parsed.files || !Array.isArray(parsed.files)) return null;
+  return {
+    plan: {
+      ...parsed,
+      files: ensureGuiEntryFile(normalizeFileContracts(parsed.files), request),
+      questions: normalizeQuestions(parsed.questions),
+    },
+    intent: spec,
+  };
+}
+
 // ─── Routes ──────────────────────────────────────────────────────────────
 
 /**
@@ -3855,10 +5463,17 @@ function writeTrainingSidecar(exportDir: string, meta: TrainingSidecarMeta): voi
  */
 codePlannerRoutes.post('/plan-code', async (req: Request, res: Response) => {
   try {
-    const { request, context, scale } = req.body;
+    const { request, context, scale, projectId } = req.body;
     if (!request || typeof request !== 'string') {
       return res.status(400).json({ error: 'request is required' });
     }
+
+    // Tree Mode (CHAT path): when the request is tied to a multi-app project,
+    // the plan must organise files under per-app `apps/` directories. Empty for
+    // a single-tree (or unknown) project, so ordinary plans are unchanged.
+    const project = typeof projectId === 'string' ? projects.getById(projectId) : undefined;
+    const treePlanSection = project ? buildPlanTreeSection(project as any) : '';
+    if (treePlanSection) console.log(`[codePlanner/plan] Tree Mode: multi-app project ${projectId} — planning per-app directories`);
 
     const scaleN = normalizeScale(scale);
     if (scaleN) console.log(`[codePlanner/plan] Scale override requested: ${scaleN}`);
@@ -3871,9 +5486,9 @@ codePlannerRoutes.post('/plan-code', async (req: Request, res: Response) => {
     const spec = await resolveIntent(request);
     const intentSection = formatIntentSection(spec);
 
-    const fullPrompt = context
+    const fullPrompt = (context
       ? `User request: ${request}\n\n${intentSection}\n\nContext:\n${context}\n\nPlan the files needed and ask any clarifying questions.`
-      : `User request: ${request}\n\n${intentSection}\n\nPlan the files needed and ask any clarifying questions.`;
+      : `User request: ${request}\n\n${intentSection}\n\nPlan the files needed and ask any clarifying questions.`) + treePlanSection;
 
     // Phase 1: every planned file now carries exports/uses contracts (~15-25
     // tokens/file), so give the plan output real headroom.
@@ -3889,7 +5504,7 @@ codePlannerRoutes.post('/plan-code', async (req: Request, res: Response) => {
       const retryRaw = await translator.reason(
         `${fullPrompt}\n\nYour previous plan JSON was truncated before it finished. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no commentary.`,
         planSystemPrompt,
-        { maxTokens: 8192, timeoutMs: PLAN_TIMEOUT_MS },
+        { maxTokens: 4096, timeoutMs: PLAN_TIMEOUT_MS },
       );
       const retryCleaned = cleanLLMResponse(retryRaw);
       const retried = extractJSON<CodePlan>(retryCleaned);
@@ -3954,7 +5569,7 @@ codePlannerRoutes.post('/plan-code', async (req: Request, res: Response) => {
  */
 codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
   try {
-    const { request, plan, answers, libraryMode, chunkSize, intent, scale } = req.body;
+    const { request, plan, answers, libraryMode, chunkSize, intent, scale, projectId } = req.body;
     if (!request || !plan) {
       return res.status(400).json({ error: 'request and plan are required' });
     }
@@ -3963,7 +5578,7 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
     // size — a one-shot write of 30+ files would truncate at the token cap.
     const scaleN = normalizeScale(scale);
     if (scaleN && !chunkSize) console.log(`[codePlanner/write] Scale ${scaleN} — defaulting to chunked generation`);
-    const gen = await generatePlanFiles(request, plan, answers, WRITE_TIMEOUT_MS, libraryMode, chunkSize ?? (scaleN === 'large' || scaleN === 'enterprise' ? 4 : undefined), intent);
+    const gen = await generatePlanFiles(request, plan, answers, WRITE_TIMEOUT_MS, libraryMode, chunkSize ?? (scaleN === 'large' || scaleN === 'enterprise' ? 4 : undefined), intent, projectId);
     if (!gen) {
       return res.json({
         success: false,
@@ -3998,13 +5613,22 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
         : gen.contractViolations
           ? ` (${gen.contractViolations} contract violation(s))`
           : '';
-    // #1 codegen-depth: a surviving compile error must be surfaced, never
-    // hidden behind a ✅ — the independent tsc gate is the authority.
-    const summary = successCount > 0
-      ? remainingTsc > 0
-        ? `⚠️ Wrote ${successCount} file${successCount > 1 ? 's' : ''} — ${remainingTsc} compile error(s) remain${modeSuffix}${gen.contractViolations ? ` (${gen.contractViolations} contract violation(s))` : ''}${fallbackNote}`
-        : `✅ Wrote ${successCount} file${successCount > 1 ? 's' : ''} successfully${modeSuffix}${fallbackNote}`
-      : '❌ Failed to write any files';
+    // Honest verdict: a tsc-clean build is NOT automatically ✅ — for
+    // single-file HTML apps tsc is 'skipped', so a smoke-FAILED build
+    // (truncated file, crash on click, static board) shows ⚠️ with the
+    // failing gate's detail instead of a green checkmark.
+    const summary = buildWriteSummary({
+      successCount,
+      remainingTsc,
+      modeSuffix,
+      fallbackNote,
+      contractViolations: gen.contractViolations,
+      compileStatus: gen.compileStatus,
+      languageGates: gen.languageGates,
+      stubFailures: gen.stubFailures,
+      renderSmoke: gen.renderSmoke,
+      cliSmoke: gen.cliSmoke,
+    });
 
     // Phase 2 (training-data loop): persist the metadata sidecar so the capture
     // script can turn tsc-clean exports into training pairs. Best-effort.
@@ -4014,7 +5638,8 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
         mode: gen.mode,
         repairRounds: gen.repairRounds,
         tscErrors: gen.tscErrors,
-        libraryContext: gen.libraryContext ?? getLibraryContext(request),
+        tscClasses: gen.tscClasses,
+        libraryContext: gen.libraryContext ?? await getLibraryContextDense(request),
         files: written.filter(w => w.status === 'written').map(w => w.path),
       });
       // Phase 2b (shared learning loop): fold this verified export into the SAME
@@ -4023,6 +5648,19 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
       void captureVerifiedSidecar(exportDir).catch((err) =>
         console.warn('[codePlanner] verified sidecar capture failed (non-fatal):', err)
       );
+      // Phase 2c (shared learning loop — knowledge store): tsc-clean writes now
+      // teach the pattern store too (before, the write path never called the
+      // learning engine — patterns only came from canvas builds). The smoke
+      // verdicts ride along so a smoke-FAILED HTML/CLI build never teaches the
+      // store (tsc-clean is not a runtime guarantee for single-file HTML).
+      learnFromWrite(exportDir, request, written, {
+        compileStatus: gen.compileStatus,
+        remainingTsc,
+        languageGates: gen.languageGates,
+        stubFailures: gen.stubFailures,
+        renderSmoke: gen.renderSmoke,
+        cliSmoke: gen.cliSmoke,
+      });
     }
 
     emitCodegenProgress({ phase: 'done', percent: 100, message: summary });
@@ -4039,8 +5677,13 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
       mode: gen.mode,
       repairRounds: gen.repairRounds ?? 0,
       tscErrors: gen.tscErrors ?? 0,
+      tscClasses: gen.tscClasses,
       compileStatus: gen.compileStatus ?? (remainingTsc > 0 ? 'errors' : 'clean'),
       contractViolations: gen.contractViolations ?? 0,
+      // Whole-project non-TS compile gates (go build / py_compile) and stub
+      // bodies — surfaced so consumers see the same honest verdict as the summary.
+      languageGates: gen.languageGates ?? [],
+      stubFailures: gen.stubFailures ?? [],
       // 3D/graphics gate: headless-Chrome render verdict for HTML entries
       // ({ status: 'passed'|'failed'|'skipped'|'unavailable', errors, detail }).
       renderSmoke: gen.renderSmoke,
@@ -4085,7 +5728,7 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
  */
 codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
   try {
-    const { request, context, autoWrite, libraryMode, chunkSize, intent, scale } = req.body;
+    const { request, context, autoWrite, libraryMode, chunkSize, intent, scale, projectId } = req.body;
     if (!request) {
       return res.status(400).json({ error: 'request is required' });
     }
@@ -4109,9 +5752,16 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
     let parsedPlan = extractJSON<CodePlan>(planCleaned);
     // Truncation repair: re-ask once for the COMPLETE plan JSON at a larger
     // budget when the first reply was cut off mid-JSON.
-    if (!parsedPlan && planCleaned.trim().startsWith('{')) {
+    // The guard must NOT require the reply to START with `{`: the plan prompt
+    // asks for fenced JSON, so the most common truncated shape begins with
+    // ```json — the fence made this retry unreachable. Measured live: a Go plan
+    // came back as a fenced, unterminated JSON object and the request failed
+    // with "Could not create a structured plan" without ever asking the model
+    // for a complete plan. `extractJSON` already tries a brace-balancing repair
+    // first, so reaching here means that failed too.
+    if (!parsedPlan && planCleaned.includes('{')) {
       const retryRaw = await translator.reason(
-        `${planPrompt}\n\nYour previous plan JSON was truncated before it finished. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no commentary.`,
+        `${planPrompt}\n\nYour previous plan JSON was truncated before it finished. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no commentary. Keep it SHORT: at most 6 files, and at most one short clarifying question.`,
         planSystemPrompt,
         { maxTokens: 8192, timeoutMs: PLAN_TIMEOUT_MS },
       );
@@ -4155,7 +5805,7 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
     // plan-time refined spec (Phase 3) as the override so the write path sees the
     // SAME intent the plan showed — a body-provided (Phase 4 card) intent wins.
     // Large/enterprise plans auto-chunk when the caller didn't pick a chunk size.
-    const gen = await generatePlanFiles(request, plan, undefined, WRITE_TIMEOUT_MS, libraryMode, chunkSize ?? (scaleN === 'large' || scaleN === 'enterprise' ? 4 : undefined), intent || spec);
+    const gen = await generatePlanFiles(request, plan, undefined, WRITE_TIMEOUT_MS, libraryMode, chunkSize ?? (scaleN === 'large' || scaleN === 'enterprise' ? 4 : undefined), intent || spec, projectId);
     if (!gen) {
       return res.json({
         success: true,
@@ -4188,11 +5838,20 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
         : gen.contractViolations
           ? ` (${gen.contractViolations} contract violation(s))`
           : '';
-    // #1 codegen-depth: a surviving compile error must be surfaced, never
-    // hidden behind a ✅ — the independent tsc gate is the authority.
-    const summaryMsg = remainingTsc > 0
-      ? `⚠️ Wrote ${successCount} file${successCount > 1 ? 's' : ''} — ${remainingTsc} compile error(s) remain${modeSuffix}${gen.contractViolations ? ` (${gen.contractViolations} contract violation(s))` : ''}${fallbackNote}`
-      : `✅ Wrote ${successCount} file${successCount > 1 ? 's' : ''} successfully${modeSuffix}${fallbackNote}`;
+    // Honest verdict (shared helper): a smoke-FAILED HTML build must show ⚠️
+    // with the failing gate's detail, never a green ✅.
+    const summaryMsg = buildWriteSummary({
+      successCount,
+      remainingTsc,
+      modeSuffix,
+      fallbackNote,
+      contractViolations: gen.contractViolations,
+      compileStatus: gen.compileStatus,
+      languageGates: gen.languageGates,
+      stubFailures: gen.stubFailures,
+      renderSmoke: gen.renderSmoke,
+      cliSmoke: gen.cliSmoke,
+    });
 
     // Phase 2 (training-data loop): persist the metadata sidecar (reuses the
     // plan-time refined spec so the capture row matches what was generated).
@@ -4203,7 +5862,8 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
         mode: gen.mode,
         repairRounds: gen.repairRounds,
         tscErrors: gen.tscErrors,
-        libraryContext: gen.libraryContext ?? getLibraryContext(request),
+        tscClasses: gen.tscClasses,
+        libraryContext: gen.libraryContext ?? await getLibraryContextDense(request),
         files: written.filter(w => w.status === 'written').map(w => w.path),
       });
       // Phase 2b (shared learning loop): same fire-and-forget capture as the
@@ -4211,6 +5871,18 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
       void captureVerifiedSidecar(exportDir).catch((err) =>
         console.warn('[codePlanner] verified sidecar capture failed (non-fatal):', err)
       );
+      // Phase 2c (shared learning loop — knowledge store): same as the
+      // /write-code path — tsc-clean interactive writes teach the pattern store.
+      // Smoke verdicts ride along so a smoke-FAILED build never teaches (the
+      // single-file HTML poisoning class).
+      learnFromWrite(exportDir, request, written, {
+        compileStatus: gen.compileStatus,
+        remainingTsc,
+        languageGates: gen.languageGates,
+        stubFailures: gen.stubFailures,
+        renderSmoke: gen.renderSmoke,
+        cliSmoke: gen.cliSmoke,
+      });
     }
 
     emitCodegenProgress({ phase: 'done', percent: 100, message: summaryMsg });
@@ -4226,7 +5898,10 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
       mode: gen.mode,
       repairRounds: gen.repairRounds ?? 0,
       tscErrors: gen.tscErrors ?? 0,
+      tscClasses: gen.tscClasses,
       compileStatus: gen.compileStatus ?? (remainingTsc > 0 ? 'errors' : 'clean'),
+      languageGates: gen.languageGates ?? [],
+      stubFailures: gen.stubFailures ?? [],
       summary: summaryMsg,
       totalFiles: gen.files.length,
       writtenCount: successCount,
@@ -4255,16 +5930,81 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
 
 // ─── Helper: Extract JSON from LLM response ────────────────────────────
 
+/**
+ * Repair the two small-model JSON failure modes a strict parse cannot survive
+ * (the whole-project repair's live-observed "no usable JSON rewrite"):
+ *   1. RAW newlines/tabs INSIDE string values — the model emits file content
+ *      with real line breaks instead of `\n` escapes, which is invalid JSON.
+ *   2. An unterminated trailing string / unclosed structure — the response
+ *      hit maxTokens mid-content.
+ * String-aware by construction: raw newlines are VALID whitespace outside
+ * strings (left untouched), only string-internal control chars are escaped,
+ * and an existing `\n` escape is never doubled. Valid JSON passes through
+ * byte-identical. Returns the repaired text — callers still validate with
+ * JSON.parse, this only makes the INVALID cases parseable.
+ */
+export function repairLLMJson(text: string): string {
+  let out = '';
+  let inStr = false, esc = false;
+  const stack: string[] = [];
+  for (const ch of text) {
+    if (inStr) {
+      if (esc) { out += ch; esc = false; continue; }
+      if (ch === '\\') { out += ch; esc = true; continue; }
+      if (ch === '"') { inStr = false; out += ch; continue; }
+      if (ch === '\n') { out += '\\n'; continue; }  // raw newline in string → \n
+      if (ch === '\r') { out += '\\r'; continue; }
+      if (ch === '\t') { out += '\\t'; continue; }
+      out += ch;
+      continue;
+    }
+    if (ch === '"') { inStr = true; out += ch; continue; }
+    if (ch === '{') { stack.push('}'); out += ch; continue; }
+    if (ch === '[') { stack.push(']'); out += ch; continue; }
+    if (ch === '}' || ch === ']') {
+      if (stack.length && stack[stack.length - 1] === ch) { stack.pop(); out += ch; continue; }
+      if (stack.length) {
+        // MISMATCHED closer. The open container's type is authoritative: a model
+        // writing `"members": ["X"} }]` swapped `]` for `}` — a typo, not a
+        // different structure. Emit the closer the structure actually needs so
+        // the payload parses instead of being discarded. Measured live: a
+        // complete Go plan was rejected as "Could not create a structured plan"
+        // because of one `}` where a `]` belonged, even after the truncation
+        // retry produced a second, equally-complete reply.
+        out += stack.pop();
+        continue;
+      }
+      // Stray closer with nothing open — leave it; JSON.parse stays the arbiter.
+    }
+    out += ch;
+  }
+  // Close an unterminated trailing string, then the unclosed structure (LIFO).
+  if (inStr) out += '"';
+  while (stack.length) out += stack.pop()!;
+  return out;
+}
+
 function extractJSON<T>(text: string): T | null {
   if (!text) return null;
   const clean = text.replace(/^\uFEFF/, '').trim();
+  const tryParse = (s: string): T | null => {
+    try { return JSON.parse(s) as T; } catch {}
+    // Raw-newline / truncation repair, then re-parse (only when it changed).
+    const repaired = repairLLMJson(s);
+    if (repaired !== s) {
+      try { return JSON.parse(repaired) as T; } catch {}
+    }
+    return null;
+  };
 
-  // 1) Direct parse
-  try { return JSON.parse(clean) as T; } catch {}
+  // 1) Direct parse (with repair fallback)
+  const direct = tryParse(clean);
+  if (direct) return direct;
 
   // 2) Code fences (json or any language)
   for (const f of [...clean.matchAll(/```(?:\w+)?\s*\n?([\s\S]*?)```/g)]) {
-    try { return JSON.parse(f[1].trim()) as T; } catch {}
+    const p = tryParse(f[1].trim());
+    if (p) return p;
   }
 
   // 3) Balanced-brace scan from the first '{' — recovers prose-wrapped and
@@ -4285,12 +6025,14 @@ function extractJSON<T>(text: string): T | null {
       else if (ch === '}') {
         depth--;
         if (depth === 0) {
-          try { return JSON.parse(clean.slice(start, i + 1)) as T; } catch {}
+          const p = tryParse(clean.slice(start, i + 1));
+          if (p) return p;
         }
       }
     }
     // 4) Last resort: tail from the first '{' to the end
-    try { return JSON.parse(clean.slice(start)) as T; } catch {}
+    const tail = tryParse(clean.slice(start));
+    if (tail) return tail;
   }
   return null;
 }

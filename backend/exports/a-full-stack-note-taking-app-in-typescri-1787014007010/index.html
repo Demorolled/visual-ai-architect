@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note Taking App</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #1e1e2e;
+    color: #ffffff;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    margin: 0;
+    color: #ffffff;
+  }
+  .notes-list {
+    margin-top: 20px;
+  }
+  .note {
+    background: #1c1c2c;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+  .note h2 {
+    margin: 0;
+    color: #ffffff;
+  }
+  .note p {
+    margin: 5px 0;
+    color: #a9a9a9;
+  }
+  .add-note {
+    margin-top: 20px;
+  }
+  .add-note input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #444444;
+    border-radius: 4px;
+    background: #121212;
+    color: #ffffff;
+    font-size: 16px;
+  }
+  .add-note button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Note Taking App</h1>
+    <button onclick="saveNotes()">Save Notes</button>
+  </div>
+  <div id="notes-list" class="notes-list"></div>
+  <div class="add-note">
+    <input id="noteInput" type="text" placeholder="Enter a new note">
+    <button onclick="addNote()">Add Note</button>
+  </div>
+</div>
+<script>
+  let notes = [];
+
+  function addNote() {
+    const input = document.getElementById('noteInput');
+    const note = input.value.trim();
+    if (note) {
+      notes.push(note);
+      input.value = '';
+      renderNotes();
+    }
+  }
+
+  function saveNotes() {
+    localStorage.setItem('notes', JSON.stringify(notes));
+    alert('Notes saved to localStorage!');
+  }
+
+  function renderNotes() {
+    const list = document.getElementById('notes-list');
+    list.innerHTML = '';
+    notes.forEach((note, index) => {
+      const li = document.createElement('li');
+      li.className = 'note';
+      li.innerHTML = `<h2>Note ${index + 1}</h2><p>${note}</p>`;
+      list.appendChild(li);
+    });
+  }
+
+  function loadNotes() {
+    const storedNotes = localStorage.getItem('notes');
+    if (storedNotes) {
+      notes = JSON.parse(storedNotes);
+    }
+    renderNotes();
+  }
+
+  loadNotes();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "debug_sink": {
+    "desc": "Find+fix a subtle bug",
+    "content": "The function tries to divide by the length of the array even when it's empty, causing a division by zero error.\nfunction average(nums: number[]): number {\n  const sum = nums.reduce((acc, n) => acc + n, 0);\n  return nums.length ? sum / nums.length : 0;\n}",
+    "elapsed": 1.1
+  },
+  "stateful_module": {
+    "desc": "Stateful class with contracts",
+    "content": "export class TaskQueue<T> {\n  private tasks: T[] = [];\n\n  enqueue(task: T): number {\n    this.tasks.push(task);\n    return this.tasks.length;\n  }\n\n  dequeue(): T | undefined {\n    return this.tasks.shift();\n  }\n\n  peek(): T | undefined {\n    return this.tasks[0];\n  }\n\n  size(): number {\n    return this.tasks.length;\n  }\n}",
+    "elapsed": 1.3
+  },
+  "hard_logic": {
+    "desc": "Multi-constraint scheduling",
+    "content": "Let's analyze the constraints step by step:\n\n1. **Y does not work morning.**\n   - This means Y can only work afternoon or night.\n\n2. **If X works morning, then Z works night.**\n   - This implies that if X is assigned morning, Z must be assigned night.\n\n3. **Z does not work afternoon.**\n   - Therefore, Z can only work morning or night.\n\n4. **Night shift is NOT worked by X.**\n   - This means X can only work morning or afternoon.\n\nNow, let's deduce the shifts:\n\n- Since X cannot work night and Y cannot work morning, we need to consider the implications for Z.\n- If Z works morning, then X cannot work morning (due to constraint 4), and Y must work afternoon or night.\n  - If Y works afternoon, Z cannot work afternoon (constraint 3), so Z must work morning, and X must work afternoon.\n  - This configuration satisfies all constraints:\n    - X: afternoon\n    - Y: afternoon (contradiction, so this path is invalid)\n- If Z works night, then X must work morning (constraint 2).\n  - Y must then work afternoon (the only remaining shift).\n  - This configuration also satisfies all constraints:\n    - X: morning\n    - Y: afternoon\n    - Z: night\n\nThus, the unique solution is:\n- X works morning.\n- Y works afternoon.\n- Z works night.\n\nThe answer is: **X: morning, Y: afternoon, Z: night**.",
+    "elapsed": 5.2
+  }
+}

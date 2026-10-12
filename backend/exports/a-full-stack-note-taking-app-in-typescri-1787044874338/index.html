@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Note Taking App</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: #f4f4f9;
+  }
+  .container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 300px;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  .notes-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  .notes-list li {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .notes-list li input[type="checkbox"] {
+    accent-color: #007bff;
+    cursor: pointer;
+  }
+  .notes-list li .delete-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .notes-list li.completed {
+    text-decoration: line-through;
+    color: #888;
+  }
+  .notes-list li.completed .delete-btn {
+    color: #666;
+  }
+  .notes-list li.completed input[type="checkbox"] {
+    opacity: 0.6;
+  }
+  .note-form {
+    margin-top: 15px;
+  }
+  .note-form input[type="text"] {
+    width: calc(100% - 22px);
+    padding: 8px 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .note-form button {
+    padding: 8px 16px;
+    border: none;
+    background: #007bff;
+    color: white;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .note-form button:hover {
+    background: #0056b3;
+  }
+  .empty-notes {
+    text-align: center;
+    color: #888;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Note Taking</h1>
+  <ul id="notesList" class="notes-list"></ul>
+  <div class="note-form">
+    <input id="noteInput" type="text" placeholder="Add a note">
+    <button onclick="addNote()">Add</button>
+  </div>
+  <p id="emptyNotes" class="empty-notes">No notes added yet.</p>
+</div>
+
+<script>
+  let notes = [];
+
+  function loadNotes() {
+    const storedNotes = localStorage.getItem('notes');
+    if (storedNotes) {
+      notes = JSON.parse(storedNotes);
+      renderNotes();
+    }
+  }
+
+  function saveNotes() {
+    localStorage.setItem('notes', JSON.stringify(notes));
+  }
+
+  function renderNotes() {
+    const notesList = document.getElementById('notesList');
+    notesList.innerHTML = '';
+    const emptyNotes = document.getElementById('emptyNotes');
+
+    if (notes.length === 0) {
+      emptyNotes.style.display = 'block';
+      return;
+    }
+
+    emptyNotes.style.display = 'none';
+    notes.forEach((note, index) => {
+      const li = document.createElement('li');
+      li.className = note.completed ? 'completed' : '';
+      li.innerHTML = `
+        <input type="checkbox" onclick="toggleCompletion(${index})" ${note.completed ? 'checked' : ''}>
+        <span class="note-text">${note.text}</span>
+        <button class="delete-btn" onclick="deleteNote(${index})">×</button>
+      `;
+      notesList.appendChild(li);
+    });
+  }
+
+  function addNote() {
+    const noteInput = document.getElementById('noteInput');
+    const text = noteInput.value.trim();
+    if (text) {
+      notes.push({ text, completed: false });
+      saveNotes();
+      renderNotes();
+      noteInput.value = '';
+    }
+  }
+
+  function toggleCompletion(index) {
+    notes[index].completed = !notes[index].completed;
+    saveNotes();
+    renderNotes();
+  }
+
+  function deleteNote(index) {
+    notes.splice(index, 1);
+    saveNotes();
+    renderNotes();
+  }
+
+  loadNotes();
+</script>
+</body>
+</html>

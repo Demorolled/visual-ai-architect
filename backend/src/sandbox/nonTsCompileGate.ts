@@ -409,13 +409,25 @@ function hasExecutableTopLevel(code: string, language: GateLanguage): boolean {
       continue;
     }
     if (language === 'php') {
-      if (/^<\?php|^\?>/.test(t)) continue;
-      if (/^\/\/|^#|^\*|^\/\*/.test(t)) continue;
-      if (/^(?:function|class|interface|trait|namespace|use|declare)\b/.test(t)) continue;
-      if (t === '}' || t === '{') continue;
-      if (/^(?:require|require_once|include|include_once)\b/.test(t)) return true;
-      if (/^(?:echo|print|new)\b|^\$[A-Za-z_]/.test(t)) return true;
-      if (/^[A-Za-z_]\w*\s*\(/.test(t)) return true;
+      // A one-line script puts its ONLY statement on the same line as the
+      // opening tag (`<?php echo "hi";`). Skipping every line that STARTS with
+      // `<?php` therefore missed it, and a file that runs fine under
+      // `php cli.php` was reported as "no runnable entry point" — measured live
+      // through the real detector. Strip the tag and judge the remainder of the
+      // line, so the tag and the statement on it are treated separately.
+      let php = t;
+      if (/^<\?php\b/i.test(php)) php = php.replace(/^<\?php\b/i, '');
+      else if (/^<\?=/.test(php)) return true; // short echo tag prints at top level
+      else if (/^<\?/.test(php)) php = php.replace(/^<\?/, ''); // short open tag
+      else if (/^\?>/.test(php)) php = php.replace(/^\?>/, '');
+      php = php.replace(/\?>\s*$/, '').trim();
+      if (!php) continue;
+      if (/^\/\/|^#|^\*|^\/\*/.test(php)) continue;
+      if (/^(?:function|class|interface|trait|namespace|use|declare)\b/.test(php)) continue;
+      if (php === '}' || php === '{') continue;
+      if (/^(?:require|require_once|include|include_once)\b/.test(php)) return true;
+      if (/^(?:echo|print|new)\b|^\$[A-Za-z_]/.test(php)) return true;
+      if (/^[A-Za-z_]\w*\s*\(/.test(php)) return true;
       continue;
     }
     if (language === 'ruby') {

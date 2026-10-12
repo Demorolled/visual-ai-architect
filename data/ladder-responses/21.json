@@ -1,0 +1,356 @@
+{
+ "success": true,
+ "projectId": "2b567d59-5018-460f-8a2e-91eeb0ad36e3",
+ "matchedBy": "semantic",
+ "matchScore": 0.9632223631495076,
+ "blueprint": {
+  "app_type": "2048_2",
+  "description": "2048 sliding tile puzzle game \u2014 Interactive 2048 with real-time visualization and analysis",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Game Controller",
+    "destination_module": "Game Engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Game Engine",
+    "destination_module": "Game State",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "Game State",
+    "destination_module": "AI Opponent",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "AI Opponent",
+    "destination_module": "Render View",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Top 22 2048 Open-Source Projects | LibHunt\n    Which are the best open-source 2048 projects? This list will help you: 2048, 2048-android, dotnet-console-games, 2048.c, 2048, Flappy-2048, and 2048-in-react.\n  \u2022 puzzle-game \u00b7 GitHub Topics \u00b7 GitHub\n    A package of 21 new, improved, text-based games. Some are entirely original ideas. Best and lightest! Years of free, fun and endless brain exercise for everyone.\n  \u2022 \u2b50505 pxvr-official/1: \u7121\u8a31\u8afe\u914d\u4fe1 \u4f01\u696d\u7406\u5ff5\u527d\u7a83 \u52d5\u7269\u306e\u68ee\u53ce\u76ca\u5316 \u5927\u795e\u30df\u30aa\u6a29\u5229\u8005\u524a\u9664 \u620c\u795e\u6a29\u5229\u4fb5\u5bb3\u767a\u8a00 \u5e38\u95c7\u30c8\u30ef\u708e\u4e0a \u591c\u7a7a\u30e1\u30eb\u30b9\u30c8\u30fc\u30ab\u30fc\u88ab\u5bb3 \u5efa\u7bc9\u738b\u30b5\u30dd\u30fc\u30bf\u30fc\u653e\u7f6e \u8d64\u5341\u5b57\u30de\u30fc\u30af \u9b54\u4e43\u30a2\u30ed\u30a8\u5352\u696d \u4e00\u3064\u306e\u4e2d\u570b\u652f\u6301\u58f0\u660e \u5927\u7a7a\u66343D\u30e9\u30a4\u30d6 \u7121\u9650\u5ef6\u671f\u6e05\u6383\u54e1\u8077\u696d\u5dee\u5225 \u65e5\u6e05\u30b3\u30e9\u30dc\u697d\u66f2 musedash\u975e\u516c\u958b rog\u6848\u4ef6\u53d6\u308a\u6d88\u3057 \u58c1\u753b\u30e9\u30a4\n  \u2022 \u2b50224 DaoCloud/dao-2048: 2048 is a number puzzle game.\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 42: SESSION UPDATE \u2014 August 6, 2026: ROUND-4 FINE-TUNE SHIPS, DEPLOY FIX, AND THE 504-CHUNK BIBLE\n    42.0 THREE WORKSTREAMS TODAY\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n- The QLoRA training loop was closed end-to-end: the SFTConfig pickle crash was\n  fixed at the root (Change 24), round 4 trained on the 25 genuine failures,\n  deployed without recovery, and benchmarked (Change 26).\n- The Programming Bible gre\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "2048_2",
+   "score": 0.9632223631495076
+  },
+  {
+   "app_type": "2048",
+   "score": 0.9188545557679727
+  },
+  {
+   "app_type": "match_3_puzzle_2",
+   "score": 0.8260952285695233
+  },
+  {
+   "app_type": "block_puzzle",
+   "score": 0.7894353744020413
+  },
+  {
+   "app_type": "crossword_builder_2",
+   "score": 0.7592937423432804
+  }
+ ],
+ "project": {
+  "id": "2b567d59-5018-460f-8a2e-91eeb0ad36e3",
+  "name": "a 2048 puzzle game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "2048_2 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "input",
+    "label": "Game Controller"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Game Engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "Game State"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "AI Opponent"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Render View"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 1,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 4,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "generated": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "matched": [
+   "Game Controller",
+   "Game Engine",
+   "Game State",
+   "AI Opponent",
+   "Render View"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "game-controller.ts",
+   "language": "typescript",
+   "code": "// Game Controller Module : blue print design : GameEngine \u2192 GameController \u2192 GameState \u2192 AI Opponent \u2192 Render View\n// TODO implement the Game Controller as described above\nfunction gameController() {\n  // TODO implement the main functionality of the game controller\n}\nexport default gameController;",
+   "nodeId": "mod_0",
+   "nodeLabel": "Game Controller",
+   "dependencies": [],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "game-engine.ts",
+   "language": "typescript",
+   "code": "import gameController from '../game-controller/game-controller.ts';\n\nfunction GameEngine() {\n  // Main functionality of the game engine goes here.\n}\nexport default GameEngine;",
+   "nodeId": "mod_1",
+   "nodeLabel": "Game Engine",
+   "dependencies": [
+    "Game Controller"
+   ],
+   "exports": [],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m28\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../game-controller/game-controller.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import gameController from '../game-controller/game-controller.ts';\n\u001b[7m \u001b[0m \u001b[91m                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-state.ts",
+   "language": "typescript",
+   "code": "import GameEngine from '../game-engine/game-engine.ts';\n\nexport interface GameState {\n    board: number[][];\n    score: number;\n    moves: number;\n    bestScore: number;\n    isGameOver: boolean;\n    isWin: boolean;\n    gameSpeed: number;\n    lastMove: number;\n    directions: string[];\n    nextNumber: number;\n    cells: { row: number; col: number; value: number }[];\n}\n\nexport function initializeGameState(): GameState {\n    return {\n        board: Array(4).fill(null).map(() => Array(4).fill(0)),\n        score: 0,\n        moves: 0,\n        bestScore: 0,\n        isGameOver: false,\n        isWin: false,\n        gameSpeed: 250,\n        lastMove: 0,\n        directions: ['up', 'down', 'left', 'right'],\n        nextNumber: 2\n    };\n}\n\nexport function placeRandomNumber(state: GameState): void {\n    const emptyCells = [];\n    for (let i = 0; i < 4; i++) {\n        for (let j = 0; j < 4; j++) {\n            if (state.board[i][j] === 0) {\n                emptyCells.push({ row: i, col: j });\n            }\n        }\n    }\n    if (emptyCells.length > 0) {\n        const index = Math.floor(Math.random() * emptyCells.length);\n        const cell = emptyCells[index];\n        state.board[cell.row][cell.col] = state.nextNumber === 4 ? 2 : 1;\n        state.cells.push({ row: cell.row, col: cell.col, value: state.nextNumber === 4 ? 2 : 1 });\n        state.nextNumber = 2;\n    }\n}\n\nexport function isGameOver(state: GameState): boolean {\n    for (let i = 0; i < 4; i++) {\n        for (let j = 0; j < 4; j++) {\n            if (state.board[i][j] === 0) return false;\n            if (i < 3 && state.board[i][j] === state.board[i + 1][j]) return false;\n            if (j < 3 && state.board[i][j] === state.board[i][j + 1]) return false;\n        }\n    }\n    return true;\n}\n\nexport function mergeCells(state: GameState): void {\n    for (let i = 0; i < 4; i++) {\n        for (let j = 0; j < 3; j++) {\n            if (state.board[i][j] === state.board[i][j + 1] && state.board[i][j] !== 0) {\n                state.board[i][j] *= 2;\n                state.board[i][j + 1] = 0;\n                state.score += state.board[i][j];\n                state.moves++;\n            }\n        }\n    }\n}\n\nexport function moveCells(state: GameState, direction: 'left' | 'right' | 'up' | 'down'): void {\n    if (direction === 'left') {\n        for (let i = 0; i < 4; i++) {\n            const cells = [];\n            for (let j = 0; j < 4; j++) {\n                if (state.board[i][j] !== 0) cells.push(state.board[i][j]);\n            }\n            for (let k = 0; k < 4; k++) {\n                state.board[i][k] = k < cells.length ? cells[k] : 0;\n            }\n            mergeCells(state);\n            mergeCells(state);\n        }\n    } else if (direction === 'right') {\n        for (let i = 0; i < 4; i++) {\n            const cells = [];\n            for (let j = 3; j >= 0; j--) {\n                if (state.board[i][j] !== 0) cells.push(state.board[i][j]);\n            }\n            for (let k = 0; k < 4; k++) {\n                state.board[i][3 - k] = k < cells.length ? cells[k] : 0;\n            }\n            mergeCells(state);\n            mergeCells(state);\n        }\n    } else if (direction === 'up') {\n        for (let j = 0; j < 4; j++) {\n            const cells = [];\n            for (let i = 0; i < 4; i++) {\n                if (state.board[i][j] !== 0) cells.push(state.board[i][j]);\n            }\n            for (let k = 0; k < 4; k++) {\n                state.board[k][j] = k < cells.length ? cells[k] : 0;\n            }\n            mergeCells(state);\n            mergeCells(state);\n        }\n    } else if (direction === 'down') {\n        for (let j = 0; j < 4; j++) {\n            const cells = [];\n            for (let i = 3; i >= 0; i--) {\n                if (state.board[i][j] !== 0) cells.push(state.board[i][j]);\n            }\n            for (let k = 0; k < 4; k++) {\n                state.board[3 - k][j] = k < cells.length ? cells[k] : 0;\n            }\n            mergeCells(state);\n            mergeCells(state);\n        }\n    }\n}\n\nexport function updateGameState(state: GameState, direction: 'left' | 'right' | 'up' | 'down'): void {\n    if (isGameOver(state)) return;\n    moveCells(state, direction);\n    placeRandomNumber(state);\n    state.moves++;\n    if (state.score > state.bestScore) state.bestScore = state.score;\n    if (state.moves % 3 === 0) state.gameSpeed = Math.max(50, state.gameSpeed - 10);\n}\n\nexport function getGameState(state: GameState): GameState {\n    return {\n        board: state.board,\n        score: state.score,\n        moves: state.moves,\n        bestScore: state.bestScore,\n        isGameOver: state.isGameOver,\n        isWin: state.isWin,\n        gameSpeed: state.gameSpeed,\n        lastMove: state.lastMove,\n        directions: state.directions,\n        nextNumber: state.nextNumber,\n        cells: state.cells\n    };\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "Game State",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState",
+    "initializeGameState",
+    "placeRandomNumber",
+    "isGameOver",
+    "mergeCells",
+    "moveCells",
+    "updateGameState",
+    "getGameState"
+   ],
+   "errors": [
+    "TS2741: Property 'cells' is missing in type '{ board: any[][]; score: number; moves: number; bestScore: number; isGameOver: false; isWin: false; gameSpeed: number; lastMove: number; directions: string[]; nextNumber: number; }' but required in type 'GameState'. (line 18)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "ai-opponent.ts",
+   "language": "typescript",
+   "code": "import { initializeGameState, placeRandomNumber, isGameOver, mergeCells, moveCells, updateGameState, getGameState } from '../game-state/game-state.ts';\n\nexport class AIOpponent {\n    private gameEngine: GameEngine;\n    private boardSize: number;\n    private directions: number[][] = [[0, 1], [1, 0], [0, -1], [-1, 0]];\n    private bestMove: number[] = [0, 0];\n    private bestScore: number = 0;\n    private maxDepth: number = 3;\n\n    constructor(gameEngine: GameEngine) {\n        this.gameEngine = gameEngine;\n        this.boardSize = gameEngine.getBoardSize();\n    }\n\n    public getBestMove(): number[] {\n        this.bestScore = 0;\n        this.bestMove = [0, 0];\n        this.minimax(0, this.maxDepth, -Infinity, Infinity, true);\n        return this.bestMove;\n    }\n\n    private minimax(depth: number, maxDepth: number, alpha: number, beta: number, isMaximizing: boolean): number {\n        if (depth === maxDepth || this.gameEngine.isGameOver()) {\n            return this.evaluateBoard();\n        }\n\n        if (isMaximizing) {\n            let bestScore = -Infinity;\n            for (let i = 0; i < this.boardSize; i++) {\n                for (let j = 0; j < this.boardSize; j++) {\n                    if (this.gameEngine.getCell(i, j) === 0) {\n                        this.gameEngine.setCellValue(i, j, this.gameEngine.getHighestTile());\n                        const score = this.minimax(depth + 1, maxDepth, alpha, beta, false);\n                        this.gameEngine.setCellValue(i, j, 0);\n                        bestScore = Math.max(bestScore, score);\n                        alpha = Math.max(alpha, score);\n                        if (beta <= alpha) break;\n                    }\n                }\n            }\n            return bestScore;\n        } else {\n            let bestScore = Infinity;\n            for (let i = 0; i < this.boardSize; i++) {\n                for (let j = 0; j < this.boardSize; j++) {\n                    if (this.gameEngine.getCell(i, j) === 0) {\n                        this.gameEngine.setCellValue(i, j, this.gameEngine.getHighestTile());\n                        const score = this.minimax(depth + 1, maxDepth, alpha, beta, true);\n                        this.gameEngine.setCellValue(i, j, 0);\n                        bestScore = Math.min(bestScore, score);\n                        beta = Math.min(beta, score);\n                        if (beta <= alpha) break;\n                    }\n                }\n            }\n            return bestScore;\n        }\n    }\n\n    private evaluateBoard(): number {\n        const maxTile = this.gameEngine.getHighestTile();\n        const blankCells = this.boardSize * this.boardSize - this.gameEngine.getFilledCells();\n        const monotonicity = this.calculateMonotonicity();\n        const smoothness = this.calculateSmoothness();\n        return (maxTile * 100) / (this.boardSize * this.boardSize) + (blankCells * 10) / (this.boardSize * this.boardSize) + monotonicity + smoothness;\n    }\n\n    private calculateMonotonicity(): number {\n        let total = 0;\n        for (let i = 0; i < this.boardSize; i++) {\n            let upScore = 0, downScore = 0;\n            for (let j = 0; j < this.boardSize; j++) {\n                const val = this.gameEngine.getCell(i, j);\n                if (val > 0) {\n                    upScore += val;\n                    downScore += val;\n                }\n            }\n            total += Math.abs(upScore - downScore);\n        }\n        return total;\n    }\n\n    private calculateSmoothness(): number {\n        let total = 0;\n        for (let i = 0; i < this.boardSize; i++) {\n            for (let j = 0; j < this.boardSize; j++) {\n                const val = this.gameEngine.getCell(i, j);\n                if (val > 0) {\n                    for (const [di, dj] of this.directions) {\n                        const ni = i + di, nj = j + dj;\n                        if (ni >= 0 && ni < this.boardSize && nj >= 0 && nj < this.boardSize && this.gameEngine.getCell(ni, nj) === val) {\n                            total += val;\n                        }\n                    }\n                }\n            }\n        }\n        return total;\n    }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "AI Opponent",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "AIOpponent"
+   ],
+   "errors": [
+    "TS2304: Cannot find name 'GameEngine'. (line 4)",
+    "TS2304: Cannot find name 'GameEngine'. (line 11)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "render-view.ts",
+   "language": "typescript",
+   "code": "import { AIOpponent } from '../ai-opponent/ai-opponent.ts';\n\nexport function renderBoard(board: number[][], score: number, bestScore: number, moves: number, isRunning: boolean, target: HTMLElement): void {\n    target.innerHTML = '';\n    const container = document.createElement('div');\n    container.style.display = 'grid';\n    container.style.gridTemplateColumns = 'repeat(4, 1fr)';\n    container.style.gap = '8px';\n    container.style.padding = '16px';\n    container.style.borderRadius = '12px';\n    container.style.background = 'rgba(0, 0, 0, 0.3)';\n\n    for (let i = 0; i < 4; i++) {\n        for (let j = 0; j < 4; j++) {\n            const cell = document.createElement('div');\n            cell.style.width = '60px';\n            cell.style.height = '60px';\n            cell.style.borderRadius = '4px';\n            cell.style.fontSize = '18px';\n            cell.style.textAlign = 'center';\n            cell.style.lineHeight = '60px';\n            cell.style.fontWeight = 'bold';\n            cell.style.color = '#ffffff';\n            if (board[i][j] === 0) {\n                cell.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';\n                cell.textContent = '';\n            } else {\n                const color = board[i][j] === 2 ? '#ffffff' : '#ffffff';\n                cell.style.backgroundColor = board[i][j] === 2 ? '#ffffff' : '#ffffff';\n                cell.textContent = board[i][j];\n            }\n            container.appendChild(cell);\n        }\n    }\n\n    const scoreDisplay = document.createElement('div');\n    scoreDisplay.textContent = `Score: ${score}`;\n    scoreDisplay.style.color = '#00d9ff';\n    scoreDisplay.style.fontSize = '14px';\n    scoreDisplay.style.marginTop = '8px';\n    container.appendChild(scoreDisplay);\n\n    const bestScoreDisplay = document.createElement('div');\n    bestScoreDisplay.textContent = `Best: ${bestScore}`;\n    bestScoreDisplay.style.color = '#00d9ff';\n    bestScoreDisplay.style.fontSize = '14px';\n    container.appendChild(bestScoreDisplay);\n\n    target.appendChild(container);\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "Render View",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "renderBoard"
+   ],
+   "errors": [
+    "TS2322: Type 'number' is not assignable to type 'string'. (line 30)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a 2048 puzzle game</title>\n  <meta name=\"description\" content=\"a 2048 puzzle game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a 2048 puzzle game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-4cLXVF/ai-opponent/ai-opponent.ts\n  var AIOpponent = class {\n    constructor(gameEngine) {\n      __publicField(this, \"gameEngine\");\n      __publicField(this, \"boardSize\");\n      __publicField(this, \"directions\", [[0, 1], [1, 0], [0, -1], [-1, 0]]);\n      __publicField(this, \"bestMove\", [0, 0]);\n      __publicField(this, \"bestScore\", 0);\n      __publicField(this, \"maxDepth\", 3);\n      this.gameEngine = gameEngine;\n      this.boardSize = gameEngine.getBoardSize();\n    }\n    getBestMove() {\n      this.bestScore = 0;\n      this.bestMove = [0, 0];\n      this.minimax(0, this.maxDepth, -Infinity, Infinity, true);\n      return this.bestMove;\n    }\n    minimax(depth, maxDepth, alpha, beta, isMaximizing) {\n      if (depth === maxDepth || this.gameEngine.isGameOver()) {\n        return this.evaluateBoard();\n      }\n      if (isMaximizing) {\n        let bestScore = -Infinity;\n        for (let i = 0; i < this.boardSize; i++) {\n          for (let j = 0; j < this.boardSize; j++) {\n            if (this.gameEngine.getCell(i, j) === 0) {\n              this.gameEngine.setCellValue(i, j, this.gameEngine.getHighestTile());\n              const score = this.minimax(depth + 1, maxDepth, alpha, beta, false);\n              this.gameEngine.setCellValue(i, j, 0);\n              bestScore = Math.max(bestScore, score);\n              alpha = Math.max(alpha, score);\n              if (beta <= alpha) break;\n            }\n          }\n        }\n        return bestScore;\n      } else {\n        let bestScore = Infinity;\n        for (let i = 0; i < this.boardSize; i++) {\n          for (let j = 0; j < this.boardSize; j++) {\n            if (this.gameEngine.getCell(i, j) === 0) {\n              this.gameEngine.setCellValue(i, j, this.gameEngine.getHighestTile());\n              const score = this.minimax(depth + 1, maxDepth, alpha, beta, true);\n              this.gameEngine.setCellValue(i, j, 0);\n              bestScore = Math.min(bestScore, score);\n              beta = Math.min(beta, score);\n              if (beta <= alpha) break;\n            }\n          }\n        }\n        return bestScore;\n      }\n    }\n    evaluateBoard() {\n      const maxTile = this.gameEngine.getHighestTile();\n      const blankCells = this.boardSize * this.boardSize - this.gameEngine.getFilledCells();\n      const monotonicity = this.calculateMonotonicity();\n      const smoothness = this.calculateSmoothness();\n      return maxTile * 100 / (this.boardSize * this.boardSize) + blankCells * 10 / (this.boardSize * this.boardSize) + monotonicity + smoothness;\n    }\n    calculateMonotonicity() {\n      let total = 0;\n      for (let i = 0; i < this.boardSize; i++) {\n        let upScore = 0, downScore = 0;\n        for (let j = 0; j < this.boardSize; j++) {\n          const val = this.gameEngine.getCell(i, j);\n          if (val > 0) {\n            upScore += val;\n            downScore += val;\n          }\n        }\n        total += Math.abs(upScore - downScore);\n      }\n      return total;\n    }\n    calculateSmoothness() {\n      let total = 0;\n      for (let i = 0; i < this.boardSize; i++) {\n        for (let j = 0; j < this.boardSize; j++) {\n          const val = this.gameEngine.getCell(i, j);\n          if (val > 0) {\n            for (const [di, dj] of this.directions) {\n              const ni = i + di, nj = j + dj;\n              if (ni >= 0 && ni < this.boardSize && nj >= 0 && nj < this.boardSize && this.gameEngine.getCell(ni, nj) === val) {\n                total += val;\n              }\n            }\n          }\n        }\n      }\n      return total;\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-4cLXVF/render-view/render-view.ts\n  function renderBoard(board, score, bestScore, moves, isRunning, target) {\n    target.innerHTML = \"\";\n    const container = document.createElement(\"div\");\n    container.style.display = \"grid\";\n    container.style.gridTemplateColumns = \"repeat(4, 1fr)\";\n    container.style.gap = \"8px\";\n    container.style.padding = \"16px\";\n    container.style.borderRadius = \"12px\";\n    container.style.background = \"rgba(0, 0, 0, 0.3)\";\n    for (let i = 0; i < 4; i++) {\n      for (let j = 0; j < 4; j++) {\n        const cell = document.createElement(\"div\");\n        cell.style.width = \"60px\";\n        cell.style.height = \"60px\";\n        cell.style.borderRadius = \"4px\";\n        cell.style.fontSize = \"18px\";\n        cell.style.textAlign = \"center\";\n        cell.style.lineHeight = \"60px\";\n        cell.style.fontWeight = \"bold\";\n        cell.style.color = \"#ffffff\";\n        if (board[i][j] === 0) {\n          cell.style.backgroundColor = \"rgba(255, 255, 255, 0.05)\";\n          cell.textContent = \"\";\n        } else {\n          const color = board[i][j] === 2 ? \"#ffffff\" : \"#ffffff\";\n          cell.style.backgroundColor = board[i][j] === 2 ? \"#ffffff\" : \"#ffffff\";\n          cell.textContent = board[i][j];\n        }\n        container.appendChild(cell);\n      }\n    }\n    const scoreDisplay = document.createElement(\"div\");\n    scoreDisplay.textContent = `Score: ${score}`;\n    scoreDisplay.style.color = \"#00d9ff\";\n    scoreDisplay.style.fontSize = \"14px\";\n    scoreDisplay.style.marginTop = \"8px\";\n    container.appendChild(scoreDisplay);\n    const bestScoreDisplay = document.createElement(\"div\");\n    bestScoreDisplay.textContent = `Best: ${bestScore}`;\n    bestScoreDisplay.style.color = \"#00d9ff\";\n    bestScoreDisplay.style.fontSize = \"14px\";\n    container.appendChild(bestScoreDisplay);\n    target.appendChild(container);\n  }\n\n  // ../../../../../tmp/vaca-preview-4cLXVF/_preview_entry.ts\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-state.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_State.GameState:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof AIOpponent === \"function\" && !/^class\\s/.test(String(AIOpponent))) {\n      AIOpponent(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ai-opponent.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling AI_Opponent.AIOpponent:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof renderBoard === \"function\" && !/^class\\s/.test(String(renderBoard))) {\n      renderBoard(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"render-view.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Render_View.renderBoard:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a 2048 puzzle game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a 2048 puzzle game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 23010,
+ "totalErrors": 5,
+ "validatedCount": 2,
+ "failedCount": 4,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "game-controller.ts",
+   "dependencies": [],
+   "exports": []
+  },
+  "mod_1": {
+   "entryFile": "game-engine.ts",
+   "dependencies": [
+    "Game Controller"
+   ],
+   "exports": []
+  },
+  "mod_2": {
+   "entryFile": "game-state.ts",
+   "dependencies": [
+    "Game Engine"
+   ],
+   "exports": [
+    "GameState",
+    "initializeGameState",
+    "placeRandomNumber",
+    "isGameOver",
+    "mergeCells",
+    "moveCells",
+    "updateGameState",
+    "getGameState"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "ai-opponent.ts",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [
+    "AIOpponent"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "render-view.ts",
+   "dependencies": [
+    "AI Opponent"
+   ],
+   "exports": [
+    "renderBoard"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Game Controller",
+    "Game Engine",
+    "Game State",
+    "AI Opponent",
+    "Render View"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 5,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 23010,
+  "totalErrors": 5,
+  "validated": 2,
+  "failed": 4,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 196282
+ }
+}

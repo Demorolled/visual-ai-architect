@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .wrap { text-align: center; }
+  h2 { color: #00d9ff; margin: 0 0 8px 0; }
+  .bar { display: flex; justify-content: center; gap: 12px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
+  .bar button, .bar select { background: #2a2a3a; color: #e6e6e6; border: 1px solid #3a3a4a;
+                             border-radius: 8px; padding: 7px 12px; font-size: 13px; cursor: pointer; }
+  .bar button.primary { background: #00d9ff; color: #04141a; border: none; }
+  .grid { display: grid; grid-template-columns: repeat(9, 44px); gap: 2px; background: #2a2a3a;
+          padding: 4px; border-radius: 10px; margin: 0 auto; width: max-content; }
+  .cell { width: 44px; height: 44px; background: #14141f; border: none; color: #e6e6e6;
+          text-align: center; font-size: 19px; font-weight: 600; outline: none; border-radius: 4px; }
+  .cell:focus { background: #1d2a3a; box-shadow: inset 0 0 0 2px #00d9ff; }
+  .cell.given { color: #00d9ff; font-weight: 700; }
+  .cell.conflict { color: #ff5c5c; background: #2a1212; }
+  .cell.hint { background: #1a2a1a; color: #3ddc84; }
+  .thick-r { border-right: 2px solid #00d9ff; }
+  .thick-b { border-bottom: 2px solid #00d9ff; }
+  .stats { margin: 12px 0; display: flex; justify-content: center; gap: 24px; font-size: 13px; }
+  .stats b { color: #ffb454; }
+  #status { min-height: 22px; color: #3ddc84; }
+  #status.bad { color: #ff5c5c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2>Sudoku</h2>
+  <div class="bar">
+    <select id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <button id="newBtn" class="primary">New puzzle</button>
+    <button id="hintBtn">Hint</button>
+    <button id="solveBtn">Solve</button>
+    <button id="checkBtn">Check</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="stats"><span>Time <b id="timer">0:00</b></span>
+    <span>Best (this level) <b id="bestTime">—</b></span></div>
+  <div id="status"></div>
+</div>
+<script>
+  const CELLS = 81;
+  const DIFF_REMOVE = { easy: 38, medium: 48, hard: 56 };
+  const DIFF_KEY = { easy: 'sud-best-easy', medium: 'sud-best-medium', hard: 'sud-best-hard' };
+  let puzzle = null;      // current grid, 0 = empty
+  let solved = null;      // the full solution
+  let givens = null;      // mask of given cells
+  let hintsUsed = 0;
+  let seconds = 0;
+  let timerId = null;
+  let fn = null;
+
+  function blankGrid() {
+    return Array(9).fill(0).map(() => Array(9).fill(0));
+  }
+
+  function isSafe(grid, r, c, v) {
+    for (let i = 0; i < 9; i++) {
+      if (grid[r][i] === v || grid[i][c] === v) return false;
+    }
+    const br = Math.floor(r / 3) * 3;
+    const bc = Math.floor(c / 3) * 3;
+    for (let i = br; i < br + 3; i++) {
+      for (let j = bc; j < bc + 3; j++) {
+        if (grid[i][j] === v) return false;
+      }
+    }
+    return true;
+  }
+
+  function findEmpty(grid) {
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (grid[r][c] === 0) return [r, c];
+      }
+    }
+    return null;
+  }
+
+  function solveGrid(grid) {
+    const cell = findEmpty(grid);
+    if (!cell) return true;
+    const [r, c] = cell;
+    for (let v = 1; v <= 9; v++) {
+      if (isSafe(grid, r, c, v)) {
+        grid[r][c] = v;
+        if (solveGrid(grid)) return true;
+        grid[r][c] = 0;
+      }
+    }
+    return false;
+  }
+
+  function countSolutions(grid, limit) {
+    let count = 0;
+    function walk(g) {
+      if (count >= limit) return;
+      const cell = findEmpty(g);
+      if (!cell) { count += 1; return; }
+      const [r, c] = cell;
+      for (let v = 1; v <= 9; v++) {
+        if (isSafe(g, r, c, v)) {
+          g[r][c] = v;
+          walk(g);
+          g[r][c] = 0;
+          if (count >= limit) return;
+        }
+      }
+    }
+    walk(grid);
+    return count;
+  }
+
+  function shuffled() {
+    const a = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function generate() {
+    const g = blankGrid();
+    const order = shuffled();
+    for (let i = 0; i < 9; i++) {
+      const r = Math.floor(i / 3);
+      const c = (i % 3) * 3;
+      g[r][c] = order[i];
+    }
+    solveGrid(g);
+    // shuffle rows within bands and columns within stacks for variety
+    for (let band = 0; band < 3; band++) {
+      const rows = shuffled().filter(x => x < 9).slice(0, 2);
+      for (let k = 0; k < rows.length; k++) {
+        const rr = band * 3 + rows[k];
+        const last = band * 3 + 2 - k;
+        if (rr !== last) [g[rr], g[last]] = [g[last], g[rr]];
+      }
+    }
+    return g;
+  }
+
+  function carve(g, remove) {
+    const grid = g.map(row => row.slice());
+    let removed = 0;
+    let guard = 0;
+    while (removed < remove && guard < 240) {
+      guard += 1;
+      const r = Math.floor(Math.random() * 9);
+      const c = Math.floor(Math.random() * 9);
+      if (grid[r][c] === 0) continue;
+      const backup = grid[r][c];
+      grid[r][c] = 0;
+      if (countSolutions(grid, 2) === 1) {
+        removed += 1;
+      } else {
+        grid[r][c] = backup;
+      }
+    }
+    return grid;
+  }
+
+  function newPuzzle() {
+    const diff = document.getElementById('difficulty').value;
+    const full = generate();
+    const grid = carve(full, DIFF_REMOVE[diff]);
+    puzzle = grid;
+    solved = full.map(row => row.slice());
+    givens = grid.map(row => row.map(v => v !== 0));
+    hintsUsed = 0;
+    seconds = 0;
+    document.getElementById('status').textContent = '';
+    document.getElementById('status').className = '';
+    renderGrid();
+    restartTimer();
+  }
+
+  function renderGrid() {
+    const gridEl = document.getElementById('grid');
+    gridEl.innerHTML = '';
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 1;
+        input.className = 'cell';
+        if (c === 2 || c === 5) input.classList.add('thick-r');
+        if (r === 2 || r === 5) input.classList.add('thick-b');
+        const v = puzzle[r][c];
+        if (v !== 0) {
+          input.value = v;
+          input.classList.add('given');
+          input.readOnly = true;
+        }
+        input.dataset.r = r;
+        input.dataset.c = c;
+        input.addEventListener('input', onCellInput);
+        input.addEventListener('keydown', onCellKey);
+        gridEl.appendChild(input);
+      }
+    }
+  }
+
+  function onCellInput(e) {
+    const input = e.target;
+    const r = parseInt(input.dataset.r, 10);
+    const c = parseInt(input.dataset.c, 10);
+    const ch = input.value.replace(/[^1-9]/g, '');
+    input.value = ch;
+    if (ch === '') {
+      puzzle[r][c] = 0;
+      input.classList.remove('conflict', 'hint');
+      return;
+    }
+    puzzle[r][c] = parseInt(ch, 10);
+    markConflicts();
+    if (puzzle[r][c] && !isSafe(puzzle, r, c, puzzle[r][c])) {
+      input.classList.add('conflict');
+    }
+  }
+
+  function markConflicts() {
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        const input = cellAt(r, c);
+        if (!input || givens[r][c]) continue;
+        if (puzzle[r][c] !== 0 && !isSafe(puzzle, r, c, puzzle[r][c])) {
+          input.classList.add('conflict');
+        } else {
+          input.classList.remove('conflict');
+        }
+        if (puzzle[r][c] === 0) input.classList.remove('hint', 'conflict');
+      }
+    }
+  }
+
+  function cellAt(r, c) {
+    return document.querySelector('#grid input[data-r="' + r + '"][data-c="' + c + '"]');
+  }
+
+  function onCellKey(e) {
+    if (e.key >= '1' && e.key <= '9') return;
+    const input = e.target;
+    const r = parseInt(input.dataset.r, 10);
+    const c = parseInt(input.dataset.c, 10);
+    const moves = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
+    const m = moves[e.key];
+    if (m) {
+      e.preventDefault();
+      const nr = Math.max(0, Math.min(8, r + m[0]));
+      const nc = Math.max(0, Math.min(8, c + m[1]));
+      cellAt(nr, nc).focus();
+    }
+    if (e.key === 'Backspace' && !input.classList.contains('given')) {
+      input.value = '';
+      puzzle[r][c] = 0;
+      markConflicts();
+    }
+  }
+
+  function useHint() {
+    const empties = [];
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (puzzle[r][c] === 0) empties.push([r, c]);
+      }
+    }
+    if (!empties.length) return;
+    const [r, c] = empties[Math.floor(Math.random() * empties.length)];
+    puzzle[r][c] = solved[r][c];
+    const input = cellAt(r, c);
+    input.value = solved[r][c];
+    input.classList.add('hint');
+    hintsUsed += 1;
+    markConflicts();
+    checkWin();
+  }
+
+  function checkWin() {
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (puzzle[r][c] === 0) return false;
+        if (puzzle[r][c] !== solved[r][c]) return false;
+      }
+    }
+    win();
+    return true;
+  }
+
+  function checkForErrors() {
+    let errors = 0;
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (puzzle[r][c] !== 0 && !isSafe(puzzle, r, c, puzzle[r][c])) errors += 1;
+      }
+    }
+    const status = document.getElementById('status');
+    status.textContent = errors ? '⚠️ ' + errors + ' conflict(s) found' : '✅ looks good so far';
+    status.className = errors ? 'bad' : '';
+  }
+
+  function solveAll() {
+    const work = puzzle.map(row => row.slice());
+    if (solveGrid(work)) {
+      puzzle = work.map(row => row.slice());
+      givens = puzzle.map(row => row.map(v => v !== 0));
+      renderGrid();
+      document.getElementById('status').textContent = '💡 solved';
+    } else {
+      document.getElementById('status').className = 'bad';
+      document.getElementById('status').textContent = 'no solution exists — check your entries';
+    }
+  }
+
+  function win() {
+    stopTimer();
+    const diff = document.getElementById('difficulty').value;
+    const key = DIFF_KEY[diff];
+    const prev = parseInt(localStorage.getItem(key) || '99999', 10);
+    if (seconds < prev) {
+      localStorage.setItem(key, String(seconds));
+      document.getElementById('bestTime').textContent = formatTime(seconds);
+      document.getElementById('status').textContent = '🏆 New best time! ' + formatTime(seconds);
+    } else {
+      document.getElementById('status').textContent = '🏆 Solved in ' + formatTime(seconds) +
+        ' · best ' + formatTime(prev);
+    }
+  }
+
+  function formatTime(sec) {
+    return Math.floor(sec / 60) + ':' + (sec % 60 < 10 ? '0' : '') + (sec % 60);
+  }
+
+  function restartTimer() {
+    if (timerId !== null) clearInterval(timerId);
+    timerId = setInterval(() => {
+      seconds += 1;
+      document.getElementById('timer').textContent = formatTime(seconds);
+    }, 1000);
+    showBest();
+  }
+
+  function stopTimer() {
+    if (timerId !== null) { clearInterval(timerId); timerId = null; }
+  }
+
+  function showBest() {
+    const diff = document.getElementById('difficulty').value;
+    const prev = parseInt(localStorage.getItem(DIFF_KEY[diff]) || '0', 10);
+    document.getElementById('bestTime').textContent = prev ? formatTime(prev) : '—';
+  }
+
+  document.getElementById('newBtn').addEventListener('click', newPuzzle);
+  document.getElementById('hintBtn').addEventListener('click', useHint);
+  document.getElementById('solveBtn').addEventListener('click', solveAll);
+  document.getElementById('checkBtn').addEventListener('click', checkForErrors);
+  document.getElementById('difficulty').addEventListener('change', () => {
+    newPuzzle();
+    showBest();
+  });
+
+  newPuzzle();
+</script>
+</body>
+</html>

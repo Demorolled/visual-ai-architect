@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tower Defense</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .wrap { text-align: center; }
+  h2 { color: #00d9ff; margin: 0 0 8px 0; }
+  .hud { display: flex; justify-content: center; gap: 26px; font-size: 14px; margin-bottom: 8px; }
+  .hud b { color: #ffb454; }
+  canvas { background: #0f0f1a; border: 1px solid #2a2a3a; border-radius: 10px; display: block; margin: 0 auto; }
+  .towers { display: flex; justify-content: center; gap: 10px; margin: 10px 0 6px 0; }
+  .towers button { background: #2a2a3a; color: #e6e6e6; border: 1px solid #3a3a4a; border-radius: 8px; padding: 7px 14px; cursor: pointer; }
+  .towers button.sel { background: #00d9ff; color: #04141a; }
+  #msg { min-height: 20px; color: #3ddc84; }
+  .hint { color: #666; font-size: 11px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2>Tower Defense</h2>
+  <div class="hud"><span>💰 <b id="money">120</b></span><span>❤️ <b id="lives">20</b></span>
+    <span>🌊 <b id="wave">1</b></span><span>🏆 <b id="score">0</b></span></div>
+  <canvas id="game" width="720" height="440"></canvas>
+  <div class="towers">
+    <button id="t1" class="sel">🔫 Gun $50</button>
+    <button id="t2">❄️ Frost $80</button>
+    <button id="t3">🔥 Cannon $110</button>
+  </div>
+  <div id="msg"></div>
+  <button id="startBtn">Start wave</button>
+  <div class="hint">pick a tower, click a grass tile to build · towers shoot enemies on the path</div>
+</div>
+<script>
+  const W = 720, H = 440;
+  const TILE = 40;
+  const PATH = [
+    [0, 5], [2, 5], [2, 2], [6, 2], [6, 7], [11, 7], [11, 3], [14, 3], [14, 9], [17, 9]
+  ];
+  const TOWERS = {
+    gun: { cost: 50, range: 130, rate: 0.4, dmg: 8, color: '#ffd166' },
+    frost: { cost: 80, range: 110, rate: 0.28, dmg: 3, color: '#4dd8d8', slow: 0.5 },
+    cannon: { cost: 110, range: 150, rate: 0.12, dmg: 30, color: '#ff5c5c', splash: 40 }
+  };
+  let money = 120, lives = 20, wave = 1, score = 0;
+  let towers = [];
+  let enemies = [];
+  let projectiles = [];
+  let waveGone = 0;
+  let waveTotal = 0;
+  let spawnTimer = 0;
+  let waveActive = false;
+  let selected = 'gun';
+  let lastT = 0;
+  let rafId = null;
+
+  function setTile(tile) {
+    for (let i = 0; i < PATH.length - 1; i++) {
+      const a = PATH[i], b = PATH[i + 1];
+      const loX = Math.min(a[0], b[0]), hiX = Math.max(a[0], b[0]);
+      const loY = Math.min(a[1], b[1]), hiY = Math.max(a[1], b[1]);
+      if (tile[0] >= loX && tile[0] <= hiX && tile[1] >= loY && tile[1] <= hiY) return true;
+    }
+    return false;
+  }
+
+  function buildAt(x, y) {
+    let tx, ty;
+    const rect = document.getElementById('game').getBoundingClientRect();
+    tx = Math.floor((x - rect.left) / TILE);
+    ty = Math.floor((y - rect.top) / TILE);
+    if (tx < 0 || tx >= W / TILE || ty < 0 || ty >= H / TILE) return;
+    if (setTile([tx, ty])) return;
+    const kind = TOWERS[selected];
+    if (money < kind.cost) { flashMsg('not enough money'); return; }
+    if (towers.some(t => t.x === tx && t.y === ty)) return;
+    towers.push({ x: tx, y: ty, kind: selected, cd: 0, level: 1 });
+    money -= kind.cost;
+    updateHud();
+  }
+
+  function startWave() {
+    if (waveActive) return;
+    const count = 6 + wave * 3;
+    waveTotal = count;
+    waveGone = 0;
+    spawnTimer = 0;
+    waveActive = true;
+    wave += 1;
+    updateHud();
+  }
+
+  function spawnEnemy() {
+    const hp = 20 + (wave - 1) * 8;
+    const speed = 34 + wave * 1.2;
+    enemies.push({ x: PATH[0][0] * TILE, y: PATH[0][1] * TILE, way: 1,
+                   hp, maxHp: hp, speed, slow: 0, r: 11 });
+  }
+
+  function waypoint(i) { return [PATH[i][0] * TILE + TILE / 2, PATH[i][1] * TILE + TILE / 2]; }
+
+  function updateEnemies(dt) {
+    for (let i = enemies.length - 1; i >= 0; i--) {
+      const e = enemies[i];
+      const mult = e.slow > 0 ? 0.5 : 1;
+      if (e.slow > 0) e.slow -= dt;
+      const [tx, ty] = waypoint(e.way);
+      const dx = tx - e.x, dy = ty - e.y;
+      const dist = Math.hypot(dx, dy);
+      const step = e.speed * mult * dt;
+      if (dist <= step) {
+        e.x = tx; e.y = ty;
+        e.way += 1;
+        if (e.way >= PATH.length) {
+          lives -= 1;
+          enemies.splice(i, 1);
+          waveGone += 1;
+          updateHud();
+          if (lives <= 0) gameOver();
+          continue;
+        }
+      } else {
+        e.x += dx / dist * step;
+        e.y += dy / dist * step;
+      }
+    }
+  }
+
+  function updateTowers(dt) {
+    for (const t of towers) {
+      t.cd -= dt;
+      if (t.cd > 0) continue;
+      let target = null;
+      let best = 1e9;
+      for (const e of enemies) {
+        const d = Math.hypot(e.x - (t.x * TILE + TILE / 2), e.y - (t.y * TILE + TILE / 2));
+        if (d < TOWERS[t.kind].range && d < best) { best = d; target = e; }
+      }
+      if (!target) continue;
+      t.cd = TOWERS[t.kind].rate;
+      const spec = TOWERS[t.kind];
+      if (t.kind === 'cannon') {
+        if (target.hp <= spec.dmg) {
+          for (const e of enemies) {
+            if (Math.hypot(e.x - target.x, e.y - target.y) < spec.splash) {
+              e.hp -= spec.dmg;
+              if (e.hp <= 0) killEnemy(e);
+            }
+          }
+        } else {
+          target.hp -= spec.dmg;
+          if (target.hp <= 0) killEnemy(target);
+        }
+      } else {
+        if (spec.slow) target.slow = 1.5;
+        target.hp -= spec.dmg;
+        if (target.hp <= 0) killEnemy(target);
+      }
+      projectiles.push({ sx: t.x * TILE + TILE / 2, sy: t.y * TILE + TILE / 2,
+                         ex: target.x, ey: target.y, life: 0.3, color: spec.color });
+    }
+  }
+
+  function killEnemy(e) {
+    const idx = enemies.indexOf(e);
+    if (idx >= 0) enemies.splice(idx, 1);
+    money += 12 + Math.floor(e.maxHp / 10);
+    score += 10;
+    waveGone += 1;
+    updateHud();
+  }
+
+  function updateProjectiles(dt) {
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      projectiles[i].life -= dt;
+      if (projectiles[i].life <= 0) projectiles.splice(i, 1);
+    }
+  }
+
+  function checkWave() {
+    if (waveActive && enemies.length === 0 && waveGone >= waveTotal) {
+      waveActive = false;
+      money += 40 + wave * 5;
+      flashMsg('wave cleared — +' + (40 + wave * 5) + ' gold');
+      updateHud();
+    }
+  }
+
+  function updateHud() {
+    document.getElementById('money').textContent = money;
+    document.getElementById('lives').textContent = lives;
+    document.getElementById('wave').textContent = wave;
+    document.getElementById('score').textContent = score;
+  }
+
+  function flashMsg(m) {
+    const el = document.getElementById('msg');
+    el.textContent = m;
+    clearTimeout(flashMsg._t);
+    flashMsg._t = setTimeout(() => { el.textContent = ''; }, 1800);
+  }
+
+  function gameOver() {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+    flashMsg('💀 game over — final score ' + score);
+  }
+
+  function draw() {
+    const cvs = document.getElementById('game');
+    const ctx = cvs.getContext('2d');
+    ctx.fillStyle = '#0f0f1a';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#2a2a3a';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += TILE) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += TILE) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    ctx.strokeStyle = '#b28a63';
+    ctx.lineWidth = 14;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(PATH[0][0] * TILE, PATH[0][1] * TILE + TILE / 2);
+    for (let i = 1; i < PATH.length; i++) {
+      ctx.lineTo(PATH[i][0] * TILE + TILE / 2, PATH[i][1] * TILE + TILE / 2);
+    }
+    ctx.stroke();
+    for (const t of towers) {
+      const cx = t.x * TILE + TILE / 2, cy = t.y * TILE + TILE / 2;
+      ctx.fillStyle = TOWERS[t.kind].color;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#0a0a14';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    for (const e of enemies) {
+      ctx.fillStyle = '#ff5c5c';
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#0a0a14';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#222';
+      ctx.fillRect(e.x - 12, e.y - 20, 24, 4);
+      ctx.fillStyle = '#3ddc84';
+      ctx.fillRect(e.x - 12, e.y - 20, 24 * Math.max(0, e.hp / e.maxHp), 4);
+    }
+    for (const p of projectiles) {
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.ex, p.ey, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function loop(ts) {
+    const dt = Math.min((ts - lastT) / 1000, 0.05);
+    lastT = ts;
+    if (waveActive) {
+      spawnTimer -= dt;
+      if (spawnTimer <= 0 && waveGone + enemies.length < waveTotal) {
+        spawnEnemy();
+        spawnTimer = 0.7;
+      }
+      updateEnemies(dt);
+      checkWave();
+    }
+    updateTowers(dt);
+    updateProjectiles(dt);
+    draw();
+    if (rafId !== null) rafId = requestAnimationFrame(loop);
+  }
+
+  document.getElementById('game').addEventListener('click', (e) => buildAt(e.clientX, e.clientY));
+  document.getElementById('startBtn').addEventListener('click', startWave);
+  document.getElementById('t1').addEventListener('click', () => {
+    selected = 'gun';
+    document.getElementById('t1').classList.add('sel');
+    document.getElementById('t2').classList.remove('sel');
+    document.getElementById('t3').classList.remove('sel');
+  });
+  document.getElementById('t2').addEventListener('click', () => {
+    selected = 'frost';
+    document.getElementById('t2').classList.add('sel');
+    document.getElementById('t1').classList.remove('sel');
+    document.getElementById('t3').classList.remove('sel');
+  });
+  document.getElementById('t3').addEventListener('click', () => {
+    selected = 'cannon';
+    document.getElementById('t3').classList.add('sel');
+    document.getElementById('t1').classList.remove('sel');
+    document.getElementById('t2').classList.remove('sel');
+  });
+
+  updateHud();
+  lastT = performance.now();
+  rafId = requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Media Player</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    .app {
+      text-align: center;
+    }
+    .controls {
+      display: flex;
+      margin-top: 20px;
+    }
+    .controls button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .controls button:hover {
+      background-color: #45a03d;
+    }
+    video {
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Simple Media Player</h1>
+    <video id="videoDisplay" controls width="100%" src="video.mp4"></video>
+    <div class="controls">
+      <button onclick="playPause()">▶ Play</button>
+      <button onclick="muteUnmute()">🔊 Mute</button>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('videoDisplay');
+
+    function playPause() {
+      if (video.paused) {
+        video.play();
+        document.querySelector('#playBtn').textContent = '⏸ Pause';
+      } else {
+        video.pause();
+        document.querySelector('#playBtn').textContent = '▶ Play';
+      }
+    }
+
+    function muteUnmute() {
+      video.muted = !video.muted;
+      document.querySelector('#muteBtn').textContent = video.muted ? '🔇 Mute' : '🔊 Unmute';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "teacher": "qwen2.5-coder:14b",
+  "n_rows": 197,
+  "n_tasks": 197,
+  "fails": 0,
+  "gate_passed": 189,
+  "gate_total": 197,
+  "gate_pass_rate": 0.9594,
+  "created_at": "2026-10-02T15:06:02-0400",
+  "note": "Alpaca rows: instruction=SYS_SCAFFOLD, input=TASK line, output=teacher scaffold. Merge into the next QLoRA round to train the scaffold role."
+}

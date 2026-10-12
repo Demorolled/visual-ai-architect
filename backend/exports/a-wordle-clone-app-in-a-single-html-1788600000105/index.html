@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wordle</title><style>
+body{font-family:'Segoe UI',sans-serif;background:#0a0a14;color:#e6e6e6;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{text-align:center}
+h1{color:#00d9ff;letter-spacing:8px}
+#board{margin:16px auto}
+.row{display:flex;gap:6px;justify-content:center;margin:6px 0}
+.cell{width:52px;height:52px;border:2px solid #2a2a3a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;text-transform:uppercase}
+.cell.g{background:#3ddc84;border-color:#3ddc84;color:#04141a}
+.cell.y{background:#ffb454;border-color:#ffb454;color:#04141a}
+.cell.gray{background:#333;border-color:#333}
+#keys{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:440px;margin:12px auto}
+#keys button{width:36px;height:44px;background:#2a2a3a;color:#e6e6e6;border:none;border-radius:6px;font-size:16px;cursor:pointer}
+#keys button.g{background:#3ddc84;color:#04141a}#keys button.y{background:#ffb454;color:#04141a}#keys button.gray{background:#333}
+#msg{min-height:22px;color:#3ddc84;margin:8px 0}
+button.new{background:#00d9ff;color:#04141a;border:none;border-radius:8px;padding:10px 18px;font-size:14px;cursor:pointer}
+</style></head><body>
+<div class="card"><h1>WORDLE</h1><div id="msg"></div><div id="board"></div>
+<div id="keys"></div><button class="new" id="newBtn">New Game</button></div>
+<script>
+const WORDS = ['pixel','train','crane','stone','light','brave','cloud','plant','green','house','music','water'];
+let target = '';
+let guesses = [];
+let current = '';
+let gameOver = false;
+
+function pickWord() { return WORDS[Math.floor(Math.random() * WORDS.length)]; }
+
+function scoreGuess(guess) {
+  const result = ['gray','gray','gray','gray','gray'];
+  const counts = {};
+  for (const ch of target) counts[ch] = (counts[ch] || 0) + 1;
+  for (let i = 0; i < 5; i++) {
+    if (guess[i] === target[i]) { result[i] = 'g'; counts[guess[i]] -= 1; }
+  }
+  for (let i = 0; i < 5; i++) {
+    if (result[i] !== 'g' && counts[guess[i]] > 0) { result[i] = 'y'; counts[guess[i]] -= 1; }
+  }
+  return result;
+}
+
+function render() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  for (let r = 0; r < 6; r++) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    const word = guesses[r] || (r === guesses.length ? current : '');
+    const result = guesses[r] ? scoreGuess(guesses[r]) : [];
+    for (let c = 0; c < 5; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell ' + (result[c] || '');
+      cell.textContent = word[c] || '';
+      row.appendChild(cell);
+    }
+    board.appendChild(row);
+  }
+}
+
+function submitGuess() {
+  if (current.length !== 5 || gameOver) return;
+  guesses.push(current);
+  const result = scoreGuess(current);
+  [...new Set(current)].forEach(ch => {
+    const btn = [...document.querySelectorAll('#keys button')].find(b => b.textContent === ch);
+    if (!btn) return;
+    const idx = current.indexOf(ch);
+    const cls = result[idx];
+    if (cls === 'g' || (cls === 'y' && btn.classList.contains('gray'))) btn.className = cls;
+    else if (!btn.classList.contains('g')) btn.className = cls;
+  });
+  if (current === target) {
+    gameOver = true;
+    document.getElementById('msg').textContent = '🎉 Correct!';
+  } else if (guesses.length >= 6) {
+    gameOver = true;
+    document.getElementById('msg').textContent = '💀 The word was: ' + target;
+  }
+  current = '';
+  render();
+}
+
+function typeLetter(ch) {
+  if (gameOver) return;
+  if (ch === 'ENTER') { submitGuess(); return; }
+  if (ch === 'BACK') { current = current.slice(0, -1); render(); return; }
+  if (current.length < 5) { current += ch.toLowerCase(); render(); }
+}
+
+function newGame() {
+  target = pickWord();
+  guesses = [];
+  current = '';
+  gameOver = false;
+  document.getElementById('msg').textContent = '';
+  document.querySelectorAll('#keys button').forEach(b => b.className = '');
+  render();
+}
+
+const rows = ['qwertyuiop','asdfghjkl','zxcvbnm'];
+const keysEl = document.getElementById('keys');
+rows.forEach(r => {
+  r.split('').forEach(ch => {
+    const btn = document.createElement('button');
+    btn.textContent = ch.toUpperCase();
+    btn.addEventListener('click', () => typeLetter(ch));
+    keysEl.appendChild(btn);
+  });
+});
+['ENTER','BACK'].forEach(k => {
+  const btn = document.createElement('button');
+  btn.textContent = k;
+  btn.style.width = '64px';
+  btn.addEventListener('click', () => typeLetter(k));
+  keysEl.appendChild(btn);
+});
+document.addEventListener('keydown', e => {
+  const k = e.key.toUpperCase();
+  if (/^[A-Z]$/.test(k)) typeLetter(k.toLowerCase());
+  else if (e.key === 'Enter') typeLetter('ENTER');
+  else if (e.key === 'Backspace') typeLetter('BACK');
+});
+document.getElementById('newBtn').addEventListener('click', newGame);
+newGame();
+</script></body></html>

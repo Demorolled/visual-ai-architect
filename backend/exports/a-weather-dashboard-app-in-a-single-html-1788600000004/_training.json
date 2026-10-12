@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T12:00:00.000Z",
+  "request": "Build a weather dashboard app in a single HTML file. A search box fetches current weather for a city from the Open-Meteo API, renders temperature, condition, humidity and wind speed, keeps a saved-cities list in localStorage, and lets the user remove cities and refresh each card.",
+  "intent": {"goal": "weather dashboard app in a single HTML file.", "targetUser": "", "coreFeatures": [], "uiStyle": "web", "language": "html"},
+  "questions": [], "answers": {}, "planFiles": [{"path": "index.html", "summary": "Weather dashboard HTML, CSS, and JavaScript in one file", "language": "html", "exports": []}],
+  "mode": "one-shot", "repairRounds": 0, "tscErrors": 0, "libraryContext": "", "files": ["index.html"]
+}

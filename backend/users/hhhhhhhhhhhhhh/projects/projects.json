@@ -1,0 +1,164 @@
+[
+  {
+    "id": "proj_1787982722806",
+    "name": "home media server o/s/",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master",
+        "type": "master",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "data": {
+          "label": "home_media_server blueprint",
+          "description": "home media server o/s/",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "home media server o/s/",
+          "appPurpose": "A local media streaming server that indexes the movies, shows, and music on your home network, lets users browse the library, and streams media to devices on the LAN.",
+          "selectedOS": "linux",
+          "scale": "medium",
+          "blueprintContext": "APP TYPE: home_media_server\nAPP DESCRIPTION: A local media streaming server that indexes the movies, shows, and music on your home network, lets users browse the library, and streams media to devices on the LAN.\nTARGET STACK: frontend=React, backend=Node.js Express, database=SQLite\nSOURCE LANGUAGE: typescript\n\nARCHITECTURE CHECKLIST (the whole app is exactly these modules, each implemented in its own file):\n  - ui_screens\n  - media_metadata\n  - media_indexer\n  - local_storage_controller\n  - user_auth_system\n  - streaming_server\n\nWIRING GRAPH (data contracts between sibling modules — use these names verbatim so files connect):\n  - user_auth_system → streaming_server : session_token\n  - media_indexer → local_storage_controller : raw_file_paths\n  - media_metadata → media_indexer : parsed_metadata\n  - streaming_server → ui_screens : play_requests\n  - media_metadata → ui_screens : browse_library_requests\n  - local_storage_controller → streaming_server : file_streams\n\nRULE: You are generating ONE module of this app. Implement exactly the module named in THIS FILE'S MODULE below.\nDo NOT implement other checklist modules — they are separate files. Do NOT invent new modules.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDESIGN RESEARCH (live web search — use as reference for the design)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📋 Reference designs found from the web, GitHub, and open source alternatives:\n  • 10 Best Home Server OS in 2026 (Linux &amp; Windows) for Media Lovers\n    Here are some of the best options for a home server OS, including Linux-based and Windows-based servers. 10 Best Home Server OS in 2026 for Media Lovers 1) OSMC (Open Source Media Center) OSMC (Open S\n  • Best Open Source Media Servers 2026 - SourceForge\n    Browse free open source Media Servers and projects below. Use the toggles on the left to filter open source Media Servers by OS, license, language, programming language, and project status.\n  • godot (gaming): Your open-source game engine\n  • gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nVACA INTERNAL KNOWLEDGE (patterns + wiki — consult before implementing)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📗 MATCHING WIKI SECTIONS (modelVeronice.txt — platform knowledge, history, lessons):\n  • Section 1: PROJECT OVERVIEW\n    Name:         Visual AI Code Architect (VACA)\nVersion:      1.0.0\nRoot:         /home/final-flash1/Desktop/visual-ai-architect\nDescription:  AI-powered visual development environment with\n              flowchart-based code generation, voice control, emotion-aware\n              LLM reasoning, and neu\n  • Section 45: ONE-SHOT CODEGEN DESIGN REVIEW — LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them — what broke, what was fixed, what remains.\n\nS"
+        }
+      },
+      {
+        "id": "mod_0",
+        "type": "ui",
+        "position": {
+          "x": 60,
+          "y": 120
+        },
+        "data": {
+          "label": "ui_screens",
+          "description": "Module \"ui_screens\" of a home_media_server app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: streaming_server → ui_screens (play_requests); media_metadata → ui_screens (browse_library_requests).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"ui_screens\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): streaming_server (play_requests), media_metadata (browse_library_requests)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { streamingServer } from '../streaming-server/streaming-server.ts';\nimport { mediaMetadata } from '../media-metadata/media-metadata.ts';\n\n// TODO: Implement ui_screens\nexport function uiScreens() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      },
+      {
+        "id": "mod_1",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "label": "media_metadata",
+          "description": "Module \"media_metadata\" of a home_media_server app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: media_metadata → media_indexer (parsed_metadata); media_metadata → ui_screens (browse_library_requests).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"media_metadata\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: media_indexer (parsed_metadata), ui_screens (browse_library_requests)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to media_indexer, ui_screens — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "// TODO: Implement media_metadata\nexport function mediaMetadata() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      },
+      {
+        "id": "mod_2",
+        "type": "database",
+        "position": {
+          "x": 700,
+          "y": 120
+        },
+        "data": {
+          "label": "media_indexer",
+          "description": "Module \"media_indexer\" of a home_media_server app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: media_indexer → local_storage_controller (raw_file_paths); media_metadata → media_indexer (parsed_metadata).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"media_indexer\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: local_storage_controller (raw_file_paths)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): media_metadata (parsed_metadata)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to local_storage_controller — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { mediaMetadata } from '../media-metadata/media-metadata.ts';\n\n// TODO: Implement media_indexer\nexport function mediaIndexer() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      },
+      {
+        "id": "mod_3",
+        "type": "database",
+        "position": {
+          "x": 60,
+          "y": 340
+        },
+        "data": {
+          "label": "local_storage_controller",
+          "description": "Module \"local_storage_controller\" of a home_media_server app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: media_indexer → local_storage_controller (raw_file_paths); local_storage_controller → streaming_server (file_streams).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"local_storage_controller\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: streaming_server (file_streams)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): media_indexer (raw_file_paths)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to streaming_server — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { mediaIndexer } from '../media-indexer/media-indexer.ts';\n\n// TODO: Implement local_storage_controller\nexport function localStorageController() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      },
+      {
+        "id": "mod_4",
+        "type": "api",
+        "position": {
+          "x": 380,
+          "y": 340
+        },
+        "data": {
+          "label": "user_auth_system",
+          "description": "Module \"user_auth_system\" of a home_media_server app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: user_auth_system → streaming_server (session_token).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"user_auth_system\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: streaming_server (session_token)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to streaming_server — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "// TODO: Implement user_auth_system\nexport function userAuthSystem() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      },
+      {
+        "id": "mod_5",
+        "type": "api",
+        "position": {
+          "x": 700,
+          "y": 340
+        },
+        "data": {
+          "label": "streaming_server",
+          "description": "Module \"streaming_server\" of a home_media_server app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: user_auth_system → streaming_server (session_token); streaming_server → ui_screens (play_requests); local_storage_controller → streaming_server (file_streams).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"streaming_server\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: ui_screens (play_requests)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): user_auth_system (session_token), local_storage_controller (file_streams)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to ui_screens — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { userAuthSystem } from '../user-auth-system/user-auth-system.ts';\nimport { localStorageController } from '../local-storage-controller/local-storage-controller.ts';\n\n// TODO: Implement streaming_server\nexport function streamingServer() {\n  // Code generation failed — implement manually\n  throw new Error('Not implemented');\n}"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0",
+        "source": "mod_4",
+        "target": "mod_5"
+      },
+      {
+        "id": "edge_1",
+        "source": "mod_2",
+        "target": "mod_3"
+      },
+      {
+        "id": "edge_2",
+        "source": "mod_1",
+        "target": "mod_2"
+      },
+      {
+        "id": "edge_3",
+        "source": "mod_5",
+        "target": "mod_0"
+      },
+      {
+        "id": "edge_4",
+        "source": "mod_1",
+        "target": "mod_0"
+      },
+      {
+        "id": "edge_5",
+        "source": "mod_3",
+        "target": "mod_5"
+      }
+    ],
+    "savedAt": "2026-08-29T13:54:24.521Z",
+    "version": 3
+  }
+]

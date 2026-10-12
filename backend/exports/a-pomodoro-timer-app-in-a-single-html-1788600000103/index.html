@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pomodoro</title><style>
+body{font-family:'Segoe UI',sans-serif;background:#0a0a14;color:#e6e6e6;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{background:#14141f;border:1px solid #2a2a3a;border-radius:12px;padding:28px;text-align:center}
+#mode{color:#00d9ff;font-size:14px;text-transform:uppercase;letter-spacing:2px}
+#time{font-size:64px;font-weight:700;margin:12px 0;font-variant-numeric:tabular-nums}
+#poms{color:#ffb454;margin-bottom:12px}
+button{background:#2a2a3a;color:#e6e6e6;border:none;border-radius:8px;padding:10px 16px;font-size:14px;margin:4px;cursor:pointer}
+#startBtn{background:#00d9ff;color:#04141a}
+</style></head><body>
+<div class="card"><div id="mode">Focus</div><div id="time">25:00</div>
+<div id="poms">🍅 0 completed</div>
+<button id="startBtn">Start</button><button id="resetBtn">Reset</button></div>
+<script>
+const FOCUS = 25 * 60;
+const BREAK = 5 * 60;
+let mode = 'focus';
+let remaining = FOCUS;
+let running = false;
+let timerId = null;
+let completed = 0;
+
+function fmt(s) {
+  const m = String(Math.floor(s / 60)).padStart(2, '0');
+  const sec = String(s % 60).padStart(2, '0');
+  return m + ':' + sec;
+}
+
+function render() {
+  document.getElementById('time').textContent = fmt(remaining);
+  document.getElementById('mode').textContent = mode;
+  document.getElementById('poms').textContent = '🍅 ' + completed + ' completed';
+}
+
+function tick() {
+  if (!running) return;
+  remaining -= 1;
+  if (remaining <= 0) {
+    if (mode === 'focus') {
+      completed += 1;
+      mode = 'break';
+      remaining = BREAK;
+    } else {
+      mode = 'focus';
+      remaining = FOCUS;
+    }
+    render();
+    return;
+  }
+  render();
+}
+
+function start() {
+  if (running) return;
+  running = true;
+  timerId = setInterval(tick, 1000);
+  document.getElementById('startBtn').textContent = 'Pause';
+}
+
+function toggle() {
+  if (running) {
+    running = false;
+    clearInterval(timerId);
+    document.getElementById('startBtn').textContent = 'Resume';
+  } else {
+    start();
+  }
+}
+
+function reset() {
+  running = false;
+  clearInterval(timerId);
+  mode = 'focus';
+  remaining = FOCUS;
+  document.getElementById('startBtn').textContent = 'Start';
+  render();
+}
+
+document.getElementById('startBtn').addEventListener('click', toggle);
+document.getElementById('resetBtn').addEventListener('click', reset);
+render();
+</script></body></html>

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-01T19:30:00.000Z",
+  "request": "Build a maze generator and solver app in a single HTML file. A recursive backtracker generates a perfect maze on an odd-sized grid with a start and end, the solver runs BFS, DFS, or A* over the maze, the search animates cell-by-cell as explored then highlights the final solution path, and the info bar reports how many cells were expanded and the solution length in steps, with adjustable maze size.",
+  "intent": {
+    "goal": "build a maze generator and solver app in a single html file.",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "web",
+    "language": "html"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "index.html",
+      "summary": "Maze Lab HTML, CSS, and JavaScript in one file",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "one-shot",
+  "repairRounds": 0,
+  "tscErrors": 0,
+  "libraryContext": "build a maze generator and solver app in a single HTML file. A recursive backtracker generates a perfect maze on an odd-sized grid with a start and end, the solver runs BFS, DFS, or A* over the maze, the search animates cell-by-cell as explored then highlights the final solution path, and the info bar reports how many cells were expanded and the solution length in steps, with adjustable maze size.",
+  "files": [
+    "index.html"
+  ],
+  "tier": "extreme"
+}

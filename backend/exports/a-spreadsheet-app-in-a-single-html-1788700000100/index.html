@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spreadsheet</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6; margin: 0; }
+  .bar { display: flex; gap: 10px; align-items: center; padding: 10px 14px; background: #14141f; border-bottom: 1px solid #2a2a3a; }
+  .bar input { background: #0f0f1a; border: 1px solid #2a2a3a; color: #e6e6e6; border-radius: 6px; padding: 6px 9px; font-size: 13px; width: 180px; }
+  .bar button { background: #2a2a3a; color: #e6e6e6; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  .bar button.primary { background: #00d9ff; color: #04141a; }
+  .wrap { overflow: auto; max-height: calc(100vh - 64px); padding: 12px; }
+  table { border-collapse: collapse; font-size: 13px; }
+  td { border: 1px solid #2a2a3a; min-width: 96px; height: 30px; padding: 4px 8px; background: #0f0f1a; }
+  td input { border: none; background: transparent; color: #e6e6e6; width: 100%; outline: none; font-size: 13px; }
+  td.colhead, td.rowhead { background: #14141f; color: #888; text-align: center; font-weight: 600; min-width: 34px; }
+  td.sel { outline: 2px solid #00d9ff; }
+  .msg { color: #ff5c5c; font-size: 12px; min-height: 16px; margin-left: 8px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>Sheet</b>
+  <input id="formulaBar" placeholder="selected cell value / formula">
+  <button id="addColBtn">+ col</button>
+  <button id="addRowBtn">+ row</button>
+  <button class="primary" id="saveBtn">Save</button>
+  <button id="resetBtn">Clear</button>
+  <span class="msg" id="cellId"></span><span class="msg" id="errMsg"></span>
+</div>
+<div class="wrap"><div id="grid"></div></div>
+<script>
+  const ROWS = 40;
+  const COLS = 12;
+  let data = {};
+  let formulas = {};
+  let selR = 0, selC = 0;
+
+  function colName(c) {
+    let s = '';
+    let n = c + 1;
+    while (n > 0) { n -= 1; s = String.fromCharCode(65 + (n % 26)) + s; n = Math.floor(n / 26); }
+    return s;
+  }
+
+  function cellKey(r, c) { return r + ':' + c; }
+
+  function parseFormula(text) {
+    const m = text.match(/^=(.+)$/);
+    return m ? m[1] : null;
+  }
+
+  function refOf(tok) {
+    const m = tok.toUpperCase().match(/^([A-Z]+)([0-9]+)$/);
+    if (!m) return null;
+    let c = 0;
+    for (const ch of m[1]) c = c * 26 + (ch.charCodeAt(0) - 64);
+    return { r: (parseInt(m[2], 10) - 1), c: (c - 1) };
+  }
+
+  function evalExpr(expr, seen, depth) {
+    if (depth > 50) throw new Error('circular reference');
+    expr = expr.replace(/\b([A-Z]+[0-9]+)\b/gi, (tok) => {
+      const ref = refOf(tok);
+      if (!ref) return tok;
+      if (seen.has(cellKey(ref.r, ref.c))) throw new Error('circular reference');
+      seen.add(cellKey(ref.r, ref.c));
+      const v = evaluate(ref.r, ref.c, seen);
+      seen.delete(cellKey(ref.r, ref.c));
+      return (typeof v === 'number' ? String(v) : '0');
+    });
+    expr = expr.replace(/\b(SUM|AVG|MIN|MAX)\s*\(\s*([A-Z]+[0-9]+)\s*:\s*([A-Z]+[0-9]+)\s*\)/gi, (_m, fn, a, b) => {
+      const r1 = refOf(a), r2 = refOf(b);
+      const loR = Math.min(r1.r, r2.r), hiR = Math.max(r1.r, r2.r);
+      const loC = Math.min(r1.c, r2.c), hiC = Math.max(r1.c, r2.c);
+      let vals = [];
+      for (let r = loR; r <= hiR; r++) {
+        for (let c = loC; c <= hiC; c++) {
+          const v = evaluate(r, c, seen);
+          if (typeof v === 'number') vals.push(v);
+        }
+      }
+      if (!vals.length) return '0';
+      if (fn === 'SUM') return String(vals.reduce((a, b) => a + b, 0));
+      if (fn === 'AVG') return String(vals.reduce((a, b) => a + b, 0) / vals.length);
+      if (fn === 'MIN') return String(Math.min.apply(null, vals));
+      return String(Math.max.apply(null, vals));
+    });
+    const cleaned = expr.replace(/[^0-9+\-*/(). ]/g, '');
+    const val = Function('return (' + cleaned + ')')();
+    if (typeof val !== 'number' || isNaN(val)) throw new Error('not a number');
+    return val;
+  }
+
+  function evaluate(r, c, seen) {
+    seen = seen || new Set();
+    const key = cellKey(r, c);
+    if (seen.has(key)) throw new Error('circular reference');
+    seen.add(key);
+    let out;
+    try {
+      if (formulas[key]) {
+        out = evalExpr(formulas[key], new Set([key]), 0);
+      } else {
+        const raw = data[key];
+        if (raw === undefined || raw === '') return '';
+        const n = Number(raw);
+        out = (raw.trim() !== '' && !isNaN(n)) ? n : raw;
+      }
+      return typeof out === 'number' ? Math.round(out * 10000) / 10000 : out;
+    } finally {
+      seen.delete(key);
+    }
+  }
+
+  function display(r, c) {
+    const key = cellKey(r, c);
+    if (formulas[key]) {
+      try { return String(evaluate(r, c)); }
+      catch (e) { return '#ERR'; }
+    }
+    const raw = data[key];
+    if (raw === undefined) return '';
+    const n = Number(raw);
+    return (raw.trim() !== '' && !isNaN(n)) ? String(n) : raw;
+  }
+
+  function render() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    const table = document.createElement('table');
+    const head = document.createElement('tr');
+    head.appendChild(document.createElement('td'));
+    for (let c = 0; c < COLS; c++) {
+      const th = document.createElement('td');
+      th.className = 'colhead';
+      th.textContent = colName(c);
+      th.addEventListener('click', () => select(0, c));
+      head.appendChild(th);
+    }
+    table.appendChild(head);
+    for (let r = 0; r < ROWS; r++) {
+      const tr = document.createElement('tr');
+      const rh = document.createElement('td');
+      rh.className = 'rowhead';
+      rh.textContent = r + 1;
+      rh.addEventListener('click', () => select(r, 0));
+      tr.appendChild(rh);
+      for (let c = 0; c < COLS; c++) {
+        const td = document.createElement('td');
+        if (r === selR && c === selC) td.className = 'sel';
+        const inp = document.createElement('input');
+        inp.value = display(r, c);
+        inp.addEventListener('focus', () => select(r, c));
+        inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); commit(r, c, inp.value); }
+          if (e.key === 'Tab') { e.preventDefault(); commit(r, c, inp.value); moveFocus(r, c, 0, e.shiftKey ? -1 : 1); }
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { commit(r, c, inp.value); moveFocus(r, c, e.key === 'ArrowDown' ? 1 : -1, 0); }
+        });
+        inp.addEventListener('blur', () => commit(r, c, inp.value));
+        td.appendChild(inp);
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+    grid.appendChild(table);
+    syncFormulaBar();
+  }
+
+  function commit(r, c, value) {
+    const key = cellKey(r, c);
+    const trimmed = value.trim();
+    if (trimmed === '') {
+      delete data[key];
+      delete formulas[key];
+    } else if (trimmed.startsWith('=')) {
+      const expr = trimmed.slice(1);
+      formulas[key] = expr;
+      delete data[key];
+      try { evalExpr(expr, {}, 0); }
+      catch (e) { document.getElementById('errMsg').textContent = 'error: ' + e.message; }
+    } else {
+      data[key] = trimmed;
+      delete formulas[key];
+    }
+    document.getElementById('errMsg').textContent = '';
+    render();
+  }
+
+  function select(r, c) {
+    selR = r; selC = c;
+    render();
+  }
+
+  function moveFocus(r, c, dr, dc) {
+    const nr = Math.max(0, Math.min(ROWS - 1, r + dr));
+    const nc = Math.max(0, Math.min(COLS - 1, c + dc));
+    select(nr, nc);
+    const inp = document.querySelector('#grid tr:nth-child(' + (nr + 2) + ') td:nth-child(' + (nc + 2) + ') input');
+    if (inp) inp.focus();
+  }
+
+  function syncFormulaBar() {
+    const key = cellKey(selR, selC);
+    document.getElementById('cellId').textContent = colName(selC) + (selR + 1);
+    const bar = document.getElementById('formulaBar');
+    bar.value = formulas[key] ? '=' + formulas[key] : (data[key] || '');
+  }
+
+  function save() {
+    try {
+      localStorage.setItem('sheet-cells', JSON.stringify({ d: data, f: formulas }));
+      document.getElementById('errMsg').textContent = 'saved ✓';
+    } catch (e) {
+      document.getElementById('errMsg').textContent = 'save failed';
+    }
+  }
+
+  function load() {
+    try {
+      const raw = JSON.parse(localStorage.getItem('sheet-cells') || '{}');
+      if (raw.d) data = raw.d;
+      if (raw.f) formulas = raw.f;
+    } catch (e) { /* fresh sheet */ }
+  }
+
+  function addRow() { render(); }
+  function addCol() { render(); }
+
+  document.getElementById('saveBtn').addEventListener('click', save);
+  document.getElementById('resetBtn').addEventListener('click', () => { data = {}; formulas = {}; render(); });
+  document.getElementById('addRowBtn').addEventListener('click', addRow);
+  document.getElementById('addColBtn').addEventListener('click', addCol);
+  document.getElementById('formulaBar').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      commit(selR, selC, document.getElementById('formulaBar').value);
+    }
+  });
+
+  load();
+  render();
+</script>
+</body>
+</html>

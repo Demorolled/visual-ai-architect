@@ -1,0 +1,57 @@
+{
+  "app_type": "void_raider",
+  "description": "Classic top-down arcade space shooter 'Void Raider' — pilot a ship against escalating waves of AI raider ships with projectile combat, explosions, and score tracking",
+  "keywords": [
+    "void raider",
+    "void-raider",
+    "raider",
+    "space-shooter",
+    "space shooter",
+    "shooter",
+    "arcade",
+    "game",
+    "space",
+    "top-down",
+    "classic",
+    "waves",
+    "wave manager",
+    "enemy ai",
+    "ship controls",
+    "combat engine",
+    "game renderer"
+  ],
+  "target_stack": {
+    "frontend": "React",
+    "backend": "Node.js Express",
+    "database": "SQLite"
+  },
+  "architecture_checklist": [
+    "Ship Controls",
+    "Wave Manager",
+    "Enemy AI",
+    "Combat Engine",
+    "Game Renderer"
+  ],
+  "wiring_graph": [
+    {
+      "source_module": "Ship Controls",
+      "destination_module": "Combat Engine",
+      "data_passed": "requests"
+    },
+    {
+      "source_module": "Wave Manager",
+      "destination_module": "Enemy AI",
+      "data_passed": "state_and_events"
+    },
+    {
+      "source_module": "Enemy AI",
+      "destination_module": "Combat Engine",
+      "data_passed": "data"
+    },
+    {
+      "source_module": "Combat Engine",
+      "destination_module": "Game Renderer",
+      "data_passed": "data"
+    }
+  ]
+}

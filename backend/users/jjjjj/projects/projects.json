@@ -1,0 +1,228 @@
+[
+  {
+    "id": "proj_video_calculator_1788064637230",
+    "name": "Simple Calculator",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master-node",
+        "type": "master",
+        "position": {
+          "x": 300,
+          "y": -120
+        },
+        "data": {
+          "label": "App Blueprint",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result.",
+          "selectedOS": "linux",
+          "status": "pending",
+          "scale": "small"
+        }
+      },
+      {
+        "id": "node_0",
+        "type": "ui",
+        "position": {
+          "x": -620,
+          "y": 120
+        },
+        "data": {
+          "label": "Calculator Interface",
+          "description": "Two number inputs, an operation selector, an equals button, and a result readout. Collects the two values and the chosen operation and sends them to the logic node.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      },
+      {
+        "id": "node_1",
+        "type": "logic",
+        "position": {
+          "x": -60,
+          "y": 120
+        },
+        "data": {
+          "label": "Calculator Logic",
+          "description": "Takes the two numbers and the selected operation. Validates that both are real numbers, performs the addition, subtraction, multiplication or division, and returns the result. Guards against dividing by zero.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      },
+      {
+        "id": "node_2",
+        "type": "logic",
+        "position": {
+          "x": 500,
+          "y": 120
+        },
+        "data": {
+          "label": "Validation & Error Handling",
+          "description": "Checks the inputs are valid numbers before calculating. If a value is empty, not a number, or division by zero is attempted, it returns a clear error message instead of a broken result.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      },
+      {
+        "id": "node_3",
+        "type": "ui",
+        "position": {
+          "x": 1060,
+          "y": 120
+        },
+        "data": {
+          "label": "Results Display",
+          "description": "Shows the answer from the logic node, or the friendly error message. Keeps the screen readable and reveals the result clearly after the equals button is pressed.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0_1",
+        "source": "node_0",
+        "target": "node_1",
+        "type": "default"
+      },
+      {
+        "id": "edge_1_2",
+        "source": "node_1",
+        "target": "node_2",
+        "type": "default"
+      },
+      {
+        "id": "edge_2_3",
+        "source": "node_2",
+        "target": "node_3",
+        "type": "default"
+      }
+    ],
+    "savedAt": "2026-08-30T04:37:17.230Z",
+    "version": 1
+  },
+  {
+    "id": "proj_video_calculator_1788064703879",
+    "name": "Simple Calculator",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master-node",
+        "type": "master",
+        "position": {
+          "x": 300,
+          "y": -120
+        },
+        "data": {
+          "label": "App Blueprint",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result.",
+          "selectedOS": "linux",
+          "status": "pending",
+          "scale": "small"
+        }
+      },
+      {
+        "id": "node_0",
+        "type": "ui",
+        "position": {
+          "x": -620,
+          "y": 120
+        },
+        "data": {
+          "label": "Calculator Interface",
+          "description": "Two number inputs, an operation selector, an equals button, and a result readout. Collects the two values and the chosen operation and sends them to the logic node.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      },
+      {
+        "id": "node_1",
+        "type": "logic",
+        "position": {
+          "x": -60,
+          "y": 120
+        },
+        "data": {
+          "label": "Calculator Logic",
+          "description": "Takes the two numbers and the selected operation. Validates that both are real numbers, performs the addition, subtraction, multiplication or division, and returns the result. Guards against dividing by zero.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      },
+      {
+        "id": "node_2",
+        "type": "logic",
+        "position": {
+          "x": 500,
+          "y": 120
+        },
+        "data": {
+          "label": "Validation & Error Handling",
+          "description": "Checks the inputs are valid numbers before calculating. If a value is empty, not a number, or division by zero is attempted, it returns a clear error message instead of a broken result.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      },
+      {
+        "id": "node_3",
+        "type": "ui",
+        "position": {
+          "x": 1060,
+          "y": 120
+        },
+        "data": {
+          "label": "Results Display",
+          "description": "Shows the answer from the logic node, or the friendly error message. Keeps the screen readable and reveals the result clearly after the equals button is pressed.",
+          "type": "ui",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "A simple calculator that adds, subtracts, multiplies and divides two numbers.",
+          "appPurpose": "Users will type two numbers, pick an operation, and see the result."
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge_0_1",
+        "source": "node_0",
+        "target": "node_1",
+        "type": "default"
+      },
+      {
+        "id": "edge_1_2",
+        "source": "node_1",
+        "target": "node_2",
+        "type": "default"
+      },
+      {
+        "id": "edge_2_3",
+        "source": "node_2",
+        "target": "node_3",
+        "type": "default"
+      }
+    ],
+    "savedAt": "2026-08-30T04:40:54.979Z",
+    "version": 2
+  }
+]

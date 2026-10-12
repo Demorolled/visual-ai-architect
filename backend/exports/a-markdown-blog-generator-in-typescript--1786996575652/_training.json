@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-17T20:00:58.720Z",
+  "request": "a markdown blog generator in TypeScript: read .md files from a folder and emit static HTML pages with an index",
+  "intent": {
+    "goal": "markdown blog generator in TypeScript: read .md files from a folder and emit static HTML pages with an index",
+    "targetUser": "",
+    "coreFeatures": [],
+    "uiStyle": "",
+    "language": "typescript"
+  },
+  "questions": [
+    {
+      "key": "inputDir",
+      "question": "What is the input directory containing the Markdown files?",
+      "options": []
+    },
+    {
+      "key": "outputDir",
+      "question": "What is the output directory for the generated HTML pages?",
+      "options": []
+    },
+    {
+      "key": "template",
+      "question": "What HTML template do you want to use?",
+      "options": [
+        "Basic",
+        "Modern",
+        "Minimal"
+      ]
+    }
+  ],
+  "answers": {
+    "inputDir": "yes",
+    "outputDir": "yes",
+    "template": "Basic"
+  },
+  "planFiles": [
+    {
+      "path": "src/index.ts",
+      "summary": "Main entry point: reads Markdown files, generates HTML pages, and writes the index",
+      "language": "typescript",
+      "exports": [
+        "run"
+      ]
+    },
+    {
+      "path": "src/markdown.ts",
+      "summary": "Markdown parsing logic",
+      "language": "typescript",
+      "exports": [
+        "parseMarkdown"
+      ]
+    },
+    {
+      "path": "src/html.ts",
+      "summary": "HTML rendering logic",
+      "language": "typescript",
+      "exports": [
+        "renderHtml"
+      ]
+    },
+    {
+      "path": "src/types.ts",
+      "summary": "Shared types",
+      "language": "typescript",
+      "exports": [
+        "MarkdownFile",
+        "HtmlPage"
+      ]
+    },
+    {
+      "path": "src/config.ts",
+      "summary": "Configuration and constants",
+      "language": "typescript",
+      "exports": [
+        "BLOG_TITLE",
+        "BLOG_SUBTITLE"
+      ]
+    }
+  ],
+  "mode": "per-file",
+  "repairRounds": 12,
+  "tscErrors": 8,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nmodelVeronice.txt sections: 1. PROJECT OVERVIEW, 2. RUNNING SERVICES (as of scan time), 3. RUNTIME TOOLS, 4. FRONTEND APPLICATION, 5. BACKEND APPLICATION, 6. LLM CONFIGURATION, 7. INSTALLED OLLAMA MODELS, 8. LOCAL GGUF MODELS, 9. DATA & KNOWLEDGE STORES, 10. TRAINING SYSTEM, 11. SYSTEM MONITOR DAEMON, 12. GENERATED PROJECTS (projects/), 13. PROFILE & USER\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node (typescript).\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-pa\n…(truncated)",
+  "files": [
+    "src/index.ts",
+    "src/markdown.ts",
+    "src/html.ts",
+    "src/types.ts",
+    "src/config.ts"
+  ]
+}

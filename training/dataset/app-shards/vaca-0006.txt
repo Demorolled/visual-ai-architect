@@ -1,0 +1,8 @@
+{"instruction": "What is the VACA backend route mount `/api/llm` bound to?", "input": "", "output": "`/api/llm` is served by `llmRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/manifesto` bound to?", "input": "", "output": "`/api/manifesto` is served by `manifestoRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/memory` bound to?", "input": "", "output": "`/api/memory` is served by `memoryRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/merge` bound to?", "input": "", "output": "`/api/merge` is served by `mergeRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/mindspace` bound to?", "input": "", "output": "`/api/mindspace` is served by `mindspaceRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/neural` bound to?", "input": "", "output": "`/api/neural` is served by `neuralRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/nodes` bound to?", "input": "", "output": "`/api/nodes` is served by `nodeStoreRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/plans` bound to?", "input": "", "output": "`/api/plans` is served by `planRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}

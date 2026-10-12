@@ -6,18 +6,28 @@ import Edge3D from './Edge3D';
 
 interface SceneContentProps {
   selectedNodeId: string | null;
-  onSelectNode: (id: string | null) => void;
+  /** All currently selected node ids (multi-select). Falls back to the single id. */
+  selectedNodeIds?: string[];
+  onSelectNode: (id: string | null, additive?: boolean) => void;
   onDoubleClickNode: (id: string) => void;
   onDragNode: (id: string, x: number, y: number) => void;
 }
 
-export default function SceneContent({ selectedNodeId, onSelectNode, onDoubleClickNode, onDragNode }: SceneContentProps) {
+export default function SceneContent({ selectedNodeId, selectedNodeIds, onSelectNode, onDoubleClickNode, onDragNode }: SceneContentProps) {
   const nodes = useProjectStore((s) => s.nodes);
   const edges = useProjectStore((s) => s.edges);
+  // Just-created connection to emphasise (set by Connect & Describe on apply).
+  const highlightedEdgeId = useProjectStore((s) => s.highlightedEdgeId);
 
-  const handleClickNode = useCallback((id: string) => {
-    onSelectNode(id === selectedNodeId ? null : id);
-  }, [selectedNodeId, onSelectNode]);
+  // Selection may be a set (multi-select) or a single id; the parent decides
+  // whether a click toggles, adds, or replaces — this only reports the click.
+  const isNodeSelected = useCallback((id: string) => (
+    selectedNodeIds ? selectedNodeIds.includes(id) : id === selectedNodeId
+  ), [selectedNodeIds, selectedNodeId]);
+
+  const handleClickNode = useCallback((id: string, additive?: boolean) => {
+    onSelectNode(id, additive);
+  }, [onSelectNode]);
 
   const handleDoubleClick = useCallback((id: string) => {
     onDoubleClickNode(id);
@@ -44,6 +54,7 @@ export default function SceneContent({ selectedNodeId, onSelectNode, onDoubleCli
           source={edge.source}
           target={edge.target}
           data={edge.data as any}
+          highlighted={edge.id === highlightedEdgeId}
         />
       ))}
 
@@ -55,7 +66,7 @@ export default function SceneContent({ selectedNodeId, onSelectNode, onDoubleCli
           x={node.position.x}
           y={node.position.y}
           data={node.data as NodeData}
-          selected={node.id === selectedNodeId}
+          selected={isNodeSelected(node.id)}
           onClick={handleClickNode}
           onDoubleClick={handleDoubleClick}
           onDrag={handleDrag}

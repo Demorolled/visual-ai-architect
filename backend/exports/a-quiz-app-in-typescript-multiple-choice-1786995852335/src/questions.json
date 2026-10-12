@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "question": "What is the capital of France?",
+        "options": ["Paris", "London", "Berlin", "Madrid"],
+        "answer": 1
+    },
+    {
+        "id": 2,
+        "question": "What is the largest planet in our solar system?",
+        "options": ["Earth", "Jupiter", "Venus", "Mars"],
+        "answer": 2
+    },
+    {
+        "id": 3,
+        "question": "What is the smallest country in the world?",
+        "options": ["Monaco", "Vatican City", "Liechtenstein", "Andorra"],
+        "answer": 2
+    }
+]

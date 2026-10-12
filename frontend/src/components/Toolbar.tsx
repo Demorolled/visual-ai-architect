@@ -12,7 +12,7 @@ interface ToolbarProps {
 }
 
 export default function Toolbar({ onGenerate, onBuild, onExport, onClear, onPlan, onBlueprint }: ToolbarProps) {
-  const { isGenerating, generationLayer, projectName, nodes, updateNode, targetOS, setTargetOS } = useProjectStore();
+  const { isGenerating, generationLayer, projectName, nodes, updateNode, targetOS, setTargetOS, planMode } = useProjectStore();
 
   const osOptions: { value: OSType; label: string; icon: string }[] = [
     { value: 'windows', label: 'Windows', icon: '🪟' },
@@ -72,11 +72,13 @@ export default function Toolbar({ onGenerate, onBuild, onExport, onClear, onPlan
         </div>
 
         <button
-          className="toolbar-btn plan-btn"
+          className={`toolbar-btn plan-btn ${planMode ? 'active' : ''}`}
           onClick={onPlan}
-          title="Plan Mode — capture your ideas to a text file for later creation"
+          title={planMode
+            ? 'Big Plan Mode is ON — you are designing, not building. Click to leave.'
+            : 'Big Plan Mode — design an app as a node graph before anything is built: start from the master node, describe the app, add nodes for each function, then wire them. Nothing is generated while you plan.'}
         >
-          📋 Plan
+          {planMode ? '🧭 Big Plan Mode ON' : '🧭 Big Plan Mode'}
         </button>
 
         <button

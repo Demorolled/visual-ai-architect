@@ -1,0 +1,340 @@
+{
+ "success": true,
+ "projectId": "e9b0aa51-e530-4aae-9dcf-25ea92cacdc9",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "void_raider",
+  "description": "Classic top-down arcade space shooter 'Void Raider' \u2014 pilot a ship against escalating waves of AI raider ships with projectile combat, explosions, and score tracking",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Ship Controls",
+   "Wave Manager",
+   "Enemy AI",
+   "Combat Engine",
+   "Game Renderer"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Ship Controls",
+    "destination_module": "Combat Engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Wave Manager",
+    "destination_module": "Enemy AI",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "Enemy AI",
+    "destination_module": "Combat Engine",
+    "data_passed": "data"
+   },
+   {
+    "source_module": "Combat Engine",
+    "destination_module": "Game Renderer",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 6,
+  "web": 4,
+  "github": 0,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 Best Open Source Arcade Games in 2026\n    The best open-source arcade games include community favorites with active development, high GitHub stars, and regular updates. These games offer classic arcade-style gameplay and high scores while bei\n  \u2022 Top 17 arcade-game Open-Source Projects - LibHunt\n    Which are the best open-source arcade-game projects? This list will help you: endless-sky, pacman, astromenace, TuxPusher, pacman-for-k8s, ParaGopher, and jcap.\n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 59: SESSION UPDATE \u2014 August 14, 2026: VOID RAIDER GAME BUILDS + BLUEPRINT RESEARCH INJECTION (what it takes to build an arcade game)\n    Four full builds of the arcade space-shooter \"void raider\" ran through the\nblueprint pipeline this session. This section records what they taught.\n\n1. WHAT WAS BUILT\n   - space_shooter blueprint build \u2192 5 modules passed tsc except\n     game-renderer (truncated mid-class); world-state had 8 real type\n  \u2022 Section 9: DATA & KNOWLEDGE STORES\n    9.1 DATA DIRECTORY (data/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesigns.json                 \u2014 Generated design catalog (design storage)\ndesign-specs-v2.json         \u2014 Design specifications (v2)\nnode-designs.json            \u2014 Node design catalog\nsession-memory.json          \u2014 Session memory/persistence\ndesig\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move "
+ },
+ "candidates": [
+  {
+   "app_type": "void_raider",
+   "score": 1
+  },
+  {
+   "app_type": "asteroids_2",
+   "score": 1
+  },
+  {
+   "app_type": "asteroids",
+   "score": 1
+  },
+  {
+   "app_type": "space_invaders_2",
+   "score": 1
+  },
+  {
+   "app_type": "space_invaders",
+   "score": 1
+  }
+ ],
+ "project": {
+  "id": "e9b0aa51-e530-4aae-9dcf-25ea92cacdc9",
+  "name": "classic arcade game void raider",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "void_raider blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "logic",
+    "label": "Ship Controls"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Wave Manager"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "Enemy AI"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "Combat Engine"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Game Renderer"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 5,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Ship Controls",
+   "Wave Manager",
+   "Enemy AI",
+   "Combat Engine",
+   "Game Renderer"
+  ],
+  "generated": [
+   "Ship Controls",
+   "Wave Manager",
+   "Enemy AI",
+   "Combat Engine",
+   "Game Renderer"
+  ],
+  "matched": [
+   "Ship Controls",
+   "Wave Manager",
+   "Enemy AI",
+   "Combat Engine",
+   "Game Renderer"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "ship-controls.ts",
+   "language": "typescript",
+   "code": "function handleRequest(data: any): void {\n  const { stateAndEvents } = data;\n  // Implement Ship Controls logic here, handling requests or game updates based on incoming data.\n  // Update the wave manager if necessary, implement enemy AI behavior, update combat engine with updated stats, etc.\n}\n\nexport default { handleRequest };",
+   "nodeId": "mod_0",
+   "nodeLabel": "Ship Controls",
+   "dependencies": [],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "wave-manager.ts",
+   "language": "typescript",
+   "code": "class WaveManager {\n  constructor() {}\n\n  manageWaves() {\n    // Implement wave management logic here\n    console.log(\"Wave manager managing waves.\");\n  }\n}\n\nexport { WaveManager };",
+   "nodeId": "mod_1",
+   "nodeLabel": "Wave Manager",
+   "dependencies": [],
+   "exports": [
+    "WaveManager"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "enemy-ai.ts",
+   "language": "typescript",
+   "code": "import { WaveManager } from '../wave-manager/wave-manager.ts';\n\nexport class EnemyAI {\n  private currentState: 'idle' | 'attacking' = 'idle';\n  private enemyPosition: { x: number; y: number } = { x: 0, y: 0 };\n\n  constructor() {}\n\n  manageWaves(): void {\n    console.log('Enemy AI managing waves.');\n  }\n\n  move(): void {\n    if (this.currentState === 'idle') {\n      const randomX = Math.floor(Math.random() * 128);\n      const randomY = Math.floor(Math.random() * 70);\n      this.enemyPosition = { x: randomX, y: randomY };\n      this.currentState = 'attacking';\n    }\n  }\n\n  attack(): void {\n    if (this.currentState === 'attacking') {\n      console.log('Enemy AI attacking!');\n      this.currentState = 'idle';\n    }\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "Enemy AI",
+   "dependencies": [
+    "Wave Manager"
+   ],
+   "exports": [
+    "EnemyAI"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m14\u001b[0m:\u001b[93m3\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS1434: \u001b[0mUnexpected keyword or identifier.\n\n\u001b[7m14\u001b[0m   move enemy(): void {\n\u001b[7m  \u001b[0m \u001b[91m  ~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:14\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "combat-engine.ts",
+   "language": "typescript",
+   "code": "import { EnemyAI } from '../enemy-ai/enemy-ai.ts';\n\nexport interface CombatEngine {\n  handleCombatRequest(request: { shipHealth: number; enemyDamage: number }): void;\n  manageEnemyAI(): void;\n}\n\nexport class CombatEngineImpl implements CombatEngine {\n  private shipHealth: number = 100;\n  private enemyDamage: number = 0;\n  private enemyPosition: { x: number; y: number } = { x: 0, y: 0 };\n\n  constructor() {}\n\n  handleCombatRequest(request: { shipHealth: number; enemyDamage: number }): void {\n    this.shipHealth = request.shipHealth;\n    this.enemyDamage = request.enemyDamage;\n    this.manageEnemyAI();\n  }\n\n  manageEnemyAI(): void {\n    const enemyHealth = 100;\n    const damage = 10;\n    this.shipHealth -= damage;\n    this.enemyDamage += damage;\n    this.enemyPosition = { x: 50, y: 30 };\n    console.log(`Enemy AI managing combat: Ship Health ${this.shipHealth}, Enemy Health ${enemyHealth}, Damage ${damage}`);\n  }\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "Combat Engine",
+   "dependencies": [
+    "Enemy AI"
+   ],
+   "exports": [
+    "CombatEngine",
+    "CombatEngineImpl"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m25\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../enemy-ai/enemy-ai.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import { EnemyAI } from '../enemy-ai/enemy-ai.ts';\n\u001b[7m \u001b[0m \u001b[91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\u001b[96mindex.ts\u001b[0m:\u001b[93m9\u001b[0m:\u001b[93m24\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2304: \u001b[0mCannot find name 'WaveManager'.\n\n\u001b[7m9\u001b[0m   private waveManager: WaveManager;\n\u001b[7m \u001b[0m \u001b[91m                       ~~~~~~~~~~~\u001b[0m\n\n\u001b[96mindex.ts\u001b[0m:\u001b[93m13\u001b[0m:\u001b[93m28\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2304: \u001b[0mCannot find name 'WaveManager'.\n\n\u001b[7m13\u001b[0m   constructor(waveManager: WaveManager) {\n\u001b[7m  \u001b[0m \u001b[91m                           ~~~~~~~~~~~\u001b[0m\n\n\nFound 3 errors in the same file, starting at: index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-renderer.ts",
+   "language": "typescript",
+   "code": "import { CombatEngine, CombatEngineImpl } from '../combat-engine/combat-engine.ts';\n\nexport class GameRenderer {\n  private shipDisplay: HTMLDivElement;\n  private scoreDisplay: HTMLDivElement;\n  private newWaveDisplay: HTMLDivElement;\n  private missionDisplay: HTMLDivElement;\n  private healthDisplay: HTMLDivElement;\n  private fireBtn: HTMLButtonElement;\n  private restartBtn: HTMLButtonElement;\n  private gameContainer: HTMLDivElement;\n  private enemyDamage: number = 0;\n  private enemyPosition: { x: number; y: number } = { x: 0, y: 0 };\n\n  constructor() {\n    this.shipDisplay = document.createElement('div');\n    this.shipDisplay.className = 'ship';\n    this.shipDisplay.innerHTML = 'Your current ship';\n\n    this.scoreDisplay = document.createElement('div');\n    this.scoreDisplay.className = 'score';\n    this.scoreDisplay.textContent = 'Score: 0';\n\n    this.newWaveDisplay = document.createElement('div');\n    this.newWaveDisplay.className = 'new-wave';\n    this.newWaveDisplay.textContent = 'New wave: 1';\n\n    this.missionDisplay = document.createElement('div');\n    this.missionDisplay.className = 'mission';\n    this.missionDisplay.textContent = 'Mission: Destroy all raiders';\n\n    this.healthDisplay = document.createElement('div');\n    this.healthDisplay.className = 'health';\n    this.healthDisplay.textContent = 'Health: 100%';\n\n    this.fireBtn = document.createElement('button');\n    this.fireBtn.className = 'fire';\n    this.fireBtn.textContent = 'Fire';\n\n    this.restartBtn = document.createElement('button');\n    this.restartBtn.className = 'restart';\n    this.restartBtn.textContent = 'Restart';\n\n    this.gameContainer = document.createElement('div');\n    this.gameContainer.className = 'game-container';\n    this.gameContainer.appendChild(this.shipDisplay);\n    this.gameContainer.appendChild(this.scoreDisplay);\n    this.gameContainer.appendChild(this.newWaveDisplay);\n    this.gameContainer.appendChild(this.missionDisplay);\n    this.gameContainer.appendChild(this.healthDisplay);\n    this.gameContainer.appendChild(this.fireBtn);\n    this.gameContainer.appendChild(this.restartBtn);\n  }\n\n  attachTo(parent: HTMLElement) {\n    parent.appendChild(this.gameContainer);\n  }\n\n  updateHealth(newHealth: number) {\n    this.healthDisplay.textContent = `Health: ${newHealth}%`;\n  }\n\n  updateScore(newScore: number) {\n    this.scoreDisplay.textContent = `Score: ${newScore}`;\n  }\n\n  updateNewWave(newWave: number) {\n    this.newWaveDisplay.textContent = `New wave: ${newWave}`;\n  }\n\n  handleFire() {\n    console.log('Fire button clicked');\n    // Handle firing logic\n  }\n\n  handleRestart() {\n    console.log('Restart button clicked');\n    // Handle restart logic\n  }\n}",
+   "nodeId": "mod_4",
+   "nodeLabel": "Game Renderer",
+   "dependencies": [
+    "Combat Engine"
+   ],
+   "exports": [
+    "GameRenderer"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m48\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../combat-engine/combat-engine.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import { CombatEngine, CombatEngineImpl } from '../combat-engine/combat-engine.ts';\n\u001b[7m \u001b[0m \u001b[91m                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\u001b[96mindex.ts\u001b[0m:\u001b[93m92\u001b[0m:\u001b[93m7\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2663: \u001b[0mCannot find name 'renderShip'. Did you mean the instance member 'this.renderShip'?\n\n\u001b[7m92\u001b[0m       renderShip(shipDisplay);\n\u001b[7m  \u001b[0m \u001b[91m      ~~~~~~~~~~\u001b[0m\n\n\u001b[96mindex.ts\u001b[0m:\u001b[93m93\u001b[0m:\u001b[93m7\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2663: \u001b[0mCannot find name 'renderScore'. Did you mean the instance member 'this.renderScore'?\n\n\u001b[7m93\u001b[0m       renderScore(scoreDisplay);\n\u001b[7m  \u001b[0m \u001b[91m      ~~~~~~~~~~~\u001b[0m\n\n\u001b[96mindex.ts\u001b[0m:\u001b[93m96\u001b[0m:\u001b[93m7\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2663: \u001b[0mCannot find name 'manageEnemyDamage'. Did you mean the instance member 'this.manageEnemyDamage'?\n\n\u001b[7m96\u001b[0m       manageEnemyDamage();\n\u001b[7m  \u001b[0m \u001b[91m      ~~~~~~~~~~~~~~~~~\u001b[0m\n\n\u001b[96mindex.ts\u001b[0m:\u001b[93m99\u001b[0m:\u001b[93m7\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2663: \u001b[0mCannot find name 'updateEnemyAI'. Did you mean the instance member 'this.updateEnemyAI'?\n\n\u001b[7m99\u001b[0m       updateEnemyAI();\n\u001b[7m  \u001b[0m \u001b[91m      ~~~~~~~~~~~~~\u001b[0m\n\n\nFound 5 errors in the same file, starting at: index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>classic arcade game void raider</title>\n  <meta name=\"description\" content=\"classic arcade game void raider \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading classic arcade game void raider...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  var __defProp = Object.defineProperty;\n  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;\n  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== \"symbol\" ? key + \"\" : key, value);\n\n  // ../../../../../tmp/vaca-preview-uj33ES/wave-manager/wave-manager.ts\n  var WaveManager = class {\n    constructor() {\n    }\n    manageWaves() {\n      console.log(\"Wave manager managing waves.\");\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-uj33ES/enemy-ai/enemy-ai.ts\n  var EnemyAI = class {\n    constructor() {\n      __publicField(this, \"currentState\", \"idle\");\n      __publicField(this, \"enemyPosition\", { x: 0, y: 0 });\n    }\n    manageWaves() {\n      console.log(\"Enemy AI managing waves.\");\n    }\n    move() {\n      if (this.currentState === \"idle\") {\n        const randomX = Math.floor(Math.random() * 128);\n        const randomY = Math.floor(Math.random() * 70);\n        this.enemyPosition = { x: randomX, y: randomY };\n        this.currentState = \"attacking\";\n      }\n    }\n    attack() {\n      if (this.currentState === \"attacking\") {\n        console.log(\"Enemy AI attacking!\");\n        this.currentState = \"idle\";\n      }\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-uj33ES/game-renderer/game-renderer.ts\n  var GameRenderer = class {\n    constructor() {\n      __publicField(this, \"shipDisplay\");\n      __publicField(this, \"scoreDisplay\");\n      __publicField(this, \"newWaveDisplay\");\n      __publicField(this, \"missionDisplay\");\n      __publicField(this, \"healthDisplay\");\n      __publicField(this, \"fireBtn\");\n      __publicField(this, \"restartBtn\");\n      __publicField(this, \"gameContainer\");\n      __publicField(this, \"enemyDamage\", 0);\n      __publicField(this, \"enemyPosition\", { x: 0, y: 0 });\n      this.shipDisplay = document.createElement(\"div\");\n      this.shipDisplay.className = \"ship\";\n      this.shipDisplay.innerHTML = \"Your current ship\";\n      this.scoreDisplay = document.createElement(\"div\");\n      this.scoreDisplay.className = \"score\";\n      this.scoreDisplay.textContent = \"Score: 0\";\n      this.newWaveDisplay = document.createElement(\"div\");\n      this.newWaveDisplay.className = \"new-wave\";\n      this.newWaveDisplay.textContent = \"New wave: 1\";\n      this.missionDisplay = document.createElement(\"div\");\n      this.missionDisplay.className = \"mission\";\n      this.missionDisplay.textContent = \"Mission: Destroy all raiders\";\n      this.healthDisplay = document.createElement(\"div\");\n      this.healthDisplay.className = \"health\";\n      this.healthDisplay.textContent = \"Health: 100%\";\n      this.fireBtn = document.createElement(\"button\");\n      this.fireBtn.className = \"fire\";\n      this.fireBtn.textContent = \"Fire\";\n      this.restartBtn = document.createElement(\"button\");\n      this.restartBtn.className = \"restart\";\n      this.restartBtn.textContent = \"Restart\";\n      this.gameContainer = document.createElement(\"div\");\n      this.gameContainer.className = \"game-container\";\n      this.gameContainer.appendChild(this.shipDisplay);\n      this.gameContainer.appendChild(this.scoreDisplay);\n      this.gameContainer.appendChild(this.newWaveDisplay);\n      this.gameContainer.appendChild(this.missionDisplay);\n      this.gameContainer.appendChild(this.healthDisplay);\n      this.gameContainer.appendChild(this.fireBtn);\n      this.gameContainer.appendChild(this.restartBtn);\n    }\n    attachTo(parent) {\n      parent.appendChild(this.gameContainer);\n    }\n    updateHealth(newHealth) {\n      this.healthDisplay.textContent = `Health: ${newHealth}%`;\n    }\n    updateScore(newScore) {\n      this.scoreDisplay.textContent = `Score: ${newScore}`;\n    }\n    updateNewWave(newWave) {\n      this.newWaveDisplay.textContent = `New wave: ${newWave}`;\n    }\n    handleFire() {\n      console.log(\"Fire button clicked\");\n    }\n    handleRestart() {\n      console.log(\"Restart button clicked\");\n    }\n  };\n\n  // ../../../../../tmp/vaca-preview-uj33ES/_preview_entry.ts\n  try {\n    if (typeof WaveManager === \"function\" && !/^class\\s/.test(String(WaveManager))) {\n      WaveManager(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"wave-manager.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Wave_Manager.WaveManager:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof EnemyAI === \"function\" && !/^class\\s/.test(String(EnemyAI))) {\n      EnemyAI(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"enemy-ai.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Enemy_AI.EnemyAI:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"combat-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Combat_Engine.CombatEngine:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof GameRenderer === \"function\" && !/^class\\s/.test(String(GameRenderer))) {\n      GameRenderer(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"game-renderer.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling Game_Renderer.GameRenderer:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">classic arcade game void raider</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 classic arcade game void raider initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Ship Controls",
+    "Wave Manager",
+    "Enemy AI",
+    "Combat Engine",
+    "Game Renderer"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 14973,
+ "totalErrors": 3,
+ "validatedCount": 3,
+ "failedCount": 3,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "ship-controls.ts",
+   "dependencies": [],
+   "exports": []
+  },
+  "mod_1": {
+   "entryFile": "wave-manager.ts",
+   "dependencies": [],
+   "exports": [
+    "WaveManager"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "enemy-ai.ts",
+   "dependencies": [
+    "Wave Manager"
+   ],
+   "exports": [
+    "EnemyAI"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "combat-engine.ts",
+   "dependencies": [
+    "Enemy AI"
+   ],
+   "exports": [
+    "CombatEngine",
+    "CombatEngineImpl"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "game-renderer.ts",
+   "dependencies": [
+    "Combat Engine"
+   ],
+   "exports": [
+    "GameRenderer"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Ship Controls",
+    "Wave Manager",
+    "Enemy AI",
+    "Combat Engine",
+    "Game Renderer"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": true,
+ "contractViolations": 1,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 14973,
+  "totalErrors": 3,
+  "validated": 3,
+  "failed": 3,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 81652
+ }
+}

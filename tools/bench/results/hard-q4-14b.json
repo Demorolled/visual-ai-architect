@@ -1,0 +1,17 @@
+{
+  "debug_sink": {
+    "desc": "Find+fix a subtle bug",
+    "content": "The bug is that dividing by nums.length when nums is empty causes a Division by Zero error; the corrected version should return 0 or NaN in that case.",
+    "elapsed": 1.5
+  },
+  "stateful_module": {
+    "desc": "Stateful class with contracts",
+    "content": "export class TaskQueue<T> {\n  private tasks: T[] = [];\n  enqueue(task: T): number { this.tasks.push(task); return this.tasks.length; }\n  dequeue(): T | undefined { return this.tasks.shift(); }\n  peek(): T | undefined { return this.tasks[0]; }\n  size(): number { return this.tasks.length; }\n}",
+    "elapsed": 2.3
+  },
+  "hard_logic": {
+    "desc": "Multi-constraint scheduling",
+    "content": "From (4), X does not work night. Since Y does not work morning (1), Y must work either afternoon or night. Z cannot work afternoon (3), so Z works either morning or night. If X worked morning, Z would have to work night (2), but then Y would have to work afternoon, which is consistent. However, if X worked afternoon, Z would have to work morning, and Y would have to work night, which contradicts (4). Therefore, X works morning, Z works night, and Y works afternoon. Answer: X: morning, Y: afternoon, Z: night.",
+    "elapsed": 4.0
+  }
+}

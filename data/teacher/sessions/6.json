@@ -1,0 +1,299 @@
+{
+ "success": true,
+ "projectId": "54748308-c72a-4170-be48-95c7d05eca8b",
+ "matchedBy": "semantic",
+ "matchScore": 0.5714037213850238,
+ "blueprint": {
+  "app_type": "unit_converter_3",
+  "description": "Unit Converter. \u2394 Unit Converter",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "ui_screens",
+    "destination_module": "core_engine",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "core_engine",
+    "destination_module": "input_handler",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "input_handler",
+    "destination_module": "data_store",
+    "data_passed": "state_and_events"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 6,
+  "web": 4,
+  "github": 0,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 temperature-converter \u00b7 GitHub Topics \u00b7 GitHub\n    Temperature Convertor is a web-based temperature calculator application built using HTML, CSS, and JavaScript. It allows users to convert temperatures between different units, such as Celsius, Fahrenh\n  \u2022 Temperature Converter App - GitHub\n    Convert temperature between Celsius, Kelvin, and Fahrenheit. User-friendly interface with dropdown menus for easy selection. Accurate temperature conversion formulas applied for all units. Supports po\n  \u2022 gitea (developer-tools): Accelerate DevOps with Gitea\n  \u2022 neovim (developer-tools): Hyperextensible Vim-based text editor\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 45: ONE-SHOT CODEGEN DESIGN REVIEW \u2014 LESSONS FOR THE NEXT ROUND\n    A deep review of the /write-code one-shot generation path (codePlanner.ts,\nPass 1) driven by live probes against the R6 model. The P0 fix is DONE and\nverified (Section 44.5); this section preserves the FINDINGS so the next\ncodegen round learns from them \u2014 what broke, what was fixed, what remains.\n\nS\n  \u2022 Section 33: SESSION UPDATE \u2014 July 26, 2026: BATCH 5 \u2014 15 GUI BUILDER APPS\n    33.1 GUI BUILDER APPS (15 apps)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nThese apps are design tools for building and generating UI components.\nAll include: localStorage persistence, escapeHTML() sanitization,\nlive preview, export functionality, and dark theme styling.\n\nCategory: Component Builders (5 apps\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 json_to_csv \u2014 data tool\n    Convert a JSON array of objects to CSV format\n    Code: // Tool: json_to_csv\n// Category: data\n// Risk: readonly\n// Convert a JSON array of objects to CSV format\n  \u2022 network_info \u2014 monitoring tool\n    Get network interface information (interfaces, IP addresses, MACs)\n    Code: // Tool: network_info\n// Category: monitoring\n// Risk: readonly\n// Get network interface information (interfaces, IP addresses, MACs)\n  \u2022 auto-learn-verify fibonacci util - Full architecture\n    Complete project architecture for auto-learn-verify fibonacci util with 1 nodes targeting linux\n    Code: interface Fibonacci {\n  n: number;\n}\n\nlet _fibCache = new Map<number, number>();\n\nexport function fib(n: number): number {\n  if (n < 0) {\n    throw new Error(\"Negative argument provided\");\n  }\n\n  if (_fibCache.has(n)) {\n    return _fibCache.get(n)!;\n"
+ },
+ "candidates": [
+  {
+   "app_type": "unit_converter_3",
+   "score": 0.5714037213850238
+  },
+  {
+   "app_type": "video_converter",
+   "score": 0.5491886376285652
+  },
+  {
+   "app_type": "currency_converter_2",
+   "score": 0.5290287185098582
+  },
+  {
+   "app_type": "unit_converter_2",
+   "score": 0.5246075739423945
+  },
+  {
+   "app_type": "currency_converter",
+   "score": 0.5197905439912035
+  }
+ ],
+ "project": {
+  "id": "54748308-c72a-4170-be48-95c7d05eca8b",
+  "name": "a temperature converter app",
+  "targetOS": "linux",
+  "nodeCount": 5,
+  "edgeCount": 3,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "unit_converter_3 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "ui",
+    "label": "ui_screens"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "core_engine"
+   },
+   {
+    "id": "mod_2",
+    "type": "input",
+    "label": "input_handler"
+   },
+   {
+    "id": "mod_3",
+    "type": "database",
+    "label": "data_store"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_1",
+    "target": "mod_0"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 4,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "generated": [
+   "core_engine",
+   "ui_screens",
+   "input_handler",
+   "data_store"
+  ],
+  "matched": [
+   "ui_screens",
+   "core_engine",
+   "input_handler",
+   "data_store"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "core-engine.ts",
+   "language": "typescript",
+   "code": "export function convertTemperature(value: number, fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin', toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin'): number {\n  if (fromUnit === 'Celsius' && toUnit === 'Fahrenheit') {\n    return (value * 9 / 5) + 32;\n  } else if (fromUnit === 'Celsius' && toUnit === 'Kelvin') {\n    return value + 273.15;\n  } else if (fromUnit === 'Fahrenheit' && toUnit === 'Celsius') {\n    return (value - 32) * 5 / 9;\n  } else if (fromUnit === 'Fahrenheit' && toUnit === 'Kelvin') {\n    return (value - 32) * 5 / 9 + 273.15;\n  } else if (fromUnit === 'Kelvin' && toUnit === 'Celsius') {\n    return value - 273.15;\n  } else if (fromUnit === 'Kelvin' && toUnit === 'Fahrenheit') {\n    return ((value - 273.15) * 9 / 5) + 32;\n  }\n  return value;\n}",
+   "nodeId": "mod_1",
+   "nodeLabel": "core_engine",
+   "dependencies": [],
+   "exports": [
+    "convertTemperature"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ui-screens.ts",
+   "language": "typescript",
+   "code": "import { convertTemperature } from '../core-engine/core-engine.ts';\n\nexport function render(container: HTMLElement) {\n  const app = document.createElement('div');\n  app.className = 'app';\n  app.style.maxWidth = '960px';\n  app.style.margin = '0 auto';\n  app.style.padding = '24px';\n\n  const title = document.createElement('h1');\n  title.textContent = 'Temp Converter';\n  title.style.color = '#333333';\n  title.style.fontSize = '2rem';\n  title.style.marginBottom = '16px';\n\n  const card = document.createElement('div');\n  card.className = 'card';\n  card.style.background = '#15152a';\n  card.style.border = '1px solid rgba(255,255,255,0.1)';\n  card.style.borderRadius = '12px';\n  card.style.padding = '16px';\n  card.style.marginBottom = '16px';\n\n  const input = document.createElement('input');\n  input.id = 'tempInput';\n  input.type = 'number';\n  input.min = '-459.67';\n  input.placeholder = 'Enter temperature';\n  input.style.width = '100%';\n  input.style.padding = '8px';\n  input.style.border = '1px solid #ccc';\n  input.style.borderRadius = '4px';\n  input.style.marginBottom = '8px';\n\n  const fromUnit = document.createElement('select');\n  fromUnit.id = 'fromUnit';\n  fromUnit.style.width = '100%';\n  fromUnit.style.padding = '8px';\n  fromUnit.style.border = '1px solid #ccc';\n  fromUnit.style.borderRadius = '4px';\n  fromUnit.style.marginBottom = '8px';\n  const units = ['Celsius', 'Fahrenheit', 'Kelvin'];\n  units.forEach(unit => {\n    const option = document.createElement('option');\n    option.value = unit;\n    option.textContent = unit;\n    fromUnit.appendChild(option);\n  });\n\n  const toUnit = document.createElement('select');\n  toUnit.id = 'toUnit';\n  toUnit.style.width = '100%';\n  toUnit.style.padding = '8px';\n  toUnit.style.border = '1px solid #ccc';\n  toUnit.style.borderRadius = '4px';\n  toUnit.style.marginBottom = '8px';\n  units.forEach(unit => {\n    const option = document.createElement('option');\n    option.value = unit;\n    option.textContent = unit;\n    toUnit.appendChild(option);\n  });\n\n  const result = document.createElement('div');\n  result.id = 'result';\n  result.style.fontSize = '1.2rem';\n  result.style.color = '#4ade80';\n  result.style.marginTop = '8px';\n\n  card.appendChild(input);\n  card.appendChild(fromUnit);\n  card.appendChild(toUnit);\n  card.appendChild(result);\n\n  const convertCtoF = () => {\n    const value = parseFloat(input.value);\n    const converted = convertTemperature(value, 'Celsius', 'Fahrenheit');\n    result.textContent = `${value}\u00b0C is ${converted}\u00b0F`;\n  };\n  const convertCtoK = () => {\n    const value = parseFloat(input.value);\n    const converted = convertTemperature(value, 'Celsius', 'Kelvin');\n    result.textContent = `${value}\u00b0C is ${converted}K`;\n  };\n  const convertFtoC = () => {\n    const value = parseFloat(input.value);\n    const converted = convertTemperature(value, 'Fahrenheit', 'Celsius');\n    result.textContent = `${value}\u00b0F is ${converted}\u00b0C`;\n  };\n  const convertFtoK = () => {\n    const value = parseFloat(input.value);\n    const converted = convertTemperature(value, 'Fahrenheit', 'Kelvin');\n    result.textContent = `${value}\u00b0F is ${converted}K`;\n  };\n  const convertKtoC = () => {\n    const value = parseFloat(input.value);\n    const converted = convertTemperature(value, 'Kelvin', 'Celsius');\n    result.textContent = `${value}K is ${converted}\u00b0C`;\n  };\n  const convertKtoF = () => {\n    const value = parseFloat(input.value);\n    const converted = convertTemperature(value, 'Kelvin', 'Fahrenheit');\n    result.textContent = `${value}K is ${converted}\u00b0F`;\n  };\n\n  const buttons = [\n    { label: 'Celsius to Fahrenheit', onClick: convertCtoF },\n    { label: 'Celsius to Kelvin', onClick: convertCtoK },\n    { label: 'Fahrenheit to Celsius', onClick: convertFtoC },\n    { label: 'Fahrenheit to Kelvin', onClick: convertFtoK },\n    { label: 'Kelvin to Celsius', onClick: convertKtoC },\n    { label: 'Kelvin to Fahrenheit', onClick: convertKtoF }\n  ];\n  buttons.forEach(btn => {\n    const button = document.createElement('button');\n    button.className = 'btn';\n    button.textContent = btn.label;\n    button.onclick = btn.onClick;\n    card.appendChild(button);\n  });\n\n  app.appendChild(title);\n  app.appendChild(card);\n  container.appendChild(app);\n}",
+   "nodeId": "mod_0",
+   "nodeLabel": "ui_screens",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m36\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../core-engine/core-engine.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import { convertTemperature } from '../core-engine/core-engine.ts';\n\u001b[7m \u001b[0m \u001b[91m                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "input-handler.ts",
+   "language": "typescript",
+   "code": "import { convertTemperature } from '../core-engine/core-engine.ts';\n\nexport interface ConversionResult {\n  convertedValue: number;\n  fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n  toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n}\n\nexport function handleInput(value: number, fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin', toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin'): ConversionResult {\n  const convertedValue = convertTemperature(value, fromUnit, toUnit);\n  return { convertedValue, fromUnit, toUnit };\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "input_handler",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "ConversionResult",
+    "handleInput"
+   ],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m36\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../core-engine/core-engine.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import { convertTemperature } from '../core-engine/core-engine.ts';\n\u001b[7m \u001b[0m \u001b[91m                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "data-store.ts",
+   "language": "typescript",
+   "code": "export interface ConversionResult {\n  convertedValue: number;\n  fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n  toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin';\n}\n\nexport function handleInput(value: number, fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin', toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin'): ConversionResult {\n  const convertedValue = convertTemperature(value, fromUnit, toUnit);\n  return { convertedValue, fromUnit, toUnit };\n}\n\nfunction convertTemperature(value: number, fromUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin', toUnit: 'Celsius' | 'Fahrenheit' | 'Kelvin'): number {\n  if (fromUnit === toUnit) return value;\n\n  if (fromUnit === 'Celsius') {\n    if (toUnit === 'Fahrenheit') return (value * 9/5) + 32;\n    if (toUnit === 'Kelvin') return value + 273.15;\n  }\n\n  if (fromUnit === 'Fahrenheit') {\n    if (toUnit === 'Celsius') return (value - 32) * 5/9;\n    if (toUnit === 'Kelvin') return ((value - 32) * 5/9) + 273.15;\n  }\n\n  if (fromUnit === 'Kelvin') {\n    if (toUnit === 'Celsius') return value - 273.15;\n    if (toUnit === 'Fahrenheit') return ((value - 273.15) * 9/5) + 32;\n  }\n\n  throw new Error('Invalid conversion');\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "data_store",
+   "dependencies": [],
+   "exports": [
+    "ConversionResult",
+    "handleInput"
+   ],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a temperature converter app</title>\n  <meta name=\"description\" content=\"a temperature converter app \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a temperature converter app...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n(() => {\n  // ../../../../../tmp/vaca-preview-h5KS8p/core-engine/core-engine.ts\n  function convertTemperature(value, fromUnit, toUnit) {\n    if (fromUnit === \"Celsius\" && toUnit === \"Fahrenheit\") {\n      return value * 9 / 5 + 32;\n    } else if (fromUnit === \"Celsius\" && toUnit === \"Kelvin\") {\n      return value + 273.15;\n    } else if (fromUnit === \"Fahrenheit\" && toUnit === \"Celsius\") {\n      return (value - 32) * 5 / 9;\n    } else if (fromUnit === \"Fahrenheit\" && toUnit === \"Kelvin\") {\n      return (value - 32) * 5 / 9 + 273.15;\n    } else if (fromUnit === \"Kelvin\" && toUnit === \"Celsius\") {\n      return value - 273.15;\n    } else if (fromUnit === \"Kelvin\" && toUnit === \"Fahrenheit\") {\n      return (value - 273.15) * 9 / 5 + 32;\n    }\n    return value;\n  }\n\n  // ../../../../../tmp/vaca-preview-h5KS8p/ui-screens/ui-screens.ts\n  function render(container) {\n    const app = document.createElement(\"div\");\n    app.className = \"app\";\n    app.style.maxWidth = \"960px\";\n    app.style.margin = \"0 auto\";\n    app.style.padding = \"24px\";\n    const title = document.createElement(\"h1\");\n    title.textContent = \"Temp Converter\";\n    title.style.color = \"#333333\";\n    title.style.fontSize = \"2rem\";\n    title.style.marginBottom = \"16px\";\n    const card = document.createElement(\"div\");\n    card.className = \"card\";\n    card.style.background = \"#15152a\";\n    card.style.border = \"1px solid rgba(255,255,255,0.1)\";\n    card.style.borderRadius = \"12px\";\n    card.style.padding = \"16px\";\n    card.style.marginBottom = \"16px\";\n    const input = document.createElement(\"input\");\n    input.id = \"tempInput\";\n    input.type = \"number\";\n    input.min = \"-459.67\";\n    input.placeholder = \"Enter temperature\";\n    input.style.width = \"100%\";\n    input.style.padding = \"8px\";\n    input.style.border = \"1px solid #ccc\";\n    input.style.borderRadius = \"4px\";\n    input.style.marginBottom = \"8px\";\n    const fromUnit = document.createElement(\"select\");\n    fromUnit.id = \"fromUnit\";\n    fromUnit.style.width = \"100%\";\n    fromUnit.style.padding = \"8px\";\n    fromUnit.style.border = \"1px solid #ccc\";\n    fromUnit.style.borderRadius = \"4px\";\n    fromUnit.style.marginBottom = \"8px\";\n    const units = [\"Celsius\", \"Fahrenheit\", \"Kelvin\"];\n    units.forEach((unit) => {\n      const option = document.createElement(\"option\");\n      option.value = unit;\n      option.textContent = unit;\n      fromUnit.appendChild(option);\n    });\n    const toUnit = document.createElement(\"select\");\n    toUnit.id = \"toUnit\";\n    toUnit.style.width = \"100%\";\n    toUnit.style.padding = \"8px\";\n    toUnit.style.border = \"1px solid #ccc\";\n    toUnit.style.borderRadius = \"4px\";\n    toUnit.style.marginBottom = \"8px\";\n    units.forEach((unit) => {\n      const option = document.createElement(\"option\");\n      option.value = unit;\n      option.textContent = unit;\n      toUnit.appendChild(option);\n    });\n    const result = document.createElement(\"div\");\n    result.id = \"result\";\n    result.style.fontSize = \"1.2rem\";\n    result.style.color = \"#4ade80\";\n    result.style.marginTop = \"8px\";\n    card.appendChild(input);\n    card.appendChild(fromUnit);\n    card.appendChild(toUnit);\n    card.appendChild(result);\n    const convertCtoF = () => {\n      const value = parseFloat(input.value);\n      const converted = convertTemperature(value, \"Celsius\", \"Fahrenheit\");\n      result.textContent = `${value}\\xB0C is ${converted}\\xB0F`;\n    };\n    const convertCtoK = () => {\n      const value = parseFloat(input.value);\n      const converted = convertTemperature(value, \"Celsius\", \"Kelvin\");\n      result.textContent = `${value}\\xB0C is ${converted}K`;\n    };\n    const convertFtoC = () => {\n      const value = parseFloat(input.value);\n      const converted = convertTemperature(value, \"Fahrenheit\", \"Celsius\");\n      result.textContent = `${value}\\xB0F is ${converted}\\xB0C`;\n    };\n    const convertFtoK = () => {\n      const value = parseFloat(input.value);\n      const converted = convertTemperature(value, \"Fahrenheit\", \"Kelvin\");\n      result.textContent = `${value}\\xB0F is ${converted}K`;\n    };\n    const convertKtoC = () => {\n      const value = parseFloat(input.value);\n      const converted = convertTemperature(value, \"Kelvin\", \"Celsius\");\n      result.textContent = `${value}K is ${converted}\\xB0C`;\n    };\n    const convertKtoF = () => {\n      const value = parseFloat(input.value);\n      const converted = convertTemperature(value, \"Kelvin\", \"Fahrenheit\");\n      result.textContent = `${value}K is ${converted}\\xB0F`;\n    };\n    const buttons = [\n      { label: \"Celsius to Fahrenheit\", onClick: convertCtoF },\n      { label: \"Celsius to Kelvin\", onClick: convertCtoK },\n      { label: \"Fahrenheit to Celsius\", onClick: convertFtoC },\n      { label: \"Fahrenheit to Kelvin\", onClick: convertFtoK },\n      { label: \"Kelvin to Celsius\", onClick: convertKtoC },\n      { label: \"Kelvin to Fahrenheit\", onClick: convertKtoF }\n    ];\n    buttons.forEach((btn) => {\n      const button = document.createElement(\"button\");\n      button.className = \"btn\";\n      button.textContent = btn.label;\n      button.onclick = btn.onClick;\n      card.appendChild(button);\n    });\n    app.appendChild(title);\n    app.appendChild(card);\n    container.appendChild(app);\n  }\n\n  // ../../../../../tmp/vaca-preview-h5KS8p/_preview_entry.ts\n  try {\n    if (typeof convertTemperature === \"function\" && !/^class\\s/.test(String(convertTemperature))) {\n      convertTemperature(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"core-engine.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling core_engine.convertTemperature:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof render === \"function\") {\n      render(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"ui-screens.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling ui_screens.render:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"input-handler.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling input_handler.ConversionResult:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n  try {\n    if (typeof void 0 === \"function\" && !/^class\\s/.test(String(void 0))) {\n      (void 0)(document.getElementById(\"app-container\"));\n    } else {\n      console.log(\"data-store.ts: awaiting user interaction\");\n    }\n  } catch (e) {\n    console.error(\"Error calling data_store.ConversionResult:\", e);\n    if (typeof addError === \"function\") addError(e.message);\n  }\n})();\n\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (4) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 4 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a temperature converter app</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a temperature converter app initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 17963,
+ "totalErrors": 2,
+ "validatedCount": 3,
+ "failedCount": 2,
+ "importGraph": {
+  "mod_1": {
+   "entryFile": "core-engine.ts",
+   "dependencies": [],
+   "exports": [
+    "convertTemperature"
+   ]
+  },
+  "mod_0": {
+   "entryFile": "ui-screens.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "render"
+   ]
+  },
+  "mod_2": {
+   "entryFile": "input-handler.ts",
+   "dependencies": [
+    "core_engine"
+   ],
+   "exports": [
+    "ConversionResult",
+    "handleInput"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "data-store.ts",
+   "dependencies": [],
+   "exports": [
+    "ConversionResult",
+    "handleInput"
+   ]
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "core_engine",
+    "ui_screens",
+    "input_handler",
+    "data_store"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": true,
+ "contractViolations": 0,
+ "summary": {
+  "totalFiles": 5,
+  "totalChars": 17963,
+  "totalErrors": 2,
+  "validated": 3,
+  "failed": 2,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 152325
+ }
+}

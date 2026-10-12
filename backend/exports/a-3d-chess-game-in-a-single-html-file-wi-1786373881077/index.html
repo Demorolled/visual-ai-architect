@@ -12,13 +12,11 @@
 <body>
     <div class="app">
         <h1>3D Chess</h1>
-        <button id="playBtn" class="btn" onclick="play()">▶ Play</button>
+        <button id="playBtn" class="btn" onclick="(typeof play === 'function' ? play : () => {}) ()">▶ Play</button>
         <canvas id="threejsCanvas"></canvas>
         <div id="statusMsg" role="status" style="padding:8px 12px;border-radius:8px;margin-top:10px"></div>
     </div>
     <script>
-import { AI } from "./ai.js";
-
 class Game {
     constructor() {
         this.board = [];
@@ -26,7 +24,6 @@ class Game {
         this.AI = new AI();
         this.setupBoard();
     }
-
     setupBoard() {
         const boardSize = 8;
         for (let y = 0; y < boardSize; y++) {
@@ -36,13 +33,11 @@ class Game {
             }
         }
     }
-
     startGame() {
         this.render();
         this.listenToUserInput();
         this.AI.startPlaying();
     }
-
     render() {
         // Initialize three.js scene
         const scene = new THREE.Scene();
@@ -50,39 +45,28 @@ class Game {
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-
         // Add board to scene
         this.board.forEach((row) => row.forEach((tile) => tile.addToScene(scene)));
-
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         }
         animate();
-
         // Move piece animation
         function animatePieceMove(piece, targetTile) {
             const start = piece.position;
             const end = targetTile.position;
             const duration = 1000; // 1 second
-
             // Move piece smoothly
             const startTransform = new THREE.Matrix4().makeTranslation(start.x, start.y, start.z);
             const endTransform = new THREE.Matrix4().makeTranslation(end.x, end.y, end.z);
-
-            const animation = new THREE.LinearKeyframeTrack(
-                "[piece].position",
-                [0, 1],
-                [startTransform.getTranslation(new THREE.Vector3()), endTransform.getTranslation(new THREE.Vector3())]
-            );
-
+            const animation = new THREE.LinearKeyframeTrack("[piece].position", [0, 1], [startTransform.getTranslation(new THREE.Vector3()), endTransform.getTranslation(new THREE.Vector3())]);
             const animationClip = new THREE.AnimationClip("Move", duration, [animation]);
             const mixer = new THREE.AnimationMixer(piece.mesh);
             const action = mixer.clipAction(animationClip);
             action.play();
         }
-
         // User input listener
         window.addEventListener("click", (event) => {
             const target = new THREE.Vector3(event.clientX, event.clientY, 0);
@@ -95,7 +79,6 @@ class Game {
             }
         });
     }
-
     listenToUserInput() {
         document.addEventListener("keydown", (event) => {
             if (event.key === "ArrowUp" && this.turn === "white") {
@@ -103,21 +86,18 @@ class Game {
             }
         });
     }
-
     findTileAt(point) {
         const x = Math.floor(point.x / 100);
         const y = Math.floor(point.y / 100);
         return this.board[y][x];
     }
-
     makeMove(piece, targetTile) {
         piece.moveTo(targetTile);
         this.turn = this.turn === "white" ? "black" : "white";
         this.AI.makeMove();
     }
 }
-
-export default Game;
+Game;
 </script>
     <script>
 // src/ai.js
@@ -129,14 +109,12 @@ const getRandomMove = () => {
     }
     return moves[Math.floor(Math.random() * moves.length)];
 };
-
 const getRandomMoveWithPiece = () => {
     const piece = Piece.all[Math.floor(Math.random() * Piece.all.length)];
     const moves = piece.getValidMoves();
     return moves[Math.floor(Math.random() * moves.length)];
 };
-
-export const AI = {
+const AI = {
     movePiece: () => {
         const move = getRandomMove();
         move.execute();
@@ -146,38 +124,29 @@ export const AI = {
 };
 </script>
     <script>
-export function animatePiece(piece, start, end, duration) {
+function animatePiece(piece, start, end, duration) {
     const scene = piece.scene;
     const camera = piece.camera;
     const renderer = piece.renderer;
-
     const startTransform = new THREE.Matrix4().extractRotation(piece.matrixWorld);
     const endTransform = new THREE.Matrix4().extractRotation(end.matrixWorld);
-
     const startTranslation = new THREE.Vector3().setFromMatrixPosition(start.matrixWorld);
     const endTranslation = new THREE.Vector3().setFromMatrixPosition(end.matrixWorld);
-
     const startScale = new THREE.Vector3().setFromMatrixScale(start.matrixWorld);
     const endScale = new THREE.Vector3().setFromMatrixScale(end.matrixWorld);
-
     const startRotation = new THREE.Euler().setFromMatrix(startTransform);
     const endRotation = new THREE.Euler().setFromMatrix(endTransform);
-
     const animation = new THREE.AnimationClip('move', duration, [
         new THREE.Interpolant(startTranslation, endTranslation, THREE.LinearInterpolant),
         new THREE.Interpolant(startRotation, endRotation, THREE.LinearInterpolant),
         new THREE.Interpolant(startScale, endScale, THREE.LinearInterpolant)
     ]);
-
     const action = new THREE.AnimationAction('move', animation);
     action.setTarget(piece);
-
     const mixer = new THREE.AnimationMixer(piece);
     mixer.clipAction('move', action).play();
-
     const clock = new THREE.Clock();
     let time = 0;
-
     function animate() {
         time += clock.getDelta();
         renderer.render(scene, camera);
@@ -185,45 +154,31 @@ export function animatePiece(piece, start, end, duration) {
             requestAnimationFrame(animate);
         }
     }
-
     animate();
 }
 </script>
     <script>
-export interface Tile {
-    x: number;
-    y: number;
-    piece: string | null;
-}
-
 const boardSize = 8;
-
-export const createBoard = () => {
+const createBoard = () => {
     const board = new Array(boardSize).fill(null).map(() => new Array(boardSize).fill(null));
-
     for (let y = 0; y < boardSize; y++) {
         for (let x = 0; x < boardSize; x++) {
             board[y][x] = { x, y, piece: null };
         }
     }
-
     return board;
 };
-
-export const placePiece = (board: Tile[][], tile: Tile, piece: string) => {
+const placePiece = (board, tile, piece) => {
     tile.piece = piece;
     board[tile.y][tile.x] = tile;
 };
-
-export const removePiece = (board: Tile[][], tile: Tile) => {
+const removePiece = (board, tile) => {
     tile.piece = null;
     board[tile.y][tile.x] = { x: tile.x, y: tile.y, piece: null };
 };
-
-export const isValidMove = (board: Tile[][], start: Tile, end: Tile) => {
+const isValidMove = (board, start, end) => {
     const { x: startX, y: startY } = start;
     const { x: endX, y: endY } = end;
-
     return startX === endX && startY === endY;
 };
 </script>

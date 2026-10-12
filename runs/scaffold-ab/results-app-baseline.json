@@ -1,0 +1,4398 @@
+{
+  "mode": "app",
+  "typescript": "5.9.3",
+  "n": 197,
+  "results": {
+    "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts": {
+      "id": "1-level-first-person-shooter-game-move-a-1786301591657__src-game.ts",
+      "file": "src/game.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Game",
+        "GameLoop"
+      ],
+      "slug": "1-level-first-person-shooter-game-move-a-1786301591657",
+      "app_files": 4,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Game",
+        "GameLoop"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts": {
+      "id": "1-level-first-person-shooter-game-move-a-1786301591657__src-input.ts",
+      "file": "src/input.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "InputHandler"
+      ],
+      "slug": "1-level-first-person-shooter-game-move-a-1786301591657",
+      "app_files": 4,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "InputHandler"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chees-game-1786611956524__src-canvas.ts": {
+      "id": "3d-chees-game-1786611956524__src-canvas.ts",
+      "file": "src/canvas.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createCanvas",
+        "render"
+      ],
+      "slug": "3d-chees-game-1786611956524",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "createCanvas",
+        "render"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chees-game-1786611956524__src-entities-cheese.ts": {
+      "id": "3d-chees-game-1786611956524__src-entities-cheese.ts",
+      "file": "src/entities/cheese.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Cheese"
+      ],
+      "slug": "3d-chees-game-1786611956524",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Cheese"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chees-game-1786611956524__src-entities-enemy.ts": {
+      "id": "3d-chees-game-1786611956524__src-entities-enemy.ts",
+      "file": "src/entities/enemy.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Enemy"
+      ],
+      "slug": "3d-chees-game-1786611956524",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Enemy"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chees-game-1786611956524__src-game.ts": {
+      "id": "3d-chees-game-1786611956524__src-game.ts",
+      "file": "src/game.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "startGame"
+      ],
+      "slug": "3d-chees-game-1786611956524",
+      "app_files": 8,
+      "n_errors": 1,
+      "errors": [
+        "TS2459 L1: Module '\"./game\"' declares 'startGame' locally, but it is not exported."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "startGame"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "3d-chees-game-1786611956524__src-input.ts": {
+      "id": "3d-chees-game-1786611956524__src-input.ts",
+      "file": "src/input.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "getKeyDown"
+      ],
+      "slug": "3d-chees-game-1786611956524",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "getKeyDown"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chees-game-1786611956524__src-scene.ts": {
+      "id": "3d-chees-game-1786611956524__src-scene.ts",
+      "file": "src/scene.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Scene",
+        "addEntity"
+      ],
+      "slug": "3d-chees-game-1786611956524",
+      "app_files": 8,
+      "n_errors": 1,
+      "errors": [
+        "TS2345 L18: Argument of type 'number' is not assignable to parameter of type 'number & { x: number; y: number; }'.   Type 'number' is not assignable to type '{ x: number; y: number; }'."
+      ],
+      "exports_found": [
+        "Scene"
+      ],
+      "exports_missing": [
+        "addEntity"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "3d-chess-game-1787074372022__src-board.js": {
+      "id": "3d-chess-game-1787074372022__src-board.js",
+      "file": "src/board.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "3d-chess-game-1787074372022",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Board"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chess-game-1787074372022__src-game.js": {
+      "id": "3d-chess-game-1787074372022__src-game.js",
+      "file": "src/game.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "3d-chess-game-1787074372022",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "startGame"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chess-game-1787074372022__src-input.js": {
+      "id": "3d-chess-game-1787074372022__src-input.js",
+      "file": "src/input.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "3d-chess-game-1787074372022",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "handleInput"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chess-game-1787074372022__src-main.js": {
+      "id": "3d-chess-game-1787074372022__src-main.js",
+      "file": "src/main.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "3d-chess-game-1787074372022",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chess-game-1787074372022__src-render.js": {
+      "id": "3d-chess-game-1787074372022__src-render.js",
+      "file": "src/render.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "3d-chess-game-1787074372022",
+      "app_files": 8,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "render"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "3d-chess-game-create-a-3d-chess-game-1786817101988__chess3d.js": {
+      "id": "3d-chess-game-create-a-3d-chess-game-1786817101988__chess3d.js",
+      "file": "chess3d.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "3d-chess-game-create-a-3d-chess-game-1786817101988",
+      "app_files": 2,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-ai.js": {
+      "id": "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-ai.js",
+      "file": "src/ai.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "AI"
+      ],
+      "slug": "a-3d-chess-game-in-a-single-html-file-wi-1786373881077",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "AI"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-game.js": {
+      "id": "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-game.js",
+      "file": "src/game.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "Game"
+      ],
+      "slug": "a-3d-chess-game-in-a-single-html-file-wi-1786373881077",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [
+        "Game"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-tile.js": {
+      "id": "a-3d-chess-game-in-a-single-html-file-wi-1786373881077__src-tile.js",
+      "file": "src/tile.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "Tile"
+      ],
+      "slug": "a-3d-chess-game-in-a-single-html-file-wi-1786373881077",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Tile"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-banking-ledger-app-in-typescript-accou-1786989674089__src-cli.ts": {
+      "id": "a-banking-ledger-app-in-typescript-accou-1786989674089__src-cli.ts",
+      "file": "src/cli.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "startCli"
+      ],
+      "slug": "a-banking-ledger-app-in-typescript-accou-1786989674089",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2459 L1: Module '\"./cli\"' declares 'startCli' locally, but it is not exported."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "startCli"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-banking-ledger-app-in-typescript-accou-1786989674089__src-storage.ts": {
+      "id": "a-banking-ledger-app-in-typescript-accou-1786989674089__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadAccounts",
+        "saveAccounts"
+      ],
+      "slug": "a-banking-ledger-app-in-typescript-accou-1786989674089",
+      "app_files": 9,
+      "n_errors": 2,
+      "errors": [
+        "TS2304 L5: Cannot find name 'Deno'.",
+        "TS2304 L13: Cannot find name 'Deno'."
+      ],
+      "exports_found": [
+        "loadAccounts",
+        "saveAccounts"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-banking-ledger-app-in-typescript-accou-1786999980769__src-cli.ts": {
+      "id": "a-banking-ledger-app-in-typescript-accou-1786999980769__src-cli.ts",
+      "file": "src/cli.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "run"
+      ],
+      "slug": "a-banking-ledger-app-in-typescript-accou-1786999980769",
+      "app_files": 9,
+      "n_errors": 2,
+      "errors": [
+        "TS2459 L1: Module '\"../src/cli.ts\"' declares 'run' locally, but it is not exported.",
+        "TS5097 L1: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "run"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-banking-ledger-app-in-typescript-accou-1786999980769__src-history.ts": {
+      "id": "a-banking-ledger-app-in-typescript-accou-1786999980769__src-history.ts",
+      "file": "src/history.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "revertToState"
+      ],
+      "slug": "a-banking-ledger-app-in-typescript-accou-1786999980769",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./ledger\"' has no exported member 'LedgerState'."
+      ],
+      "exports_found": [
+        "revertToState"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-banking-ledger-app-in-typescript-accou-1786999980769__src-ledger.ts": {
+      "id": "a-banking-ledger-app-in-typescript-accou-1786999980769__src-ledger.ts",
+      "file": "src/ledger.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Ledger",
+        "Account",
+        "Transaction",
+        "deposit",
+        "withdraw",
+        "showBalance",
+        "getHistory"
+      ],
+      "slug": "a-banking-ledger-app-in-typescript-accou-1786999980769",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Account",
+        "Ledger",
+        "Transaction"
+      ],
+      "exports_missing": [
+        "deposit",
+        "withdraw",
+        "showBalance",
+        "getHistory"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-budget-splitter-app-in-typescript-spli-1786988675306__src-budget.ts": {
+      "id": "a-budget-splitter-app-in-typescript-spli-1786988675306__src-budget.ts",
+      "file": "src/budget.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "BudgetItem",
+        "splitExpense",
+        "calculateOwes"
+      ],
+      "slug": "a-budget-splitter-app-in-typescript-spli-1786988675306",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "BudgetItem",
+        "calculateOwes",
+        "splitExpense"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-budget-splitter-app-in-typescript-spli-1786988675306__src-storage.ts": {
+      "id": "a-budget-splitter-app-in-typescript-spli-1786988675306__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadBudget",
+        "saveBudget"
+      ],
+      "slug": "a-budget-splitter-app-in-typescript-spli-1786988675306",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadBudget",
+        "saveBudget"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-budget-splitter-app-in-typescript-spli-1786997848181__src-budget.ts": {
+      "id": "a-budget-splitter-app-in-typescript-spli-1786997848181__src-budget.ts",
+      "file": "src/budget.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "splitExpense",
+        "calculateBalances"
+      ],
+      "slug": "a-budget-splitter-app-in-typescript-spli-1786997848181",
+      "app_files": 7,
+      "n_errors": 2,
+      "errors": [
+        "TS2305 L1: Module '\"./types\"' has no exported member 'Expense'.",
+        "TS2305 L1: Module '\"./types\"' has no exported member 'Balance'."
+      ],
+      "exports_found": [
+        "calculateBalances",
+        "splitExpense"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-command-line-expense-tracker-in-typesc-1786357706649__src-utils.ts": {
+      "id": "a-command-line-expense-tracker-in-typesc-1786357706649__src-utils.ts",
+      "file": "src/utils.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "parseExpense",
+        "writeToFile"
+      ],
+      "slug": "a-command-line-expense-tracker-in-typesc-1786357706649",
+      "app_files": 4,
+      "n_errors": 1,
+      "errors": [
+        "TS2304 L14: Cannot find name 'Deno'."
+      ],
+      "exports_found": [
+        "parseExpense",
+        "writeToFile"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-contact-book-app-in-typescript-add-sea-1786988799000__src-storage.ts": {
+      "id": "a-contact-book-app-in-typescript-add-sea-1786988799000__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadTodos",
+        "saveTodos"
+      ],
+      "slug": "a-contact-book-app-in-typescript-add-sea-1786988799000",
+      "app_files": 7,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./todo\"' has no exported member 'Todo'."
+      ],
+      "exports_found": [
+        "loadTodos",
+        "saveTodos"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-contact-book-app-in-typescript-add-sea-1786997994164__src-contact.ts": {
+      "id": "a-contact-book-app-in-typescript-add-sea-1786997994164__src-contact.ts",
+      "file": "src/contact.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "ContactItem",
+        "addContact",
+        "listContacts",
+        "searchContacts",
+        "editContact",
+        "deleteContact"
+      ],
+      "slug": "a-contact-book-app-in-typescript-add-sea-1786997994164",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "ContactItem",
+        "addContact",
+        "deleteContact",
+        "editContact",
+        "listContacts",
+        "searchContacts"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-contact-book-app-in-typescript-add-sea-1786997994164__src-types.ts": {
+      "id": "a-contact-book-app-in-typescript-add-sea-1786997994164__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "ContactItem",
+        "ContactTag"
+      ],
+      "slug": "a-contact-book-app-in-typescript-add-sea-1786997994164",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "ContactItem",
+        "ContactTag"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-contact-book-app-in-typescript-add-sea-1786997994164__src-utils.ts": {
+      "id": "a-contact-book-app-in-typescript-add-sea-1786997994164__src-utils.ts",
+      "file": "src/utils.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "validateEmail",
+        "validatePhone"
+      ],
+      "slug": "a-contact-book-app-in-typescript-add-sea-1786997994164",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "validateEmail",
+        "validatePhone"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-file-organizer-app-in-typescript-sort--1787001821302__src-cli.ts": {
+      "id": "a-file-organizer-app-in-typescript-sort--1787001821302__src-cli.ts",
+      "file": "src/cli.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "parseArgs",
+        "printResults"
+      ],
+      "slug": "a-file-organizer-app-in-typescript-sort--1787001821302",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "run"
+      ],
+      "exports_missing": [
+        "parseArgs",
+        "printResults"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-file-organizer-app-in-typescript-sort--1787001821302__src-index.ts": {
+      "id": "a-file-organizer-app-in-typescript-sort--1787001821302__src-index.ts",
+      "file": "src/index.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "run"
+      ],
+      "slug": "a-file-organizer-app-in-typescript-sort--1787001821302",
+      "app_files": 7,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./organizer\"' has no exported member 'run'."
+      ],
+      "exports_found": [
+        "main"
+      ],
+      "exports_missing": [
+        "run"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-flashcard-study-app-in-typescript-deck-1786987500960__src-cli.ts": {
+      "id": "a-flashcard-study-app-in-typescript-deck-1786987500960__src-cli.ts",
+      "file": "src/cli.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "runCli"
+      ],
+      "slug": "a-flashcard-study-app-in-typescript-deck-1786987500960",
+      "app_files": 15,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./flashcards\"' has no exported member 'runQuiz'."
+      ],
+      "exports_found": [
+        "runCli"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-flashcard-study-app-in-typescript-deck-1786987500960__src-config.ts": {
+      "id": "a-flashcard-study-app-in-typescript-deck-1786987500960__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "getConfig"
+      ],
+      "slug": "a-flashcard-study-app-in-typescript-deck-1786987500960",
+      "app_files": 15,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "getConfig"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-flashcard-study-app-in-typescript-deck-1786987500960__src-flashcards.ts": {
+      "id": "a-flashcard-study-app-in-typescript-deck-1786987500960__src-flashcards.ts",
+      "file": "src/flashcards.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Flashcard",
+        "createDeck",
+        "quiz"
+      ],
+      "slug": "a-flashcard-study-app-in-typescript-deck-1786987500960",
+      "app_files": 15,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Flashcard",
+        "createDeck",
+        "quiz"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-flashcard-study-app-in-typescript-deck-1786987500960__src-test-flashcards.test.ts": {
+      "id": "a-flashcard-study-app-in-typescript-deck-1786987500960__src-test-flashcards.test.ts",
+      "file": "src/test/flashcards.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-flashcard-study-app-in-typescript-deck-1786987500960",
+      "app_files": 15,
+      "n_errors": 4,
+      "errors": [
+        "TS2459 L1: Module '\"../flashcards\"' declares 'Flashcard' locally, but it is not exported.",
+        "TS2305 L1: Module '\"../flashcards\"' has no exported member 'ReviewSession'.",
+        "TS2305 L1: Module '\"../flashcards\"' has no exported member 'addFlashcard'.",
+        "TS2305 L1: Module '\"../flashcards\"' has no exported member 'reviewFlashcard'."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-flashcard-study-app-in-typescript-deck-1786987500960__src-types.ts": {
+      "id": "a-flashcard-study-app-in-typescript-deck-1786987500960__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Flashcard",
+        "Deck",
+        "QuizSession"
+      ],
+      "slug": "a-flashcard-study-app-in-typescript-deck-1786987500960",
+      "app_files": 15,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Deck",
+        "Flashcard",
+        "QuizSession"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-flashcard-study-app-in-typescript-deck-1786997336101__src-cards.ts": {
+      "id": "a-flashcard-study-app-in-typescript-deck-1786997336101__src-cards.ts",
+      "file": "src/cards.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Card",
+        "Deck",
+        "addCard",
+        "listCards"
+      ],
+      "slug": "a-flashcard-study-app-in-typescript-deck-1786997336101",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Card",
+        "Deck",
+        "addCard",
+        "listCards"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-flashcard-study-app-in-typescript-deck-1786997336101__src-storage.ts": {
+      "id": "a-flashcard-study-app-in-typescript-deck-1786997336101__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadCards",
+        "saveCards"
+      ],
+      "slug": "a-flashcard-study-app-in-typescript-deck-1786997336101",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadCards",
+        "saveCards"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356120852__src-api.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356120852__src-api.ts",
+      "file": "src/api.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "startAPI"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356120852",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "startAPI"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356120852__src-frontend.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356120852__src-frontend.ts",
+      "file": "src/frontend.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "startFrontend"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356120852",
+      "app_files": 7,
+      "n_errors": 3,
+      "errors": [
+        "TS2305 L1: Module '\"./api\"' has no exported member 'getNotes'.",
+        "TS2305 L1: Module '\"./api\"' has no exported member 'addNote'.",
+        "TS2305 L1: Module '\"./api\"' has no exported member 'deleteNote'."
+      ],
+      "exports_found": [
+        "startFrontend"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356120852__src-services.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356120852__src-services.ts",
+      "file": "src/services.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NoteService"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356120852",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "NoteService"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356120852__src-tests.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356120852__src-tests.ts",
+      "file": "src/tests.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356120852",
+      "app_files": 7,
+      "n_errors": 5,
+      "errors": [
+        "TS2305 L1: Module '\"../src/api\"' has no exported member 'addNote'.",
+        "TS2305 L1: Module '\"../src/api\"' has no exported member 'getNotes'.",
+        "TS2305 L1: Module '\"../src/api\"' has no exported member 'deleteNote'.",
+        "TS2305 L27: Module '\"../src/frontend\"' has no exported member 'App'.",
+        "TS1005 L31: '>' expected."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356370922__src-__tests__-index.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356370922__src-__tests__-index.ts",
+      "file": "src/__tests__/index.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "runTests"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356370922",
+      "app_files": 11,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"../app\"' has no exported member 'runTests'."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "runTests"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356370922__src-app.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356370922__src-app.ts",
+      "file": "src/app.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "run"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356370922",
+      "app_files": 11,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L2: Module '\"./frontend\"' has no exported member 'renderApp'."
+      ],
+      "exports_found": [
+        "run"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356370922__src-frontend-store.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356370922__src-frontend-store.ts",
+      "file": "src/frontend/store.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "configureStore"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356370922",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "configureStore"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356370922__src-routes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356370922__src-routes.ts",
+      "file": "src/routes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "noteRoutes"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356370922",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "noteRoutes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786356370922__src-services.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786356370922__src-services.ts",
+      "file": "src/services.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addNote",
+        "listNotes"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786356370922",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addNote",
+        "listNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-App.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-App.tsx",
+      "file": "client/src/App.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "App"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890266536",
+      "app_files": 13,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L23: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [
+        "App"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-NoteList.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-NoteList.tsx",
+      "file": "client/src/NoteList.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "NoteList"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890266536",
+      "app_files": 13,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L16: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [
+        "NoteList"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-services-noteApi.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890266536__client-src-services-noteApi.ts",
+      "file": "client/src/services/noteApi.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createNote",
+        "getNotes"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890266536",
+      "app_files": 13,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "createNote",
+        "getNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890266536__src-services-noteService.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890266536__src-services-noteService.ts",
+      "file": "src/services/noteService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createNote",
+        "getNotes"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890266536",
+      "app_files": 13,
+      "n_errors": 2,
+      "errors": [
+        "TS2305 L2: Module '\"../in-memory-storage\"' has no exported member 'InMemoryStorage'.",
+        "TS2353 L7: Object literal may only specify known properties, and 'title' does not exist in type 'Note'."
+      ],
+      "exports_found": [
+        "createNote",
+        "getNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteApi.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteApi.test.ts",
+      "file": "tests/noteApi.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890266536",
+      "app_files": 13,
+      "n_errors": 2,
+      "errors": [
+        "TS2305 L1: Module '\"../src/services/noteService\"' has no exported member 'addNote'.",
+        "TS2305 L1: Module '\"../src/services/noteService\"' has no exported member 'deleteNote'."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteService.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890266536__tests-noteService.test.ts",
+      "file": "tests/noteService.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890266536",
+      "app_files": 13,
+      "n_errors": 2,
+      "errors": [
+        "TS2305 L1: Module '\"../src/services/noteService\"' has no exported member 'addNote'.",
+        "TS2305 L1: Module '\"../src/services/noteService\"' has no exported member 'deleteNote'."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890984902__client-src-components-NoteForm.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890984902__client-src-components-NoteForm.tsx",
+      "file": "client/src/components/NoteForm.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "NoteForm"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890984902",
+      "app_files": 11,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L21: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [
+        "NoteForm"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786890984902__tests-app.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786890984902__tests-app.test.ts",
+      "file": "tests/app.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786890984902",
+      "app_files": 11,
+      "n_errors": 1,
+      "errors": [
+        "TS2459 L1: Module '\"../src/app\"' declares 'app' locally, but it is not exported."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786896484419__src-services-noteService.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786896484419__src-services-noteService.ts",
+      "file": "src/services/noteService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786896484419",
+      "app_files": 9,
+      "n_errors": 3,
+      "errors": [
+        "TS2322 L6: Type 'string' is not assignable to type 'number'.",
+        "TS2367 L16: This comparison appears to be unintentional because the types 'number' and 'string' have no overlap.",
+        "TS2367 L25: This comparison appears to be unintentional because the types 'number' and 'string' have no overlap."
+      ],
+      "exports_found": [
+        "createNote",
+        "deleteNote",
+        "getNotes",
+        "updateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786897701361__client-src-App.test.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786897701361__client-src-App.test.tsx",
+      "file": "client/src/App.test.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786897701361",
+      "app_files": 8,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L5: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786897701361__tests-server.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786897701361__tests-server.test.ts",
+      "file": "tests/server.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786897701361",
+      "app_files": 8,
+      "n_errors": 1,
+      "errors": [
+        "TS2459 L1: Module '\"../src/server\"' declares 'app' locally, but it is not exported."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-App.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-App.tsx",
+      "file": "client/src/App.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786898204964",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L25: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-NoteForm.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786898204964__client-src-NoteForm.tsx",
+      "file": "client/src/NoteForm.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786898204964",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L21: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786898204964__src-notes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786898204964__src-notes.ts",
+      "file": "src/notes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "notesRouter"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786898204964",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "notesRouter"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786898204964__tests-notes.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786898204964__tests-notes.test.ts",
+      "file": "tests/notes.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786898204964",
+      "app_files": 9,
+      "n_errors": 3,
+      "errors": [
+        "TS2305 L1: Module '\"../src/notes\"' has no exported member 'addNote'.",
+        "TS2305 L1: Module '\"../src/notes\"' has no exported member 'getNotes'.",
+        "TS2305 L1: Module '\"../src/notes\"' has no exported member 'deleteNote'."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786906927842__client-src-api-notes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786906927842__client-src-api-notes.ts",
+      "file": "client/src/api/notes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "fetchNotes",
+        "addNote",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786906927842",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addNote",
+        "deleteNote",
+        "fetchNotes",
+        "updateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786907414891__backend-src-config.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786907414891__backend-src-config.ts",
+      "file": "backend/src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "PORT"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786907414891",
+      "app_files": 12,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "PORT"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786907414891__frontend-src-AddNote.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786907414891__frontend-src-AddNote.tsx",
+      "file": "frontend/src/AddNote.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "AddNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786907414891",
+      "app_files": 12,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L18: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [
+        "AddNote"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786907414891__tests-backend-notesService.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786907414891__tests-backend-notesService.test.ts",
+      "file": "tests/backend/notesService.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786907414891",
+      "app_files": 12,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786908038933__src-backend-controllers-noteController.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786908038933__src-backend-controllers-noteController.ts",
+      "file": "src/backend/controllers/noteController.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786908038933",
+      "app_files": 10,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "createNote",
+        "deleteNote",
+        "getNotes",
+        "updateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786908038933__src-frontend-src-components-NoteApp.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786908038933__src-frontend-src-components-NoteApp.tsx",
+      "file": "src/frontend/src/components/NoteApp.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "NoteApp"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786908038933",
+      "app_files": 10,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L19: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [
+        "NoteApp"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786908261632__src-database.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786908261632__src-database.ts",
+      "file": "src/database.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addNote",
+        "getNotes"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786908261632",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addNote",
+        "getNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786908261632__src-services-notes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786908261632__src-services-notes.ts",
+      "file": "src/services/notes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addNote",
+        "getNotes"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786908261632",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addNote",
+        "getNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786924894561__src-config-index.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786924894561__src-config-index.ts",
+      "file": "src/config/index.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "PORT"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786924894561",
+      "app_files": 13,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "PORT"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786924894561__src-interface-api.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786924894561__src-interface-api.ts",
+      "file": "src/interface/api.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "notesRouter"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786924894561",
+      "app_files": 13,
+      "n_errors": 1,
+      "errors": [
+        "TS2554 L20: Expected 1 arguments, but got 2."
+      ],
+      "exports_found": [
+        "notesRouter"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786924894561__src-services-notes.service.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786924894561__src-services-notes.service.ts",
+      "file": "src/services/notes.service.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786924894561",
+      "app_files": 13,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L2: Module '\"../infrastructure/storage\"' has no exported member 'Storage'."
+      ],
+      "exports_found": [
+        "NotesService"
+      ],
+      "exports_missing": [
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786924894561__tests-frontend-NotesList.test.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786924894561__tests-frontend-NotesList.test.tsx",
+      "file": "tests/frontend/NotesList.test.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786924894561",
+      "app_files": 13,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L5: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786925409480__src-app.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786925409480__src-app.ts",
+      "file": "src/app.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createServer"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786925409480",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L2: Module '\"./notes\"' has no exported member 'createNote'."
+      ],
+      "exports_found": [
+        "createServer"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786925409480__src-config.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786925409480__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "PORT",
+        "DB_PATH"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786925409480",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "DB_PATH",
+        "PORT"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786925714974__frontend-src-components-NoteList.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786925714974__frontend-src-components-NoteList.tsx",
+      "file": "frontend/src/components/NoteList.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "default"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786925714974",
+      "app_files": 10,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L16: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786925714974__tests-backend-routes-note.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786925714974__tests-backend-routes-note.test.ts",
+      "file": "tests/backend/routes/note.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786925714974",
+      "app_files": 10,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786925927926__src-controllers-noteController.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786925927926__src-controllers-noteController.ts",
+      "file": "src/controllers/noteController.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "getNotes",
+        "addNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786925927926",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addNote",
+        "getNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786925927926__tests-noteController.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786925927926__tests-noteController.test.ts",
+      "file": "tests/noteController.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786925927926",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteForm.js": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteForm.js",
+      "file": "frontend/src/components/NoteForm.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "default"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786926471424",
+      "app_files": 12,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteList.js": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786926471424__frontend-src-components-NoteList.js",
+      "file": "frontend/src/components/NoteList.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "default"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786926471424",
+      "app_files": 12,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786926471424__src-utils-logger.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786926471424__src-utils-logger.ts",
+      "file": "src/utils/logger.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "info",
+        "error"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786926471424",
+      "app_files": 12,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "error",
+        "info"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786960008755__backend-note.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786960008755__backend-note.ts",
+      "file": "backend/note.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NoteService",
+        "NoteRepository"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786960008755",
+      "app_files": 14,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "NoteRepository",
+        "NoteService"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteForm.test.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteForm.test.tsx",
+      "file": "frontend/src/NoteForm.test.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "testNoteForm"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786960008755",
+      "app_files": 14,
+      "n_errors": 2,
+      "errors": [
+        "TS2875 L5: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.",
+        "TS2304 L22: Cannot find name 'jest'."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "testNoteForm"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteList.test.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786960008755__frontend-src-NoteList.test.tsx",
+      "file": "frontend/src/NoteList.test.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "testNoteList"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786960008755",
+      "app_files": 14,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L6: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "testNoteList"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786961607585__frontend-src-notesService.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786961607585__frontend-src-notesService.ts",
+      "file": "frontend/src/notesService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "fetchNotes",
+        "addNote",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786961607585",
+      "app_files": 12,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addNote",
+        "deleteNote",
+        "fetchNotes",
+        "updateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786961607585__src-controllers.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786961607585__src-controllers.ts",
+      "file": "src/controllers.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786961607585",
+      "app_files": 12,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addNote",
+        "deleteNote",
+        "getNotes",
+        "updateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786990924420__src-NoteItem.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786990924420__src-NoteItem.tsx",
+      "file": "src/NoteItem.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786990924420",
+      "app_files": 17,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L12: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786990924420__src-routes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786990924420__src-routes.ts",
+      "file": "src/routes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "notesRouter"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786990924420",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "notesRouter"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786992245826__src-database.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786992245826__src-database.ts",
+      "file": "src/database.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "initDatabase",
+        "saveNote",
+        "loadNotes",
+        "deleteNoteById"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786992245826",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "deleteNoteById",
+        "initDatabase",
+        "loadNotes",
+        "saveNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786992245826__src-models-notes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786992245826__src-models-notes.ts",
+      "file": "src/models/notes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Note",
+        "addNote",
+        "getAllNotes",
+        "getNoteById",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786992245826",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Note",
+        "addNote",
+        "deleteNote",
+        "getAllNotes",
+        "getNoteById",
+        "updateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786992245826__tests-frontend.test.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786992245826__tests-frontend.test.tsx",
+      "file": "tests/frontend.test.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786992245826",
+      "app_files": 17,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L5: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786993152454__src-tests-index.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786993152454__src-tests-index.test.ts",
+      "file": "src/tests/index.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "runTests"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786993152454",
+      "app_files": 17,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"../index\"' has no exported member 'runTests'."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "runTests"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.test.ts",
+      "file": "src/controllers.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786993589574",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786993589574__src-controllers.ts",
+      "file": "src/controllers.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786993589574",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "createNote",
+        "deleteNote",
+        "getNotes",
+        "updateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786993589574__src-models.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786993589574__src-models.ts",
+      "file": "src/models.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NoteItem"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786993589574",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "NoteItem"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1786993589574__src-routes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1786993589574__src-routes.ts",
+      "file": "src/routes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "noteRouter"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1786993589574",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "noteRouter"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787011839360__client-src-Notes.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787011839360__client-src-Notes.tsx",
+      "file": "client/src/Notes.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "default"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787011839360",
+      "app_files": 19,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L16: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787011839360__tests-unit-routes.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787011839360__tests-unit-routes.test.ts",
+      "file": "tests/unit/routes.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787011839360",
+      "app_files": 19,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787012386826__src-config.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787012386826__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "PORT",
+        "MAX_NOTES"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787012386826",
+      "app_files": 25,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "MAX_NOTES",
+        "PORT"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787012386826__src-controllers.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787012386826__src-controllers.ts",
+      "file": "src/controllers.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "notesController"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787012386826",
+      "app_files": 25,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "notesController"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787012386826__src-notes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787012386826__src-notes.ts",
+      "file": "src/notes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NotesService",
+        "Note",
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787012386826",
+      "app_files": 25,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Note",
+        "NotesService"
+      ],
+      "exports_missing": [
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-app.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-app.test.ts",
+      "file": "src/test/app.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "testApp",
+        "testRoutes"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787012386826",
+      "app_files": 25,
+      "n_errors": 2,
+      "errors": [
+        "TS2305 L1: Module '\"../app\"' has no exported member 'testApp'.",
+        "TS2305 L1: Module '\"../app\"' has no exported member 'testRoutes'."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "testApp",
+        "testRoutes"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-notes.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787012386826__src-test-notes.test.ts",
+      "file": "src/test/notes.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "testCreateNote",
+        "testGetNotes",
+        "testUpdateNote",
+        "testDeleteNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787012386826",
+      "app_files": 25,
+      "n_errors": 4,
+      "errors": [
+        "TS2305 L1: Module '\"../notes\"' has no exported member 'createNote'.",
+        "TS2305 L1: Module '\"../notes\"' has no exported member 'getNotes'.",
+        "TS2305 L1: Module '\"../notes\"' has no exported member 'updateNote'.",
+        "TS2305 L1: Module '\"../notes\"' has no exported member 'deleteNote'."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "testCreateNote",
+        "testGetNotes",
+        "testUpdateNote",
+        "testDeleteNote"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787012386826__src-utils.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787012386826__src-utils.ts",
+      "file": "src/utils.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "generateId",
+        "formatDate"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787012386826",
+      "app_files": 25,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "formatDate",
+        "generateId"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787013450703__src-api.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787013450703__src-api.ts",
+      "file": "src/api.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "startServer"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787013450703",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "startServer"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787013450703__tests-unit.test.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787013450703__tests-unit.test.ts",
+      "file": "tests/unit.test.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787013450703",
+      "app_files": 9,
+      "n_errors": 3,
+      "errors": [
+        "TS2305 L1: Module '\"../src/api\"' has no exported member 'addNote'.",
+        "TS2305 L1: Module '\"../src/api\"' has no exported member 'getNotes'.",
+        "TS2305 L1: Module '\"../src/api\"' has no exported member 'deleteNote'."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787014007010__client-src-components-AddNote.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787014007010__client-src-components-AddNote.tsx",
+      "file": "client/src/components/AddNote.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [
+        "default"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787014007010",
+      "app_files": 17,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L19: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.controller.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.controller.ts",
+      "file": "notes/notes.controller.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NotesController"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787044137506",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "NotesController"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787044137506__notes-notes.ts",
+      "file": "notes/notes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NotesController"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787044137506",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "NotesController"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787044595344__src-AddNote.tsx": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787044595344__src-AddNote.tsx",
+      "file": "src/AddNote.tsx",
+      "ext": "tsx",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787044595344",
+      "app_files": 17,
+      "n_errors": 1,
+      "errors": [
+        "TS2875 L18: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed."
+      ],
+      "exports_found": [
+        "default"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787044874338__client-src-types.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787044874338__client-src-types.ts",
+      "file": "client/src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NoteData"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787044874338",
+      "app_files": 31,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "NoteData"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787044874338__src-config.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787044874338__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "PORT",
+        "DATABASE_URL"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787044874338",
+      "app_files": 31,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "DATABASE_URL",
+        "PORT"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787044874338__src-db.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787044874338__src-db.ts",
+      "file": "src/db.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "getDatabase"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787044874338",
+      "app_files": 31,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "getDatabase"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787686629354__src-utils.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787686629354__src-utils.ts",
+      "file": "src/utils.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "generateId",
+        "validateNote"
+      ],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787686629354",
+      "app_files": 17,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "generateId",
+        "validateNote"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787740976664__build-pipeline.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787740976664__build-pipeline.ts",
+      "file": "build-pipeline.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787740976664",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "buildDockerImage"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-full-stack-note-taking-app-in-typescri-1787740976664__database-sqlite-db.ts": {
+      "id": "a-full-stack-note-taking-app-in-typescri-1787740976664__database-sqlite-db.ts",
+      "file": "database/sqlite-db.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-full-stack-note-taking-app-in-typescri-1787740976664",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "deleteNote",
+        "initDb",
+        "insertNote",
+        "selectNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-habit-tracker-app-in-typescript-track--1786967347530__src-habitService.ts": {
+      "id": "a-habit-tracker-app-in-typescript-track--1786967347530__src-habitService.ts",
+      "file": "src/habitService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "HabitService",
+        "addHabit",
+        "markDone",
+        "getStreaks"
+      ],
+      "slug": "a-habit-tracker-app-in-typescript-track--1786967347530",
+      "app_files": 11,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L2: Module '\"./storageService\"' has no exported member 'StorageService'."
+      ],
+      "exports_found": [
+        "HabitService"
+      ],
+      "exports_missing": [
+        "addHabit",
+        "markDone",
+        "getStreaks"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-habit-tracker-app-in-typescript-track--1786967347530__src-storageService.ts": {
+      "id": "a-habit-tracker-app-in-typescript-track--1786967347530__src-storageService.ts",
+      "file": "src/storageService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "saveHabits",
+        "loadHabits"
+      ],
+      "slug": "a-habit-tracker-app-in-typescript-track--1786967347530",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadHabits",
+        "saveHabits"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-habit-tracker-app-in-typescript-track--1786967347530__src-types.ts": {
+      "id": "a-habit-tracker-app-in-typescript-track--1786967347530__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Habit",
+        "Streak"
+      ],
+      "slug": "a-habit-tracker-app-in-typescript-track--1786967347530",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Habit",
+        "Streak"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-storage.ts": {
+      "id": "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-storage.ts",
+      "file": "src/habits/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadHabits",
+        "saveHabits"
+      ],
+      "slug": "a-habit-tracker-app-with-streaks-and-rem-1787167867482",
+      "app_files": 11,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./types\"' has no exported member 'Habit'."
+      ],
+      "exports_found": [
+        "loadHabits",
+        "saveHabits"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-ui.ts": {
+      "id": "a-habit-tracker-app-with-streaks-and-rem-1787167867482__src-habits-ui.ts",
+      "file": "src/habits/ui.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "renderHabits",
+        "renderStreaks",
+        "renderReminders"
+      ],
+      "slug": "a-habit-tracker-app-with-streaks-and-rem-1787167867482",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "renderHabits",
+        "renderReminders",
+        "renderStreaks"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-storage.ts": {
+      "id": "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadTasks",
+        "saveTasks"
+      ],
+      "slug": "a-kanban-task-board-cli-app-in-typescrip-1786986697539",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadTasks",
+        "saveTasks"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-taskService.ts": {
+      "id": "a-kanban-task-board-cli-app-in-typescrip-1786986697539__src-taskService.ts",
+      "file": "src/taskService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addTask",
+        "moveTask",
+        "listTasks"
+      ],
+      "slug": "a-kanban-task-board-cli-app-in-typescrip-1786986697539",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2353 L4: Object literal may only specify known properties, and 'title' does not exist in type 'Task'."
+      ],
+      "exports_found": [
+        "addTask",
+        "listTasks",
+        "moveTask"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-config.ts": {
+      "id": "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "CONFIG"
+      ],
+      "slug": "a-log-analyzer-app-in-typescript-parse-l-1786989135641",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "CONFIG"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logAnalyzer.ts": {
+      "id": "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logAnalyzer.ts",
+      "file": "src/logAnalyzer.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "analyzeLog"
+      ],
+      "slug": "a-log-analyzer-app-in-typescript-parse-l-1786989135641",
+      "app_files": 11,
+      "n_errors": 3,
+      "errors": [
+        "TS2345 L7: Argument of type '{ level: string; module: string; message: string; }' is not assignable to parameter of type 'string[]'.   Type '{ level: string; module: string; message: string; }' is missing the following properties from type 'string[]': length, pop, push, concat, and 28 more.",
+        "TS2322 L8: Type '{ module: string; count: number; }[]' is not assignable to type 'string'.",
+        "TS2554 L8: Expected 2 arguments, but got 1."
+      ],
+      "exports_found": [
+        "analyzeLog"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logCounter.ts": {
+      "id": "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logCounter.ts",
+      "file": "src/logCounter.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "countLevels"
+      ],
+      "slug": "a-log-analyzer-app-in-typescript-parse-l-1786989135641",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "countLevels"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logParser.ts": {
+      "id": "a-log-analyzer-app-in-typescript-parse-l-1786989135641__src-logParser.ts",
+      "file": "src/logParser.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "parseLog"
+      ],
+      "slug": "a-log-analyzer-app-in-typescript-parse-l-1786989135641",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "parseLog"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-logParser.ts": {
+      "id": "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-logParser.ts",
+      "file": "src/logParser.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "parseLog",
+        "countLevels"
+      ],
+      "slug": "a-log-analyzer-app-in-typescript-parse-l-1786998653215",
+      "app_files": 9,
+      "n_errors": 2,
+      "errors": [
+        "TS2345 L11: Argument of type '{ level: LogLevel; message: string; }' is not assignable to parameter of type 'LogEntry'.   Property 'module' is missing in type '{ level: LogLevel; message: string; }' but required in type 'LogEntry'.",
+        "TS2561 L18: Object literal may only specify known properties, but 'error' does not exist in type '{ DEBUG: number; INFO: number; WARN: number; ERROR: number; }'. Did you mean to write 'ERROR'?"
+      ],
+      "exports_found": [
+        "countLevels",
+        "parseLog"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-moduleReport.ts": {
+      "id": "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-moduleReport.ts",
+      "file": "src/moduleReport.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "reportTopModules"
+      ],
+      "slug": "a-log-analyzer-app-in-typescript-parse-l-1786998653215",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2367 L7: This comparison appears to be unintentional because the types 'LogLevel' and '\"error\"' have no overlap."
+      ],
+      "exports_found": [
+        "reportTopModules"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-types.ts": {
+      "id": "a-log-analyzer-app-in-typescript-parse-l-1786998653215__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "LogLevel",
+        "LogEntry",
+        "ModuleReport"
+      ],
+      "slug": "a-log-analyzer-app-in-typescript-parse-l-1786998653215",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "LogEntry",
+        "LogLevel",
+        "ModuleReport"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-markdown-blog-generator-in-typescript--1786986887187__src-markdown-reader.ts": {
+      "id": "a-markdown-blog-generator-in-typescript--1786986887187__src-markdown-reader.ts",
+      "file": "src/markdown-reader.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "readMarkdownFiles"
+      ],
+      "slug": "a-markdown-blog-generator-in-typescript--1786986887187",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "readMarkdownFiles"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-markdown-blog-generator-in-typescript--1786986887187__src-template-renderer.ts": {
+      "id": "a-markdown-blog-generator-in-typescript--1786986887187__src-template-renderer.ts",
+      "file": "src/template-renderer.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "renderTemplate"
+      ],
+      "slug": "a-markdown-blog-generator-in-typescript--1786986887187",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "renderTemplate"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-markdown-blog-generator-in-typescript--1786996575652__src-config.ts": {
+      "id": "a-markdown-blog-generator-in-typescript--1786996575652__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "BLOG_TITLE",
+        "BLOG_SUBTITLE"
+      ],
+      "slug": "a-markdown-blog-generator-in-typescript--1786996575652",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "BLOG_SUBTITLE",
+        "BLOG_TITLE"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-markdown-blog-generator-in-typescript--1786996575652__src-types.ts": {
+      "id": "a-markdown-blog-generator-in-typescript--1786996575652__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "MarkdownFile",
+        "HtmlPage"
+      ],
+      "slug": "a-markdown-blog-generator-in-typescript--1786996575652",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "HtmlPage",
+        "MarkdownFile"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-scheduler.ts": {
+      "id": "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-scheduler.ts",
+      "file": "src/scheduler.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addMeeting",
+        "listMeetings",
+        "checkOverlap"
+      ],
+      "slug": "a-meeting-scheduler-app-in-typescript-sc-1787001416784",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addMeeting",
+        "checkOverlap",
+        "listMeetings"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-storage.ts": {
+      "id": "a-meeting-scheduler-app-in-typescript-sc-1787001416784__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadMeetings",
+        "saveMeetings"
+      ],
+      "slug": "a-meeting-scheduler-app-in-typescript-sc-1787001416784",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadMeetings",
+        "saveMeetings"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-music-playlist-manager-app-in-typescri-1786988402035__src-storage.ts": {
+      "id": "a-music-playlist-manager-app-in-typescri-1786988402035__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadPlaylists",
+        "savePlaylists"
+      ],
+      "slug": "a-music-playlist-manager-app-in-typescri-1786988402035",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadPlaylists",
+        "savePlaylists"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-music-playlist-manager-app-in-typescri-1786988402035__src-types.ts": {
+      "id": "a-music-playlist-manager-app-in-typescri-1786988402035__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Song",
+        "Playlist"
+      ],
+      "slug": "a-music-playlist-manager-app-in-typescri-1786988402035",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Playlist",
+        "Song"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-music-playlist-manager-app-in-typescri-1786997631362__src-playlistService.ts": {
+      "id": "a-music-playlist-manager-app-in-typescri-1786997631362__src-playlistService.ts",
+      "file": "src/playlistService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "createPlaylist",
+        "addSong",
+        "removeSong",
+        "shufflePlaylist"
+      ],
+      "slug": "a-music-playlist-manager-app-in-typescri-1786997631362",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "addSong",
+        "createPlaylist",
+        "removeSong",
+        "shufflePlaylist"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-note-taking-app-in-typescript-store-no-1786967060818__src-notes.ts": {
+      "id": "a-note-taking-app-in-typescript-store-no-1786967060818__src-notes.ts",
+      "file": "src/notes.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "NoteItem",
+        "addNote",
+        "listNotes",
+        "deleteNote",
+        "editNote"
+      ],
+      "slug": "a-note-taking-app-in-typescript-store-no-1786967060818",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "NoteItem",
+        "addNote",
+        "deleteNote",
+        "editNote",
+        "listNotes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-password-strength-checker-app-in-types-1787000544776__src-storage.ts": {
+      "id": "a-password-strength-checker-app-in-types-1787000544776__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadPasswords",
+        "savePasswords"
+      ],
+      "slug": "a-password-strength-checker-app-in-types-1787000544776",
+      "app_files": 7,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./password\"' has no exported member 'Password'."
+      ],
+      "exports_found": [
+        "loadPasswords",
+        "savePasswords"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-history.ts": {
+      "id": "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-history.ts",
+      "file": "src/history.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "saveSession",
+        "loadSessions"
+      ],
+      "slug": "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadSessions",
+        "saveSession"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-types.ts": {
+      "id": "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Session"
+      ],
+      "slug": "a-pomodoro-timer-app-in-typescript-25-mi-1786987082727",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Session"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-pomodoro-timer-app-in-typescript-25-mi-1786996932424__src-timer.ts": {
+      "id": "a-pomodoro-timer-app-in-typescript-25-mi-1786996932424__src-timer.ts",
+      "file": "src/timer.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Timer",
+        "start",
+        "stop",
+        "undo"
+      ],
+      "slug": "a-pomodoro-timer-app-in-typescript-25-mi-1786996932424",
+      "app_files": 7,
+      "n_errors": 1,
+      "errors": [
+        "TS2694 L2: Namespace 'NodeJS' has no exported member 'Timeout'."
+      ],
+      "exports_found": [
+        "Timer"
+      ],
+      "exports_missing": [
+        "start",
+        "stop",
+        "undo"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-questions.ts": {
+      "id": "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-questions.ts",
+      "file": "src/questions.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Question",
+        "loadQuestions"
+      ],
+      "slug": "a-quiz-app-in-typescript-multiple-choice-1786967723052",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Question",
+        "loadQuestions"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-scoring.ts": {
+      "id": "a-quiz-app-in-typescript-multiple-choice-1786967723052__src-scoring.ts",
+      "file": "src/scoring.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "scoreQuiz",
+        "getResults"
+      ],
+      "slug": "a-quiz-app-in-typescript-multiple-choice-1786967723052",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "getResults",
+        "scoreQuiz"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-quiz.js": {
+      "id": "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-quiz.js",
+      "file": "src/quiz.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-quiz-app-in-typescript-multiple-choice-1786995852335",
+      "app_files": 6,
+      "n_errors": 4,
+      "errors": [
+        "TS8010 L3: Type annotations can only be used in TypeScript files.",
+        "TS8010 L11: Type annotations can only be used in TypeScript files.",
+        "TS8010 L11: Type annotations can only be used in TypeScript files.",
+        "TS8010 L11: Type annotations can only be used in TypeScript files."
+      ],
+      "exports_found": [
+        "checkAnswer",
+        "loadQuestions"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-storage.ts": {
+      "id": "a-quiz-app-in-typescript-multiple-choice-1786995852335__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadQuestions",
+        "saveQuestions"
+      ],
+      "slug": "a-quiz-app-in-typescript-multiple-choice-1786995852335",
+      "app_files": 6,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./quiz\"' has no exported member 'Question'."
+      ],
+      "exports_found": [
+        "loadQuestions",
+        "saveQuestions"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-recipe.ts": {
+      "id": "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-recipe.ts",
+      "file": "src/recipe.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Recipe",
+        "addRecipe",
+        "listRecipes"
+      ],
+      "slug": "a-recipe-manager-app-in-typescript-add-r-1786989568584",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Recipe",
+        "addRecipe",
+        "listRecipes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-storage.ts": {
+      "id": "a-recipe-manager-app-in-typescript-add-r-1786989568584__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadRecipes",
+        "saveRecipes"
+      ],
+      "slug": "a-recipe-manager-app-in-typescript-add-r-1786989568584",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadRecipes",
+        "saveRecipes"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-recipe-manager-app-in-typescript-add-r-1786999611395__src-recipe.ts": {
+      "id": "a-recipe-manager-app-in-typescript-add-r-1786999611395__src-recipe.ts",
+      "file": "src/recipe.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "RecipeItem",
+        "addRecipe",
+        "searchRecipesByIngredient",
+        "scaleServings"
+      ],
+      "slug": "a-recipe-manager-app-in-typescript-add-r-1786999611395",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "RecipeItem",
+        "addRecipe",
+        "scaleServings",
+        "searchRecipesByIngredient"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-simple-password-generator-cli-tool-in--1787263797116__src-config.ts": {
+      "id": "a-simple-password-generator-cli-tool-in--1787263797116__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "DEFAULT_PASSWORD_LENGTH",
+        "COMPLEXITY_CHOICES"
+      ],
+      "slug": "a-simple-password-generator-cli-tool-in--1787263797116",
+      "app_files": 11,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "COMPLEXITY_CHOICES",
+        "DEFAULT_PASSWORD_LENGTH"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-small-todo-list-cli-app-with-add-list--1786727010717__src-todo.ts": {
+      "id": "a-small-todo-list-cli-app-with-add-list--1786727010717__src-todo.ts",
+      "file": "src/todo.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Todo",
+        "addTodo",
+        "listTodos",
+        "completeTodo"
+      ],
+      "slug": "a-small-todo-list-cli-app-with-add-list--1786727010717",
+      "app_files": 4,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Todo",
+        "addTodo",
+        "completeTodo",
+        "listTodos"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-small-todo-list-cli-app-with-add-list--1787520513922__main.ts": {
+      "id": "a-small-todo-list-cli-app-with-add-list--1787520513922__main.ts",
+      "file": "main.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "a-small-todo-list-cli-app-with-add-list--1787520513922",
+      "app_files": 11,
+      "n_errors": 1,
+      "errors": [
+        "TS2339 L25: Property 'desc' does not exist on type 'TodoItem'."
+      ],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-portfolio.ts": {
+      "id": "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-portfolio.ts",
+      "file": "src/portfolio.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Portfolio",
+        "addTransaction",
+        "getHoldings",
+        "getProfitLoss"
+      ],
+      "slug": "a-stock-portfolio-tracker-app-in-typescr-1787001556696",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Portfolio"
+      ],
+      "exports_missing": [
+        "addTransaction",
+        "getHoldings",
+        "getProfitLoss"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-storage.ts": {
+      "id": "a-stock-portfolio-tracker-app-in-typescr-1787001556696__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadPortfolio",
+        "savePortfolio"
+      ],
+      "slug": "a-stock-portfolio-tracker-app-in-typescr-1787001556696",
+      "app_files": 9,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./types\"' has no exported member 'Portfolio'."
+      ],
+      "exports_found": [
+        "loadPortfolio",
+        "savePortfolio"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-temperature-converter-app-in-typescrip-1786966906890__src-index.ts": {
+      "id": "a-temperature-converter-app-in-typescrip-1786966906890__src-index.ts",
+      "file": "src/index.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "convertTemperature"
+      ],
+      "slug": "a-temperature-converter-app-in-typescrip-1786966906890",
+      "app_files": 3,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [
+        "convertTemperature"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-text-adventure-game-app-in-typescript--1787000604729__src-commands.ts": {
+      "id": "a-text-adventure-game-app-in-typescript--1787000604729__src-commands.ts",
+      "file": "src/commands.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "processCommand"
+      ],
+      "slug": "a-text-adventure-game-app-in-typescript--1787000604729",
+      "app_files": 15,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "processCommand"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-text-adventure-game-app-in-typescript--1787000604729__src-game.ts": {
+      "id": "a-text-adventure-game-app-in-typescript--1787000604729__src-game.ts",
+      "file": "src/game.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Game",
+        "Room",
+        "Item"
+      ],
+      "slug": "a-text-adventure-game-app-in-typescript--1787000604729",
+      "app_files": 15,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Game",
+        "Item",
+        "Room"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-text-adventure-game-app-in-typescript--1787000604729__src-items.ts": {
+      "id": "a-text-adventure-game-app-in-typescript--1787000604729__src-items.ts",
+      "file": "src/items.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "ITEMS"
+      ],
+      "slug": "a-text-adventure-game-app-in-typescript--1787000604729",
+      "app_files": 15,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "ITEMS"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-text-adventure-game-app-in-typescript--1787000604729__src-player.ts": {
+      "id": "a-text-adventure-game-app-in-typescript--1787000604729__src-player.ts",
+      "file": "src/player.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Player",
+        "Inventory"
+      ],
+      "slug": "a-text-adventure-game-app-in-typescript--1787000604729",
+      "app_files": 15,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Player"
+      ],
+      "exports_missing": [
+        "Inventory"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-text-adventure-game-app-in-typescript--1787000604729__src-render.ts": {
+      "id": "a-text-adventure-game-app-in-typescript--1787000604729__src-render.ts",
+      "file": "src/render.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "render",
+        "renderInventory"
+      ],
+      "slug": "a-text-adventure-game-app-in-typescript--1787000604729",
+      "app_files": 15,
+      "n_errors": 3,
+      "errors": [
+        "TS2304 L1: Cannot find name 'Room'.",
+        "TS2304 L1: Cannot find name 'Item'.",
+        "TS2304 L9: Cannot find name 'Item'."
+      ],
+      "exports_found": [
+        "render",
+        "renderInventory"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-stats.ts": {
+      "id": "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-stats.ts",
+      "file": "src/stats.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "countWords",
+        "countChars",
+        "countSentences",
+        "getMostFrequentWords"
+      ],
+      "slug": "a-text-stats-tool-app-in-typescript-coun-1787000216675",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "countChars",
+        "countSentences",
+        "countWords",
+        "getMostFrequentWords"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-types.ts": {
+      "id": "a-text-stats-tool-app-in-typescript-coun-1787000216675__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "TextStats"
+      ],
+      "slug": "a-text-stats-tool-app-in-typescript-coun-1787000216675",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "TextStats"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-game.ts": {
+      "id": "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-game.ts",
+      "file": "src/game.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Game",
+        "Board",
+        "Player"
+      ],
+      "slug": "a-tic-tac-toe-game-app-in-typescript-two-1786988951520",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Board",
+        "Game"
+      ],
+      "exports_missing": [
+        "Player"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-ui.ts": {
+      "id": "a-tic-tac-toe-game-app-in-typescript-two-1786988951520__src-ui.ts",
+      "file": "src/ui.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "renderBoard",
+        "getPlayerInput"
+      ],
+      "slug": "a-tic-tac-toe-game-app-in-typescript-two-1786988951520",
+      "app_files": 7,
+      "n_errors": 4,
+      "errors": [
+        "TS2303 L1: Circular definition of import alias 'renderBoard'.",
+        "TS2459 L1: Module '\"./ui\"' declares 'renderBoard' locally, but it is not exported.",
+        "TS2303 L1: Circular definition of import alias 'getPlayerInput'.",
+        "TS2459 L1: Module '\"./ui\"' declares 'getPlayerInput' locally, but it is not exported."
+      ],
+      "exports_found": [
+        "playGame"
+      ],
+      "exports_missing": [
+        "renderBoard",
+        "getPlayerInput"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-gameLogic.ts": {
+      "id": "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-gameLogic.ts",
+      "file": "src/gameLogic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "GameLogic",
+        "GameState",
+        "Board"
+      ],
+      "slug": "a-tic-tac-toe-game-app-in-typescript-two-1786998209590",
+      "app_files": 7,
+      "n_errors": 1,
+      "errors": [
+        "TS2322 L49: Type 'string' is not assignable to type '\"X\" | \"O\"'."
+      ],
+      "exports_found": [
+        "GameLogic",
+        "GameState"
+      ],
+      "exports_missing": [
+        "Board"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-main.ts": {
+      "id": "a-tic-tac-toe-game-app-in-typescript-two-1786998209590__src-main.ts",
+      "file": "src/main.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "runGame"
+      ],
+      "slug": "a-tic-tac-toe-game-app-in-typescript-two-1786998209590",
+      "app_files": 7,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./gameLogic\"' has no exported member 'runGame'."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "runGame"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786357584176__src-game-logic.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786357584176__src-game-logic.ts",
+      "file": "src/game-logic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "minimax"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786357584176",
+      "app_files": 3,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "checkWinner",
+        "minimax"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-game-logic.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-game-logic.ts",
+      "file": "src/game-logic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "playGame"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786359845935",
+      "app_files": 4,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "playGame"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-tic-tac-toe.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786359845935__src-tic-tac-toe.ts",
+      "file": "src/tic-tac-toe.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "TicTacToeBoard",
+        "TicTacToePlayer"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786359845935",
+      "app_files": 4,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "TicTacToeBoard",
+        "TicTacToePlayer"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-game-logic.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-game-logic.ts",
+      "file": "src/game-logic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "minimax",
+        "getValidMoves",
+        "evaluateBoard"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786360058323",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "evaluateBoard",
+        "getValidMoves",
+        "minimax"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-ui.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786360058323__src-ui.ts",
+      "file": "src/ui.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "displayBoard",
+        "getUserMove"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786360058323",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "displayBoard",
+        "getUserMove"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786360347970__src-game-logic.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786360347970__src-game-logic.ts",
+      "file": "src/game-logic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Game",
+        "MinMaxComputer"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786360347970",
+      "app_files": 3,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Game",
+        "MinMaxComputer"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786360967129__src-game-logic.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786360967129__src-game-logic.ts",
+      "file": "src/game-logic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "play",
+        "minimax"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786360967129",
+      "app_files": 3,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "play"
+      ],
+      "exports_missing": [
+        "minimax"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786361527799__src-game-logic.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786361527799__src-game-logic.ts",
+      "file": "src/game-logic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "GameState",
+        "makeMove",
+        "minimax"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786361527799",
+      "app_files": 3,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "GameState",
+        "makeMove",
+        "minimax"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786362105481__src-main.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786362105481__src-main.ts",
+      "file": "src/main.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "startGame"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786362105481",
+      "app_files": 3,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./game-logic\"' has no exported member 'startGame'."
+      ],
+      "exports_found": [],
+      "exports_missing": [
+        "startGame"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-tic-tac-toe-game-in-typescript-with-a--1786362606779__src-game-logic.ts": {
+      "id": "a-tic-tac-toe-game-in-typescript-with-a--1786362606779__src-game-logic.ts",
+      "file": "src/game-logic.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "TicTacToe",
+        "Player",
+        "minimax"
+      ],
+      "slug": "a-tic-tac-toe-game-in-typescript-with-a--1786362606779",
+      "app_files": 3,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Player",
+        "TicTacToe",
+        "minimax"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-typescript-cli-tool-that-reads-a-csv-f-1786357640821__src-csv-parser.ts": {
+      "id": "a-typescript-cli-tool-that-reads-a-csv-f-1786357640821__src-csv-parser.ts",
+      "file": "src/csv-parser.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "parseCSV",
+        "calculateMovingAverage"
+      ],
+      "slug": "a-typescript-cli-tool-that-reads-a-csv-f-1786357640821",
+      "app_files": 3,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "calculateMovingAverage",
+        "parseCSV"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-redirect.js": {
+      "id": "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-redirect.js",
+      "file": "src/routes/redirect.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "handleRedirect"
+      ],
+      "slug": "a-url-shortener-app-an-express-api-that--1786967914386",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [
+        "handleRedirect"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-shorten.js": {
+      "id": "a-url-shortener-app-an-express-api-that--1786967914386__src-routes-shorten.js",
+      "file": "src/routes/shorten.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "createShortUrl"
+      ],
+      "slug": "a-url-shortener-app-an-express-api-that--1786967914386",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [
+        "createShortUrl"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": true
+    },
+    "a-url-shortener-app-an-express-api-that--1786967914386__src-storage.js": {
+      "id": "a-url-shortener-app-an-express-api-that--1786967914386__src-storage.js",
+      "file": "src/storage.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [
+        "saveUrlMapping",
+        "getUrlMapping"
+      ],
+      "slug": "a-url-shortener-app-an-express-api-that--1786967914386",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "getUrlMapping",
+        "saveUrlMapping"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-voting-poll-app-in-typescript-create-p-1787001731335__src-pollService.ts": {
+      "id": "a-voting-poll-app-in-typescript-create-p-1787001731335__src-pollService.ts",
+      "file": "src/pollService.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "PollService",
+        "createPoll",
+        "castVote",
+        "getResults"
+      ],
+      "slug": "a-voting-poll-app-in-typescript-create-p-1787001731335",
+      "app_files": 9,
+      "n_errors": 6,
+      "errors": [
+        "TS2305 L1: Module '\"./types\"' has no exported member 'Vote'.",
+        "TS2322 L10: Type 'string[]' is not assignable to type 'PollOption[]'.   Type 'string' is not assignable to type 'PollOption'.",
+        "TS2339 L20: Property 'votes' does not exist on type 'Poll'.",
+        "TS2339 L27: Property 'votes' does not exist on type 'Poll'.",
+        "TS2339 L30: Property 'votes' does not exist on type 'Poll'."
+      ],
+      "exports_found": [
+        "PollService"
+      ],
+      "exports_missing": [
+        "createPoll",
+        "castVote",
+        "getResults"
+      ],
+      "parsed": true,
+      "ok_exports": false,
+      "passed": false
+    },
+    "a-voting-poll-app-in-typescript-create-p-1787001731335__src-storage.ts": {
+      "id": "a-voting-poll-app-in-typescript-create-p-1787001731335__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "savePoll",
+        "loadPolls"
+      ],
+      "slug": "a-voting-poll-app-in-typescript-create-p-1787001731335",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadPolls",
+        "savePoll"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "a-voting-poll-app-in-typescript-create-p-1787001731335__src-types.ts": {
+      "id": "a-voting-poll-app-in-typescript-create-p-1787001731335__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "Poll",
+        "PollOption"
+      ],
+      "slug": "a-voting-poll-app-in-typescript-create-p-1787001731335",
+      "app_files": 9,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Poll",
+        "PollOption"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "an-event-countdown-planner-app-in-typesc-1787000399819__src-storage.ts": {
+      "id": "an-event-countdown-planner-app-in-typesc-1787000399819__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadEvents",
+        "saveEvents"
+      ],
+      "slug": "an-event-countdown-planner-app-in-typesc-1787000399819",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "loadEvents",
+        "saveEvents"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "an-expense-tracker-app-in-typescript-add-1786987396890__src-expense.ts": {
+      "id": "an-expense-tracker-app-in-typescript-add-1786987396890__src-expense.ts",
+      "file": "src/expense.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "ExpenseItem",
+        "addExpense",
+        "getMonthlyTotals",
+        "getCategoryBreakdown"
+      ],
+      "slug": "an-expense-tracker-app-in-typescript-add-1786987396890",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "ExpenseItem",
+        "addExpense",
+        "getCategoryBreakdown",
+        "getMonthlyTotals"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "an-expense-tracker-app-in-typescript-add-1786987396890__src-storage.ts": {
+      "id": "an-expense-tracker-app-in-typescript-add-1786987396890__src-storage.ts",
+      "file": "src/storage.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "loadExpenses",
+        "saveExpenses"
+      ],
+      "slug": "an-expense-tracker-app-in-typescript-add-1786987396890",
+      "app_files": 7,
+      "n_errors": 1,
+      "errors": [
+        "TS2305 L1: Module '\"./expense\"' has no exported member 'Expense'."
+      ],
+      "exports_found": [
+        "loadExpenses",
+        "saveExpenses"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": false
+    },
+    "an-expense-tracker-app-in-typescript-add-1786997065329__src-expenses.ts": {
+      "id": "an-expense-tracker-app-in-typescript-add-1786997065329__src-expenses.ts",
+      "file": "src/expenses.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "ExpenseItem",
+        "addExpense",
+        "getMonthlyTotals",
+        "getCategoryBreakdown"
+      ],
+      "slug": "an-expense-tracker-app-in-typescript-add-1786997065329",
+      "app_files": 7,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "ExpenseItem",
+        "addExpense",
+        "getCategoryBreakdown",
+        "getMonthlyTotals"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "build-a-simple-cli-todo-manager-in-types-1786566803017__src-todo.ts": {
+      "id": "build-a-simple-cli-todo-manager-in-types-1786566803017__src-todo.ts",
+      "file": "src/todo.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addTodo",
+        "listTodos"
+      ],
+      "slug": "build-a-simple-cli-todo-manager-in-types-1786566803017",
+      "app_files": 4,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Todo",
+        "addTodo",
+        "listTodos"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "build-a-simple-cli-todo-manager-in-types-1786572070132__src-config.ts": {
+      "id": "build-a-simple-cli-todo-manager-in-types-1786572070132__src-config.ts",
+      "file": "src/config.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "build-a-simple-cli-todo-manager-in-types-1786572070132",
+      "app_files": 6,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "DATA_FILE"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "build-a-simple-cli-todo-manager-in-types-1786572070132__src-types.ts": {
+      "id": "build-a-simple-cli-todo-manager-in-types-1786572070132__src-types.ts",
+      "file": "src/types.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [],
+      "slug": "build-a-simple-cli-todo-manager-in-types-1786572070132",
+      "app_files": 6,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "Todo"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "build-a-small-todo-app-add-tasks-mark-do-1788593586525__src-todo.ts": {
+      "id": "build-a-small-todo-app-add-tasks-mark-do-1788593586525__src-todo.ts",
+      "file": "src/todo.ts",
+      "ext": "ts",
+      "mode": "app",
+      "expects": [
+        "addTask",
+        "toggleTaskDone",
+        "deleteTask",
+        "getTasks"
+      ],
+      "slug": "build-a-small-todo-app-add-tasks-mark-do-1788593586525",
+      "app_files": 5,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [
+        "TodoItem",
+        "addTask",
+        "deleteTask",
+        "getTasks",
+        "toggleTaskDone"
+      ],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    },
+    "build-a-todo-list-app-in-a-single-html-f-1786561227765__app.js": {
+      "id": "build-a-todo-list-app-in-a-single-html-f-1786561227765__app.js",
+      "file": "app.js",
+      "ext": "js",
+      "mode": "app",
+      "expects": [],
+      "slug": "build-a-todo-list-app-in-a-single-html-f-1786561227765",
+      "app_files": 2,
+      "n_errors": 0,
+      "errors": [],
+      "exports_found": [],
+      "exports_missing": [],
+      "parsed": true,
+      "ok_exports": true,
+      "passed": true
+    }
+  }
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note Taking App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    .app {
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 24px;
+    }
+    .card {
+      background: #15152a;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .card h3 {
+      margin: 0 0 8px;
+    }
+    .card p {
+      margin: 0 0 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Note Taking App</h1>
+    <div id="notesList" class="grid"></div>
+    <form id="noteForm">
+      <label for="titleInput">Title</label>
+      <input id="titleInput" type="text" placeholder="Enter title" required>
+      <label for="contentInput">Content</label>
+      <textarea id="contentInput" placeholder="Enter content" required></textarea>
+      <button id="saveBtn" class="btn btn-primary" type="submit">💾 Save</button>
+    </form>
+    <div id="statusMsg" role="status"></div>
+  </div>
+  <script>
+    const notesList = document.getElementById('notesList');
+    const noteForm = document.getElementById('noteForm');
+    const titleInput = document.getElementById('titleInput');
+    const contentInput = document.getElementById('contentInput');
+    const statusMsg = document.getElementById('statusMsg');
+
+    noteForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const title = titleInput.value.trim();
+      const content = contentInput.value.trim();
+      if (!title || !content) {
+        statusMsg.textContent = 'Please enter both title and content.';
+        return;
+      }
+
+      const note = { title, content };
+      fetch('/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(note)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          renderNotesList();
+          titleInput.value = '';
+          contentInput.value = '';
+          statusMsg.textContent = 'Note saved successfully.';
+        } else {
+          statusMsg.textContent = 'Failed to save note.';
+        }
+      })
+      .catch(error => {
+        statusMsg.textContent = 'An error occurred while saving the note.';
+      });
+    });
+
+    function renderNotesList() {
+      fetch('/notes')
+        .then(response => response.json())
+        .then(notes => {
+          notesList.innerHTML = '';
+          notes.forEach(note => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<h3>${note.title}</h3><p>${note.content}</p>`;
+            notesList.appendChild(card);
+          });
+        })
+        .catch(error => {
+          statusMsg.textContent = 'An error occurred while fetching notes.';
+        });
+    }
+
+    window.onload = renderNotesList;
+  </script>
+</body>
+</html>

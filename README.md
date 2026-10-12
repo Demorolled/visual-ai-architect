@@ -2,6 +2,11 @@
 
 AI-powered development environment where users build software visually using flowcharts.
 
+> **Working with an AI agent on this repo?** Read [`AGENTS.md`](AGENTS.md) first.
+> It sets an output budget: agents must cap command output with
+> `scripts/cap.sh` instead of dumping whole files, because a single session
+> once produced a 21 MB chat transcript that froze the client.
+
 ## Features
 
 - **Visual Node Editor**: Drag-and-drop canvas for building application flow

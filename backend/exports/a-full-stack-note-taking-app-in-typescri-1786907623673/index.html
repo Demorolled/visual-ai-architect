@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note-Taking App</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .card h3 { margin: 0 0 8px; }
+    .card p { margin: 0 0 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Notes</h1>
+    <div id="notesGrid" class="grid"></div>
+    <button id="addNoteBtn" class="btn" onclick="addNote()">+ Add Note</button>
+    <div id="statusMsg" role="status" style="padding:8px 12px;border-radius:8px;margin-top:10px"></div>
+  </div>
+  <script>
+    const notesGrid = document.getElementById('notesGrid');
+    const statusMsg = document.getElementById('statusMsg');
+
+    let notes = [];
+
+    function displayNotes() {
+      notesGrid.innerHTML = '';
+      notes.forEach(note => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${note.title}</h3><p>${note.content}</p>`;
+        notesGrid.appendChild(card);
+      });
+    }
+
+    function addNote() {
+      const title = prompt('Enter note title:', '');
+      const content = prompt('Enter note content:', '');
+      if (title && content) {
+        notes.push({ title, content });
+        displayNotes();
+        statusMsg.textContent = 'Note added.';
+      }
+    }
+
+    displayNotes();
+  </script>
+</body>
+</html>

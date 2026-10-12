@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background-color: #121212; color: #e0e0e0; font-family: Arial, sans-serif; }
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .btn { padding: 8px 16px; cursor: pointer; }
+    .btn-primary { background-color: #1e88e5; color: white; }
+    .btn-danger { background-color: #e74c3c; color: white; }
+    .card { background-color: #15152a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .card h3 { margin: 0 0 8px; }
+    .card p { margin: 0 0 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Note Taking App</h1>
+    <form id="noteForm">
+      <label for="titleInput">Title</label>
+      <input id="titleInput" type="text" placeholder="Enter title" value="">
+      <label for="contentInput">Content</label>
+      <textarea id="contentInput" placeholder="Enter note content" rows="4"></textarea>
+      <button type="submit" class="btn btn-primary">Add Note</button>
+    </form>
+    <div id="notesList" class="grid"></div>
+  </div>
+  <script>
+    const notesList = document.getElementById('notesList');
+    const noteForm = document.getElementById('noteForm');
+    const titleInput = document.getElementById('titleInput');
+    const contentInput = document.getElementById('contentInput');
+
+    noteForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const title = titleInput.value.trim();
+      const content = contentInput.value.trim();
+
+      if (title && content) {
+        const note = { title, content };
+        fetch('/notes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(note)
+        }).then(response => response.json()).then(data => {
+          if (data.success) {
+            addNoteToUI(note);
+            titleInput.value = '';
+            contentInput.value = '';
+          } else {
+            console.error('Note addition failed:', data.message);
+          }
+        }).catch(error => {
+          console.error('Error adding note:', error);
+        });
+      }
+    });
+
+    function addNoteToUI(note) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${note.title}</h3>
+        <p>${note.content}</p>
+      `;
+      notesList.appendChild(card);
+    }
+
+    fetch('/notes').then(response => response.json()).then(data => {
+      if (data && data.length) {
+        data.forEach(note => addNoteToUI(note));
+      }
+    }).catch(error => {
+      console.error('Error fetching notes:', error);
+    });
+  </script>
+</body>
+</html>

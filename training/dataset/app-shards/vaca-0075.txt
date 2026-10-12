@@ -1,0 +1,2 @@
+{"instruction": "What is the VACA backend route mount `/api/llm` bound to?", "input": "", "output": "`/api/llm` is served by `llmRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}
+{"instruction": "What is the VACA backend route mount `/api/scan` bound to?", "input": "", "output": "`/api/scan` is served by `scannerRoutes` (mounted in backend/src/index.ts).", "source": "backend/src/index.ts"}

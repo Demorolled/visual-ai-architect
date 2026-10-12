@@ -1,0 +1,349 @@
+{
+ "success": true,
+ "projectId": "c242aea5-4e47-4a1d-b431-8c9adf9913a7",
+ "matchedBy": "semantic",
+ "matchScore": 1,
+ "blueprint": {
+  "app_type": "breakout_2",
+  "description": "Classic Breakout with paddle physics, brick types, power-ups, and level progression \u2014 Breakout implementation with paddle reflection physics, multiple brick types (normal/hard/unbreakable), power-up drops (multi-ball, wide paddle), and level progression",
+  "target_stack": {
+   "frontend": "React",
+   "backend": "Node.js Express",
+   "database": "SQLite"
+  },
+  "architecture_checklist": [
+   "Paddle Input",
+   "Ball Physics",
+   "Brick Engine",
+   "Game State",
+   "Game View"
+  ],
+  "wiring_graph": [
+   {
+    "source_module": "Paddle Input",
+    "destination_module": "Ball Physics",
+    "data_passed": "requests"
+   },
+   {
+    "source_module": "Ball Physics",
+    "destination_module": "Brick Engine",
+    "data_passed": "results"
+   },
+   {
+    "source_module": "Brick Engine",
+    "destination_module": "Game State",
+    "data_passed": "state_and_events"
+   },
+   {
+    "source_module": "Game State",
+    "destination_module": "Game View",
+    "data_passed": "data"
+   }
+  ]
+ },
+ "research": {
+  "searched": true,
+  "totalReferences": 8,
+  "web": 4,
+  "github": 2,
+  "openSourceAlt": 2,
+  "context": "\ud83d\udccb Reference designs found from the web, GitHub, and open source alternatives:\n  \u2022 brick-breaker \u00b7 GitHub Topics \u00b7 GitHub\n    Based on the classic arcade game which I first played on a BlackBerry. Brick Breaker is a simple and easy to play game that is iconic. Users are charged with tracking the ball and to not let it hit th\n  \u2022 brick-breaker-game \u00b7 GitHub Topics \u00b7 GitHub\n    A classic Brick Breaker game developed in Java. Break bricks by bouncing the ball off the paddle while avoiding losing the ball. Features multiple levels, increasing difficulty, and a scoring system. \n  \u2022 \u2b507 abcdvvvv/Breakout: A brick breaker game\n  \u2022 \u2b505 ReaperOverwatcher/Breakout-Game: \ud83c\udfd3 Brick Breaker Arcade: A recreation of Breakout featuring complex ball trajectory physics. \ud83c\udfaf Excellent for mastering game loops and advanced level \n  \u2022 godot (gaming): Your open-source game engine\n  \u2022 gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture."
+ },
+ "internalKnowledge": {
+  "searched": true,
+  "patterns": 3,
+  "wikiSections": 2,
+  "context": "\ud83d\udcd7 MATCHING WIKI SECTIONS (modelVeronice.txt \u2014 platform knowledge, history, lessons):\n  \u2022 Section 42: SESSION UPDATE \u2014 August 6, 2026: ROUND-4 FINE-TUNE SHIPS, DEPLOY FIX, AND THE 504-CHUNK BIBLE\n    42.0 THREE WORKSTREAMS TODAY\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n- The QLoRA training loop was closed end-to-end: the SFTConfig pickle crash was\n  fixed at the root (Change 24), round 4 trained on the 25 genuine failures,\n  deployed without recovery, and benchmarked (Change 26).\n- The Programming Bible gre\n  \u2022 Section 9: DATA & KNOWLEDGE STORES\n    9.1 DATA DIRECTORY (data/)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesigns.json                 \u2014 Generated design catalog (design storage)\ndesign-specs-v2.json         \u2014 Design specifications (v2)\nnode-designs.json            \u2014 Node design catalog\nsession-memory.json          \u2014 Session memory/persistence\ndesig\n\ud83e\udde0 MATCHING INTERNAL PATTERNS (knowledge store \u2014 proven code from past builds):\n  \u2022 void_raider game architecture \u2014 5-module arcade blueprint\n    Complete game architecture for arcade space-shooter builds: 5 modules, wiring contracts, real-time loop, wave escalation\n    Code: // Game architecture (void_raider blueprint) \u2014 one file per module:\n//   Ship Controls \u2192 Combat Engine (requests)\n//   Wave Manager \u2192 Enemy AI (state_and_events)\n//   Enemy AI \u2192 Combat Engine (data)\n//   Combat Engine \u2192 Game Renderer (data)\n//\n// Gam\n  \u2022 canvas game loop \u2014 real-time, not turn-based\n    A playable canvas game loop: fixed-clamp dt, update/render split, requestAnimationFrame; the generated 7B renderers are static HUDs without this\n    Code: let last = performance.now();\nfunction loop(now) {\n  const dt = Math.min(0.05, (now - last) / 1000);\n  last = now;\n  update(dt);\n  render();\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\n// update(dt) must: move player (input), move \n  \u2022 terminal arcade game \u2014 Java CLI (javac 21)\n    Playable terminal arcade in Java: input polling, wave escalation, collision, lives; javac naming rule\n    Code: // One package (no package statement). Files: Game (main loop + waves +\n// collisions + lives), Player (move clamped to field), Enemy (descent +\n// sideways drift, hp, respawn at top), Projectile (upward), Render\n// (ANSI clearScreen + frame draw).\n/"
+ },
+ "candidates": [
+  {
+   "app_type": "breakout_2",
+   "score": 1
+  },
+  {
+   "app_type": "breakout",
+   "score": 0.69019460445005
+  },
+  {
+   "app_type": "freecell_solitaire",
+   "score": 0.34657425918357315
+  },
+  {
+   "app_type": "klondike_solitaire",
+   "score": 0.3366700865083859
+  },
+  {
+   "app_type": "mahjong_solitaire",
+   "score": 0.33510052044720373
+  }
+ ],
+ "project": {
+  "id": "c242aea5-4e47-4a1d-b431-8c9adf9913a7",
+  "name": "a breakout brick breaker game",
+  "targetOS": "linux",
+  "nodeCount": 6,
+  "edgeCount": 4,
+  "nodes": [
+   {
+    "id": "master",
+    "type": "master",
+    "label": "breakout_2 blueprint"
+   },
+   {
+    "id": "mod_0",
+    "type": "input",
+    "label": "Paddle Input"
+   },
+   {
+    "id": "mod_1",
+    "type": "logic",
+    "label": "Ball Physics"
+   },
+   {
+    "id": "mod_2",
+    "type": "logic",
+    "label": "Brick Engine"
+   },
+   {
+    "id": "mod_3",
+    "type": "logic",
+    "label": "Game State"
+   },
+   {
+    "id": "mod_4",
+    "type": "ui",
+    "label": "Game View"
+   }
+  ],
+  "edges": [
+   {
+    "id": "edge_0",
+    "source": "mod_0",
+    "target": "mod_1"
+   },
+   {
+    "id": "edge_1",
+    "source": "mod_1",
+    "target": "mod_2"
+   },
+   {
+    "id": "edge_2",
+    "source": "mod_2",
+    "target": "mod_3"
+   },
+   {
+    "id": "edge_3",
+    "source": "mod_3",
+    "target": "mod_4"
+   }
+  ]
+ },
+ "verifiedCapture": {
+  "captured": 2,
+  "skipped": 0,
+  "filePath": "/home/final-flash1/Desktop/visual-ai-architect/training/dataset/verified-generations.jsonl",
+  "reasons": {
+   "not-verified": 3,
+   "wrapper-or-html": 1
+  }
+ },
+ "drift": {
+  "expected": [
+   "Paddle Input",
+   "Ball Physics",
+   "Brick Engine",
+   "Game State",
+   "Game View"
+  ],
+  "generated": [
+   "Paddle Input",
+   "Ball Physics",
+   "Brick Engine",
+   "Game State",
+   "Game View"
+  ],
+  "matched": [
+   "Paddle Input",
+   "Ball Physics",
+   "Brick Engine",
+   "Game State",
+   "Game View"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "clean": true
+ },
+ "files": [
+  {
+   "fileName": "paddle-input.ts",
+   "language": "typescript",
+   "code": "// Paddle Input module for a breakout game.\n// This module handles paddle input events and updates the ball position based on paddle reflection physics.\n\n// Import necessary modules and types\n\ninterface Paddle {\n  position: { x: number; y: number };\n  width: number;\n}\n\ninterface Ball {\n  position: { x: number; y: number };\n  velocityX: number;\n  velocityY: number;\n  radius: number;\n}\n\nclass PaddleInput {\n  private paddle: Paddle;\n\n  constructor(paddle: Paddle) {\n    this.paddle = paddle;\n  }\n\n  handleKeyDown(event: KeyboardEvent): void {\n    const key = event.key;\n    switch (key) {\n      case 'ArrowUp':\n        if (this.paddle.position.y > 0) {\n          this.paddle.position.y -= 10; // Adjust velocity to simulate movement\n        }\n        break;\n      case 'ArrowDown':\n        if (this.paddle.position.y + this.paddle.width < 400) { // assuming canvas height is 400px\n          this.paddle.position.y += 10; // Adjust velocity to simulate movement\n        }\n        break;\n    }\n  }\n}\n\n// Export the module function\nexport default PaddleInput;",
+   "nodeId": "mod_0",
+   "nodeLabel": "Paddle Input",
+   "dependencies": [],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "ball-physics.ts",
+   "language": "typescript",
+   "code": "import PaddleInput from '../paddle-input/paddle-input.ts';\n\n// Ball Physics module for a breakout game.\nclass Ball {\n  public position: { x: number; y: number };\n  public velocityX: number;\n  public velocityY: number;\n  public radius: number;\n\n  constructor(radius = 10) {\n    this.position = { x: 200, y: 200 }; // Center of the ball\n    this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n    this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n    this.radius = radius;\n  }\n\n  update(dt: number): void {\n    this.position.x += dt * this.velocityX;\n    this.position.y += dt * this.velocityY;\n\n    // Check for collisions with walls\n    if (this.position.x < 0 || this.position.x > 400) {\n      this.velocityX *= -1; // Reverse horizontal direction on collision with left or right wall\n    }\n    if (this.position.y < 0) {\n      this.velocityY *= -1;\n    } else if (this.position.y > 320) {\n      // Ball has gone past the paddle, reset it and change direction\n      this.reset();\n      this.velocityX *= -1;\n    }\n  }\n\n  reset(): void {\n    this.position = { x: 200, y: 200 }; // Reset ball to center of the canvas\n    this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n    this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n  }\n}\n\nexport default Ball;",
+   "nodeId": "mod_1",
+   "nodeLabel": "Ball Physics",
+   "dependencies": [
+    "Paddle Input"
+   ],
+   "exports": [],
+   "errors": [
+    "\u001b[96mindex.ts\u001b[0m:\u001b[93m1\u001b[0m:\u001b[93m25\u001b[0m - \u001b[91merror\u001b[0m\u001b[90m TS2307: \u001b[0mCannot find module '../paddle-input/paddle-input.ts' or its corresponding type declarations.\n\n\u001b[7m1\u001b[0m import PaddleInput from '../paddle-input/paddle-input.ts';\n\u001b[7m \u001b[0m \u001b[91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\u001b[0m\n\n\nFound 1 error in index.ts\u001b[90m:1\u001b[0m"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "brick-engine.ts",
+   "language": "typescript",
+   "code": "import Ball from '../ball-physics/ball-physics.ts';\n\nexport class Ball {\n  public position: { x: number; y: number };\n  public velocityX: number;\n  public velocityY: number;\n  public radius: number;\n\n  constructor(radius = 10) {\n    this.position = { x: 200, y: 200 }; // Center of the ball\n    this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n    this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n    this.radius = radius;\n  }\n\n  update(dt: number): void {\n    this.position.x += dt * this.velocityX;\n    this.position.y += dt * this.velocityY;\n\n    // Check for collisions with walls\n    if (this.position.x < 0 || this.position.x > 400) {\n      this.velocityX *= -1; // Reverse horizontal direction on collision with left or right wall\n    }\n    if (this.position.y < 0) {\n      this.velocityY *= -1;\n    } else if (this.position.y > 320) {\n      // Ball has gone past the paddle, reset it and change direction\n      this.reset();\n      this.velocityX *= -1;\n    }\n  }\n\n  reset(): void {\n    this.position = { x: 200, y: 200 }; // Reset ball to center of the canvas\n    this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n    this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n  }\n}",
+   "nodeId": "mod_2",
+   "nodeLabel": "Brick Engine",
+   "dependencies": [
+    "Ball Physics"
+   ],
+   "exports": [
+    "Ball"
+   ],
+   "errors": [
+    "TS2395: Individual declarations in merged declaration 'Ball' must be all exported or all local. (line 1)",
+    "TS2440: Import declaration conflicts with local declaration of 'Ball'. (line 1)",
+    "TS2395: Individual declarations in merged declaration 'Ball' must be all exported or all local. (line 3)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-state.ts",
+   "language": "typescript",
+   "code": "export interface Brick {\n  x: number;\n  y: number;\n  width: number;\n  height: number;\n  hitCount: number;\n  color: string;\n}\n\nexport interface Paddle {\n  x: number;\n  y: number;\n  width: number;\n  height: number;\n  velocity: number;\n  color: string;\n}\n\nexport interface Ball {\n  x: number;\n  y: number;\n  velocityX: number;\n  velocityY: number;\n  radius: number;\n  color: string;\n}\n\nexport interface GameState {\n  bricks: Brick[];\n  paddle: Paddle;\n  ball: Ball;\n  score: number;\n  lives: number;\n  level: number;\n  highScore: number;\n  gameRunning: boolean;\n  gameOver: boolean;\n  gameWin: boolean;\n}\n\nexport function createGameState(): GameState {\n  const bricks: Brick[] = [];\n  const rows = 5;\n  const cols = 8;\n  const startX = 100;\n  const startY = 20;\n  const brickSize = 50;\n  const gap = 10;\n  const paddle = {\n    x: startX + (cols * brickSize) / 2 - 40,\n    y: 450,\n    width: 80,\n    height: 20,\n    velocity: 0,\n    color: '#00d9ff',\n  };\n  const ball = {\n    x: startX + (cols * brickSize) / 2,\n    y: startY + (rows * brickSize) / 2,\n    velocityX: 2,\n    velocityY: -2,\n    radius: 6,\n    color: '#ffffff',\n  };\n  const score = 0;\n  const lives = 3;\n  const level = 1;\n  const highScore = 0;\n  const gameRunning = true;\n  const gameOver = false;\n  const gameWin = false;\n\n  for (let row = 0; row < rows; row++) {\n    for (let col = 0; col < cols; col++) {\n      bricks.push({\n        x: startX + col * (brickSize + gap),\n        y: startY + row * (brickSize + gap),\n        width: brickSize,\n        height: brickSize,\n        hitCount: 0,\n        color: row === 0 ? '#ff6b6b' : row === 1 ? '#ffcc66' : row === 2 ? '#66d9ff' : row === 3 ? '#66ff66' : '#ff9f40',\n      });\n    }\n  }\n\n  return { bricks, paddle, ball, score, lives, level, highScore, gameRunning, gameOver, gameWin };\n}\n\nexport function updateGameState(state: GameState, dt: number): GameState {\n  const ball = state.ball;\n  const paddle = state.paddle;\n  const bricks = state.bricks;\n  const score = state.score;\n  const lives = state.lives;\n  const gameRunning = state.gameRunning;\n  const gameOver = state.gameOver;\n  const gameWin = state.gameWin;\n\n  if (!gameRunning) return state;\n\n  // Update paddle\n  const paddleSpeed = 4;\n  const input = { left: false, right: false };\n  if (paddle.x > 0 && paddle.x < 400 - paddle.width) {\n    if (input.left) paddle.velocity = -paddleSpeed;\n    if (input.right) paddle.velocity = paddleSpeed;\n  } else {\n    if (paddle.x > 0) paddle.velocity = -paddleSpeed;\n    if (paddle.x < 400 - paddle.width) paddle.velocity = paddleSpeed;\n  }\n  paddle.x += paddle.velocity * dt;\n\n  // Update ball\n  ball.x += ball.velocityX * dt;\n  ball.y += ball.velocityY * dt;\n\n  // Check for wall collision\n  if (ball.x < 0 || ball.x > 400 - ball.radius * 2) {\n    ball.velocityX = -ball.velocityX;\n  }\n  if (ball.y < 0) {\n    ball.velocityY = -ball.velocityY;\n  }\n\n  // Check for paddle collision\n  if (ball.y > 450 && ball.y < 450 + paddle.height) {\n    if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {\n      ball.velocityY = -ball.velocityY;\n      ball.velocityX = (ball.x - (paddle.x + paddle.width / 2)) / 20 * paddleSpeed;\n      if (Math.abs(ball.velocityX) < 1) ball.velocityX = 1;\n    }\n  }\n\n  // Check for brick collision\n  for (let i = 0; i < bricks.length; i++) {\n    const brick = bricks[i];\n    if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brick.height) {\n      ball.velocityY = -ball.velocityY;\n      brick.hitCount++;\n      if (brick.hitCount >= 3) {\n        bricks.splice(i, 1);\n        i--;\n      }\n      score++;\n      if (score >= 100) {\n        gameRunning = false;\n        gameOver = false;\n        gameWin = true;\n      }\n      break;\n    }\n  }\n\n  // Check for game over\n  if (ball.y > 480) {\n    lives--;\n    if (lives === 0) {\n      gameRunning = false;\n      gameOver = true;\n    } else {\n      ball.x = 200;\n      ball.y = 450;\n      ball.velocityX = 2;\n      ball.velocityY = -2;\n      paddle.x = 200;\n    }\n  }\n\n  return { ...state, ball, paddle, score, lives, gameRunning, gameOver, gameWin };\n}",
+   "nodeId": "mod_3",
+   "nodeLabel": "Game State",
+   "dependencies": [],
+   "exports": [
+    "Brick",
+    "Paddle",
+    "Ball",
+    "GameState",
+    "createGameState",
+    "updateGameState"
+   ],
+   "errors": [
+    "TS2588: Cannot assign to 'score' because it is a constant. (line 144)",
+    "TS2588: Cannot assign to 'gameRunning' because it is a constant. (line 146)",
+    "TS2588: Cannot assign to 'gameOver' because it is a constant. (line 147)",
+    "TS2588: Cannot assign to 'gameWin' because it is a constant. (line 148)",
+    "TS2588: Cannot assign to 'lives' because it is a constant. (line 156)",
+    "TS2588: Cannot assign to 'gameRunning' because it is a constant. (line 158)",
+    "TS2588: Cannot assign to 'gameOver' because it is a constant. (line 159)"
+   ],
+   "validated": false
+  },
+  {
+   "fileName": "game-view.ts",
+   "language": "typescript",
+   "code": "import { GameState, createGameState, updateGameState } from '../game-state/game-state.ts';\n\nconst canvas = document.createElement('canvas');\ncanvas.width = 400;\ncanvas.height = 600;\ndocument.body.appendChild(canvas);\n\nconst ctx = canvas.getContext('2d');\n\nlet ball = { x: 200, y: 300, vx: 4, vy: -4, radius: 6 };\nlet paddle = { x: 180, y: 550, width: 100, height: 20, velocity: 0 };\nlet bricks = [];\nlet score = 0;\nlet lives = 3;\nlet gameOver = false;\n\nconst brickRows = 5;\nconst brickCols = 8;\nconst brickSize = 50;\nconst brickGap = 10;\n\nfunction createBricks() {\n  bricks = [];\n  const startX = 100;\n  const startY = 50;\n  for (let row = 0; row < brickRows; row++) {\n    for (let col = 0; col < brickCols; col++) {\n      bricks.push({\n        x: startX + col * (brickSize + brickGap),\n        y: startY + row * (brickSize + brickGap),\n        width: brickSize,\n        height: brickSize,\n        color: row === 0 ? 'red' : row === 1 ? 'orange' : row === 2 ? 'yellow' : row === 3 ? 'green' : 'blue'\n      });\n    }\n  }\n}\n\nfunction drawBall() {\n  ctx.beginPath();\n  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);\n  ctx.fillStyle = '#ffffff';\n  ctx.fill();\n  ctx.closePath();\n}\n\nfunction drawPaddle() {\n  ctx.fillStyle = '#00d9ff';\n  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);\n}\n\nfunction drawBricks() {\n  bricks.forEach(brick => {\n    ctx.fillStyle = brick.color;\n    ctx.fillRect(brick.x, brick.y, brick.width, brick.height);\n  });\n}\n\nfunction drawScore() {\n  ctx.fillStyle = '#ffffff';\n  ctx.font = '20px Arial';\n  ctx.fillText(`Score: ${score}`, 10, 30);\n}\n\nfunction drawLives() {\n  ctx.fillStyle = '#ffffff';\n  ctx.font = '20px Arial';\n  ctx.fillText(`Lives: ${lives}`, 350, 30);\n}\n\nfunction update() {\n  if (gameOver) return;\n\n  ball.x += ball.vx;\n  ball.y += ball.vy;\n\n  // Wall collision\n  if (ball.x - ball.radius < 0 || ball.x + ball.radius > 400) {\n    ball.vx = -ball.vx;\n  }\n\n  // Paddle collision\n  if (ball.y > 550 && ball.y < 550 + paddle.height) {\n    if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {\n      ball.vy = -ball.vy;\n      ball.vx = (ball.x - (paddle.x + paddle.width / 2)) / 20 * 3;\n      if (Math.abs(ball.vx) < 1) ball.vx = 1;\n    }\n  }\n\n  // Brick collision\n  bricks.forEach(brick => {\n    if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brick.height) {\n      ball.vy = -ball.vy;\n      bricks.splice(bricks.indexOf(brick), 1);\n      score++;\n      if (bricks.length === 0) {\n        gameOver = true;\n      }\n      return;\n    }\n  });\n\n  // Game over\n  if (ball.y > 580) {\n    lives--;\n    if (lives === 0) {\n      gameOver = true;\n    } else {\n      ball.x = 200;\n      ball.y = 580;\n      ball.vx = 4;\n      ball.vy = -4;\n      paddle.x = 180;\n    }\n  }\n}\n\nfunction render() {\n  ctx.clearRect(0, 0, 400, 600);\n  drawBall();\n  drawPaddle();\n  drawBricks();\n  drawScore();\n  drawLives();\n  requestAnimationFrame(render);\n}\n\nfunction movePaddle() {\n  if (paddle.velocity > 0) {\n    paddle.x += paddle.velocity;\n    if (paddle.x + paddle.width > 400) {\n      paddle.x = 400 - paddle.width;\n    }\n  } else if (paddle.velocity < 0) {\n    paddle.x += paddle.velocity;\n    if (paddle.x < 0) {\n      paddle.x = 0;\n    }\n  }\n}\n\nfunction init() {\n  createBricks();\n  render();\n  setInterval(() => { movePaddle(); }, 16);\n}\n\ninit();",
+   "nodeId": "mod_4",
+   "nodeLabel": "Game View",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  },
+  {
+   "fileName": "index.html",
+   "language": "html",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <base href=\"http://localhost:3001/\">\n  <title>a breakout brick breaker game</title>\n  <meta name=\"description\" content=\"a breakout brick breaker game \u2014 generated by VACA\">\n  <style>\n    /* \u2500\u2500 Base Reset \u2500\u2500 */\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }\n    body { background: #0f0f1a; color: #e0e0e0; display: flex; flex-direction: column; }\n\n    /* \u2500\u2500 Error Toast \u2500\u2500 */\n    #error-toast { display: none; position: fixed; top: 12px; right: 12px; z-index: 9999;\n      background: #ef4444; color: white; padding: 10px 16px; border-radius: 8px;\n      font-size: 13px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);\n      animation: slideIn 0.2s ease-out; }\n    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n\n    /* \u2500\u2500 Loading \u2500\u2500 */\n    #loading { display: flex; align-items: center; justify-content: center; height: 100vh;\n      flex-direction: column; gap: 16px; color: #64748b; }\n    #loading .spinner { width: 32px; height: 32px; border: 3px solid rgba(74,158,255,0.2);\n      border-top-color: #4a9eff; border-radius: 50%; animation: spin 0.6s linear infinite; }\n    @keyframes spin { to { transform: rotate(360deg); } }\n    #loading-bar { width: 200px; height: 3px; background: rgba(74,158,255,0.15); border-radius: 4px; overflow: hidden; margin-top: 4px; }\n    #loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4a9eff, #60a5fa); border-radius: 4px; animation: progress 1.5s ease-in-out infinite; }\n    @keyframes progress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }\n\n    /* \u2500\u2500 App Container \u2500\u2500 */\n    #app-container { flex: 1; display: flex; flex-direction: column; min-height: 0; }\n\n    /* \u2500\u2500 App-generated CSS \u2500\u2500 */\n\n  </style>\n</head>\n<body>\n  <div id=\"error-toast\"></div>\n  <div id=\"loading\">\n    <div class=\"spinner\"></div>\n    <span>Loading a breakout brick breaker game...</span>\n    <div id=\"loading-bar\"><div id=\"loading-bar-fill\"></div></div>\n  </div>\n  <div id=\"app-container\"></div>\n\n  <script>\n    // \u2500\u2500 Global error boundary \u2500\u2500\n    function addError(msg) {\n      var toast = document.getElementById('error-toast');\n      if (!toast) return;\n      toast.textContent = '\u26a0\ufe0f ' + msg;\n      toast.style.display = 'block';\n      setTimeout(function() { toast.style.display = 'none'; }, 5000);\n    }\n    window.addEventListener('error', function(ev) { addError(ev.message || 'Unknown error'); });\n    window.addEventListener('unhandledrejection', function(ev) { addError((ev.reason && ev.reason.message) || 'Unhandled rejection'); });\n      // \u2500\u2500 Declare module namespaces (used by the legacy IIFEs below) \u2500\u2500\n      var Paddle_Input = {}; var Ball_Physics = {}; var Brick_Engine = {}; var Game_State = {}; var Game_View = {};\n  </script>\n\n  <!-- \u2500\u2500 Inline Generated JS (esbuild-bundled so cross-module imports resolve) \u2500\u2500 -->\n<script>\n// \u2500\u2500 paddle-input.ts \u2500\u2500\n\n(function(exports) {\n// Paddle Input module for a breakout game.\n// This module handles paddle input events and updates the ball position based on paddle reflection physics.\n\nclass PaddleInput {\n    constructor(paddle) {\n        this.paddle = paddle;\n    }\n    handleKeyDown(event) {\n        const key = event.key;\n        switch (key) {\n            case 'ArrowUp':\n                if (this.paddle.position.y > 0) {\n                    this.paddle.position.y -= 10; // Adjust velocity to simulate movement\n                }\n                break;\n            case 'ArrowDown':\n                if (this.paddle.position.y + this.paddle.width < 400) { // assuming canvas height is 400px\n                    this.paddle.position.y += 10; // Adjust velocity to simulate movement\n                }\n                break;\n        }\n    }\n}\n// Export the module function\nexports.default = PaddleInput;\n})(typeof Paddle_Input !== 'undefined' ? Paddle_Input : {});\n\n// \u2500\u2500 ball-physics.ts \u2500\u2500\n\n(function(exports) {\n// Ball Physics module for a breakout game.\nclass Ball {\n    constructor(radius = 10) {\n        this.position = { x: 200, y: 200 }; // Center of the ball\n        this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n        this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n        this.radius = radius;\n    }\n    update(dt) {\n        this.position.x += dt * this.velocityX;\n        this.position.y += dt * this.velocityY;\n        // Check for collisions with walls\n        if (this.position.x < 0 || this.position.x > 400) {\n            this.velocityX *= -1; // Reverse horizontal direction on collision with left or right wall\n        }\n        if (this.position.y < 0) {\n            this.velocityY *= -1;\n        }\n        else if (this.position.y > 320) {\n            // Ball has gone past the paddle, reset it and change direction\n            this.reset();\n            this.velocityX *= -1;\n        }\n    }\n    reset() {\n        this.position = { x: 200, y: 200 }; // Reset ball to center of the canvas\n        this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n        this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n    }\n}\nexports.default = Ball;\n})(typeof Ball_Physics !== 'undefined' ? Ball_Physics : {});\n\n// \u2500\u2500 brick-engine.ts \u2500\u2500\n\n(function(exports) {\nexports.Ball = void 0;\nclass Ball {\n    constructor(radius = 10) {\n        this.position = { x: 200, y: 200 }; // Center of the ball\n        this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n        this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n        this.radius = radius;\n    }\n    update(dt) {\n        this.position.x += dt * this.velocityX;\n        this.position.y += dt * this.velocityY;\n        // Check for collisions with walls\n        if (this.position.x < 0 || this.position.x > 400) {\n            this.velocityX *= -1; // Reverse horizontal direction on collision with left or right wall\n        }\n        if (this.position.y < 0) {\n            this.velocityY *= -1;\n        }\n        else if (this.position.y > 320) {\n            // Ball has gone past the paddle, reset it and change direction\n            this.reset();\n            this.velocityX *= -1;\n        }\n    }\n    reset() {\n        this.position = { x: 200, y: 200 }; // Reset ball to center of the canvas\n        this.velocityX = Math.random() * 5; // Random horizontal speed in range (-5, 5)\n        this.velocityY = Math.random() * 5 + Math.sign(Math.random()); // Vertical speed that allows bounce up or down\n    }\n}\nexports.Ball = Ball;\n})(typeof Brick_Engine !== 'undefined' ? Brick_Engine : {});\n\n// \u2500\u2500 game-state.ts \u2500\u2500\n\n(function(exports) {\nexports.createGameState = createGameState;\nexports.updateGameState = updateGameState;\nfunction createGameState() {\n    const bricks = [];\n    const rows = 5;\n    const cols = 8;\n    const startX = 100;\n    const startY = 20;\n    const brickSize = 50;\n    const gap = 10;\n    const paddle = {\n        x: startX + (cols * brickSize) / 2 - 40,\n        y: 450,\n        width: 80,\n        height: 20,\n        velocity: 0,\n        color: '#00d9ff',\n    };\n    const ball = {\n        x: startX + (cols * brickSize) / 2,\n        y: startY + (rows * brickSize) / 2,\n        velocityX: 2,\n        velocityY: -2,\n        radius: 6,\n        color: '#ffffff',\n    };\n    const score = 0;\n    const lives = 3;\n    const level = 1;\n    const highScore = 0;\n    const gameRunning = true;\n    const gameOver = false;\n    const gameWin = false;\n    for (let row = 0; row < rows; row++) {\n        for (let col = 0; col < cols; col++) {\n            bricks.push({\n                x: startX + col * (brickSize + gap),\n                y: startY + row * (brickSize + gap),\n                width: brickSize,\n                height: brickSize,\n                hitCount: 0,\n                color: row === 0 ? '#ff6b6b' : row === 1 ? '#ffcc66' : row === 2 ? '#66d9ff' : row === 3 ? '#66ff66' : '#ff9f40',\n            });\n        }\n    }\n    return { bricks, paddle, ball, score, lives, level, highScore, gameRunning, gameOver, gameWin };\n}\nfunction updateGameState(state, dt) {\n    const ball = state.ball;\n    const paddle = state.paddle;\n    const bricks = state.bricks;\n    const score = state.score;\n    const lives = state.lives;\n    const gameRunning = state.gameRunning;\n    const gameOver = state.gameOver;\n    const gameWin = state.gameWin;\n    if (!gameRunning)\n        return state;\n    // Update paddle\n    const paddleSpeed = 4;\n    const input = { left: false, right: false };\n    if (paddle.x > 0 && paddle.x < 400 - paddle.width) {\n        if (input.left)\n            paddle.velocity = -paddleSpeed;\n        if (input.right)\n            paddle.velocity = paddleSpeed;\n    }\n    else {\n        if (paddle.x > 0)\n            paddle.velocity = -paddleSpeed;\n        if (paddle.x < 400 - paddle.width)\n            paddle.velocity = paddleSpeed;\n    }\n    paddle.x += paddle.velocity * dt;\n    // Update ball\n    ball.x += ball.velocityX * dt;\n    ball.y += ball.velocityY * dt;\n    // Check for wall collision\n    if (ball.x < 0 || ball.x > 400 - ball.radius * 2) {\n        ball.velocityX = -ball.velocityX;\n    }\n    if (ball.y < 0) {\n        ball.velocityY = -ball.velocityY;\n    }\n    // Check for paddle collision\n    if (ball.y > 450 && ball.y < 450 + paddle.height) {\n        if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {\n            ball.velocityY = -ball.velocityY;\n            ball.velocityX = (ball.x - (paddle.x + paddle.width / 2)) / 20 * paddleSpeed;\n            if (Math.abs(ball.velocityX) < 1)\n                ball.velocityX = 1;\n        }\n    }\n    // Check for brick collision\n    for (let i = 0; i < bricks.length; i++) {\n        const brick = bricks[i];\n        if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brick.height) {\n            ball.velocityY = -ball.velocityY;\n            brick.hitCount++;\n            if (brick.hitCount >= 3) {\n                bricks.splice(i, 1);\n                i--;\n            }\n            score++;\n            if (score >= 100) {\n                gameRunning = false;\n                gameOver = false;\n                gameWin = true;\n            }\n            break;\n        }\n    }\n    // Check for game over\n    if (ball.y > 480) {\n        lives--;\n        if (lives === 0) {\n            gameRunning = false;\n            gameOver = true;\n        }\n        else {\n            ball.x = 200;\n            ball.y = 450;\n            ball.velocityX = 2;\n            ball.velocityY = -2;\n            paddle.x = 200;\n        }\n    }\n    return Object.assign(Object.assign({}, state), { ball, paddle, score, lives, gameRunning, gameOver, gameWin });\n}\n})(typeof Game_State !== 'undefined' ? Game_State : {});\n\n// \u2500\u2500 game-view.ts \u2500\u2500\n\n(function(exports) {\nconst canvas = document.createElement('canvas');\ncanvas.width = 400;\ncanvas.height = 600;\ndocument.body.appendChild(canvas);\nconst ctx = canvas.getContext('2d');\nlet ball = { x: 200, y: 300, vx: 4, vy: -4, radius: 6 };\nlet paddle = { x: 180, y: 550, width: 100, height: 20, velocity: 0 };\nlet bricks = [];\nlet score = 0;\nlet lives = 3;\nlet gameOver = false;\nconst brickRows = 5;\nconst brickCols = 8;\nconst brickSize = 50;\nconst brickGap = 10;\nfunction createBricks() {\n    bricks = [];\n    const startX = 100;\n    const startY = 50;\n    for (let row = 0; row < brickRows; row++) {\n        for (let col = 0; col < brickCols; col++) {\n            bricks.push({\n                x: startX + col * (brickSize + brickGap),\n                y: startY + row * (brickSize + brickGap),\n                width: brickSize,\n                height: brickSize,\n                color: row === 0 ? 'red' : row === 1 ? 'orange' : row === 2 ? 'yellow' : row === 3 ? 'green' : 'blue'\n            });\n        }\n    }\n}\nfunction drawBall() {\n    ctx.beginPath();\n    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);\n    ctx.fillStyle = '#ffffff';\n    ctx.fill();\n    ctx.closePath();\n}\nfunction drawPaddle() {\n    ctx.fillStyle = '#00d9ff';\n    ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);\n}\nfunction drawBricks() {\n    bricks.forEach(brick => {\n        ctx.fillStyle = brick.color;\n        ctx.fillRect(brick.x, brick.y, brick.width, brick.height);\n    });\n}\nfunction drawScore() {\n    ctx.fillStyle = '#ffffff';\n    ctx.font = '20px Arial';\n    ctx.fillText(\\`Score: \\${score}\\`, 10, 30);\n}\nfunction drawLives() {\n    ctx.fillStyle = '#ffffff';\n    ctx.font = '20px Arial';\n    ctx.fillText(\\`Lives: \\${lives}\\`, 350, 30);\n}\nfunction update() {\n    if (gameOver)\n        return;\n    ball.x += ball.vx;\n    ball.y += ball.vy;\n    // Wall collision\n    if (ball.x - ball.radius < 0 || ball.x + ball.radius > 400) {\n        ball.vx = -ball.vx;\n    }\n    // Paddle collision\n    if (ball.y > 550 && ball.y < 550 + paddle.height) {\n        if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {\n            ball.vy = -ball.vy;\n            ball.vx = (ball.x - (paddle.x + paddle.width / 2)) / 20 * 3;\n            if (Math.abs(ball.vx) < 1)\n                ball.vx = 1;\n        }\n    }\n    // Brick collision\n    bricks.forEach(brick => {\n        if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brick.height) {\n            ball.vy = -ball.vy;\n            bricks.splice(bricks.indexOf(brick), 1);\n            score++;\n            if (bricks.length === 0) {\n                gameOver = true;\n            }\n            return;\n        }\n    });\n    // Game over\n    if (ball.y > 580) {\n        lives--;\n        if (lives === 0) {\n            gameOver = true;\n        }\n        else {\n            ball.x = 200;\n            ball.y = 580;\n            ball.vx = 4;\n            ball.vy = -4;\n            paddle.x = 180;\n        }\n    }\n}\nfunction render() {\n    ctx.clearRect(0, 0, 400, 600);\n    drawBall();\n    drawPaddle();\n    drawBricks();\n    drawScore();\n    drawLives();\n    requestAnimationFrame(render);\n}\nfunction movePaddle() {\n    if (paddle.velocity > 0) {\n        paddle.x += paddle.velocity;\n        if (paddle.x + paddle.width > 400) {\n            paddle.x = 400 - paddle.width;\n        }\n    }\n    else if (paddle.velocity < 0) {\n        paddle.x += paddle.velocity;\n        if (paddle.x < 0) {\n            paddle.x = 0;\n        }\n    }\n}\nfunction init() {\n    createBricks();\n    render();\n    setInterval(() => { movePaddle(); }, 16);\n}\ninit();\n})(typeof Game_View !== 'undefined' ? Game_View : {});\n</script>\n\n  <script>\n    // \u2500\u2500 Initialize app \u2500\u2500\n    try {\n      var loadingEl = document.getElementById('loading');\n      var containerEl = document.getElementById('app-container');\n      if (loadingEl) loadingEl.style.display = 'none';\n      if (containerEl) containerEl.style.display = 'flex';\n  try { if(typeof Brick_Engine.Ball === 'function' && !/^class\\s/.test(String(Brick_Engine.Ball))) Brick_Engine.Ball(document.getElementById('app-container')); else console.log('brick-engine.ts: awaiting user interaction'); } catch(e) { console.warn('Brick Engine init:', e); }\n  try { if(typeof Game_State.Brick === 'function' && !/^class\\s/.test(String(Game_State.Brick))) Game_State.Brick(document.getElementById('app-container')); else console.log('game-state.ts: awaiting user interaction'); } catch(e) { console.warn('Game State init:', e); }\n      // GUI entry placeholder \u2014 only when there was NOTHING to assemble (no\n      // web-language files). Apps that DO have JS render asynchronously may\n      // legitimately mount nothing at init, so don't clobber them.\n      // jsFiles is interpolated at build time (5) \u2014 a bare\n      // reference would leak an undeclared identifier into the page and throw\n      // a ReferenceError that blanks every GUI preview.\n      if (containerEl && 5 === 0 && !containerEl.children.length && !containerEl.textContent.trim()) {\n        containerEl.innerHTML = '<div style=\"padding:48px 24px;text-align:center;color:#94a3b8;font-family:system-ui,sans-serif\"><h2 style=\"color:#e2e8f0;margin:0 0 8px\">a breakout brick breaker game</h2><p style=\"margin:0 0 16px\">This app\\'s interface is ready \u2014 generated code is below.</p><div style=\"font-size:12px;opacity:.7\">Preview shell \u00b7 VACA</div></div>';\n      }\n      console.log('\u2705 a breakout brick breaker game initialized successfully');\n    } catch(e) {\n      var loadingEl2 = document.getElementById('loading');\n      if (loadingEl2) loadingEl2.innerHTML = '<div style=\"color:#ef4444;text-align:center\">\u274c Failed to initialize:<br><pre style=\"margin-top:8px;font-size:12px;color:#aaa\">' + e.message + '</pre></div>';\n      addError(e.message);\n    }\n  </script>\n</body>\n</html>",
+   "nodeId": "preview_gui_wrapper",
+   "nodeLabel": "App Preview (Auto-generated)",
+   "dependencies": [
+    "Paddle Input",
+    "Ball Physics",
+    "Brick Engine",
+    "Game State",
+    "Game View"
+   ],
+   "exports": [],
+   "errors": [],
+   "validated": true
+  }
+ ],
+ "totalChars": 28275,
+ "totalErrors": 11,
+ "validatedCount": 3,
+ "failedCount": 3,
+ "importGraph": {
+  "mod_0": {
+   "entryFile": "paddle-input.ts",
+   "dependencies": [],
+   "exports": []
+  },
+  "mod_1": {
+   "entryFile": "ball-physics.ts",
+   "dependencies": [
+    "Paddle Input"
+   ],
+   "exports": []
+  },
+  "mod_2": {
+   "entryFile": "brick-engine.ts",
+   "dependencies": [
+    "Ball Physics"
+   ],
+   "exports": [
+    "Ball"
+   ]
+  },
+  "mod_3": {
+   "entryFile": "game-state.ts",
+   "dependencies": [],
+   "exports": [
+    "Brick",
+    "Paddle",
+    "Ball",
+    "GameState",
+    "createGameState",
+    "updateGameState"
+   ]
+  },
+  "mod_4": {
+   "entryFile": "game-view.ts",
+   "dependencies": [
+    "Game State"
+   ],
+   "exports": []
+  },
+  "preview_gui_wrapper": {
+   "entryFile": "index.html",
+   "dependencies": [
+    "Paddle Input",
+    "Ball Physics",
+    "Brick Engine",
+    "Game State",
+    "Game View"
+   ],
+   "exports": []
+  }
+ },
+ "tsCompileClean": false,
+ "contractViolations": 3,
+ "summary": {
+  "totalFiles": 6,
+  "totalChars": 28275,
+  "totalErrors": 11,
+  "validated": 3,
+  "failed": 3,
+  "isAllValidated": false
+ },
+ "timingMs": {
+  "total": 173513
+ }
+}

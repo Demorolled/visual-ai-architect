@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note-Taking App</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .btn { padding: 8px 16px; cursor: pointer; }
+    .btn-primary { background-color: #007bff; color: white; }
+    .btn-danger { background-color: #dc3545; color: white; }
+    .card { background: #15152a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin: 10px 0; }
+    .card h3 { margin: 0 0 8px; }
+    .card p { margin: 0 0 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Notes</h1>
+    <div id="notesList" class="grid"></div>
+    <div class="row">
+      <input id="noteInput" type="text" placeholder="Enter a note" value="">
+      <button id="addNoteBtn" class="btn btn-primary">Add Note</button>
+    </div>
+  </div>
+  <script>
+    const notesList = document.getElementById('notesList');
+    const noteInput = document.getElementById('noteInput');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+
+    const notes = [];
+
+    function renderNotes() {
+      notesList.innerHTML = '';
+      notes.forEach(note => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${note}</h3>`;
+        notesList.appendChild(card);
+      });
+    }
+
+    addNoteBtn.addEventListener('click', () => {
+      const note = noteInput.value.trim();
+      if (note) {
+        notes.push(note);
+        noteInput.value = '';
+        renderNotes();
+      }
+    });
+
+    renderNotes();
+  </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Taking App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0e0e1a;
+      color: #e0e0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #181828;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      color: #00d9ff;
+    }
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .note {
+      background: #12121e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      color: #d4d4d8;
+      transition: border-color 0.2s;
+    }
+    .note:hover {
+      border-color: #00d9ff;
+    }
+    .note-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #f0f0f0;
+    }
+    .note-content {
+      font-size: 0.9rem;
+      color: #a8a8b8;
+    }
+    .note-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .note-actions button {
+      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .note-actions button:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .add-note {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .add-note input {
+      flex: 1;
+      padding: 8px 12px;
+      background: #12121e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: #d4d4d8;
+      font-size: 0.9rem;
+    }
+    .add-note button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #00d9ff;
+      color: #0e0e1a;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .add-note button:hover {
+      background: #0099cc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Note Taking App</h1>
+    </div>
+    <div class="notes-list" id="notesList"></div>
+    <div class="add-note">
+      <input type="text" id="noteInput" placeholder="Add a new note…" aria-label="Add a new note…">
+      <button onclick="addNote()">➕ Add</button>
+    </div>
+  </div>
+  <script>
+    const notesList = document.getElementById('notesList');
+    const noteInput = document.getElementById('noteInput');
+
+    function loadNotes() {
+      const notes = localStorage.getItem('notes') || '[]';
+      try {
+        return JSON.parse(notes);
+      } catch {
+        return [];
+      }
+    }
+
+    function saveNotes(notes) {
+      localStorage.setItem('notes', JSON.stringify(notes));
+    }
+
+    function renderNotes() {
+      notesList.innerHTML = '';
+      const notes = loadNotes();
+      if (!notes.length) {
+        notesList.innerHTML = '<p style="color:#555;font-size:0.8rem">No notes yet. Add one above!</p>';
+        return;
+      }
+      notes.forEach((note, index) => {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'note';
+        noteDiv.innerHTML = `<div class="note-title">Note ${index + 1}</div>
+                          <div class="note-content">${escape(note)}</div>
+                          <div class="note-actions">
+                            <button onclick="deleteNote(${index})">✕ Delete</button>
+                          </div>`;
+        notesList.appendChild(noteDiv);
+      });
+    }
+
+    function addNote() {
+      const note = noteInput.value.trim();
+      if (!note) return;
+      const notes = loadNotes();
+      notes.push(note);
+      saveNotes(notes);
+      noteInput.value = '';
+      renderNotes();
+    }
+
+    function deleteNote(index) {
+      const notes = loadNotes();
+      notes.splice(index, 1);
+      saveNotes(notes);
+      renderNotes();
+    }
+
+    window.addEventListener('DOMContentLoaded', renderNotes);
+  </script>
+</body>
+</html>

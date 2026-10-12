@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz</title><style>
+body{font-family:'Segoe UI',sans-serif;background:#0a0a14;color:#e6e6e6;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:#14141f;border:1px solid #2a2a3a;border-radius:12px;padding:28px;max-width:560px;width:90%}
+h2{color:#00d9ff;margin:0 0 10px 0}.meta{display:flex;justify-content:space-between;font-size:13px;color:#aaa;margin-bottom:8px}
+#bar{background:#0f0f1a;border:1px solid #2a2a3a;border-radius:6px;height:10px;overflow:hidden;margin-bottom:16px}
+#bar .fill{background:#00d9ff;height:100%;width:0%;transition:width .3s}
+#q{font-size:18px;margin-bottom:16px}
+.opt{display:block;width:100%;text-align:left;background:#0f0f1a;border:1px solid #2a2a3a;color:#e6e6e6;border-radius:8px;padding:12px 14px;font-size:15px;margin-bottom:8px;cursor:pointer}
+.opt.correct{background:#3ddc84;color:#04141a;border-color:#3ddc84}
+.opt.wrong{background:#ff5c5c;color:#14141f;border-color:#ff5c5c}
+.opt:disabled{cursor:default}
+#fb{min-height:20px;margin-top:10px;font-size:14px;color:#3ddc84}
+#nextBtn{background:#00d9ff;color:#04141a;border:none;border-radius:8px;padding:10px 18px;font-size:14px;cursor:pointer;margin-top:12px;display:none}
+#result{text-align:center}
+#result .pct{font-size:64px;color:#00d9ff;font-weight:700}
+</style></head><body>
+<div class="card" id="quizCard">
+<h2>📝 Quiz</h2>
+<div class="meta"><span id="qNum">Question 1/5</span><span>Score: <b id="score">0</b></span><span>Best: <b id="best">0%</b></span></div>
+<div id="bar"><div class="fill" id="fill"></div></div>
+<div id="q"></div><div id="opts"></div><div id="fb"></div>
+<button id="nextBtn">Next</button>
+</div>
+<script>
+const QUESTIONS = [
+  { q: 'Which keyword declares a block-scoped variable?', opts: ['var','let','define'], a: 1, exp: 'let is block-scoped; var is function-scoped.' },
+  { q: 'What does JSON.stringify do?', opts: ['Parses JSON','Turns a JS value into a JSON string','Minifies code'], a: 1, exp: 'stringify serializes a JS value to a JSON string.' },
+  { q: 'Which method adds an element to the end of an array?', opts: ['push()','unshift()','pop()'], a: 0, exp: 'push() appends to the end.' },
+  { q: 'What is the event that fires when a form is submitted?', opts: ['onchange','submit','keyup'], a: 1, exp: 'The submit event fires on form submission.' },
+  { q: 'Which CSS property makes a flex container?', opts: ['display: block','display: flex','position: fixed'], a: 1, exp: 'display: flex enables flexbox.' },
+];
+let index = 0;
+let score = 0;
+let answered = false;
+let best = parseInt(localStorage.getItem('quiz-best') || '0', 10);
+
+function renderQuestion() {
+  const q = QUESTIONS[index];
+  answered = false;
+  document.getElementById('qNum').textContent = 'Question ' + (index + 1) + '/' + QUESTIONS.length;
+  document.getElementById('score').textContent = score;
+  document.getElementById('best').textContent = best + '%';
+  document.getElementById('fill').style.width = (100 * index / QUESTIONS.length) + '%';
+  document.getElementById('q').textContent = q.q;
+  const opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => answer(i));
+    opts.appendChild(btn);
+  });
+  document.getElementById('fb').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function answer(i) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[index];
+  const btns = document.querySelectorAll('.opt');
+  btns[q.a].classList.add('correct');
+  if (i === q.a) {
+    score += 1;
+    document.getElementById('fb').textContent = '✅ ' + q.exp;
+  } else {
+    btns[i].classList.add('wrong');
+    document.getElementById('fb').textContent = '❌ ' + q.exp;
+  }
+  btns.forEach(b => b.disabled = true);
+  document.getElementById('score').textContent = score;
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function next() {
+  index += 1;
+  if (index >= QUESTIONS.length) showResult();
+  else renderQuestion();
+}
+
+function showResult() {
+  const pct = Math.round(100 * score / QUESTIONS.length);
+  if (pct > best) {
+    best = pct;
+    localStorage.setItem('quiz-best', String(best));
+  }
+  document.getElementById('quizCard').innerHTML =
+    '<div id="result"><h2>📝 Results</h2>' +
+    '<div class="pct">' + pct + '%</div>' +
+    '<p>You got ' + score + '/' + QUESTIONS.length + ' correct.</p>' +
+    '<p style="color:#aaa">Best score: ' + best + '%</p>' +
+    '<button id="againBtn" style="background:#00d9ff;color:#04141a;border:none;border-radius:8px;padding:10px 18px;cursor:pointer">Play Again</button></div>';
+  document.getElementById('againBtn').addEventListener('click', () => location.reload());
+}
+
+document.getElementById('nextBtn').addEventListener('click', next);
+renderQuestion();
+</script></body></html>

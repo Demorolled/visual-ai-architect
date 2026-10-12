@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Taking App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            margin: 5px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Notes</h1>
+    <form id="addNoteForm">
+        <input type="text" id="noteInput" placeholder="Enter a note" required>
+        <button type="submit">Add Note</button>
+    </form>
+    <ul id="noteList"></ul>
+
+    <script>
+        const noteList = document.getElementById('noteList');
+        const noteInput = document.getElementById('noteInput');
+        const addNoteForm = document.getElementById('addNoteForm');
+
+        addNoteForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const noteText = noteInput.value.trim();
+            if (noteText) {
+                try {
+                    const response = await fetch('/notes', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ text: noteText })
+                    });
+                    if (response.ok) {
+                        noteInput.value = '';
+                        fetchNotes();
+                    } else {
+                        console.error('Failed to add note');
+                    }
+                } catch (error) {
+                    console.error('Error adding note:', error);
+                }
+            }
+        });
+
+        async function fetchNotes() {
+            try {
+                const response = await fetch('/notes');
+                if (response.ok) {
+                    const notes = await response.json();
+                    noteList.innerHTML = '';
+                    notes.forEach(note => {
+                        const li = document.createElement('li');
+                        li.textContent = note.text;
+                        noteList.appendChild(li);
+                    });
+                } else {
+                    console.error('Failed to fetch notes');
+                }
+            } catch (error) {
+                console.error('Error fetching notes:', error);
+            }
+        }
+
+        fetchNotes();
+    </script>
+</body>
+</html>

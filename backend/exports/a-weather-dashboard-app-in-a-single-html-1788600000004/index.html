@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather Dashboard</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         margin: 0; padding: 24px; }
+  h1 { color: #00d9ff; margin: 0 0 16px 0; }
+  .search { display: flex; gap: 8px; margin-bottom: 20px; max-width: 420px; }
+  input { flex: 1; background: #0f0f1a; border: 1px solid #2a2a3a; color: #e6e6e6;
+          border-radius: 8px; padding: 10px 12px; font-size: 15px; }
+  button { background: #00d9ff; color: #04141a; border: none; border-radius: 8px;
+           padding: 10px 16px; font-size: 14px; cursor: pointer; }
+  .cards { display: flex; flex-wrap: wrap; gap: 14px; }
+  .card { background: #14141f; border: 1px solid #2a2a3a; border-radius: 12px;
+          padding: 16px; width: 230px; }
+  .card h3 { margin: 0 0 8px 0; color: #00d9ff; }
+  .temp { font-size: 36px; font-weight: 700; margin: 4px 0; }
+  .meta { color: #aaa; font-size: 13px; line-height: 1.6; }
+  .card .actions { margin-top: 10px; display: flex; gap: 6px; }
+  .card .actions button { background: #2a2a3a; color: #e6e6e6; padding: 6px 10px; font-size: 12px; }
+  #status { color: #ffb454; min-height: 18px; margin-bottom: 8px; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>☀️ Weather Dashboard</h1>
+<div class="search">
+  <input id="cityInput" placeholder="Enter city name…">
+  <button id="addBtn">Add</button>
+</div>
+<div id="status"></div>
+<div id="cards" class="cards"></div>
+<script>
+  const STORAGE_KEY = 'vaca-weather-cities';
+  let cities = [];
+
+  function loadCities() {
+    try {
+      cities = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch (e) {
+      cities = [];
+    }
+  }
+
+  function saveCities() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cities));
+  }
+
+  async function geocode(city) {
+    const url = 'https://geocoding-api.open-meteo.com/v1/search?name=' +
+                encodeURIComponent(city) + '&count=1';
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.results || data.results.length === 0) return null;
+    return data.results[0];
+  }
+
+  async function fetchWeather(lat, lon) {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat +
+                '&longitude=' + lon +
+                '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code';
+    const res = await fetch(url);
+    return res.json();
+  }
+
+  function codeToText(code) {
+    if (code === 0) return 'Clear';
+    if (code < 3) return 'Partly cloudy';
+    if (code < 50) return 'Cloudy';
+    if (code < 70) return 'Rain';
+    if (code < 80) return 'Snow';
+    return 'Storm';
+  }
+
+  async function addCity(cityName) {
+    const status = document.getElementById('status');
+    status.textContent = 'Looking up ' + cityName + '…';
+    try {
+      const place = await geocode(cityName);
+      if (!place) {
+        status.textContent = '❌ City not found: ' + cityName;
+        return;
+      }
+      if (cities.some(c => c.name.toLowerCase() === place.name.toLowerCase())) {
+        status.textContent = 'Already added: ' + place.name;
+        return;
+      }
+      cities.push({ name: place.name, lat: place.latitude, lon: place.longitude });
+      saveCities();
+      status.textContent = '✅ Added ' + place.name;
+      renderAll();
+    } catch (e) {
+      status.textContent = '❌ Error looking up city';
+    }
+  }
+
+  async function refreshCity(index) {
+    const c = cities[index];
+    const status = document.getElementById('status');
+    status.textContent = 'Refreshing ' + c.name + '…';
+    try {
+      const w = await fetchWeather(c.lat, c.lon);
+      c.weather = {
+        temp: w.current.temperature_2m,
+        hum: w.current.relative_humidity_2m,
+        wind: w.current.wind_speed_10m,
+        cond: codeToText(w.current.weather_code),
+      };
+      saveCities();
+      status.textContent = '✅ Refreshed ' + c.name;
+      renderAll();
+    } catch (e) {
+      status.textContent = '❌ Failed to refresh ' + c.name;
+    }
+  }
+
+  function removeCity(index) {
+    cities.splice(index, 1);
+    saveCities();
+    renderAll();
+  }
+
+  function renderAll() {
+    const wrap = document.getElementById('cards');
+    wrap.innerHTML = '';
+    cities.forEach((c, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const w = c.weather;
+      card.innerHTML = '<h3>' + c.name + '</h3>' +
+        (w ? '<div class="temp">' + Math.round(w.temp) + '°C</div>' +
+              '<div class="meta">' + w.cond + '<br>💧 ' + w.hum + '% · 💨 ' +
+              w.wind + ' km/h</div>'
+           : '<div class="meta">no data yet — refresh</div>') +
+        '<div class="actions">' +
+        '<button data-act="refresh">Refresh</button>' +
+        '<button data-act="remove">Remove</button></div>';
+      card.querySelector('[data-act="refresh"]').addEventListener('click', () => refreshCity(i));
+      card.querySelector('[data-act="remove"]').addEventListener('click', () => removeCity(i));
+      wrap.appendChild(card);
+    });
+  }
+
+  document.getElementById('addBtn').addEventListener('click', () => {
+    const inp = document.getElementById('cityInput');
+    const name = inp.value.trim();
+    if (name) addCity(name);
+    inp.value = '';
+  });
+  document.getElementById('cityInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('addBtn').click();
+  });
+
+  loadCities();
+  renderAll();
+  cities.forEach((_, i) => refreshCity(i));
+</script>
+</body>
+</html>

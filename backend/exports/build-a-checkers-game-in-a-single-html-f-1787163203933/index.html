@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkers</title>
+<style>
+  body { background:#1a1a2e; color:#ddd; font-family:Arial,sans-serif; text-align:center; }
+  h1 { color:#00d9ff; margin:20px 0; }
+  .board { display:grid; grid-template-columns:repeat(8,50px); gap:2px; margin:0 auto; width:400px; }
+  .cell { width:50px; height:50px; background:#333; border:1px solid #111; cursor:pointer; }
+  .red { background:#ff6347; }
+  .black { background:#000; }
+  .king { font-size:20px; color:#00d9ff; }
+  .selected { border:3px solid #ff6347; }
+  .available { border:3px solid rgba(255,255,255,0.2); }
+  .winner-banner { color:#00d9ff; font-size:24px; margin:20px 0; }
+  .move-history { color:#888; font-size:12px; margin-top:10px; }
+</style>
+</head>
+<body>
+<h1>Checkers</h1>
+<div class="board" id="board"></div>
+<div class="winner-banner" id="winnerBanner"></div>
+<div class="move-history" id="moveHistory"></div>
+<div class="controls" id="controls">
+  <button class="btn" onclick="(typeof undoMove === 'function' ? undoMove : () => {}) ()" style="margin:10px 5px">Undo</button>
+  <button class="btn" onclick="(typeof redoMove === 'function' ? redoMove : () => {}) ()" style="margin:10px 5px">Redo</button>
+  <select id="levelSelect" onchange="(typeof setLevel === 'function' ? setLevel : () => {}) (this.value)">
+    <option value="easy" selected>Easy</option>
+    <option value="medium">Medium</option>
+    <option value="hard">Hard</option>
+  </select>
+</div>
+
+<script>
+const boardSize = 8;
+const redPiece = '🟥';
+const blackPiece = '⬛';
+const kingPiece = '👑';
+const emptyCell = '⬜';
+
+let board = [];
+let selectedPiece = null;
+let turn = 'red';
+let moveHistory = [];
+let historyIndex = -1;
+let level = 'easy';
+
+function initBoard() {
+  board = [];
+  for (let i = 0; i < boardSize; i++) {
+    board[i] = [];
+    for (let j = 0; j < boardSize; j++) {
+      if ((i + j) % 2 === 1) {
+        if (i < 3) board[i][j] = { type: 'red', isKing: false };
+        else if (i > 4) board[i][j] = { type: 'black', isKing: false };
+        else board[i][j] = { type: 'empty', isKing: false };
+      } else {
+        board[i][j] = { type: 'empty', isKing: false };
+      }
+    }
+  }
+  renderBoard();
+  updateControls();
+}
+
+function renderBoard() {
+  const boardDiv = document.getElementById('board');
+  boardDiv.innerHTML = '';
+  for (let i = 0; i < boardSize; i++) {
+    for (let j = 0; j < boardSize; j++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      if (i % 2 === j % 2) cell.style.background = '#333';
+      else cell.style.background = '#111';
+      if (selectedPiece && selectedPiece.x === i && selectedPiece.y === j) {
+        cell.classList.add('selected');
+      }
+      if (board[i][j].type !== 'empty') {
+        cell.textContent = board[i][j].type === 'red' ? redPiece : blackPiece;
+        if (board[i][j].isKing) cell.textContent += ' ' + kingPiece;
+      }
+      cell.onclick = () => { handleCellClick(i, j); };
+      boardDiv.appendChild(cell);
+    }
+  }
+}
+
+function handleCellClick(x, y) {
+  if (selectedPiece) {
+    const moves = getAvailableMoves(selectedPiece.x, selectedPiece.y);
+    const move = moves.find(m => m.toX === x && m.toY === y);
+    if (move) {
+      if (move.captures.length > 0) {
+        const captures = move.captures;
+        let cx = selectedPiece.x, cy = selectedPiece.y;
+        for (const cap of captures) {
+          const nx = cap.toX;
+          const ny = cap.toY;
+          board[cx][cy] = { type: 'empty', isKing: false };
+          board[(cx + nx) / 2][(cy + ny) / 2] = { type: 'empty', isKing: false };
+          board[nx][ny] = { type: selectedPiece.type, isKing: selectedPiece.isKing };
+          cx = nx; cy = ny;
+        }
+        if (move.isKing && !board[nx][ny].isKing) {
+          board[nx][ny].isKing = true;
+        }
+        historyIndex++;
+        moveHistory = moveHistory.slice(0, historyIndex);
+        moveHistory.push({ from: { x: selectedPiece.x, y: selectedPiece.y }, to: { x: nx, y: ny }, captures });
+        if (isGameOver()) {
+          const winner = turn === 'red' ? 'black' : 'red';
+          document.getElementById('winnerBanner').textContent = `${winner.toUpperCase()} wins!`;
+          return;
+        }
+        turn = turn === 'red' ? 'black' : 'red';
+        selectedPiece = null;
+        renderBoard();
+        updateControls();
+        return;
+      }
+    }
+  }
+
+  if (board[x][y].type === turn) {
+    selectedPiece = { x, y };
+    renderBoard();
+    return;
+  }
+
+  const moves = getAvailableMoves(x, y);
+  if (moves.length > 0) {
+    selectedPiece = { x, y };
+    renderBoard();
+  }
+}
+
+function getAvailableMoves(x, y) {
+  const moves = [];
+  const directions = board[x][y].isKing ? [[-1,-1],[-1,1],[1,-1],[1,1]] : turn === 'red' ? [[1,-1],[1,1]] : [[-1,-1],[-1,1]];
+  for (const [dx, dy] of directions) {
+    const nx = x + dx;
+    const ny = y + dy;
+    if (nx >= 0 && nx < boardSize && ny >= 0 && ny < boardSize && board[nx][ny].type === 'empty') {
+      moves.push({ from: { x, y }, to: { x: nx, y: ny }, captures: [] });
+    }
+  }
+  return moves;
+}
+
+function isGameOver() {
+  let redCount = 0, blackCount = 0;
+  for (let i = 0; i < boardSize; i++) {
+    for (let j = 0; j < boardSize; j++) {
+      if (board[i][j].type === 'red') redCount++;
+      if (board[i][j].type === 'black') blackCount++;
+    }
+  }
+  return redCount === 0 || blackCount === 0;
+}
+
+function undoMove() {
+  if (historyIndex <= 0) return;
+  historyIndex--;
+  const move = moveHistory[historyIndex];
+  const from = move.from;
+  const to = move.to;
+  const captures = move.captures;
+  let cx = to.x, cy = to.

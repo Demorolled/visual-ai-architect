@@ -1,0 +1,44 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note-Taking App</title>
+  <style>
+    .app { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .card { background: #15152a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .card h3 { margin: 0 0 8px; }
+    .card p { margin: 0 0 12px; }
+    .card button { margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Notes</h1>
+    <div id="notesList"></div>
+  </div>
+
+  <script>
+    const notes = [
+      { id: '1', title: 'Note 1', content: 'Content 1' },
+      { id: '2', title: 'Note 2', content: 'Content 2' }
+    ];
+
+    const notesList = document.getElementById('notesList');
+
+    notes.forEach(note => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const title = document.createElement('h3');
+      title.textContent = note.title;
+
+      const content = document.createElement('p');
+      content.textContent = note.content;
+
+      card.appendChild(title);
+      card.appendChild(content);
+      notesList.appendChild(card);
+    });
+  </script>
+</body>
+</html>

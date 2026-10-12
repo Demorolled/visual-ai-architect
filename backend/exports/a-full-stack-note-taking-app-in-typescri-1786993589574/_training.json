@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-17T19:19:54.833Z",
+  "request": "a full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+  "intent": {
+    "goal": "full-stack note-taking app in TypeScript: Express API core logic, a React frontend wired to the API, unit tests, and a Dockerfile for deployment",
+    "targetUser": "deployment",
+    "coreFeatures": [
+      "note-taking"
+    ],
+    "uiStyle": "",
+    "language": "typescript"
+  },
+  "questions": [],
+  "answers": {},
+  "planFiles": [
+    {
+      "path": "src/server.ts",
+      "summary": "Express server entry point: defines routes for note-taking operations",
+      "language": "typescript",
+      "exports": [
+        "startServer"
+      ]
+    },
+    {
+      "path": "src/routes.ts",
+      "summary": "Route definitions for the Express server: handles note-taking operations",
+      "language": "typescript",
+      "exports": [
+        "noteRouter"
+      ]
+    },
+    {
+      "path": "src/controllers.ts",
+      "summary": "Business logic for note-taking operations: create, get, update, delete",
+      "language": "typescript",
+      "exports": [
+        "createNote",
+        "getNotes",
+        "updateNote",
+        "deleteNote"
+      ]
+    },
+    {
+      "path": "src/database.ts",
+      "summary": "SQLite database setup and operations: notes storage",
+      "language": "typescript",
+      "exports": [
+        "connectDB",
+        "getNotes",
+        "saveNote",
+        "updateNote",
+        "deleteNote"
+      ]
+    },
+    {
+      "path": "src/models.ts",
+      "summary": "Data models for notes: NoteItem",
+      "language": "typescript",
+      "exports": [
+        "NoteItem"
+      ]
+    },
+    {
+      "path": "src/database.test.ts",
+      "summary": "Unit tests for database operations: notes storage",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "src/controllers.test.ts",
+      "summary": "Unit tests for controllers: note-taking operations",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "src/server.test.ts",
+      "summary": "Unit tests for Express server: note-taking operations",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "src/database.ts",
+      "summary": "SQLite database setup and operations: notes storage",
+      "language": "typescript",
+      "exports": [
+        "connectDB",
+        "getNotes",
+        "saveNote",
+        "updateNote",
+        "deleteNote"
+      ]
+    },
+    {
+      "path": "src/models.ts",
+      "summary": "Data models for notes: NoteItem",
+      "language": "typescript",
+      "exports": [
+        "NoteItem"
+      ]
+    },
+    {
+      "path": "src/database.test.ts",
+      "summary": "Unit tests for database operations: notes storage",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "src/controllers.test.ts",
+      "summary": "Unit tests for controllers: note-taking operations",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "src/server.test.ts",
+      "summary": "Unit tests for Express server: note-taking operations",
+      "language": "typescript",
+      "exports": []
+    },
+    {
+      "path": "Dockerfile",
+      "summary": "Dockerfile for deployment: Express API core logic",
+      "language": "docker",
+      "exports": []
+    },
+    {
+      "path": "index.html",
+      "summary": "Single self-contained GUI page (HTML + CSS + JS inline, no build step) that renders the complete app interface and wires it to the logic. This is what makes the app viewable in the browser preview — build the full UI here. STRICT RULES: (1) do NOT reference external files — no <script src=\"...\">, no <link href=\"...\">, no CSS or JS files; the preview iframe cannot load external files, so inline ALL CSS in a <style> tag and ALL JavaScript in a <script> tag directly in this file; (2) plain browser JavaScript only — no React, no TypeScript, no imports, no JSX, no build step; (3) include working inline code that actually renders the interface so the page is never blank.",
+      "language": "html",
+      "exports": []
+    }
+  ],
+  "mode": "chunked",
+  "repairRounds": 13,
+  "tscErrors": 7,
+  "libraryContext": "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — wiki + library + bible. Consult ALL THREE sources:\n📗 WIKI — modelVeronice.txt + data/VACA-MASTER-KNOWLEDGE.md (platform knowledge, history, lessons).\n📜 BIBLE — bible-reference/ deep technical guides (42 levels).\n📖 LIBRARY — data/library/ sheets (patterns, rules, templates).\nUse these references to inform architecture, code generation, and implementation.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📗 WIKI KNOWLEDGE BASE ──\nmodelVeronice.txt sections: 1. PROJECT OVERVIEW, 2. RUNNING SERVICES (as of scan time), 3. RUNTIME TOOLS, 4. FRONTEND APPLICATION, 5. BACKEND APPLICATION, 6. LLM CONFIGURATION, 7. INSTALLED OLLAMA MODELS, 8. LOCAL GGUF MODELS, 9. DATA & KNOWLEDGE STORES, 10. TRAINING SYSTEM, 11. SYSTEM MONITOR DAEMON, 12. GENERATED PROJECTS (projects/), 13. PROFILE & USER\n…(truncated)\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📚 REFERENCE — Relevant patterns for logic node (typescript).\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n── 📖 01-node-architecture-reference ──\n[1. Node Type Overview] The Visual AI Architect uses a node-based design system with the following node types: Each node is a self-contained module with: - Clear input/output contracts (typed interfaces) - Single responsibility - Testable in isolation - Language-specific implementation patterns\n[2. ...\n\n── 📖 05-design-patterns ──\n[1. Module Pattern] ### Purpose Encapsulate related functionality into self-contained modules with clear interfaces. ### When to Use - Every node in the design becomes a module - Separating concerns between different app layers - Organizing code by feature // modules/media-library.ts export interfac...\n\n── 📖 06-data-flow-pa\n…(truncated)",
+  "files": [
+    "src/database.ts",
+    "src/controllers.ts",
+    "src/routes.ts",
+    "src/server.ts",
+    "src/models.ts",
+    "src/database.test.ts",
+    "src/controllers.test.ts",
+    "src/server.test.ts",
+    "Dockerfile",
+    "index.html"
+  ]
+}

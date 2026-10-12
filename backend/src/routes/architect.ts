@@ -289,10 +289,41 @@ export function parseArchitectResponse(response: string): ArchitectResponse | nu
   if (typeof parsed === 'object' && parsed !== null) {
     const obj = parsed as Record<string, unknown>;
     if (Array.isArray(obj.nodes) && obj.nodes.length > 0) {
+      // A node carrying a recognisable filename in ANY accepted key is usable
+      // (see nodeLabelOf). When not a single node has one, the model answered in
+      // the wrong shape entirely (e.g. an array of bare strings, or objects with
+      // only `type`): accepting that would make sanitizeNodes fabricate
+      // "Node 1..N" for the whole graph — reject so the retry prompt asks for
+      // valid JSON instead of silently shipping a canvas of blank nodes.
+      if (!obj.nodes.some((n) => nodeLabelOf(n))) return null;
       return { nodes: obj.nodes as ArchitectNode[], edges: (obj.edges || []) as ArchitectEdge[] };
     }
   }
   return null;
+}
+
+/**
+ * Resolve a node's filename from the raw LLM JSON.
+ *
+ * The architect prompt documents a `label` field, but models routinely put the
+ * filename under another key: the qwen-coder family answers that prompt with
+ * `{ "name": "src/index.ts", "type": "entry" }` — no `label`, no
+ * `description`. Reading only `n.label` handed every one of those nodes to the
+ * `Node ${i + 1}` placeholder, so a real build request rendered as a canvas of
+ * blank nodes labeled "Node 1".."Node N". Accept the common aliases so a node
+ * that DOES carry a filename keeps it.
+ */
+export function nodeLabelOf(n: unknown): string {
+  if (!n || typeof n !== 'object') return '';
+  const o = n as Record<string, unknown>;
+  // First key that yields a NON-EMPTY STRING wins. A present-but-unusable
+  // `label` (empty string, number, null) must fall through to `name` — an
+  // empty label is exactly the blank-node case this exists to catch.
+  for (const key of ['label', 'name', 'file', 'filename', 'path']) {
+    const raw = o[key];
+    if (typeof raw === 'string' && raw.trim()) return raw.trim();
+  }
+  return '';
 }
 
 /**
@@ -301,7 +332,7 @@ export function parseArchitectResponse(response: string): ArchitectResponse | nu
 export function sanitizeNodes(nodes: any[]): ArchitectNode[] {
   const validTypes = new Set(NODE_TYPES);
   return nodes.map((n: any, i: number): ArchitectNode => ({
-    label: (n.label || `Node ${i + 1}`).trim().slice(0, 60),
+    label: (nodeLabelOf(n) || `Node ${i + 1}`).slice(0, 60),
     description: (n.description || '').trim().slice(0, 1000),
     type: validTypes.has(n.type) ? n.type : 'logic',
     language: n.language || 'typescript',
@@ -353,7 +384,11 @@ export function enforceRequiredTypes(nodes: ArchitectNode[], _goal: string, lang
   if (nodes.length <= 3) return nodes; // small apps don't need all layers
 
   const hasType = (type: string) => nodes.some(n => n.type === type);
-  const ext = lang === 'go' ? '.go' : lang === 'csharp' ? '.cs' : lang === 'swift' ? '.swift' : lang === 'kotlin' ? '.kt' : '.ts';
+  // Full language→extension map (getExtensionForLanguage), not a 4-case
+  // ternary: the old chain only special-cased go/csharp/swift/kotlin and fell
+  // through to '.ts' for everything else, so a C++ plan got an inserted node
+  // literally named "ui.ts" (same for java/php/ruby/rust/python).
+  const ext = getExtensionForLanguage(lang);
   const missing: ArchitectNode[] = [];
 
   // Calculate a reasonable position for inserted nodes

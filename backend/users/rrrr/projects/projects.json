@@ -1,0 +1,216 @@
+[
+  {
+    "id": "proj_1788057454422_p19f5gy",
+    "name": "i want a home media streaming app to pla",
+    "targetOS": "linux",
+    "nodes": [
+      {
+        "id": "master_design_1788057383607",
+        "type": "master",
+        "position": {
+          "x": 250,
+          "y": 40
+        },
+        "data": {
+          "label": "App Blueprint",
+          "type": "master",
+          "status": "pending",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": "",
+          "selectedOS": "linux",
+          "scale": "medium"
+        }
+      },
+      {
+        "id": "design_1788057383607_0",
+        "type": "database",
+        "position": {
+          "x": 30,
+          "y": -330
+        },
+        "data": {
+          "label": "Media Library",
+          "description": "Stores all media files, metadata, and user profiles.",
+          "type": "database",
+          "status": "pending",
+          "language": "sqlalchemy",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_1",
+        "type": "api",
+        "position": {
+          "x": 100,
+          "y": 250
+        },
+        "data": {
+          "label": "User Authentication",
+          "description": "Handles user registration, login, and session management. Uses JWT.",
+          "type": "api",
+          "status": "pending",
+          "language": "express.js",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_2",
+        "type": "logic",
+        "position": {
+          "x": 675,
+          "y": -390
+        },
+        "data": {
+          "label": "Media Player Core",
+          "description": "Manages playback logic and state. Supports multiple media formats.",
+          "type": "logic",
+          "status": "pending",
+          "language": "Go",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_3",
+        "type": "api",
+        "position": {
+          "x": 300,
+          "y": 400
+        },
+        "data": {
+          "label": "Video/Screen Recorder",
+          "description": "Captures video and screen using OBS Studio API or similar.",
+          "type": "api",
+          "status": "pending",
+          "language": "python",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_4",
+        "type": "logic",
+        "position": {
+          "x": 510,
+          "y": 975
+        },
+        "data": {
+          "label": "Media Converter",
+          "description": "Converts media files to compatible formats for streaming.",
+          "type": "logic",
+          "status": "pending",
+          "language": "ffmpeg",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_5",
+        "type": "ui",
+        "position": {
+          "x": 1065,
+          "y": 30
+        },
+        "data": {
+          "label": "Web UI",
+          "description": "Provides a web interface for users to manage media and settings. Uses React.",
+          "type": "ui",
+          "status": "pending",
+          "language": "javascript/typescript",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_6",
+        "type": "api",
+        "position": {
+          "x": 1125,
+          "y": -375
+        },
+        "data": {
+          "label": "Streaming Server",
+          "description": "Serves the media files over HTTP based on user requests. Uses NGINX.",
+          "type": "api",
+          "status": "pending",
+          "language": "nginx",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_7",
+        "type": "logic",
+        "position": {
+          "x": 900,
+          "y": 375
+        },
+        "data": {
+          "label": "Media Streaming Service",
+          "description": "Handles asynchronous streaming requests to clients.",
+          "type": "logic",
+          "status": "pending",
+          "language": "python",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_8",
+        "type": "ui",
+        "position": {
+          "x": 1515,
+          "y": -225
+        },
+        "data": {
+          "label": "Client Player",
+          "description": "Media player application for Linux. Uses VLC or own custom implementation.",
+          "type": "ui",
+          "status": "pending",
+          "language": "c",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_9",
+        "type": "logic",
+        "position": {
+          "x": 309.28554920488506,
+          "y": 1830
+        },
+        "data": {
+          "label": "Node,  to use h264 and h265 codec for this app.",
+          "description": "node,  to use h264 and h265 codec for this app.",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      },
+      {
+        "id": "design_1788057383607_10",
+        "type": "logic",
+        "position": {
+          "x": 376.4300107628111,
+          "y": 2000
+        },
+        "data": {
+          "label": "The connect for the project. write out the code and build the app",
+          "description": "the connect for the project. write out the code and build the app",
+          "type": "logic",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "i want a home media streaming app to play my music and video anywhere in my home. I also want something simular to obs studio screen capture, and screeen stream to my home",
+          "appPurpose": ""
+        }
+      }
+    ],
+    "edges": [],
+    "savedAt": "2026-08-30T02:37:34.422Z",
+    "version": 1
+  }
+]

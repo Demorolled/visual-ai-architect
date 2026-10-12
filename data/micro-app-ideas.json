@@ -1,0 +1,776 @@
+[
+  {
+    "purpose": "a temperature converter between celsius and fahrenheit as a single-file browser app (index.html)",
+    "design": "a temperature converter between celsius and fahrenheit as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1606,
+      "lines": 1,
+      "files": 1,
+      "genMs": 15614
+    },
+    "baselineMetrics": {
+      "bytes": 1566,
+      "lines": 37,
+      "files": 1,
+      "genMs": 24931
+    },
+    "composite": 0.8259156702895907,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-temperature-converter-between-celsius--1788130497196-round-1",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Temperature Converter</title><style>body{font-family:Arial,sans-serif;background-color:#222;color:#fff;}.app{max-width:400px;margin:50px auto;padding:24px;border-radius:8px;background-color:#333;}input{padding:8px;width:calc(100%-16px);border:none;border-radius:4px;background-color:#444;color:#fff;}button{padding:8px 16px;border:none;border-radius:4px;background-color:#555;color:#fff;cursor:pointer;}button:hover{background-color:#666;}</style></head><body><div class=\"app\"><h1>Temperature Converter</h1><div class=\"row\"><label for=\"celsiusInput\">Celsius</label><input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\" oninput=\"convertTemperature()\"></div><div class=\"row\"><label for=\"fahrenheitInput\">Fahrenheit</label><input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\" oninput=\"convertTemperature()\"></div><button onclick=\"clearInputs()\">Clear</button></div><script>const toF = c => c * 9 / 5 + 32;const toC = f => (f - 32) * 5 / 9;function convertTemperature() {const c = parseFloat(document.getElementById('celsiusInput').value);const f = parseFloat(document.getElementById('fahrenheitInput').value);document.getElementById('celsiusInput').value = isNaN(f) ? '' : toC(f).toFixed(1);document.getElementById('fahrenheitInput').value = isNaN(c) ? '' : toF(c).toFixed(1);}function clearInputs() {document.getElementById('celsiusInput').value = '';document.getElementById('fahrenheitInput').value = '';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Temperature Converter</title>\n  <style>\n    body { font-family: Arial, sans-serif; background-color: #222; color: #fff; }\n    .app { max-width: 400px; margin: 50px auto; padding: 24px; border-radius: 8px; background-color: #333; }\n    input { padding: 8px; width: calc(100% - 16px); border: none; border-radius: 4px; background-color: #444; color: #fff; }\n    button { padding: 8px 16px; border: none; border-radius: 4px; background-color: #555; color: #fff; cursor: pointer; }\n    button:hover { background-color: #666; }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Temperature Converter</h1>\n    <div class=\"row\">\n      <label for=\"celsiusInput\">Celsius</label>\n      <input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <div class=\"row\">\n      <label for=\"fahrenheitInput\">Fahrenheit</label>\n      <input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <button onclick=\"clearInputs()\">Clear</button>\n  </div>\n\n  <script>\n    function convertTemperature() {\n      const celsiusInput = document.getElementById('celsiusInput').value;\n      const fahrenheitInput = document.getElementById('fahrenheitInput').value;\n\n      if (celsiusInput) {\n        const celsius = parseFloat(celsiusInput);\n        const fahrenheit = (celsius * 9/5) + 32;\n        document."
+      }
+    ],
+    "id": "idea_1788130497238_io5rl",
+    "createdAt": "2026-08-30T22:54:57.238Z"
+  },
+  {
+    "purpose": "a temperature converter between celsius and fahrenheit as a single-file browser app (index.html)",
+    "design": "a temperature converter between celsius and fahrenheit as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1576,
+      "lines": 1,
+      "files": 1,
+      "genMs": 14201
+    },
+    "baselineMetrics": {
+      "bytes": 1566,
+      "lines": 37,
+      "files": 1,
+      "genMs": 24931
+    },
+    "composite": 0.7879989127591129,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-temperature-converter-between-celsius--1788130511441-round-2",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Temperature Converter</title><style>body{font-family:Arial,sans-serif;background-color:#222;color:#fff;}.app{max-width:400px;margin:50px auto;padding:24px;border-radius:8px;background-color:#333;}input{padding:8px;width:calc(100%-16px);border:none;border-radius:4px;background-color:#444;color:#fff;}button{padding:8px 16px;border:none;border-radius:4px;background-color:#555;color:#fff;cursor:pointer;}button:hover{background-color:#666;}</style></head><body><div class=\"app\"><h1>Temperature Converter</h1><div class=\"row\"><label for=\"celsiusInput\">Celsius</label><input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\" oninput=\"convertTemperature('celsiusInput', 'fahrenheitInput')\"></div><div class=\"row\"><label for=\"fahrenheitInput\">Fahrenheit</label><input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\" oninput=\"convertTemperature('fahrenheitInput', 'celsiusInput')\"></div><button onclick=\"clearInputs()\">Clear</button></div><script>const toF = c => c * 9 / 5 + 32;const toC = f => (f - 32) * 5 / 9;function convertTemperature(inputId, outputId) {const value = parseFloat(document.getElementById(inputId).value);document.getElementById(outputId).value = isNaN(value) ? '' : (inputId === 'celsiusInput' ? toF(value) : toC(value)).toFixed(1);}function clearInputs() {document.getElementById('celsiusInput').value = '';document.getElementById('fahrenheitInput').value = '';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Temperature Converter</title>\n  <style>\n    body { font-family: Arial, sans-serif; background-color: #222; color: #fff; }\n    .app { max-width: 400px; margin: 50px auto; padding: 24px; border-radius: 8px; background-color: #333; }\n    input { padding: 8px; width: calc(100% - 16px); border: none; border-radius: 4px; background-color: #444; color: #fff; }\n    button { padding: 8px 16px; border: none; border-radius: 4px; background-color: #555; color: #fff; cursor: pointer; }\n    button:hover { background-color: #666; }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Temperature Converter</h1>\n    <div class=\"row\">\n      <label for=\"celsiusInput\">Celsius</label>\n      <input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <div class=\"row\">\n      <label for=\"fahrenheitInput\">Fahrenheit</label>\n      <input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <button onclick=\"clearInputs()\">Clear</button>\n  </div>\n\n  <script>\n    function convertTemperature() {\n      const celsiusInput = document.getElementById('celsiusInput').value;\n      const fahrenheitInput = document.getElementById('fahrenheitInput').value;\n\n      if (celsiusInput) {\n        const celsius = parseFloat(celsiusInput);\n        const fahrenheit = (celsius * 9/5) + 32;\n        document."
+      }
+    ],
+    "id": "idea_1788130511477_667r9",
+    "createdAt": "2026-08-30T22:55:11.477Z"
+  },
+  {
+    "purpose": "a temperature converter between celsius and fahrenheit as a single-file browser app (index.html)",
+    "design": "a temperature converter between celsius and fahrenheit as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1526,
+      "lines": 1,
+      "files": 1,
+      "genMs": 13254
+    },
+    "baselineMetrics": {
+      "bytes": 1566,
+      "lines": 37,
+      "files": 1,
+      "genMs": 24931
+    },
+    "composite": 0.7530422535802903,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-temperature-converter-between-celsius--1788130524731-round-3",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Temperature Converter</title><style>body{font-family:Arial,sans-serif;background-color:#222;color:#fff;}.app{max-width:400px;margin:50px auto;padding:24px;border-radius:8px;background-color:#333;}input{padding:8px;width:calc(100%-16px);border:none;border-radius:4px;background-color:#444;color:#fff;}button{padding:8px 16px;border:none;border-radius:4px;background-color:#555;color:#fff;cursor:pointer;}button:hover{background-color:#666;}</style></head><body><div class=\"app\"><h1>Temperature Converter</h1><div class=\"row\"><label for=\"celsiusInput\">Celsius</label><input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\" oninput=\"convert('celsiusInput', 'fahrenheitInput', toF)\"></div><div class=\"row\"><label for=\"fahrenheitInput\">Fahrenheit</label><input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\" oninput=\"convert('fahrenheitInput', 'celsiusInput', toC)\"></div><button onclick=\"clearInputs()\">Clear</button></div><script>const toF = c => c * 9 / 5 + 32;const toC = f => (f - 32) * 5 / 9;function convert(inputId, outputId, transform) {const value = parseFloat(document.getElementById(inputId).value);document.getElementById(outputId).value = isNaN(value) ? '' : transform(value).toFixed(1);}function clearInputs() {document.getElementById('celsiusInput').value = '';document.getElementById('fahrenheitInput').value = '';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Temperature Converter</title>\n  <style>\n    body { font-family: Arial, sans-serif; background-color: #222; color: #fff; }\n    .app { max-width: 400px; margin: 50px auto; padding: 24px; border-radius: 8px; background-color: #333; }\n    input { padding: 8px; width: calc(100% - 16px); border: none; border-radius: 4px; background-color: #444; color: #fff; }\n    button { padding: 8px 16px; border: none; border-radius: 4px; background-color: #555; color: #fff; cursor: pointer; }\n    button:hover { background-color: #666; }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Temperature Converter</h1>\n    <div class=\"row\">\n      <label for=\"celsiusInput\">Celsius</label>\n      <input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <div class=\"row\">\n      <label for=\"fahrenheitInput\">Fahrenheit</label>\n      <input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <button onclick=\"clearInputs()\">Clear</button>\n  </div>\n\n  <script>\n    function convertTemperature() {\n      const celsiusInput = document.getElementById('celsiusInput').value;\n      const fahrenheitInput = document.getElementById('fahrenheitInput').value;\n\n      if (celsiusInput) {\n        const celsius = parseFloat(celsiusInput);\n        const fahrenheit = (celsius * 9/5) + 32;\n        document."
+      }
+    ],
+    "id": "idea_1788130524770_mmwda",
+    "createdAt": "2026-08-30T22:55:24.770Z"
+  },
+  {
+    "purpose": "a temperature converter between celsius and fahrenheit as a single-file browser app (index.html)",
+    "design": "The design approach makes the code small, fast, and universal by using a single event-driven conversion function that recalculates on input changes, isolating the transformation logic in pure functions (`toF` and `toC`). This modular structure allows for easy swapping of transformation functions to support other unit conversions, ensuring a generic and reusable design.",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1526,
+      "lines": 1,
+      "files": 1,
+      "genMs": 13186
+    },
+    "baselineMetrics": {
+      "bytes": 1566,
+      "lines": 37,
+      "files": 1,
+      "genMs": 24931
+    },
+    "composite": 0.7516784895916817,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-temperature-converter-between-celsius--1788130537957-round-4",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Temperature Converter</title><style>body{font-family:Arial,sans-serif;background-color:#222;color:#fff;}.app{max-width:400px;margin:50px auto;padding:24px;border-radius:8px;background-color:#333;}input{padding:8px;width:calc(100%-16px);border:none;border-radius:4px;background-color:#444;color:#fff;}button{padding:8px 16px;border:none;border-radius:4px;background-color:#555;color:#fff;cursor:pointer;}button:hover{background-color:#666;}</style></head><body><div class=\"app\"><h1>Temperature Converter</h1><div class=\"row\"><label for=\"celsiusInput\">Celsius</label><input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\" oninput=\"convert('celsiusInput', 'fahrenheitInput', toF)\"></div><div class=\"row\"><label for=\"fahrenheitInput\">Fahrenheit</label><input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\" oninput=\"convert('fahrenheitInput', 'celsiusInput', toC)\"></div><button onclick=\"clearInputs()\">Clear</button></div><script>const toF = c => c * 9 / 5 + 32;const toC = f => (f - 32) * 5 / 9;function convert(inputId, outputId, transform) {const value = parseFloat(document.getElementById(inputId).value);document.getElementById(outputId).value = isNaN(value) ? '' : transform(value).toFixed(1);}function clearInputs() {document.getElementById('celsiusInput').value = '';document.getElementById('fahrenheitInput').value = '';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Temperature Converter</title>\n  <style>\n    body { font-family: Arial, sans-serif; background-color: #222; color: #fff; }\n    .app { max-width: 400px; margin: 50px auto; padding: 24px; border-radius: 8px; background-color: #333; }\n    input { padding: 8px; width: calc(100% - 16px); border: none; border-radius: 4px; background-color: #444; color: #fff; }\n    button { padding: 8px 16px; border: none; border-radius: 4px; background-color: #555; color: #fff; cursor: pointer; }\n    button:hover { background-color: #666; }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Temperature Converter</h1>\n    <div class=\"row\">\n      <label for=\"celsiusInput\">Celsius</label>\n      <input type=\"number\" id=\"celsiusInput\" placeholder=\"Enter Celsius value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <div class=\"row\">\n      <label for=\"fahrenheitInput\">Fahrenheit</label>\n      <input type=\"number\" id=\"fahrenheitInput\" placeholder=\"Enter Fahrenheit value\"\n        oninput=\"convertTemperature()\">\n    </div>\n    <button onclick=\"clearInputs()\">Clear</button>\n  </div>\n\n  <script>\n    function convertTemperature() {\n      const celsiusInput = document.getElementById('celsiusInput').value;\n      const fahrenheitInput = document.getElementById('fahrenheitInput').value;\n\n      if (celsiusInput) {\n        const celsius = parseFloat(celsiusInput);\n        const fahrenheit = (celsius * 9/5) + 32;\n        document."
+      }
+    ],
+    "id": "idea_1788130537995_e1bt4",
+    "createdAt": "2026-08-30T22:55:37.995Z",
+    "lesson": "The design approach makes the code small, fast, and universal by using a single event-driven conversion function that recalculates on input changes, isolating the transformation logic in pure functions (`toF` and `toC`). This modular structure allows for easy swapping of transformation functions to support other unit conversions, ensuring a generic and reusable design."
+  },
+  {
+    "purpose": "a simple stopwatch app as a single-file browser app (index.html)",
+    "design": "a simple stopwatch app as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1485,
+      "lines": 1,
+      "files": 1,
+      "genMs": 16194
+    },
+    "baselineMetrics": {
+      "bytes": 1981,
+      "lines": 70,
+      "files": 1,
+      "genMs": 26087
+    },
+    "composite": 0.6851951843583541,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-simple-stopwatch-app-as-a-single-file--1788131209518-round-1",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Stopwatch App</title><style>.app{max-width:960px;margin:0 auto;padding:24px;text-align:center;}.btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;}.btn-primary{background-color:#28a745;color:white;}.btn-danger{background-color:#dc3545;color:white;}</style></head><body><div class=\"app\"><h1>Stopwatch</h1><div class=\"row\"><span id=\"timer\">00:00:00</span><button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"startStopwatch()\">Start</button><button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"stopStopwatch()\">Stop</button><button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button></div></div><script>let on=false,acc=0,t,timerInterval=null;b.onclick=()=>{on=!on;b.textContent=on?'⏸':'▶';t=performance.now();if(on)tick();};function tick(){acc=on?performance.now()-t:0;const s=Math.floor(acc/1000%60),m=Math.floor(acc/60000%60),h=Math.floor(acc/3600000%24);document.getElementById('timer').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(on)requestAnimationFrame(tick);};function startStopwatch(){if(!timerInterval){timerInterval=setInterval(tick,10);}}function stopStopwatch(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}function resetStopwatch(){acc=0;document.getElementById('timer').textContent='00:00:00';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Stopwatch App</title>\n  <style>\n    .app {\n      max-width: 960px;\n      margin: 0 auto;\n      padding: 24px;\n      text-align: center;\n    }\n    .btn {\n      padding: 10px 20px;\n      border: none;\n      border-radius: 5px;\n      cursor: pointer;\n    }\n    .btn-primary {\n      background-color: #28a745;\n      color: white;\n    }\n    .btn-danger {\n      background-color: #dc3545;\n      color: white;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Stopwatch</h1>\n    <div class=\"row\">\n      <span id=\"timer\">00:00:00</span>\n      <button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"startStopwatch()\">Start</button>\n      <button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"stopStopwatch()\">Stop</button>\n      <button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button>\n    </div>\n  </div>\n  <script>\n    let startTime = 0;\n    let elapsedTime = 0;\n    let timerInterval = null;\n\n    function startStopwatch() {\n      if (!timerInterval) {\n        startTime = Date.now() - elapsedTime;\n        timerInterval = setInterval(updateTimer, 10);\n      }\n    }\n\n    function stopStopwatch() {\n      if (timerInterval) {\n        clearInterval(timerInterval);\n        timerInterval = null;\n      }\n    }\n\n    function resetStopwatch() {\n      elapsedTime = 0;\n      document.getElementById('timer').textContent = '00:00:00';\n    }\n\n    function updateTimer() {\n      elapsedTime = Date.now() - startTime;\n      const seconds = Math.floor((elapsedTime / 1000) % 60);\n      const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);\n      const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);\n\n      document.getElementById('timer').textContent = \n        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;\n    }\n  </script>\n</body>\n</html>"
+      }
+    ],
+    "id": "idea_1788131209558_vwy39",
+    "createdAt": "2026-08-30T23:06:49.558Z"
+  },
+  {
+    "purpose": "a simple stopwatch app as a single-file browser app (index.html)",
+    "design": "a simple stopwatch app as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1333,
+      "lines": 1,
+      "files": 1,
+      "genMs": 13599
+    },
+    "baselineMetrics": {
+      "bytes": 1981,
+      "lines": 70,
+      "files": 1,
+      "genMs": 26087
+    },
+    "composite": 0.5970933048613185,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-simple-stopwatch-app-as-a-single-file--1788131223158-round-2",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Stopwatch App</title><style>.app{max-width:960px;margin:0 auto;padding:24px;text-align:center;}.btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;}.btn-primary{background-color:#28a745;color:white;}.btn-danger{background-color:#dc3545;color:white;}</style></head><body><div class=\"app\"><h1>Stopwatch</h1><div class=\"row\"><span id=\"timer\">00:00:00</span><button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"toggleStopwatch()\">Start</button><button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"toggleStopwatch()\">Stop</button><button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button></div></div><script>let on=false,acc=0,t;function toggleStopwatch(){on=!on;document.getElementById('startBtn').textContent=on?'⏸':'▶';t=performance.now();if(on)tick();}function tick(){acc=performance.now()-t;const s=Math.floor(acc/1000%60),m=Math.floor(acc/60000%60),h=Math.floor(acc/3600000%24);document.getElementById('timer').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(on)requestAnimationFrame(tick);}function resetStopwatch(){acc=0;document.getElementById('timer').textContent='00:00:00';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Stopwatch App</title>\n  <style>\n    .app {\n      max-width: 960px;\n      margin: 0 auto;\n      padding: 24px;\n      text-align: center;\n    }\n    .btn {\n      padding: 10px 20px;\n      border: none;\n      border-radius: 5px;\n      cursor: pointer;\n    }\n    .btn-primary {\n      background-color: #28a745;\n      color: white;\n    }\n    .btn-danger {\n      background-color: #dc3545;\n      color: white;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Stopwatch</h1>\n    <div class=\"row\">\n      <span id=\"timer\">00:00:00</span>\n      <button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"startStopwatch()\">Start</button>\n      <button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"stopStopwatch()\">Stop</button>\n      <button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button>\n    </div>\n  </div>\n  <script>\n    let startTime = 0;\n    let elapsedTime = 0;\n    let timerInterval = null;\n\n    function startStopwatch() {\n      if (!timerInterval) {\n        startTime = Date.now() - elapsedTime;\n        timerInterval = setInterval(updateTimer, 10);\n      }\n    }\n\n    function stopStopwatch() {\n      if (timerInterval) {\n        clearInterval(timerInterval);\n        timerInterval = null;\n      }\n    }\n\n    function resetStopwatch() {\n      elapsedTime = 0;\n      document.getElementById('timer').textContent = '00:00:00';\n    }\n\n    function updateTimer() {\n      elapsedTime = Date.now() - startTime;\n      const seconds = Math.floor((elapsedTime / 1000) % 60);\n      const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);\n      const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);\n\n      document.getElementById('timer').textContent = \n        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;\n    }\n  </script>\n</body>\n</html>"
+      }
+    ],
+    "id": "idea_1788131223198_cjmcl",
+    "createdAt": "2026-08-30T23:07:03.198Z"
+  },
+  {
+    "purpose": "a simple stopwatch app as a single-file browser app (index.html)",
+    "design": "a simple stopwatch app as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1333,
+      "lines": 1,
+      "files": 1,
+      "genMs": 13341
+    },
+    "baselineMetrics": {
+      "bytes": 1981,
+      "lines": 70,
+      "files": 1,
+      "genMs": 26087
+    },
+    "composite": 0.5921483131029714,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-simple-stopwatch-app-as-a-single-file--1788131236540-round-3",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Stopwatch App</title><style>.app{max-width:960px;margin:0 auto;padding:24px;text-align:center;}.btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;}.btn-primary{background-color:#28a745;color:white;}.btn-danger{background-color:#dc3545;color:white;}</style></head><body><div class=\"app\"><h1>Stopwatch</h1><div class=\"row\"><span id=\"timer\">00:00:00</span><button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"toggleStopwatch()\">Start</button><button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"toggleStopwatch()\">Stop</button><button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button></div></div><script>let on=false,acc=0,t;function toggleStopwatch(){on=!on;document.getElementById('startBtn').textContent=on?'⏸':'▶';t=performance.now();if(on)tick();}function tick(){acc=performance.now()-t;const s=Math.floor(acc/1000%60),m=Math.floor(acc/60000%60),h=Math.floor(acc/3600000%24);document.getElementById('timer').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(on)requestAnimationFrame(tick);}function resetStopwatch(){acc=0;document.getElementById('timer').textContent='00:00:00';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Stopwatch App</title>\n  <style>\n    .app {\n      max-width: 960px;\n      margin: 0 auto;\n      padding: 24px;\n      text-align: center;\n    }\n    .btn {\n      padding: 10px 20px;\n      border: none;\n      border-radius: 5px;\n      cursor: pointer;\n    }\n    .btn-primary {\n      background-color: #28a745;\n      color: white;\n    }\n    .btn-danger {\n      background-color: #dc3545;\n      color: white;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Stopwatch</h1>\n    <div class=\"row\">\n      <span id=\"timer\">00:00:00</span>\n      <button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"startStopwatch()\">Start</button>\n      <button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"stopStopwatch()\">Stop</button>\n      <button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button>\n    </div>\n  </div>\n  <script>\n    let startTime = 0;\n    let elapsedTime = 0;\n    let timerInterval = null;\n\n    function startStopwatch() {\n      if (!timerInterval) {\n        startTime = Date.now() - elapsedTime;\n        timerInterval = setInterval(updateTimer, 10);\n      }\n    }\n\n    function stopStopwatch() {\n      if (timerInterval) {\n        clearInterval(timerInterval);\n        timerInterval = null;\n      }\n    }\n\n    function resetStopwatch() {\n      elapsedTime = 0;\n      document.getElementById('timer').textContent = '00:00:00';\n    }\n\n    function updateTimer() {\n      elapsedTime = Date.now() - startTime;\n      const seconds = Math.floor((elapsedTime / 1000) % 60);\n      const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);\n      const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);\n\n      document.getElementById('timer').textContent = \n        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;\n    }\n  </script>\n</body>\n</html>"
+      }
+    ],
+    "id": "idea_1788131236577_1v7lf",
+    "createdAt": "2026-08-30T23:07:16.577Z"
+  },
+  {
+    "purpose": "a simple stopwatch app as a single-file browser app (index.html)",
+    "design": "The design approach makes the code small and fast by using a single-source-of-truth timestamp (`performance.now()`) to calculate elapsed time directly, avoiding drift and throttling issues. This approach is universal because it can be easily adapted for similar timing-based apps like countdowns or FPS meters by changing the logic that calculates and displays the time.",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 1368,
+      "lines": 1,
+      "files": 1,
+      "genMs": 12798
+    },
+    "baselineMetrics": {
+      "bytes": 1981,
+      "lines": 70,
+      "files": 1,
+      "genMs": 26087
+    },
+    "composite": 0.5905747527102598,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-simple-stopwatch-app-as-a-single-file--1788131249376-round-4",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Stopwatch App</title><style>.app{max-width:960px;margin:0 auto;padding:24px;text-align:center;}.btn{padding:10px 20px;border:none;border-radius:5px;cursor:pointer;}.btn-primary{background-color:#28a745;color:white;}.btn-danger{background-color:#dc3545;color:white;}</style></head><body><div class=\"app\"><h1>Stopwatch</h1><div class=\"row\"><span id=\"timer\">00:00:00</span><button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"toggleStopwatch()\">Start</button><button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"toggleStopwatch()\">Stop</button><button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button></div></div><script>let on=false,acc=0,t;function toggleStopwatch(){on=!on;document.getElementById('startBtn').textContent=on?'⏸':'▶';t=performance.now();if(on)tick();}function tick(){const now=performance.now(),elapsed=on?now-t:0;const s=Math.floor(elapsed/1000%60),m=Math.floor(elapsed/60000%60),h=Math.floor(elapsed/3600000%24);document.getElementById('timer').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(on)requestAnimationFrame(tick);}function resetStopwatch(){acc=0;document.getElementById('timer').textContent='00:00:00';}</script></body></html>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Stopwatch App</title>\n  <style>\n    .app {\n      max-width: 960px;\n      margin: 0 auto;\n      padding: 24px;\n      text-align: center;\n    }\n    .btn {\n      padding: 10px 20px;\n      border: none;\n      border-radius: 5px;\n      cursor: pointer;\n    }\n    .btn-primary {\n      background-color: #28a745;\n      color: white;\n    }\n    .btn-danger {\n      background-color: #dc3545;\n      color: white;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"app\">\n    <h1>Stopwatch</h1>\n    <div class=\"row\">\n      <span id=\"timer\">00:00:00</span>\n      <button id=\"startBtn\" class=\"btn btn-primary\" onclick=\"startStopwatch()\">Start</button>\n      <button id=\"stopBtn\" class=\"btn btn-danger\" onclick=\"stopStopwatch()\">Stop</button>\n      <button id=\"resetBtn\" class=\"btn\" onclick=\"resetStopwatch()\">Reset</button>\n    </div>\n  </div>\n  <script>\n    let startTime = 0;\n    let elapsedTime = 0;\n    let timerInterval = null;\n\n    function startStopwatch() {\n      if (!timerInterval) {\n        startTime = Date.now() - elapsedTime;\n        timerInterval = setInterval(updateTimer, 10);\n      }\n    }\n\n    function stopStopwatch() {\n      if (timerInterval) {\n        clearInterval(timerInterval);\n        timerInterval = null;\n      }\n    }\n\n    function resetStopwatch() {\n      elapsedTime = 0;\n      document.getElementById('timer').textContent = '00:00:00';\n    }\n\n    function updateTimer() {\n      elapsedTime = Date.now() - startTime;\n      const seconds = Math.floor((elapsedTime / 1000) % 60);\n      const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);\n      const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);\n\n      document.getElementById('timer').textContent = \n        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;\n    }\n  </script>\n</body>\n</html>"
+      }
+    ],
+    "id": "idea_1788131249415_yxsaf",
+    "createdAt": "2026-08-30T23:07:29.416Z",
+    "lesson": "The design approach makes the code small and fast by using a single-source-of-truth timestamp (`performance.now()`) to calculate elapsed time directly, avoiding drift and throttling issues. This approach is universal because it can be easily adapted for similar timing-based apps like countdowns or FPS meters by changing the logic that calculates and displays the time."
+  },
+  {
+    "purpose": "a character and word counter CLI program in typescript",
+    "design": "The design approach makes the code small and fast by collapsing functionality into a single statement where possible and using `filter(Boolean)` to efficiently drop empty strings. It achieves universality by implementing reusable helper functions like `countCharactersAndWords`, which can be applied across various text processing tasks such as logs, diffs, and search indexing. This modular design e",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 924,
+      "lines": 8,
+      "files": 4,
+      "genMs": 5758
+    },
+    "baselineMetrics": {
+      "bytes": 1269,
+      "lines": 34,
+      "files": 4,
+      "genMs": 33197
+    },
+    "composite": 0.45079089789294957,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-character-and-word-counter-cli-program-1788131933259-round-2",
+    "files": [
+      {
+        "path": "src/input-parser.ts",
+        "content": "export function parseInput(rawInput: string): string { return rawInput.trim(); }"
+      },
+      {
+        "path": "src/counter.ts",
+        "content": "export function countCharactersAndWords(text: string): { characters: number, words: number } { return { characters: text.length, words: text.split(/\\s+/).filter(Boolean).length }; }"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import { parseInput } from './input-parser'; import { countCharactersAndWords } from './counter'; const run = (): void => { const userInput = parseInput(process.argv.slice(2).join(' ')); if (!userInput) { console.error('Invalid input. Please provide text as input.'); return; } const { characters, words } = countCharactersAndWords(userInput); console.log(`Characters: ${characters}`); console.log(`Words: ${words}`); }; run();"
+      },
+      {
+        "path": "src/output.ts",
+        "content": "// This file handles the output display to the CLI\n\nexport const displayResults = (wordCount: number, characterCount: number): void => {\n  console.log(`Word Count: ${wordCount}`);\n  console.log(`Character Count: ${characterCount}`);\n};\n"
+      }
+    ],
+    "nodeType": "logic",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "src/input-parser.ts",
+        "content": "export function parseInput(rawInput: string): string {\n  if (typeof rawInput !== 'string' || rawInput.trim() === '') {\n    throw new Error('Input must be a non-empty string');\n  }\n  return rawInput.trim();\n}"
+      },
+      {
+        "path": "src/counter.ts",
+        "content": "// Counts characters and words in the provided text\n\nexport function countCharactersAndWords(text: string): { characters: number, words: number } {\n  const characterCount = text.length;\n  const wordCount = text.trim() === '' ? 0 : text.split(/\\s+/).filter(word => word.length > 0).length;\n\n  return {\n    characters: characterCount,\n    words: wordCount\n  };\n}"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import { parseInput } from './input-parser';\nimport { countCharactersAndWords } from './counter';\n\nconst run = (): void => {\n  const args = process.argv.slice(2);\n  const userInput = args.join(' ');\n\n  if (userInput === '') {\n    console.error('Invalid input. Please provide text as input.');\n    return;\n  }\n\n  const { characters, words } = countCharactersAndWords(userInput);\n  console.log(`Characters: ${characters}`);\n  console.log(`Words: ${words}`);\n};\n\nrun();"
+      },
+      {
+        "path": "src/output.ts",
+        "content": "// This file handles the output display to the CLI\n\nexport const displayResults = (wordCount: number, characterCount: number): void => {\n  console.log(`Word Count: ${wordCount}`);\n  console.log(`Character Count: ${characterCount}`);\n};\n"
+      }
+    ],
+    "id": "idea_1788131935488_xg91j",
+    "createdAt": "2026-08-30T23:18:55.488Z",
+    "lesson": "The design approach makes the code small and fast by collapsing functionality into a single statement where possible and using `filter(Boolean)` to efficiently drop empty strings. It achieves universality by implementing reusable helper functions like `countCharactersAndWords`, which can be applied across various text processing tasks such as logs, diffs, and search indexing. This modular design e"
+  },
+  {
+    "purpose": "a small quiz app with hardcoded questions as a single-file browser app (index.html)",
+    "design": "a small quiz app with hardcoded questions as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 2185,
+      "lines": 1,
+      "files": 1,
+      "genMs": 20650
+    },
+    "baselineMetrics": {
+      "bytes": 2577,
+      "lines": 71,
+      "files": 1,
+      "genMs": 30259
+    },
+    "composite": 0.7651633626919518,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-small-quiz-app-with-hardcoded-question-1788133252872-round-1",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\">  <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      <h1>Quiz App</h1>      <form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\">        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          <label for=\"questionInput\" style=\"min-width:100px\">Question</label>          <input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\">        </div>        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          <label for=\"answerInput\" style=\"min-width:100px\">Answer</label>          <input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\">        </div>        <button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button>      </form>    </div>    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      <h2>Questions</h2>      <ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul>    </div>  </div></div><script>const questions = [], q = document.getElementById('questionsList');function submitQuestion() {const question = document.getElementById('questionInput').value.trim(), answer = document.getElementById('answerInput').value.trim();if (question && answer) {questions.push({ question, answer });updateQuestionsList();document.getElementById('questionInput').value = '';document.getElementById('answerInput').value = '';} else {alert('Question and answer must not be empty.');}}function updateQuestionsList() {q.innerHTML = '';questions.forEach((q, index) => {const li = document.createElement('li');li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;q.appendChild(li);});}</script><style>.app {background-color: #222;color: #ddd;}.btn {padding: 8px 16px;border: none;border-radius: 4px;cursor: pointer;background-color: #007bff;color: white;}.btn:hover {background-color: #0056b3;}input {padding: 8px;border: 1px solid #ccc;border-radius: 4px;}</style>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\">  \n  <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">    \n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h1>Quiz App</h1>\n      <form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\">        \n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"questionInput\" style=\"min-width:100px\">Question</label>          \n          <input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\">\n        </div>\n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"answerInput\" style=\"min-width:100px\">Answer</label>          \n          <input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\">\n        </div>        \n        <button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button>        \n      </form>\n    </div>\n\n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h2>Questions</h2>      \n      <ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul>\n    </div>\n  </div>\n</div>\n\n<script>\n  const questions = [];\n\n  function submitQuestion() {\n    const questionInput = document.getElementById('questionInput');\n    const answerInput = document.getElementById('answerInput');\n    const question = questionInput.value.trim();\n    const answer = answerInput.value.trim();\n\n    if (question && answer) {\n      questions.push({ question, answer });\n      updateQuestionsList();\n      questionInput.value = '';\n      answerInput.value = '';\n    } else {\n      alert('Question and answer must not be empty.');\n    }\n  }\n\n  function updateQuestionsList() {\n    const questionsList = document.getElementById('questionsList');\n    questionsList.innerHTML = '';\n    questions.forEach((q, index) => {\n      const li = document.createElement('li');\n      li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;\n      questionsList.appendChild(li);\n    });\n  }\n</script>\n<style>\n  .app {\n    background-color: #222;\n    color: #ddd;\n  }\n\n  .btn {\n    padding: 8px 16px;\n    border: none;\n    border-radius: 4px;\n    cursor: pointer;\n    background-color: #007bff;\n    color: white;\n  }\n\n  .btn:hover {\n    background-color: #0056b3;\n  }\n\n  input {\n    padding: 8px;\n    border: 1px solid #ccc;\n    border-radius: 4px;\n  }\n</style>"
+      }
+    ],
+    "id": "idea_1788133252912_lnot3",
+    "createdAt": "2026-08-30T23:40:52.912Z"
+  },
+  {
+    "purpose": "a small quiz app with hardcoded questions as a single-file browser app (index.html)",
+    "design": "a small quiz app with hardcoded questions as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 2055,
+      "lines": 1,
+      "files": 1,
+      "genMs": 18241
+    },
+    "baselineMetrics": {
+      "bytes": 2577,
+      "lines": 71,
+      "files": 1,
+      "genMs": 30259
+    },
+    "composite": 0.7001338964141206,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-small-quiz-app-with-hardcoded-question-1788133271154-round-2",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\"><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\"><h1>Quiz App</h1><form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\"><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><label for=\"questionInput\" style=\"min-width:100px\">Question</label><input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\"></div><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><label for=\"answerInput\" style=\"min-width:100px\">Answer</label><input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\"></div><button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button></form></div><div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\"><h2>Questions</h2><ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul></div></div></div><script>const questions = [], q = document.getElementById('questionsList');function submitQuestion() {const question = document.getElementById('questionInput').value.trim(), answer = document.getElementById('answerInput').value.trim();if (question && answer) {questions.push({ question, answer });updateQuestionsList();document.getElementById('questionInput').value = '';document.getElementById('answerInput').value = '';} else {alert('Question and answer must not be empty.');}}function updateQuestionsList() {q.innerHTML = '';questions.forEach((q, index) => {const li = document.createElement('li');li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;q.appendChild(li);});}</script><style>.app {background-color: #222;color: #ddd;}.btn {padding: 8px 16px;border: none;border-radius: 4px;cursor: pointer;background-color: #007bff;color: white;}.btn:hover {background-color: #0056b3;}input {padding: 8px;border: 1px solid #ccc;border-radius: 4px;}</style>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\">  \n  <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">    \n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h1>Quiz App</h1>\n      <form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\">        \n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"questionInput\" style=\"min-width:100px\">Question</label>          \n          <input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\">\n        </div>\n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"answerInput\" style=\"min-width:100px\">Answer</label>          \n          <input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\">\n        </div>        \n        <button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button>        \n      </form>\n    </div>\n\n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h2>Questions</h2>      \n      <ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul>\n    </div>\n  </div>\n</div>\n\n<script>\n  const questions = [];\n\n  function submitQuestion() {\n    const questionInput = document.getElementById('questionInput');\n    const answerInput = document.getElementById('answerInput');\n    const question = questionInput.value.trim();\n    const answer = answerInput.value.trim();\n\n    if (question && answer) {\n      questions.push({ question, answer });\n      updateQuestionsList();\n      questionInput.value = '';\n      answerInput.value = '';\n    } else {\n      alert('Question and answer must not be empty.');\n    }\n  }\n\n  function updateQuestionsList() {\n    const questionsList = document.getElementById('questionsList');\n    questionsList.innerHTML = '';\n    questions.forEach((q, index) => {\n      const li = document.createElement('li');\n      li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;\n      questionsList.appendChild(li);\n    });\n  }\n</script>\n<style>\n  .app {\n    background-color: #222;\n    color: #ddd;\n  }\n\n  .btn {\n    padding: 8px 16px;\n    border: none;\n    border-radius: 4px;\n    cursor: pointer;\n    background-color: #007bff;\n    color: white;\n  }\n\n  .btn:hover {\n    background-color: #0056b3;\n  }\n\n  input {\n    padding: 8px;\n    border: 1px solid #ccc;\n    border-radius: 4px;\n  }\n</style>"
+      }
+    ],
+    "id": "idea_1788133271194_mgsv3",
+    "createdAt": "2026-08-30T23:41:11.194Z"
+  },
+  {
+    "purpose": "a small quiz app with hardcoded questions as a single-file browser app (index.html)",
+    "design": "a small quiz app with hardcoded questions as a single-file browser app (index.html) — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 2055,
+      "lines": 1,
+      "files": 1,
+      "genMs": 18120
+    },
+    "baselineMetrics": {
+      "bytes": 2577,
+      "lines": 71,
+      "files": 1,
+      "genMs": 30259
+    },
+    "composite": 0.6981344912784586,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-small-quiz-app-with-hardcoded-question-1788133289315-round-3",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\"><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\"><h1>Quiz App</h1><form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\"><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><label for=\"questionInput\" style=\"min-width:100px\">Question</label><input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\"></div><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><label for=\"answerInput\" style=\"min-width:100px\">Answer</label><input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\"></div><button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button></form></div><div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\"><h2>Questions</h2><ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul></div></div></div><script>const questions = [], q = document.getElementById('questionsList');function submitQuestion() {const question = document.getElementById('questionInput').value.trim(), answer = document.getElementById('answerInput').value.trim();if (question && answer) {questions.push({ question, answer });updateQuestionsList();document.getElementById('questionInput').value = '';document.getElementById('answerInput').value = '';} else {alert('Question and answer must not be empty.');}}function updateQuestionsList() {q.innerHTML = '';questions.forEach((q, index) => {const li = document.createElement('li');li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;q.appendChild(li);});}</script><style>.app {background-color: #222;color: #ddd;}.btn {padding: 8px 16px;border: none;border-radius: 4px;cursor: pointer;background-color: #007bff;color: white;}.btn:hover {background-color: #0056b3;}input {padding: 8px;border: 1px solid #ccc;border-radius: 4px;}</style>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\">  \n  <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">    \n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h1>Quiz App</h1>\n      <form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\">        \n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"questionInput\" style=\"min-width:100px\">Question</label>          \n          <input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\">\n        </div>\n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"answerInput\" style=\"min-width:100px\">Answer</label>          \n          <input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\">\n        </div>        \n        <button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button>        \n      </form>\n    </div>\n\n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h2>Questions</h2>      \n      <ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul>\n    </div>\n  </div>\n</div>\n\n<script>\n  const questions = [];\n\n  function submitQuestion() {\n    const questionInput = document.getElementById('questionInput');\n    const answerInput = document.getElementById('answerInput');\n    const question = questionInput.value.trim();\n    const answer = answerInput.value.trim();\n\n    if (question && answer) {\n      questions.push({ question, answer });\n      updateQuestionsList();\n      questionInput.value = '';\n      answerInput.value = '';\n    } else {\n      alert('Question and answer must not be empty.');\n    }\n  }\n\n  function updateQuestionsList() {\n    const questionsList = document.getElementById('questionsList');\n    questionsList.innerHTML = '';\n    questions.forEach((q, index) => {\n      const li = document.createElement('li');\n      li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;\n      questionsList.appendChild(li);\n    });\n  }\n</script>\n<style>\n  .app {\n    background-color: #222;\n    color: #ddd;\n  }\n\n  .btn {\n    padding: 8px 16px;\n    border: none;\n    border-radius: 4px;\n    cursor: pointer;\n    background-color: #007bff;\n    color: white;\n  }\n\n  .btn:hover {\n    background-color: #0056b3;\n  }\n\n  input {\n    padding: 8px;\n    border: 1px solid #ccc;\n    border-radius: 4px;\n  }\n</style>"
+      }
+    ],
+    "id": "idea_1788133289356_ekrlz",
+    "createdAt": "2026-08-30T23:41:29.356Z"
+  },
+  {
+    "purpose": "a small quiz app with hardcoded questions as a single-file browser app (index.html)",
+    "design": "The design approach makes the code small and fast by using a minimal state machine with a shared index/score that mutates on each advance step, triggering a re-render. It is universal enough to replace older implementations by employing a single source of truth (the `questions` array), avoiding dependencies, and using simple algorithms for adding questions and updating the list.",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 2055,
+      "lines": 1,
+      "files": 1,
+      "genMs": 16895
+    },
+    "baselineMetrics": {
+      "bytes": 2577,
+      "lines": 71,
+      "files": 1,
+      "genMs": 30259
+    },
+    "composite": 0.6778925797810529,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-small-quiz-app-with-hardcoded-question-1788133306252-round-4",
+    "files": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\"><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\"><h1>Quiz App</h1><form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\"><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><label for=\"questionInput\" style=\"min-width:100px\">Question</label><input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\"></div><div class=\"row\" style=\"display:flex;gap:10px;align-items:center\"><label for=\"answerInput\" style=\"min-width:100px\">Answer</label><input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\"></div><button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button></form></div><div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\"><h2>Questions</h2><ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul></div></div></div><script>const questions = [], q = document.getElementById('questionsList');function submitQuestion() {const question = document.getElementById('questionInput').value.trim(), answer = document.getElementById('answerInput').value.trim();if (question && answer) {questions.push({ question, answer });updateQuestionsList();document.getElementById('questionInput').value = '';document.getElementById('answerInput').value = '';} else {alert('Question and answer must not be empty.');}}function updateQuestionsList() {q.innerHTML = '';questions.forEach((q, index) => {const li = document.createElement('li');li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;q.appendChild(li);});}</script><style>.app {background-color: #222;color: #ddd;}.btn {padding: 8px 16px;border: none;border-radius: 4px;cursor: pointer;background-color: #007bff;color: white;}.btn:hover {background-color: #0056b3;}input {padding: 8px;border: 1px solid #ccc;border-radius: 4px;}</style>"
+      }
+    ],
+    "nodeType": "ui",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.html",
+        "content": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<div class=\"app\" style=\"max-width:960px;margin:0 auto;padding:24px\">  \n  <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">    \n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h1>Quiz App</h1>\n      <form id=\"quizForm\" style=\"display:flex;flex-direction:column;gap:10px\">        \n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"questionInput\" style=\"min-width:100px\">Question</label>          \n          <input type=\"text\" id=\"questionInput\" placeholder=\"Enter question\" value=\"\">\n        </div>\n        <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">          \n          <label for=\"answerInput\" style=\"min-width:100px\">Answer</label>          \n          <input type=\"text\" id=\"answerInput\" placeholder=\"Enter answer\" value=\"\">\n        </div>        \n        <button id=\"submitBtn\" class=\"btn\" onclick=\"submitQuestion()\">Submit</button>        \n      </form>\n    </div>\n\n    <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">      \n      <h2>Questions</h2>      \n      <ul id=\"questionsList\" style=\"list-style:none;padding:0;display:flex;flex-direction:column;gap:10px\"></ul>\n    </div>\n  </div>\n</div>\n\n<script>\n  const questions = [];\n\n  function submitQuestion() {\n    const questionInput = document.getElementById('questionInput');\n    const answerInput = document.getElementById('answerInput');\n    const question = questionInput.value.trim();\n    const answer = answerInput.value.trim();\n\n    if (question && answer) {\n      questions.push({ question, answer });\n      updateQuestionsList();\n      questionInput.value = '';\n      answerInput.value = '';\n    } else {\n      alert('Question and answer must not be empty.');\n    }\n  }\n\n  function updateQuestionsList() {\n    const questionsList = document.getElementById('questionsList');\n    questionsList.innerHTML = '';\n    questions.forEach((q, index) => {\n      const li = document.createElement('li');\n      li.textContent = `${index + 1}. ${q.question} - Answer: ${q.answer}`;\n      questionsList.appendChild(li);\n    });\n  }\n</script>\n<style>\n  .app {\n    background-color: #222;\n    color: #ddd;\n  }\n\n  .btn {\n    padding: 8px 16px;\n    border: none;\n    border-radius: 4px;\n    cursor: pointer;\n    background-color: #007bff;\n    color: white;\n  }\n\n  .btn:hover {\n    background-color: #0056b3;\n  }\n\n  input {\n    padding: 8px;\n    border: 1px solid #ccc;\n    border-radius: 4px;\n  }\n</style>"
+      }
+    ],
+    "id": "idea_1788133306295_dm2do",
+    "createdAt": "2026-08-30T23:41:46.295Z",
+    "lesson": "The design approach makes the code small and fast by using a minimal state machine with a shared index/score that mutates on each advance step, triggering a re-render. It is universal enough to replace older implementations by employing a single source of truth (the `questions` array), avoiding dependencies, and using simple algorithms for adding questions and updating the list."
+  },
+  {
+    "purpose": "a simple password strength checker CLI program in typescript",
+    "design": "a simple password strength checker CLI program in typescript — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 503,
+      "lines": 2,
+      "files": 2,
+      "genMs": 6997
+    },
+    "baselineMetrics": {
+      "bytes": 1207,
+      "lines": 33,
+      "files": 2,
+      "genMs": 21125
+    },
+    "composite": 0.3739773216395484,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-simple-password-strength-checker-cli-p-1788133967977-round-1",
+    "files": [
+      {
+        "path": "src/password-strength.ts",
+        "content": "const checks=[/.{8}/,/\\d/,/[a-z]/,/A-Z/,/[^A-Za-z0-9]/];const rate=pw=>['Very Weak','Weak','Moderate','Strong','Very Strong'][Math.min(4,checks.filter(c=>c.test(pw)).length)];export{rate};"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import{rate}from'./password-strength';const args=process.argv.slice(2);if(args.length!==1){console.error('Usage: node src/index.ts <password>');process.exit(1);}const password=args[0];try{console.log(`Password strength: ${rate(password)}`);}catch(e){console.error(`Error checking password strength: ${e.message}`);}"
+      }
+    ],
+    "nodeType": "logic",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "src/password-strength.ts",
+        "content": "// Contains logic to evaluate the strength of a password\n\nfunction checkPasswordStrength(password: string): string {\n  const lengthCriteria = password.length >= 8;\n  const uppercaseCriteria = /[A-Z]/.test(password);\n  const lowercaseCriteria = /[a-z]/.test(password);\n  const digitCriteria = /[0-9]/.test(password);\n  const specialCriteria = /[!@#$%^&*(),.?\":{}|<>]/.test(password);\n\n  let strength = 0;\n\n  if (lengthCriteria) strength++;\n  if (uppercaseCriteria) strength++;\n  if (lowercaseCriteria) strength++;\n  if (digitCriteria) strength++;\n  if (specialCriteria) strength++;\n\n  const strengths = ['Very Weak', 'Weak', 'Moderate', 'Strong', 'Very Strong'];\n\n  return strengths[strength];\n}\n\nexport { checkPasswordStrength };\n"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import { checkPasswordStrength } from './password-strength';\n\nfunction main() {\n  const args = process.argv.slice(2);\n  if (args.length !== 1) {\n    console.error('Usage: node src/index.ts <password>');\n    process.exit(1);\n  }\n\n  const password = args[0];\n  try {\n    const strength = checkPasswordStrength(password);\n    console.log(`Password strength: ${strength}`);\n  } catch (error) {\n    console.error(`Error checking password strength: ${error.message}`);\n  }\n}\n\nmain();"
+      }
+    ],
+    "id": "idea_1788133970186_k1fia",
+    "createdAt": "2026-08-30T23:52:50.186Z"
+  },
+  {
+    "purpose": "a simple password strength checker CLI program in typescript",
+    "design": "a simple password strength checker CLI program in typescript — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 396,
+      "lines": 2,
+      "files": 2,
+      "genMs": 4916
+    },
+    "baselineMetrics": {
+      "bytes": 1207,
+      "lines": 33,
+      "files": 2,
+      "genMs": 21125
+    },
+    "composite": 0.2803981116073398,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-simple-password-strength-checker-cli-p-1788133975104-round-2",
+    "files": [
+      {
+        "path": "src/password-strength.ts",
+        "content": "const checks=[/.{8}/,/\\d/,/[a-z]/,/A-Z/,/[^A-Za-z0-9]/];const rate=pw=>['Weak','Medium','Strong'][Math.min(2,checks.filter(c=>c.test(pw)).length)];export{rate};"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import{rate}from'./password-strength';const args=process.argv.slice(2);if(args.length!==1){console.error('Usage: node src/index.ts <password>');process.exit(1);}const password=args[0];console.log(`Password strength: ${rate(password)}`);"
+      }
+    ],
+    "nodeType": "logic",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "src/password-strength.ts",
+        "content": "// Contains logic to evaluate the strength of a password\n\nfunction checkPasswordStrength(password: string): string {\n  const lengthCriteria = password.length >= 8;\n  const uppercaseCriteria = /[A-Z]/.test(password);\n  const lowercaseCriteria = /[a-z]/.test(password);\n  const digitCriteria = /[0-9]/.test(password);\n  const specialCriteria = /[!@#$%^&*(),.?\":{}|<>]/.test(password);\n\n  let strength = 0;\n\n  if (lengthCriteria) strength++;\n  if (uppercaseCriteria) strength++;\n  if (lowercaseCriteria) strength++;\n  if (digitCriteria) strength++;\n  if (specialCriteria) strength++;\n\n  const strengths = ['Very Weak', 'Weak', 'Moderate', 'Strong', 'Very Strong'];\n\n  return strengths[strength];\n}\n\nexport { checkPasswordStrength };\n"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import { checkPasswordStrength } from './password-strength';\n\nfunction main() {\n  const args = process.argv.slice(2);\n  if (args.length !== 1) {\n    console.error('Usage: node src/index.ts <password>');\n    process.exit(1);\n  }\n\n  const password = args[0];\n  try {\n    const strength = checkPasswordStrength(password);\n    console.log(`Password strength: ${strength}`);\n  } catch (error) {\n    console.error(`Error checking password strength: ${error.message}`);\n  }\n}\n\nmain();"
+      }
+    ],
+    "id": "idea_1788133977279_nqzms",
+    "createdAt": "2026-08-30T23:52:57.279Z"
+  },
+  {
+    "purpose": "a simple password strength checker CLI program in typescript",
+    "design": "The design approach makes the code small and fast by using a data-driven array of regex tests to check password criteria, reducing branching and allowing for easy extension. The universal aspect is achieved by mapping the checklist results directly to a strength category using a simple arithmetic expression, creating a generic validator that can be reused for other similar validation tasks.",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 410,
+      "lines": 2,
+      "files": 2,
+      "genMs": 4442
+    },
+    "baselineMetrics": {
+      "bytes": 1207,
+      "lines": 33,
+      "files": 2,
+      "genMs": 21125
+    },
+    "composite": 0.27497867959584865,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-simple-password-strength-checker-cli-p-1788133988355-round-4",
+    "files": [
+      {
+        "path": "src/password-strength.ts",
+        "content": "const checks=[/.{8}/,/\\d/,/[a-z]/,/A-Z/,/[^A-Za-z0-9]/];const rate=pw=>['Weak','Medium','Strong'][Math.min(2,Math.floor(checks.filter(c=>c.test(pw)).length/2))];export{rate};"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import{rate}from'./password-strength';const args=process.argv.slice(2);if(args.length!==1){console.error('Usage: node src/index.ts <password>');process.exit(1);}const password=args[0];console.log(`Password strength: ${rate(password)}`);"
+      }
+    ],
+    "nodeType": "logic",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "src/password-strength.ts",
+        "content": "// Contains logic to evaluate the strength of a password\n\nfunction checkPasswordStrength(password: string): string {\n  const lengthCriteria = password.length >= 8;\n  const uppercaseCriteria = /[A-Z]/.test(password);\n  const lowercaseCriteria = /[a-z]/.test(password);\n  const digitCriteria = /[0-9]/.test(password);\n  const specialCriteria = /[!@#$%^&*(),.?\":{}|<>]/.test(password);\n\n  let strength = 0;\n\n  if (lengthCriteria) strength++;\n  if (uppercaseCriteria) strength++;\n  if (lowercaseCriteria) strength++;\n  if (digitCriteria) strength++;\n  if (specialCriteria) strength++;\n\n  const strengths = ['Very Weak', 'Weak', 'Moderate', 'Strong', 'Very Strong'];\n\n  return strengths[strength];\n}\n\nexport { checkPasswordStrength };\n"
+      },
+      {
+        "path": "src/index.ts",
+        "content": "import { checkPasswordStrength } from './password-strength';\n\nfunction main() {\n  const args = process.argv.slice(2);\n  if (args.length !== 1) {\n    console.error('Usage: node src/index.ts <password>');\n    process.exit(1);\n  }\n\n  const password = args[0];\n  try {\n    const strength = checkPasswordStrength(password);\n    console.log(`Password strength: ${strength}`);\n  } catch (error) {\n    console.error(`Error checking password strength: ${error.message}`);\n  }\n}\n\nmain();"
+      }
+    ],
+    "id": "idea_1788133990607_5ekvb",
+    "createdAt": "2026-08-30T23:53:10.607Z",
+    "lesson": "The design approach makes the code small and fast by using a data-driven array of regex tests to check password criteria, reducing branching and allowing for easy extension. The universal aspect is achieved by mapping the checklist results directly to a strength category using a simple arithmetic expression, creating a generic validator that can be reused for other similar validation tasks."
+  },
+  {
+    "purpose": "a mini http server using only node built-ins in javascript",
+    "design": "a mini http server using only node built-ins in javascript — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 646,
+      "lines": 13,
+      "files": 1,
+      "genMs": 8028
+    },
+    "baselineMetrics": {
+      "bytes": 714,
+      "lines": 28,
+      "files": 1,
+      "genMs": 42795
+    },
+    "composite": 0.5461769565870512,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-mini-http-server-using-only-node-built-1788134670387-round-1",
+    "files": [
+      {
+        "path": "index.js",
+        "content": "import http from 'http';\nimport yargs from 'yargs';\n\nconst { hostname, port } = yargs(process.argv.slice(2))\n  .usage('$0 [options]')\n  .option('p', { alias: 'port', type: 'number', default: 3000, description: 'Port number to listen on' })\n  .option('h', { alias: 'hostname', type: 'string', default: '127.0.0.1', description: 'Hostname to listen on' })\n  .help()\n  .parse();\n\nconst routes = { '/': 'Hello World\\n' };\n\nhttp.createServer((req, res) => {\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.end(routes[req.url] ?? routes['/']);\n}).listen(port, hostname, () => console.log(`Server running at http://${hostname}:${port}/`));"
+      }
+    ],
+    "nodeType": "api",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.js",
+        "content": "import http from 'http';\nimport yargs from 'yargs';\n\nconst argv = yargs(process.argv.slice(2))\n  .usage('$0 [options]')\n  .option('p', {\n    alias: 'port',\n    type: 'number',\n    default: 3000,\n    description: 'Port number to listen on'\n  })\n  .option('h', {\n    alias: 'hostname',\n    type: 'string',\n    default: '127.0.0.1',\n    description: 'Hostname to listen on'\n  })\n  .help()\n  .parse();\n\nconst hostname = argv.hostname;\nconst port = argv.port;\n\nconst server = http.createServer((req, res) => {\n  res.statusCode = 200;\n  res.setHeader('Content-Type', 'text/plain');\n  res.end('Hello World\\n');\n});\n\nserver.listen(port, hostname, () => {\n  console.log(`Server running at http://${hostname}:${port}/`);\n});"
+      }
+    ],
+    "id": "idea_1788134671712_ylmxv",
+    "createdAt": "2026-08-31T00:04:31.712Z"
+  },
+  {
+    "purpose": "a mini http server using only node built-ins in javascript",
+    "design": "a mini http server using only node built-ins in javascript — improved design",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 552,
+      "lines": 8,
+      "files": 1,
+      "genMs": 6058
+    },
+    "baselineMetrics": {
+      "bytes": 714,
+      "lines": 28,
+      "files": 1,
+      "genMs": 42795
+    },
+    "composite": 0.45733391849554406,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-mini-http-server-using-only-node-built-1788134677771-round-2",
+    "files": [
+      {
+        "path": "index.js",
+        "content": "import http from 'http';\nimport yargs from 'yargs';\n\nconst { hostname, port } = yargs(process.argv.slice(2)).usage('$0 [options]').option('p', { alias: 'port', type: 'number', default: 3000 }).option('h', { alias: 'hostname', type: 'string', default: '127.0.0.1' }).help().parse();\n\nconst routes = { '/': 'Hello World\\n' };\n\nhttp.createServer((req, res) => {\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.end(routes[req.url] ?? routes['/']);\n}).listen(port, hostname, () => console.log(`Server running at http://${hostname}:${port}/`));"
+      }
+    ],
+    "nodeType": "api",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.js",
+        "content": "import http from 'http';\nimport yargs from 'yargs';\n\nconst argv = yargs(process.argv.slice(2))\n  .usage('$0 [options]')\n  .option('p', {\n    alias: 'port',\n    type: 'number',\n    default: 3000,\n    description: 'Port number to listen on'\n  })\n  .option('h', {\n    alias: 'hostname',\n    type: 'string',\n    default: '127.0.0.1',\n    description: 'Hostname to listen on'\n  })\n  .help()\n  .parse();\n\nconst hostname = argv.hostname;\nconst port = argv.port;\n\nconst server = http.createServer((req, res) => {\n  res.statusCode = 200;\n  res.setHeader('Content-Type', 'text/plain');\n  res.end('Hello World\\n');\n});\n\nserver.listen(port, hostname, () => {\n  console.log(`Server running at http://${hostname}:${port}/`);\n});"
+      }
+    ],
+    "id": "idea_1788134679122_s44s2",
+    "createdAt": "2026-08-31T00:04:39.123Z"
+  },
+  {
+    "purpose": "a mini http server using only node built-ins in javascript",
+    "design": "The design approach makes the code small and fast by using a lookup object (`routes`) for URL routing instead of an if/else chain, allowing for easy addition of new routes and a shared fallback response. This object-dispatch pattern is universal and can be applied to any state machine or lookup table, making it highly reusable and adaptable for other similar apps.",
+    "focus": [
+      "smaller",
+      "faster"
+    ],
+    "metrics": {
+      "bytes": 538,
+      "lines": 1,
+      "files": 1,
+      "genMs": 5494
+    },
+    "baselineMetrics": {
+      "bytes": 714,
+      "lines": 28,
+      "files": 1,
+      "genMs": 42795
+    },
+    "composite": 0.4409404420723775,
+    "exportsDir": "/home/llmlab/Desktop/visual-ai-architect/backend/exports/__micro_experiments__/a-mini-http-server-using-only-node-built-1788134684618-round-3",
+    "files": [
+      {
+        "path": "index.js",
+        "content": "import http from 'http';import yargs from 'yargs';const { hostname, port } = yargs(process.argv.slice(2)).usage('$0 [options]').option('p', { alias: 'port', type: 'number', default: 3000 }).option('h', { alias: 'hostname', type: 'string', default: '127.0.0.1' }).help().parse();const routes = { '/': 'Hello World\\n' };http.createServer((req, res) => {res.writeHead(200, { 'Content-Type': 'text/plain' });res.end(routes[req.url] ?? routes['/']);}).listen(port, hostname, () => console.log(`Server running at http://${hostname}:${port}/`));"
+      }
+    ],
+    "nodeType": "api",
+    "verdict": "thumbs-up",
+    "baselineFiles": [
+      {
+        "path": "index.js",
+        "content": "import http from 'http';\nimport yargs from 'yargs';\n\nconst argv = yargs(process.argv.slice(2))\n  .usage('$0 [options]')\n  .option('p', {\n    alias: 'port',\n    type: 'number',\n    default: 3000,\n    description: 'Port number to listen on'\n  })\n  .option('h', {\n    alias: 'hostname',\n    type: 'string',\n    default: '127.0.0.1',\n    description: 'Hostname to listen on'\n  })\n  .help()\n  .parse();\n\nconst hostname = argv.hostname;\nconst port = argv.port;\n\nconst server = http.createServer((req, res) => {\n  res.statusCode = 200;\n  res.setHeader('Content-Type', 'text/plain');\n  res.end('Hello World\\n');\n});\n\nserver.listen(port, hostname, () => {\n  console.log(`Server running at http://${hostname}:${port}/`);\n});"
+      }
+    ],
+    "id": "idea_1788134685972_0cq64",
+    "createdAt": "2026-08-31T00:04:45.972Z",
+    "lesson": "The design approach makes the code small and fast by using a lookup object (`routes`) for URL routing instead of an if/else chain, allowing for easy addition of new routes and a shared fallback response. This object-dispatch pattern is universal and can be applied to any state machine or lookup table, making it highly reusable and adaptable for other similar apps."
+  }
+]

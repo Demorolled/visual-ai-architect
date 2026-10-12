@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temperature Converter</title>
+  <style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;max-width:600px;margin:24px auto;font-size:14px;}input{padding:.5em;margin:.5em;width:100%;}button{padding:.5em;margin:.5em;}</style>
+</head>
+<body>
+  <h2>Temperature Converter</h2>
+  <input type="number" id="inputTemp" placeholder="Enter temperature">
+  <select id="fromUnit">
+    <option value="celsius">Celsius</option>
+    <option value="fahrenheit">Fahrenheit</option>
+    <option value="kelvin">Kelvin</option>
+  </select>
+  <select id="toUnit">
+    <option value="celsius">Celsius</option>
+    <option value="fahrenheit">Fahrenheit</option>
+    <option value="kelvin">Kelvin</option>
+  </select>
+  <button id="convertBtn" onclick="convert()">Convert</button>
+  <p id="result"></p>
+  <script>
+function convert() { const inputTemp = parseFloat(document.getElementById('inputTemp').value); if (isNaN(inputTemp)) { alert('Invalid number'); return; } const fromUnit = document.getElementById('fromUnit').value; const toUnit = document.getElementById('toUnit').value; let result = 0; switch (fromUnit) { case 'celsius': if (toUnit === 'fahrenheit') result = inputTemp * 9 / 5 + 32; else if (toUnit === 'kelvin') result = inputTemp + 273.15; else result = inputTemp; break; case 'fahrenheit': if (toUnit === 'celsius') result = (inputTemp - 32) * 5 / 9; else if (toUnit === 'kelvin') result = (inputTemp - 32) * 5 / 9 + 273.15; else result = inputTemp; break; case 'kelvin': if (toUnit === 'celsius') result = inputTemp - 273.15; else if (toUnit === 'fahrenheit') result = (inputTemp - 273.15) * 9 / 5 + 32; else result = inputTemp; } document.getElementById('result').textContent = `${inputTemp} ${fromUnit} = ${result} ${toUnit}`; }
+  </script>
+</body>
+</html>

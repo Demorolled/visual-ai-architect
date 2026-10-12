@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Counter</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #e6e6e6;
+         display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+  .card { background: #14141f; border: 1px solid #2a2a3a; border-radius: 12px;
+          padding: 32px; text-align: center; min-width: 260px; }
+  #count { font-size: 72px; color: #00d9ff; margin: 16px 0; font-weight: 700; }
+  button { background: #00d9ff; color: #04141a; border: none; border-radius: 8px;
+           padding: 10px 18px; font-size: 16px; margin: 0 4px; cursor: pointer; }
+  button:hover { opacity: 0.85; }
+  #resetBtn { background: #2a2a3a; color: #e6e6e6; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>Counter</h2>
+  <div id="count">0</div>
+  <div>
+    <button id="decBtn">−</button>
+    <button id="incBtn">+</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+</div>
+<script>
+  const STORAGE_KEY = 'vaca-counter';
+  let value = 0;
+
+  function loadValue() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    value = raw === null ? 0 : parseInt(raw, 10) || 0;
+  }
+
+  function saveValue() {
+    localStorage.setItem(STORAGE_KEY, String(value));
+  }
+
+  function render() {
+    document.getElementById('count').textContent = value;
+  }
+
+  function increment() {
+    value += 1;
+    saveValue();
+    render();
+  }
+
+  function decrement() {
+    value -= 1;
+    saveValue();
+    render();
+  }
+
+  function reset() {
+    value = 0;
+    saveValue();
+    render();
+  }
+
+  document.getElementById('incBtn').addEventListener('click', increment);
+  document.getElementById('decBtn').addEventListener('click', decrement);
+  document.getElementById('resetBtn').addEventListener('click', reset);
+
+  loadValue();
+  render();
+</script>
+</body>
+</html>

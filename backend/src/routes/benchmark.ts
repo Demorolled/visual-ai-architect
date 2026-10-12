@@ -20,13 +20,13 @@ const MODELS: ModelEndpoint[] = [
   {
     name: '1.5b-gpu',
     label: '1.5B (GPU)',
-    baseUrl: 'http://127.0.0.1:11434',
+    baseUrl: process.env.OLLAMA_BASE_URL || 'http://192.168.1.234:11434',
     model: 'qwen2.5-coder:1.5b',
   },
   {
     name: '7b-gpu',
     label: '7B (GPU)',
-    baseUrl: 'http://127.0.0.1:11434',
+    baseUrl: process.env.OLLAMA_BASE_URL || 'http://192.168.1.234:11434',
     model: 'qwen2.5-7b-instruct-uncensored',
   },
 ];

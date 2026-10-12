@@ -1,0 +1,496 @@
+[
+  {
+    "task": "Build a tic-tac-toe game in a single HTML file, human vs a simple AI.",
+    "files": [
+      "index.html"
+    ],
+    "mode": "one-shot",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-a-tic-tac-toe-game-in-a-single-htm-1790988537180",
+    "err": null,
+    "secs": 32,
+    "smoke": {
+      "available": true,
+      "success": true,
+      "durationMs": 2105,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "pass",
+          "detail": "No console/page errors during load"
+        },
+        {
+          "name": "app-mounted",
+          "status": "pass",
+          "detail": "body rendered (body.children=2 textLen=953 canvas=0 controls=9)"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "pass",
+          "detail": "Found 9 clickable element(s) (9 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "pass",
+          "detail": "Clicked 9 element(s), zero errors; 1 produced a visible response"
+        },
+        {
+          "name": "typing-works",
+          "status": "warn",
+          "detail": "No visible text inputs to type into"
+        },
+        {
+          "name": "dom-responds",
+          "status": "pass",
+          "detail": "UI responded on 1/9 click(s) (dom 1, canvas 0); 0 input(s) accepted"
+        }
+      ],
+      "consoleErrors": [],
+      "interactions": {
+        "clickableFound": 9,
+        "clicked": 9,
+        "inputsFound": 0,
+        "typed": 0,
+        "domChangedAfterClick": 1,
+        "responseSignals": {
+          "dom": 1,
+          "canvas": 0
+        }
+      }
+    }
+  },
+  {
+    "task": "Build a checkers game in a single HTML file where a human plays against a simple AI.",
+    "files": [
+      "index.html"
+    ],
+    "mode": "one-shot",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-a-checkers-game-in-a-single-html-f-1790988556893",
+    "err": null,
+    "secs": 18,
+    "smoke": {
+      "available": true,
+      "success": true,
+      "durationMs": 772,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "pass",
+          "detail": "No console/page errors during load"
+        },
+        {
+          "name": "app-mounted",
+          "status": "pass",
+          "detail": "body rendered (body.children=2 textLen=320 canvas=0 controls=0)"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "warn",
+          "detail": "Found 0 clickable element(s) (0 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "warn",
+          "detail": "No visible clickable elements to click"
+        },
+        {
+          "name": "typing-works",
+          "status": "warn",
+          "detail": "No visible text inputs to type into"
+        },
+        {
+          "name": "dom-responds",
+          "status": "warn",
+          "detail": "No interactions available to verify DOM response"
+        }
+      ],
+      "consoleErrors": [],
+      "interactions": {
+        "clickableFound": 0,
+        "clicked": 0,
+        "inputsFound": 0,
+        "typed": 0,
+        "domChangedAfterClick": 0,
+        "responseSignals": {
+          "dom": 0,
+          "canvas": 0
+        }
+      }
+    }
+  },
+  {
+    "task": "Build an image gallery app in a single HTML file with a lightbox and tag filters.",
+    "files": [
+      "index.html"
+    ],
+    "mode": "one-shot",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-an-image-gallery-app-in-a-single-h-1790988592942",
+    "err": null,
+    "secs": 36,
+    "smoke": {
+      "available": true,
+      "success": false,
+      "durationMs": 687,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "fail",
+          "detail": "console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND; console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND; console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND"
+        },
+        {
+          "name": "app-mounted",
+          "status": "pass",
+          "detail": "body rendered (body.children=4 textLen=948 canvas=0 controls=1)"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "warn",
+          "detail": "Found 0 clickable element(s) (0 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "warn",
+          "detail": "No visible clickable elements to click"
+        },
+        {
+          "name": "typing-works",
+          "status": "pass",
+          "detail": "Typed into 1 input(s), values round-tripped"
+        },
+        {
+          "name": "dom-responds",
+          "status": "pass",
+          "detail": "UI responded on 0/0 click(s) (dom 0, canvas 0); 1 input(s) accepted"
+        }
+      ],
+      "consoleErrors": [
+        "console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND",
+        "console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND",
+        "console.error: Failed to load resource: net::ERR_FILE_NOT_FOUND",
+        "pageerror: tags.some is not a function"
+      ],
+      "interactions": {
+        "clickableFound": 0,
+        "clicked": 0,
+        "inputsFound": 1,
+        "typed": 1,
+        "domChangedAfterClick": 0,
+        "responseSignals": {
+          "dom": 0,
+          "canvas": 0
+        }
+      }
+    }
+  },
+  {
+    "task": "Build a temperature converter in a single HTML file supporting Celsius, Fahrenheit and Kelvin.",
+    "files": [
+      "index.html"
+    ],
+    "mode": "one-shot",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-a-temperature-converter-in-a-singl-1790988613464",
+    "err": null,
+    "secs": 21,
+    "smoke": {
+      "available": true,
+      "success": true,
+      "durationMs": 706,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "pass",
+          "detail": "No console/page errors during load"
+        },
+        {
+          "name": "app-mounted",
+          "status": "warn",
+          "detail": "body empty after load (body.children=0 textLen=0 canvas=0 controls=0) — app may be logic-only or render on interaction"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "warn",
+          "detail": "Found 0 clickable element(s) (0 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "warn",
+          "detail": "No visible clickable elements to click"
+        },
+        {
+          "name": "typing-works",
+          "status": "warn",
+          "detail": "No visible text inputs to type into"
+        },
+        {
+          "name": "dom-responds",
+          "status": "warn",
+          "detail": "No interactions available to verify DOM response"
+        }
+      ],
+      "consoleErrors": [],
+      "interactions": {
+        "clickableFound": 0,
+        "clicked": 0,
+        "inputsFound": 0,
+        "typed": 0,
+        "domChangedAfterClick": 0,
+        "responseSignals": {
+          "dom": 0,
+          "canvas": 0
+        }
+      }
+    }
+  },
+  {
+    "task": "Build a sudoku solver and player in a single HTML file.",
+    "files": [
+      "index.html",
+      "sudoku-game.js"
+    ],
+    "mode": "per-file",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-a-sudoku-solver-and-player-in-a-si-1790988663413",
+    "err": null,
+    "secs": 50,
+    "smoke": {
+      "available": true,
+      "success": false,
+      "durationMs": 818,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "pass",
+          "detail": "No console/page errors during load"
+        },
+        {
+          "name": "app-mounted",
+          "status": "pass",
+          "detail": "body rendered (body.children=2 textLen=209 canvas=0 controls=1)"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "pass",
+          "detail": "Found 1 clickable element(s) (1 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "fail",
+          "detail": "1 clicks produced 1 error(s): pageerror: startGame is not defined"
+        },
+        {
+          "name": "typing-works",
+          "status": "warn",
+          "detail": "No visible text inputs to type into"
+        },
+        {
+          "name": "dom-responds",
+          "status": "warn",
+          "detail": "Clicks ran without error but nothing observable changed (no DOM mutation, no canvas change) — the click handler may be a no-op"
+        }
+      ],
+      "consoleErrors": [
+        "pageerror: startGame is not defined"
+      ],
+      "interactions": {
+        "clickableFound": 1,
+        "clicked": 1,
+        "inputsFound": 0,
+        "typed": 0,
+        "domChangedAfterClick": 0,
+        "responseSignals": {
+          "dom": 0,
+          "canvas": 0
+        }
+      }
+    }
+  },
+  {
+    "task": "Build a memory match card game in a single HTML file with a move counter and a timer.",
+    "files": [
+      "game.js",
+      "index.html"
+    ],
+    "mode": "one-shot",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-a-memory-match-card-game-in-a-sing-1790988727953",
+    "err": null,
+    "secs": 65,
+    "smoke": {
+      "available": true,
+      "success": false,
+      "durationMs": 819,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "pass",
+          "detail": "No console/page errors during load"
+        },
+        {
+          "name": "app-mounted",
+          "status": "pass",
+          "detail": "body rendered (body.children=2 textLen=100 canvas=0 controls=1)"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "pass",
+          "detail": "Found 1 clickable element(s) (1 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "fail",
+          "detail": "1 clicks produced 1 error(s): pageerror: startGame is not defined"
+        },
+        {
+          "name": "typing-works",
+          "status": "warn",
+          "detail": "No visible text inputs to type into"
+        },
+        {
+          "name": "dom-responds",
+          "status": "warn",
+          "detail": "Clicks ran without error but nothing observable changed (no DOM mutation, no canvas change) — the click handler may be a no-op"
+        }
+      ],
+      "consoleErrors": [
+        "pageerror: startGame is not defined"
+      ],
+      "interactions": {
+        "clickableFound": 1,
+        "clicked": 1,
+        "inputsFound": 0,
+        "typed": 0,
+        "domChangedAfterClick": 0,
+        "responseSignals": {
+          "dom": 0,
+          "canvas": 0
+        }
+      }
+    }
+  },
+  {
+    "task": "Build a quiz app in a single HTML file with score tracking and a results screen.",
+    "files": [
+      "index.html"
+    ],
+    "mode": "one-shot",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-a-quiz-app-in-a-single-html-file-w-1790988749906",
+    "err": null,
+    "secs": 22,
+    "smoke": {
+      "available": true,
+      "success": false,
+      "durationMs": 1214,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "pass",
+          "detail": "No console/page errors during load"
+        },
+        {
+          "name": "app-mounted",
+          "status": "pass",
+          "detail": "body rendered (body.children=4 textLen=884 canvas=0 controls=4)"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "pass",
+          "detail": "Found 4 clickable element(s) (4 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "fail",
+          "detail": "4 clicks produced 2 error(s): pageerror: Cannot read properties of undefined (reading 'answer'); pageerror: Cannot read properties of undefined (reading 'answer')"
+        },
+        {
+          "name": "typing-works",
+          "status": "warn",
+          "detail": "No visible text inputs to type into"
+        },
+        {
+          "name": "dom-responds",
+          "status": "pass",
+          "detail": "UI responded on 2/4 click(s) (dom 2, canvas 0); 0 input(s) accepted"
+        }
+      ],
+      "consoleErrors": [
+        "pageerror: Cannot read properties of undefined (reading 'answer')",
+        "pageerror: Cannot read properties of undefined (reading 'answer')"
+      ],
+      "interactions": {
+        "clickableFound": 4,
+        "clicked": 4,
+        "inputsFound": 0,
+        "typed": 0,
+        "domChangedAfterClick": 2,
+        "responseSignals": {
+          "dom": 2,
+          "canvas": 0
+        }
+      }
+    }
+  },
+  {
+    "task": "Build an expense tracker in a single HTML file with categories, a running total and localStorage persistence.",
+    "files": [
+      "index.html"
+    ],
+    "mode": "one-shot",
+    "exportDir": "/home/homellmlab/Desktop/visual-ai-architect/backend/exports/build-an-expense-tracker-in-a-single-htm-1790988773844",
+    "err": null,
+    "secs": 23,
+    "smoke": {
+      "available": true,
+      "success": true,
+      "durationMs": 699,
+      "entryFile": "index.html",
+      "checks": [
+        {
+          "name": "loads-without-errors",
+          "status": "pass",
+          "detail": "No console/page errors during load"
+        },
+        {
+          "name": "app-mounted",
+          "status": "pass",
+          "detail": "body rendered (body.children=3 textLen=1051 canvas=0 controls=0)"
+        },
+        {
+          "name": "interactive-elements",
+          "status": "warn",
+          "detail": "Found 0 clickable element(s) (0 visible)"
+        },
+        {
+          "name": "clicks-dont-crash",
+          "status": "warn",
+          "detail": "No visible clickable elements to click"
+        },
+        {
+          "name": "typing-works",
+          "status": "warn",
+          "detail": "No visible text inputs to type into"
+        },
+        {
+          "name": "dom-responds",
+          "status": "warn",
+          "detail": "No interactions available to verify DOM response"
+        }
+      ],
+      "consoleErrors": [],
+      "interactions": {
+        "clickableFound": 0,
+        "clicked": 0,
+        "inputsFound": 0,
+        "typed": 0,
+        "domChangedAfterClick": 0,
+        "responseSignals": {
+          "dom": 0,
+          "canvas": 0
+        }
+      }
+    }
+  }
+]

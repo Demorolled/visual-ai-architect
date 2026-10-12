@@ -34,7 +34,8 @@ interface Node3DProps {
   y: number;
   data: NodeData;
   selected: boolean;
-  onClick: (id: string) => void;
+  /** `additive` is true when the click carried Shift/Cmd/Ctrl — multi-select. */
+  onClick: (id: string, additive?: boolean) => void;
   onDoubleClick: (id: string) => void;
   onDrag: (id: string, x: number, y: number) => void;
 }
@@ -114,7 +115,9 @@ function Node3D({ id, x, y, data, selected, onClick, onDoubleClick, onDrag }: No
 
   const handleClick = useCallback((e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
-    onClick(id);
+    // Shift/Cmd/Ctrl turns a click into "add to the selection" so the user can
+    // pick a second node and wire the pair without opening the detail panel.
+    onClick(id, e.shiftKey || e.metaKey || e.ctrlKey);
   }, [id, onClick]);
 
   const handleDoubleClick = useCallback((e: ThreeEvent<MouseEvent>) => {
