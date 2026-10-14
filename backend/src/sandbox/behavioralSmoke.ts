@@ -215,17 +215,169 @@ export function pickCliEntryFile(files: Array<{ path: string }>): string | null 
 }
 
 /**
+ * Runtime probe for a SERVER-style entry — the class that was left UNVERIFIED.
+ *
+ * Skipping the probe entirely was honest but silent: a generated `app.ts` that
+ * defined `runServer()` and never called it shipped, and `npm start` exited 0
+ * immediately while the build reported only "runtime unverified" (measured live:
+ * no listener on :3000, `curl` → 000). Nothing ever caught it. Its `.listen(` sat
+ * inside the uncalled function, which is also why `looksLikeServerEntry` called
+ * it "binds a port" and skipped the CLI probe that would have seen the exit.
+ *
+ * Three outcomes, because "it stayed up" alone is not proof it SERVES:
+ *   - exits before the deadline  → `failed`. A server that returns is broken.
+ *   - up AND answers a GET on the URL it announced → `passed`.
+ *   - up but silent              → `skipped` (unverified), never a green ✅.
+ * The process runs in its OWN group and the whole group is reaped on every exit
+ * path, so a probe can never leave a listener holding the port (the leak that
+ * made the NEXT build fail with EADDRINUSE).
+ */
+export function runServerProbe(
+  exportDir: string,
+  entry: string,
+  opts: { timeoutMs?: number } = {},
+): Promise<SmokeVerdict> {
+  const absPath = safeJoin(exportDir, entry);
+  if (!fs.existsSync(absPath)) {
+    return Promise.resolve({ status: 'skipped', errors: [], detail: `entry not on disk: ${entry}`, serverEntry: true });
+  }
+  const isTs = /\.(?:ts|tsx)$/i.test(entry);
+  const tsxBin = path.join(PROJECT_ROOT, 'node_modules', '.bin', 'tsx');
+  if (isTs && !fs.existsSync(tsxBin)) {
+    return Promise.resolve({ status: 'unavailable', errors: [], detail: 'tsx missing — server run NOT verified' });
+  }
+  const waitMs = opts.timeoutMs ?? 9_000;
+  return new Promise<SmokeVerdict>((resolve) => {
+    // An export has no node_modules until someone runs `npm install`, so a
+    // server that legitimately imports `express` would die with
+    // MODULE_NOT_FOUND and be blamed for it. Link the project's own installed
+    // deps for the duration of the probe (same reasoning as the tsc gate's
+    // resolution context), and remove the link afterwards so the artifact is
+    // left exactly as it was. Best-effort: on a filesystem that refuses links we
+    // simply probe without them.
+    let linkedNodeModules = false;
+    const linkPath = path.join(exportDir, 'node_modules');
+    if (!fs.existsSync(linkPath)) {
+      try {
+        fs.symlinkSync(
+          path.join(PROJECT_ROOT, 'node_modules'),
+          linkPath,
+          process.platform === 'win32' ? 'junction' : 'dir',
+        );
+        linkedNodeModules = true;
+      } catch { /* probe without them */ }
+    }
+    const unlink = () => {
+      if (!linkedNodeModules) return;
+      linkedNodeModules = false;
+      try { fs.unlinkSync(linkPath); } catch { /* best-effort */ }
+    };
+    const proc = spawn(isTs ? tsxBin : process.execPath, [entry], {
+      cwd: exportDir,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      // Own group, so a timeout can reap tsx→node together.
+      detached: true,
+    });
+    let out = '';
+    let settled = false;
+    let deadline: ReturnType<typeof setTimeout> | null = null;
+    const killGroup = (signal: NodeJS.Signals) => {
+      try {
+        if (proc.pid) process.kill(-proc.pid, signal);
+        else proc.kill(signal);
+      } catch {
+        try { proc.kill(signal); } catch { /* already gone */ }
+      }
+    };
+    const finish = (v: SmokeVerdict) => {
+      if (settled) return;
+      settled = true;
+      if (deadline) clearTimeout(deadline);
+      killGroup('SIGTERM');
+      setTimeout(() => { killGroup('SIGKILL'); unlink(); }, 1_500).unref();
+      resolve(v);
+    };
+    const tail = () => out.split('\n').map((l) => l.trim()).filter(Boolean).slice(-4);
+
+    proc.stdout.on('data', (d: Buffer) => { out += String(d); });
+    proc.stderr.on('data', (d: Buffer) => { out += String(d); });
+    proc.on('error', (err) => {
+      finish({ status: 'unavailable', errors: [], detail: `spawn failed: ${(err as Error)?.message || err}` });
+    });
+    // A server entry that RETURNS is the defect this probe exists for.
+    proc.on('close', (code) => {
+      if (settled) return;
+      settled = true;
+      if (deadline) clearTimeout(deadline);
+      killGroup('SIGKILL');
+      unlink();
+      // A dependency that is not installed ANYWHERE (not even in the repo) is an
+      // environment gap, not a defect in the generated app — blaming the model
+      // for it would burn repair rounds on code that is correct.
+      if (/cannot find module|MODULE_NOT_FOUND|ERR_MODULE_NOT_FOUND/i.test(out)) {
+        resolve({
+          status: 'unavailable',
+          errors: [],
+          detail: `server entry could not start: an imported dependency is not installed (${tail()[0] || 'module not found'})`,
+          serverEntry: true,
+        });
+        return;
+      }
+      resolve({
+        status: 'failed',
+        errors: tail(),
+        detail: `server entry exited (code ${code}) instead of staying up — the app never serves`,
+        serverEntry: true,
+      });
+    });
+
+    deadline = setTimeout(async () => {
+      // It survived. If it announced a URL, prove it actually answers.
+      const url = out.match(/https?:\/\/(?:localhost|127\.0\.0\.1):\d+/i)?.[0];
+      if (!url) {
+        finish({
+          status: 'skipped',
+          errors: [],
+          detail: 'server stayed up but never announced a URL — serving NOT verified',
+          serverEntry: true,
+        });
+        return;
+      }
+      try {
+        const res = await fetch(url, { signal: AbortSignal.timeout(3_000) });
+        finish({
+          status: res.status < 500 ? 'passed' : 'failed',
+          errors: res.status < 500 ? [] : [`GET ${url} → HTTP ${res.status}`],
+          detail: `server up and answering (GET ${url} → HTTP ${res.status})`,
+          serverEntry: true,
+        });
+      } catch (err) {
+        finish({
+          status: 'failed',
+          errors: [`GET ${url} failed: ${(err as Error)?.message || err}`],
+          detail: `server announced ${url} but did not answer`,
+          serverEntry: true,
+        });
+      }
+    }, waitMs);
+  });
+}
+
+/**
  * Does this entry look like a long-running SERVER (binds a port, runs until
  * killed) rather than a CLI?
  *
- * Servers must never be probed with `--help` / `-h` / a bare run, for two
- * reasons observed live:
- *   1. A server does not exit on `--help`, so EVERY probe "times out" — a
- *      FALSE failure for a perfectly good server, and it burned 2 LLM repair
- *      rounds chasing it.
- *   2. The surviving probe kept holding its port (`app.listen(3000)`), which
- *      leaked a `:3000` listener; the next probe then died on EADDRINUSE and
- *      the NEXT build reported that as its failure.
+ * A server must never be probed with `--help` / `-h` — it does not exit on them,
+ * so every CLI probe "times out" (a FALSE failure that burned 2 repair rounds)
+ * and the surviving probe held its port, leaking a `:3000` listener that made
+ * the NEXT build fail on EADDRINUSE. Such an entry gets `runServerProbe`
+ * instead, which starts it and judges whether it stays up.
+ *
+ * The match is intentionally loose (any `.listen(`/`createServer(`), because a
+ * false negative here means probing a live server with `--help`. Its cost is
+ * false POSITIVES: `app.listen()` inside a function nobody calls still reads as
+ * "binds a port" — the real defect that made a dead app look unprobeable. The
+ * probe above now catches those anyway (it exits immediately).
  *
  * Comments are stripped first so a commented-out `// app.listen(...)` cannot
  * misclassify a real CLI. Pure function — unit-testable.
@@ -371,7 +523,7 @@ export function applyDeterministicCliFixes(content: string): { content: string; 
  * Status: 'passed' | 'failed' | 'skipped' (no runnable entry) | 'unavailable'
  * (tsx/python missing — infra, never the model's fault).
  */
-export function runCliSmoke(
+export async function runCliSmoke(
   exportDir: string,
   files: Array<{ path: string; content?: string }>,
   timeoutMs = 45_000,
@@ -387,13 +539,17 @@ export function runCliSmoke(
   // `serverEntry` — buildVerification.ts must not read it as a green build.
   const entrySrc = files.find(f => f.path === entry)?.content || readEntrySource(absPath);
   if (looksLikeServerEntry(entrySrc)) {
-    console.log(`[behavioralSmoke] cli smoke: skipping server-style entry ${entry} — a long-running server cannot be probed with --help (runtime left UNVERIFIED)`);
-    return Promise.resolve({
-      status: 'skipped',
-      errors: [],
-      detail: `server-style entry ${entry} (binds a port) — not probed with --help; runtime unverified`,
-      serverEntry: true,
+    // Not the --help probe (it would time out), but not silence either: start it
+    // and require that it STAYS UP. A server entry that returns immediately is
+    // the "defines but never invokes" defect, and used to ship as merely
+    // "runtime unverified" with `npm start` exiting 0 and nothing listening.
+    // The liveness window is bounded by the caller's budget, so a caller (or a
+    // test) that asks for less does not wait 9s for a verdict.
+    const verdict = await runServerProbe(exportDir, entry, {
+      timeoutMs: Math.min(9_000, Math.max(1_500, timeoutMs)),
     });
+    console.log(`[behavioralSmoke] cli smoke: server entry ${entry} → ${verdict.status} (${verdict.detail})`);
+    return verdict;
   }
 
   const script = path.join(PROJECT_ROOT, 'scripts', 'smoke-test-cli.py');

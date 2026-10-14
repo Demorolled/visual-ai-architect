@@ -302,17 +302,50 @@ describe('CLI probe safety — servers are never probed with --help', () => {
     expect(looksLikeServerEntry('')).toBe(false);
   });
 
-  it('runCliSmoke SKIPS a server entry instead of probing it', async () => {
+  // A server entry is no longer silently skipped: it is STARTED and judged by
+  // whether it stays up. The old assertion here pinned "never probe a server",
+  // which is why a generated entry that defined its server and never called it
+  // shipped reporting only "runtime unverified" while `npm start` exited 0 with
+  // nothing listening. --help is still never used on a server (that is what
+  // times out); liveness is what is measured instead.
+  it('runServerProbe FAILS a server entry that returns instead of serving', async () => {
     const dir = tmpDir();
-    const content = "import express from 'express';\nconst app = express();\n" +
-      "app.get('/health', (_, res) => res.json({ ok: true }));\n" +
-      "app.listen(3000, () => console.log('listening'));\n";
-    fs.writeFileSync(path.join(dir, 'index.js'), content);
-    const v = await runCliSmoke(dir, [{ path: 'index.js', content }]);
+    // The measured defect, reduced: `.listen(` exists (so it reads as a server)
+    // but sits inside a function nothing ever calls.
+    const content = "const net = require('net');\n" +
+      "function runServer(port) { net.createServer().listen(port, () => console.log('up')); }\n" +
+      'module.exports = runServer;\n';
+    fs.writeFileSync(path.join(dir, 'index.cjs'), content);
+    const v = await runCliSmoke(dir, [{ path: 'index.cjs', content }], 3_000);
+    expect(v.status).toBe('failed');
+    expect(v.serverEntry).toBe(true);
+    expect(v.detail).toContain('never serves');
+  }, 30_000);
+
+  it('runServerProbe PASSES a server that stays up and answers on its URL', async () => {
+    const PORT = await freePort();
+    const dir = tmpDir();
+    const content = "const http = require('http');\n" +
+      `http.createServer((_, res) => res.end('ok')).listen(${PORT}, () => console.log('http://localhost:${PORT}'));\n`;
+    fs.writeFileSync(path.join(dir, 'index.cjs'), content);
+    const v = await runCliSmoke(dir, [{ path: 'index.cjs', content }], 4_000);
+    expect(v.detail).toContain('answering');
+    expect(v.status).toBe('passed');
+    expect(v.serverEntry).toBe(true);
+    // And it must not survive the verdict: a leaked listener breaks the NEXT build.
+    await new Promise((r) => setTimeout(r, 600));
+    expect(await portFree(PORT)).toBe(true);
+  }, 30_000);
+
+  it('runServerProbe leaves an up-but-SILENT server UNVERIFIED, never green', async () => {
+    const dir = tmpDir();
+    const content = "const net = require('net');\nnet.createServer().listen(0);\nsetInterval(() => {}, 1000);\n";
+    fs.writeFileSync(path.join(dir, 'index.cjs'), content);
+    const v = await runCliSmoke(dir, [{ path: 'index.cjs', content }], 3_000);
     expect(v.status).toBe('skipped');
     expect(v.serverEntry).toBe(true);
-    expect(v.detail).toContain('server-style entry');
-  });
+    expect(v.detail).toContain('never announced a URL');
+  }, 30_000);
 
   it.skipIf(!haveInfra)('a timed-out probe leaves nothing listening (caller-side group kill)', async () => {
     const PORT = await freePort();
