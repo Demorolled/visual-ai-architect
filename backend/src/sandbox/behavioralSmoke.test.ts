@@ -337,6 +337,20 @@ describe('CLI probe safety — servers are never probed with --help', () => {
     expect(await portFree(PORT)).toBe(true);
   }, 30_000);
 
+  it('runServerProbe does NOT blame a working server whose logged URL is wrong', async () => {
+    // Measured with my own fixture: a server binding an OS-chosen port while
+    // logging `http://localhost:0`. GET failed, yet the app was serving — so an
+    // unreachable announcement must stay unverified, never 'failed'.
+    const dir = tmpDir();
+    const content = "const http = require('http');\n" +
+      "http.createServer((_, res) => res.end('ok')).listen(0, () => console.log('http://localhost:0'));\n";
+    fs.writeFileSync(path.join(dir, 'index.cjs'), content);
+    const v = await runCliSmoke(dir, [{ path: 'index.cjs', content }], 3_000);
+    expect(v.status).toBe('skipped');
+    expect(v.serverEntry).toBe(true);
+    expect(v.detail).toContain('did not answer');
+  }, 30_000);
+
   it('runServerProbe leaves an up-but-SILENT server UNVERIFIED, never green', async () => {
     const dir = tmpDir();
     const content = "const net = require('net');\nnet.createServer().listen(0);\nsetInterval(() => {}, 1000);\n";

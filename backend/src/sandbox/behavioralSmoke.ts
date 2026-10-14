@@ -306,11 +306,15 @@ export function runServerProbe(
     });
     // A server entry that RETURNS is the defect this probe exists for.
     proc.on('close', (code) => {
+      // Reap unconditionally, exactly as cliProbe does: if this fires after a
+      // timeout verdict, the SIGTERM above may not have been enough (or its
+      // unref'd SIGKILL backstop may never run in a short-lived process), and a
+      // survivor would hold the port and fail the NEXT build with EADDRINUSE.
+      killGroup('SIGKILL');
+      unlink();
       if (settled) return;
       settled = true;
       if (deadline) clearTimeout(deadline);
-      killGroup('SIGKILL');
-      unlink();
       // A dependency that is not installed ANYWHERE (not even in the repo) is an
       // environment gap, not a defect in the generated app — blaming the model
       // for it would burn repair rounds on code that is correct.
@@ -352,10 +356,17 @@ export function runServerProbe(
           serverEntry: true,
         });
       } catch (err) {
+        // NOT a failure. The URL is whatever the app PRINTED, which can differ
+        // from where it actually listens — measured with a server that binds an
+        // OS-chosen port but logs `http://localhost:0` (a placeholder): GET
+        // failed while the app was serving perfectly. Blaming the model for a
+        // mismatched log line is exactly the false-failure churn this probe must
+        // not cause, so an unreachable announcement stays UNVERIFIED. Only a
+        // process that EXITS is proof the app does not serve.
         finish({
-          status: 'failed',
-          errors: [`GET ${url} failed: ${(err as Error)?.message || err}`],
-          detail: `server announced ${url} but did not answer`,
+          status: 'skipped',
+          errors: [],
+          detail: `server stayed up and announced ${url}, but that URL did not answer — serving NOT verified (${(err as Error)?.message || err})`,
           serverEntry: true,
         });
       }
