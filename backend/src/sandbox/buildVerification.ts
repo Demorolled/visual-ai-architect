@@ -104,7 +104,7 @@ export interface TscGateResult {
  */
 export async function runTscGate(
   entries: TscEntry[],
-  opts: { timeoutMs?: number } = {},
+  opts: { timeoutMs?: number; linkNodeModules?: boolean } = {},
 ): Promise<TscGateResult> {
   // Compile checkable sources. Callers choose what to pass (chat passes
   // .ts/.tsx; canvas also passes .js), but the gate itself handles any of them.
@@ -158,6 +158,35 @@ export async function runTscGate(
     };
     fs.writeFileSync(path.join(tmpDir, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
     fs.writeFileSync(path.join(tmpDir, 'globals.d.ts'), GLOBALS_DTS, 'utf-8');
+
+    // Give tsc the SAME resolution context the export gets from `npm install`,
+    // by linking the project's installed deps into the scaffold.
+    //
+    // Without it tsc cannot resolve a SINGLE bare import, so an app that
+    // correctly imports an installed package fails this gate with TS2307 on
+    // every file that imports it — while the contract gate's
+    // `isSafeNonRelativeImport()` accepts the very same specifier as an
+    // installed package. The two gates disagreed about the same import.
+    // MEASURED on a real chat-path build: tscClasses {TS2307: 2} for an app
+    // whose shipped sources typecheck clean once deps are installed; that cost
+    // 5 repair rounds spent correcting imports that were already correct, and
+    // the repair prompt for this class tells the model to REMOVE the import.
+    // Linking fixes the cause rather than muting the symptom: real deps resolve
+    // (and tsc now checks usage against their actual types), while an INVENTED
+    // package still fails TS2307 because it is not installed anywhere. This
+    // generalizes the react/react-dom `paths` mapping above, which existed for
+    // exactly this reason.
+    // Best-effort: a filesystem that refuses links (e.g. Windows without the
+    // privilege) silently keeps the previous unlinked behaviour.
+    if (opts.linkNodeModules !== false) {
+      try {
+        fs.symlinkSync(
+          path.join(PROJECT_ROOT, 'node_modules'),
+          path.join(tmpDir, 'node_modules'),
+          process.platform === 'win32' ? 'junction' : 'dir',
+        );
+      } catch { /* keep the unlinked behaviour */ }
+    }
 
     const out = await new Promise<{ text: string; unavailable: boolean }>((resolve) => {
       const proc = spawn('node', [TSC_BIN, '--noEmit', '--allowImportingTsExtensions', '-p', tmpDir], {
