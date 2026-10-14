@@ -19,6 +19,7 @@ import {
   planModuleWiring,
   collectRuntimeDependencies,
   packageNameFromSpecifier,
+  buildExportManifest,
 } from './perFileScaffolder.js';
 import type { GeneratedFile } from '../layers/fileGenerator.js';
 
@@ -1014,6 +1015,74 @@ describe('collectRuntimeDependencies', () => {
       mkFile('README.md', "import express from 'express';"),
     ]);
     expect(deps).toEqual({});
+  });
+});
+
+// ─── The manifest the CHAT path ships ──────────────────────────────────────
+// Regression guard: the chat path wrote NO package.json at all, so an export
+// importing `express` had no way to resolve it once copied out of this repo —
+// it only appeared to work because resolution walked up into the repo's own
+// node_modules (observed live: index.js + server.js importing express with no
+// manifest beside them).
+describe('buildExportManifest — the chat path ships a real manifest', () => {
+  const installedVersion = (pkg: string): string => {
+    for (const base of [process.cwd(), path.resolve(process.cwd(), '..')]) {
+      const f = path.join(base, 'node_modules', pkg, 'package.json');
+      if (fs.existsSync(f)) return JSON.parse(fs.readFileSync(f, 'utf-8')).version;
+    }
+    throw new Error(`${pkg} not installed locally`);
+  };
+
+  const JS_ESM = [
+    { path: 'src/index.js', content: "import express from 'express';\nimport { createServer } from './server.js';\nconst app = express();\napp.listen(3000);\n" },
+    { path: 'src/server.js', content: "import express from 'express';\nexport function createServer() { return express(); }\n" },
+  ];
+
+  it('declares the runtime dependency, pinned to the version installed here', () => {
+    const m = buildExportManifest(JS_ESM, 'Build a small Express server')!;
+    expect(m).not.toBeNull();
+    expect((m.dependencies as Record<string, string>).express).toBe(`^${installedVersion('express')}`);
+  });
+
+  it('derives "type" from the code: ESM must not silently fall back to CommonJS', () => {
+    expect(buildExportManifest(JS_ESM, 'x')!.type).toBe('module');
+    const cjs = [{ path: 'index.js', content: "const express = require('express');\nmodule.exports = express();\n" }];
+    expect(buildExportManifest(cjs, 'x')!.type).toBe('commonjs');
+  });
+
+  it('points `start` at the entry with the right runner (node for JS, tsx for TS)', () => {
+    const js = buildExportManifest(JS_ESM, 'x')!;
+    expect(js.main).toBe('src/index.js');
+    expect((js.scripts as Record<string, string>).start).toBe('node src/index.js');
+
+    const ts = buildExportManifest(
+      [{ path: 'main.ts', content: "import express from 'express';\nconsole.log(1);\n" }], 'x')!;
+    expect((ts.scripts as Record<string, string>).start).toBe('tsx main.ts');
+    expect((ts.devDependencies as Record<string, string>).tsx).toBeDefined();
+  });
+
+  it('a plain-JS export gets no invented toolchain', () => {
+    expect(buildExportManifest(JS_ESM, 'x')!.devDependencies).toBeUndefined();
+    // `build: tsc` without a tsconfig would only look like it works.
+    expect((buildExportManifest(JS_ESM, 'x')!.scripts as Record<string, string>).build).toBeUndefined();
+  });
+
+  it('never invents a dependency that is not installed (phantom class)', () => {
+    const m = buildExportManifest(
+      [{ path: 'index.js', content: "import { z } from 'totally-uninstalled-pkg-xyz';\n" }], 'x')!;
+    expect(m.dependencies).toEqual({});
+  });
+
+  it('returns null when the export has no Node source (nothing to manifest)', () => {
+    expect(buildExportManifest([{ path: 'index.html', content: '<html></html>' }], 'x')).toBeNull();
+    expect(buildExportManifest([{ path: 'main.py', content: 'print(1)' }], 'x')).toBeNull();
+    expect(buildExportManifest([], 'x')).toBeNull();
+  });
+
+  it('always produces an npm-legal package name', () => {
+    const named = buildExportManifest(JS_ESM, 'Build a small Express server! (with /health)')!;
+    expect(String(named.name)).toMatch(/^[a-z0-9-]+$/);
+    expect(String(buildExportManifest(JS_ESM, '!!!')!.name)).toBe('generated-app');
   });
 });
 

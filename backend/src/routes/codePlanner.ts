@@ -34,6 +34,7 @@ import { sanitizeGoModuleName } from '../sandbox/nonTsCompileGate.js';
 import { repairAndParseJSON } from './architect.js';
 export { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports } from '../ai/guiShared.js';
 export type { PlannedFile, FileUse } from '../ai/guiShared.js';
+import { buildExportManifest } from '../export/perFileScaffolder.js';
 import fs from 'fs';
 import os from 'os';
 import pathModule from 'path';
@@ -127,6 +128,39 @@ function safeJoin(exportDir: string, relPath: string): string {
   const rel = pathModule.normalize(relPath || 'file.txt').replace(/^(\\.\\.(\/|\\|$))+/, '');
   const full = pathModule.resolve(exportDir, rel);
   return full.startsWith(exportDir + pathModule.sep) ? full : pathModule.join(exportDir, 'file.txt');
+}
+
+/**
+ * Write the export's dependency manifest, if it does not already have one.
+ *
+ * The canvas path has always written a package.json (PerFileScaffolder); the
+ * CHAT path shipped none, so an export that imported `express` could not
+ * resolve it once copied out of this repo — it only appeared to work because
+ * module resolution walked up into the repo's own node_modules. Observed live:
+ * a chat export of `index.js` + `server.js` importing express with no manifest
+ * beside them.
+ *
+ *  - never clobbers a manifest the model wrote itself,
+ *  - writes nothing for non-Node exports (HTML/Python/Go).
+ * Best-effort: a manifest is an artifact, so it must never fail a generation.
+ */
+function ensureExportManifest(
+  exportDir: string,
+  files: Array<{ path: string; content: string }>,
+  projectName: string,
+): void {
+  try {
+    if (!exportDir || !fs.existsSync(exportDir)) return;
+    const manifestPath = pathModule.join(exportDir, 'package.json');
+    if (fs.existsSync(manifestPath)) return;
+    const manifest = buildExportManifest(files, projectName);
+    if (!manifest) return;
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
+    const deps = Object.keys((manifest.dependencies as Record<string, string>) || {});
+    console.log(`[codePlanner] export manifest: type=${String(manifest.type)} deps=[${deps.join(', ') || 'none'}]`);
+  } catch (err) {
+    console.warn('[codePlanner] export manifest write failed (non-fatal):', err);
+  }
 }
 
 // ─── User-context injection (profile + manifesto + library) ──────────────
@@ -2657,7 +2691,7 @@ async function finalizeGeneratedFiles(
   /** Headless-Chrome render smoke-test verdict for HTML entries (3D gate). */
   renderSmoke: { status: 'passed' | 'failed' | 'skipped' | 'unavailable'; errors: string[]; detail: string };
   /** tsx-execution behavioral gate verdict for non-HTML (CLI/script) entries. */
-  cliSmoke: { status: 'passed' | 'failed' | 'skipped' | 'unavailable'; errors: string[]; detail: string };
+  cliSmoke: { status: 'passed' | 'failed' | 'skipped' | 'unavailable'; errors: string[]; detail: string; serverEntry?: boolean };
 }> {
   // 1b) Partial one-shot acceptance gate: fill in any planned files the
   //     (possibly truncated) response never wrote, per-file.
@@ -4410,7 +4444,7 @@ export async function generatePlanFiles(
   chunkSize?: unknown,
   intentOverride?: unknown,
   projectId?: unknown
-): Promise<{ files: Array<{ path: string; content: string }>; mode: 'one-shot' | 'per-file' | 'chunked'; exportDir?: string; repairRounds?: number; tscErrors?: number; tscClasses?: Record<string, number>; tscGateRan?: boolean; compileStatus?: string; languageGates?: LanguageGate[]; stubFailures?: string[]; tscFallback?: boolean; contractViolations?: number; intent?: IntentSpec; libraryContext?: string; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string } } | null> {
+): Promise<{ files: Array<{ path: string; content: string }>; mode: 'one-shot' | 'per-file' | 'chunked'; exportDir?: string; repairRounds?: number; tscErrors?: number; tscClasses?: Record<string, number>; tscGateRan?: boolean; compileStatus?: string; languageGates?: LanguageGate[]; stubFailures?: string[]; tscFallback?: boolean; contractViolations?: number; intent?: IntentSpec; libraryContext?: string; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string; serverEntry?: boolean } } | null> {
   // Resolve answer keys back to the original question text so the prompt reads
   // naturally ("Q: What interface? / A: Web") instead of raw keys ("Q: q1 / A: Web").
   const questionByKey = new Map((plan?.questions || []).map(q => [q.key, q.question]));
@@ -4639,7 +4673,7 @@ async function generateChunkedFiles(
   libMode: LibraryMode,
   timeoutMs: number,
   chunkSize: number
-): Promise<{ files: Array<{ path: string; content: string }>; mode: 'chunked'; exportDir: string; repairRounds: number; tscErrors: number; tscClasses?: Record<string, number>; tscGateRan: boolean; compileStatus: 'clean' | 'errors' | 'skipped' | 'unavailable'; languageGates: LanguageGate[]; stubFailures: string[]; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string }; designBrief?: string; conductorFindings?: Array<{ chunkNo: number; findings: string[]; note: string }>; conductorReport?: { verdict: string; findings: string[]; note: string } | null } | null> {
+): Promise<{ files: Array<{ path: string; content: string }>; mode: 'chunked'; exportDir: string; repairRounds: number; tscErrors: number; tscClasses?: Record<string, number>; tscGateRan: boolean; compileStatus: 'clean' | 'errors' | 'skipped' | 'unavailable'; languageGates: LanguageGate[]; stubFailures: string[]; renderSmoke?: { status: string; errors: string[]; detail: string }; cliSmoke?: { status: string; errors: string[]; detail: string; serverEntry?: boolean }; designBrief?: string; conductorFindings?: Array<{ chunkNo: number; findings: string[]; note: string }>; conductorReport?: { verdict: string; findings: string[]; note: string } | null } | null> {
   const ordered = orderFilesByDependency(contractFiles);
   const chunks = chunkFiles(ordered, chunkSize);
   const exportDir = getExportDir(request);
@@ -5272,7 +5306,7 @@ export function buildWriteSummary(opts: {
   /** Paths rejected as stub/placeholder bodies. */
   stubFailures?: string[];
   renderSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string } | null;
-  cliSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string } | null;
+  cliSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string; serverEntry?: boolean } | null;
 }): string {
   const { successCount, remainingTsc, modeSuffix, fallbackNote, contractViolations, compileStatus, languageGates, stubFailures, renderSmoke, cliSmoke } = opts;
   if (successCount <= 0) return '❌ Failed to write any files';
@@ -5334,7 +5368,7 @@ export function learnFromWrite(
     // `status: string` (line 4421) — the union-narrowed SmokeVerdict is what
     // the smoke gates produce, but the write path sees the loose shape.
     renderSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string };
-    cliSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string };
+    cliSmoke?: SmokeVerdict | { status: string; errors: string[]; detail: string; serverEntry?: boolean };
   },
 ): void {
   // Any FAILED gate disqualifies; any UNVERIFIED gate ALSO disqualifies —
@@ -5603,6 +5637,10 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
       exportDir = w.exportDir;
     }
 
+    // Ship a dependency manifest with every Node/TS export so the app can
+    // resolve its own imports outside this repo (see ensureExportManifest).
+    ensureExportManifest(exportDir, gen.files, request);
+
     const successCount = written.filter(w => w.status === 'written').length;
     const remainingTsc = gen.tscErrors ?? 0;
     const fallbackNote = gen.tscFallback ? ' — retried in chunked mode' : '';
@@ -5827,6 +5865,10 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
       written = w.written;
       exportDir = w.exportDir;
     }
+
+    // Ship a dependency manifest with every Node/TS export so the app can
+    // resolve its own imports outside this repo (see ensureExportManifest).
+    ensureExportManifest(exportDir, gen.files, request);
 
     const successCount = written.filter(w => w.status === 'written').length;
     const remainingTsc = gen.tscErrors ?? 0;

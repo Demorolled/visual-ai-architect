@@ -548,7 +548,9 @@ function installedPackageVersion(pkg: string): string | null {
  * version installed in this repo. Sorted so the manifest is stable from build
  * to build — a package.json diff should mean the code changed, not the walk.
  */
-export function collectRuntimeDependencies(files: GeneratedFile[]): Record<string, string> {
+export function collectRuntimeDependencies(
+  files: Array<{ fileName?: string; code?: string }>,
+): Record<string, string> {
   const found = new Map<string, string>();
   for (const f of files) {
     if (!f?.code) continue;
@@ -564,6 +566,98 @@ export function collectRuntimeDependencies(files: GeneratedFile[]): Record<strin
     }
   }
   return Object.fromEntries([...found.entries()].sort(([a], [b]) => a.localeCompare(b)));
+}
+
+// ─── Manifest for exports that have no scaffolder ───────────────────────────
+
+/** Node/TS sources a manifest can describe. */
+const MANIFEST_SOURCE_RE = /\.(?:ts|tsx|js|jsx|mjs|cjs)$/i;
+
+/**
+ * Does this source use ES-module syntax? Decides `package.json` `type`. This is
+ * derived from the code, never assumed: declaring "module" over CommonJS output
+ * (or the reverse) breaks the export outright — `require is not defined` or
+ * `Cannot use import statement outside a module`.
+ */
+function usesEsmSyntax(code: string): boolean {
+  const src = (code || '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|[^:])\/\/[^\n]*/gm, '$1');
+  return /^\s*(?:import|export)\s/m.test(src) || /\bimport\s*\(/.test(src);
+}
+
+/** The file `npm start` should launch: the shallowest main/index/app/... source. */
+function pickManifestEntry(paths: string[]): string | null {
+  const sorted = [...paths].sort(
+    (a, b) => a.split('/').length - b.split('/').length || a.localeCompare(b),
+  );
+  for (const name of ['main', 'index', 'app', 'server', 'cli', 'start']) {
+    const hit = sorted.find((p) =>
+      new RegExp(`(^|/)${name}\\.(?:ts|tsx|js|mjs|cjs)$`, 'i').test(p));
+    if (hit) return hit;
+  }
+  return sorted[0] ?? null;
+}
+
+/** A manifest-safe package name (npm rejects anything else). */
+function manifestName(projectName: string): string {
+  const slug = (projectName || '').toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+  return slug || 'generated-app';
+}
+
+/**
+ * Dependency manifest for an export that has NO scaffolder — i.e. anything the
+ * CHAT path writes.
+ *
+ * The chat path shipped no `package.json` at all, so an export importing
+ * `express` had no way to resolve it once copied out of this repo: it only
+ * appeared to work because module resolution walked up into the repo's own
+ * node_modules. This derives the real manifest from what the generated code
+ * imports (the same helper the canvas path uses, so the two cannot drift), with
+ * `type` taken from the code's module syntax.
+ *
+ * Returns null when the export has no Node/TS source — HTML, Python and Go
+ * exports have no npm dependencies to declare.
+ */
+export function buildExportManifest(
+  files: Array<{ path: string; content: string }>,
+  projectName: string,
+): Record<string, unknown> | null {
+  const nodeFiles = files.filter(
+    (f) => MANIFEST_SOURCE_RE.test(f.path || '') && (f.content || '').trim().length > 0,
+  );
+  if (!nodeFiles.length) return null;
+
+  const dependencies = collectRuntimeDependencies(
+    nodeFiles.map((f) => ({ fileName: f.path, code: f.content })),
+  );
+  const hasTs = nodeFiles.some((f) => /\.tsx?$/i.test(f.path));
+  const esm = nodeFiles.some((f) => usesEsmSyntax(f.content));
+  const entry = pickManifestEntry(nodeFiles.map((f) => f.path));
+  const runner = hasTs ? 'tsx' : 'node';
+  const name = manifestName(projectName);
+
+  return {
+    name,
+    version: '1.0.0',
+    description: `${name} — generated app`,
+    type: esm ? 'module' : 'commonjs',
+    ...(entry ? { main: entry } : {}),
+    scripts: {
+      ...(entry ? { start: `${runner} ${entry}` } : {}),
+      // `tsx` is required to RUN TypeScript; a plain-JS export needs no
+      // toolchain at all, so it gets no devDependencies and no build script
+      // (`build: tsc` without a tsconfig would only look like it works).
+      ...(hasTs ? { dev: `tsx watch ${entry ?? 'index.ts'}` } : {}),
+    },
+    dependencies,
+    ...(hasTs
+      ? { devDependencies: { typescript: '^5.4.0', tsx: '^4.7.0', '@types/node': '^20.0.0' } }
+      : {}),
+  };
 }
 
 export class PerFileScaffolder {
