@@ -97,6 +97,20 @@ export function resolveGateLanguage(language: string | undefined, relPath: strin
 }
 
 /**
+ * Does this source use ES-module syntax? `node --check` resolves its PARSE GOAL
+ * from the nearest `package.json`, so this decides which goal the JS gate must
+ * stage under. It is also the rule the export's own `package.json` `type` is
+ * derived from (`export/perFileScaffolder.ts` imports THIS function), so the
+ * gate judges a file in the mode the packaged app is actually parsed in.
+ */
+export function usesEsmSyntax(code: string): boolean {
+  const src = (code || '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|[^:])\/\/[^\n]*/gm, '$1');
+  return /^\s*(?:import|export)\s/m.test(src) || /\bimport\s*\(/.test(src);
+}
+
+/**
  * Sanitize a project title into a valid Go module path segment. Using the raw
  * title (spaces, commas) produced `malformed import path ... invalid char ' '`
  * on every exported Go project — this must match the scaffolder's go.mod name.
@@ -1110,6 +1124,18 @@ export async function runNonTsProjectGates(
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-jsgate-'));
     try {
       const absFiles = jsFiles.filter((f) => !isConfigDotfile(f.relPath)).map((f) => stageFile(dir, f.relPath, f.code));
+      // MEASURED (Node v24.18.0): `node --check` takes its parse goal from the
+      // nearest `package.json`, and with NONE it does not report invalid ESM at
+      // all — `export const x = ;` exits 0. Staging into a bare temp dir thus
+      // made this gate a NO-OP for every ESM `.js` build: a real export shipped
+      // `src/server.js` with a stray `}`, this gate reported `javascript
+      // clean: true`, and the file exits 1 under `--input-type=module` — i.e.
+      // exactly how the app is parsed once the export declares `type: module`.
+      // Stage that declaration so the gate sees the same goal as the artifact.
+      // Only ESM sets it, leaving CommonJS detection behaviour untouched.
+      if (jsFiles.some((f) => usesEsmSyntax(f.code))) {
+        fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({ type: 'module' }), 'utf-8');
+      }
       const failures = await perFileGate(toolchainBin('javascript'), (abs) => ['--check', abs], absFiles, dir, 30000);
       pushGate(gates, 'javascript', failures);
     } catch (err: any) {

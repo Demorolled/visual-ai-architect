@@ -311,6 +311,35 @@ describe('javascript is gated (node --check)', () => {
     expect((js?.errors || []).some((e) => e.startsWith('src/main.js:'))).toBe(true);
   });
 
+  it.skipIf(!hasNode)('rejects invalid ESM that only module mode can see', async () => {
+    // MEASURED root cause: `node --check` resolves its parse goal from the
+    // nearest package.json, and with NONE it silently PASSES invalid ESM
+    // (`export const x = ;` exits 0 on Node v24) — so a bare temp dir made this
+    // gate a no-op for every ESM `.js` build. A real export shipped a
+    // src/server.js with a stray `}` and this gate still said clean: true.
+    const gates = await runNonTsProjectGates(
+      [{ relPath: 'src/server.js', language: 'javascript', code: 'export const x = ;\n' }],
+      'esm-bad',
+    );
+    const js = gates.find((g) => g.language === 'javascript');
+    expect(js?.clean).toBe(false);
+    expect((js?.errors || []).some((e) => e.startsWith('src/server.js:'))).toBe(true);
+  });
+
+  it.skipIf(!hasNode)('still accepts VALID ESM in a .js file under the staged module type', async () => {
+    const gates = await runNonTsProjectGates(
+      [{
+        relPath: 'src/main.js',
+        language: 'javascript',
+        code: 'import express from "express";\nexport default function startServer() {\n  return express();\n}\nstartServer();\n',
+      }],
+      'esm-good',
+    );
+    const js = gates.find((g) => g.language === 'javascript');
+    expect(js?.errors || []).toEqual([]);
+    expect(js?.clean).toBe(true);
+  });
+
   it.skipIf(!hasNode)('accepts an ESM-only file (import/export)', async () => {
     const gates = await runNonTsProjectGates(
       [{ relPath: 'bin/tool.mjs', language: 'javascript', code: 'import fs from "fs";\nconsole.log(fs.existsSync("/"));\n' }],

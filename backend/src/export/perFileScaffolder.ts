@@ -22,6 +22,9 @@ import * as os from 'os';
 import { AppTree, OSType, LinuxDistro, Node, Edge } from '../types.js';
 import { labelToFileName } from '../layers/fileGenerator.js';
 import type { GeneratedFile } from '../layers/fileGenerator.js';
+// ONE definition of "is this source ESM?" — the JS syntax gate stages its temp
+// workspace under the same goal (see nonTsCompileGate's usesEsmSyntax).
+import { usesEsmSyntax } from '../sandbox/nonTsCompileGate.js';
 import {
   planExportLayout,
   exportDirFor,
@@ -573,18 +576,10 @@ export function collectRuntimeDependencies(
 /** Node/TS sources a manifest can describe. */
 const MANIFEST_SOURCE_RE = /\.(?:ts|tsx|js|jsx|mjs|cjs)$/i;
 
-/**
- * Does this source use ES-module syntax? Decides `package.json` `type`. This is
- * derived from the code, never assumed: declaring "module" over CommonJS output
- * (or the reverse) breaks the export outright — `require is not defined` or
- * `Cannot use import statement outside a module`.
- */
-function usesEsmSyntax(code: string): boolean {
-  const src = (code || '')
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:])\/\/[^\n]*/gm, '$1');
-  return /^\s*(?:import|export)\s/m.test(src) || /\bimport\s*\(/.test(src);
-}
+// `usesEsmSyntax` decides the manifest's `type`, derived from the code and never
+// assumed: declaring "module" over CommonJS output (or the reverse) breaks the
+// export outright — `require is not defined` or `Cannot use import statement
+// outside a module`. Imported from the shared gate module (one definition).
 
 /** The file `npm start` should launch: the shallowest main/index/app/... source. */
 function pickManifestEntry(paths: string[]): string | null {
