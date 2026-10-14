@@ -20,11 +20,22 @@ Verdict rules (lenient on purpose — never blame the model for infra):
   * tsx binary missing         -> unavailable (error key)
   * any invocation exits 0 with non-empty stdout -> passed
   * every invocation crashes / prints nothing / times out -> failed
+
+Every probe runs in its OWN process group and the WHOLE group is killed when the
+probe ends. tsx runs the entry in a child node process, so killing only the
+direct child left that child alive — and when the entry was a server it kept
+holding its port, which made the NEXT build fail with EADDRINUSE. Server-style
+entries are skipped before probing by the TypeScript caller
+(behavioralSmoke.ts `looksLikeServerEntry`); the group kill here is the safety
+net for anything that still outlives its wrapper.
 """
 import argparse
 import json
+import os
 import re
+import signal
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -52,26 +63,84 @@ def pick_entry(export_dir: Path, explicit: str | None) -> str | None:
     return str(files[0].relative_to(export_dir))
 
 
+# Probe process groups that are currently alive. Each probe runs in its OWN
+# session (start_new_session in run_probe), which is what makes one killpg able
+# to take down the whole tsx → node tree — but it also means a killpg on THIS
+# process does NOT reach them. So a caller-side timeout must send SIGTERM
+# (catchable) and this handler cleans the probes up; SIGKILL would skip it and
+# leave the probe's node child holding its port.
+LIVE_GROUPS: set[int] = set()
+
+
+def kill_all_probe_groups() -> None:
+    for pgid in list(LIVE_GROUPS):
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError, OSError):
+            pass
+        LIVE_GROUPS.discard(pgid)
+
+
+def _handle_signal(signum, _frame) -> None:
+    """Caller-side timeout: kill every live probe, then exit."""
+    kill_all_probe_groups()
+    sys.exit(128 + signum)
+
+
+def kill_process_group(proc: subprocess.Popen) -> None:
+    """Kill the probe AND everything it spawned.
+
+    tsx runs the entry in a CHILD node process, so killing only the direct child
+    leaves that child running — and a server child keeps holding its port. The
+    probe is started with start_new_session, which makes it a process-group
+    leader, so one killpg takes down the whole tree.
+    """
+    try:
+        os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        return
+    except (ProcessLookupError, PermissionError, OSError, AttributeError):
+        pass
+    try:                       # non-POSIX fallback
+        proc.kill()
+    except Exception:
+        pass
+
+
 def run_probe(entry_abs: Path, args: list[str], timeout: int) -> dict:
     """Execute the entry under tsx. stdin is closed so interactive prompts EOF
     immediately instead of hanging the probe."""
     try:
-        p = subprocess.run(
+        p = subprocess.Popen(
             [str(TSX), str(entry_abs), *args],
             stdin=subprocess.DEVNULL,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
-            timeout=timeout,
+            start_new_session=True,   # own process group → killable as a tree
         )
+    except OSError as exc:
+        return {"args": args, "exit": None, "timedOut": False, "out": "",
+                "err": f"spawn failed: {exc}"}
+    LIVE_GROUPS.add(p.pid)   # start_new_session → pgid == pid
+    try:
+        out, err = p.communicate(timeout=timeout)
         return {
             "args": args,
             "exit": p.returncode,
             "timedOut": False,
-            "out": (p.stdout or "")[-2000:],
-            "err": (p.stderr or "")[-2000:],
+            "out": (out or "")[-2000:],
+            "err": (err or "")[-2000:],
         }
     except subprocess.TimeoutExpired:
-        return {"args": args, "exit": None, "timedOut": True, "out": "", "err": f"timed out after {timeout}s"}
+        kill_process_group(p)
+        p.communicate()
+        return {"args": args, "exit": None, "timedOut": True, "out": "",
+                "err": f"timed out after {timeout}s"}
+    finally:
+        # A clean exit still does not prove nothing was left behind: the wrapper
+        # can exit while its node child keeps serving. Reap the whole group.
+        kill_process_group(p)
+        LIVE_GROUPS.discard(p.pid)
 
 
 def looks_crashed(run: dict) -> bool:
@@ -88,6 +157,15 @@ def looks_crashed(run: dict) -> bool:
 
 
 def main() -> None:
+    # The caller SIGTERMs this script when its own budget expires (see
+    # runCliSmoke in backend/src/sandbox/behavioralSmoke.ts). Register that
+    # BEFORE any probe starts, so no probe can outlive a caller-side timeout.
+    for _sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        try:
+            signal.signal(_sig, _handle_signal)
+        except (ValueError, OSError):
+            pass   # non-main thread or unsupported platform
+
     ap = argparse.ArgumentParser()
     ap.add_argument("export_dir")
     ap.add_argument("--entry", default=None)

@@ -53,6 +53,15 @@ export interface SmokeVerdict {
   status: SmokeStatus;
   errors: string[];
   detail: string;
+  /**
+   * Set when a long-running SERVER entry was deliberately NOT probed (a server
+   * cannot be probed with --help: it never exits, so the probe always fails
+   * falsely, and the survivor leaked a listener that broke the NEXT build with
+   * EADDRINUSE). `skipped` alone means "no entry to run"; this flag means
+   * "there IS an entry and its runtime was knowingly left unverified", which
+   * must never be read as a pass.
+   */
+  serverEntry?: boolean;
 }
 
 // ─── tsc gate ────────────────────────────────────────────────────────────
@@ -272,8 +281,8 @@ export interface BuildVerificationInput {
   tscErrors?: number;
   languageGates?: LanguageGate[];
   stubFailures?: string[];
-  renderSmoke?: { status: string; errors?: string[]; detail?: string } | null;
-  cliSmoke?: { status: string; errors?: string[]; detail?: string } | null;
+  renderSmoke?: { status: string; errors?: string[]; detail?: string; serverEntry?: boolean } | null;
+  cliSmoke?: { status: string; errors?: string[]; detail?: string; serverEntry?: boolean } | null;
 }
 
 export interface BuildVerdict {
@@ -300,6 +309,8 @@ export function deriveBuildVerdict(input: BuildVerificationInput): BuildVerdict 
   const renderFailed = input.renderSmoke?.status === 'failed';
   const cliFailed = input.cliSmoke?.status === 'failed';
   const failedGate = input.languageGates?.find((g) => !g.clean);
+  /** A server entry that was intentionally not probed (see runCliSmoke). */
+  const serverUnprobed = input.cliSmoke?.status === 'skipped' && input.cliSmoke.serverEntry === true;
 
   let failure: BuildVerdict['failure'] = null;
   if (tscErrors > 0 || input.tscStatus === 'errors') {
@@ -326,6 +337,14 @@ export function deriveBuildVerdict(input: BuildVerificationInput): BuildVerdict 
   }
   if (!failure && !legacy && (input.tscStatus === 'skipped') && !compileVerified) {
     failure = { kind: 'noGate', detail: 'compile NOT verified (no gate applied)' };
+  }
+  // A skipped server probe is honest, but it is NOT verification: a syntax gate
+  // (`node --check`) only PARSES and cannot show the app boots and answers.
+  // Without this rule, removing the bad probe would flip every server build to
+  // a green ✅ and make it learn-eligible — observed directly: the Express build
+  // went ⚠️ → ✅ the moment the probe stopped running. Unverified is not clean.
+  if (!failure && serverUnprobed) {
+    failure = { kind: 'noGate', detail: 'server app — runtime NOT verified (long-running entry; probe skipped)' };
   }
 
   const anyFailed = !!failure;

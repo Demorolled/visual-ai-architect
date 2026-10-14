@@ -16,12 +16,17 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import * as fs from 'fs';
+import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
+import { spawnSync } from 'child_process';
+import { fileURLToPath } from 'url';
 import {
   runBehavioralSmokeGates,
   runStagedBehavioralSmoke,
   pickCliEntryFile,
+  runCliSmoke,
+  looksLikeServerEntry,
   detectHtmlTruncation,
   applyDeterministicHtmlRuntimeFixes,
   fixUninvokedEntryMain,
@@ -239,4 +244,117 @@ describe('pure helpers the canvas path shares', () => {
     expect(fixed).toContain('__vacaHelp');
     expect(addDeterministicHelpHandler(fixed!)).toBeNull();
   });
+});
+
+/**
+ * Probe SAFETY — the two live defects this block pins:
+ *  1. a server probed with `--help` never exits, so the probe reported a FALSE
+ *     failure for a good app, and
+ *  2. the surviving probe kept holding its port, leaking a listener that made
+ *     the NEXT build die on EADDRINUSE.
+ * A leak can only be proven with REAL subprocesses (tsx + python3), so this
+ * block needs that infra and SKIPS — never fails — when it is missing.
+ */
+describe('CLI probe safety — servers are never probed with --help', () => {
+  const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+  const TSX = path.join(ROOT, 'node_modules', '.bin', 'tsx');
+  const SCRIPT = path.join(ROOT, 'scripts', 'smoke-test-cli.py');
+  const haveInfra = fs.existsSync(TSX) && fs.existsSync(SCRIPT);
+
+  /** True when we can still bind the port ⇒ nothing leaked it. A LIVE holder
+   *  makes bind fail with EADDRINUSE (SO_REUSEADDR does not allow that), so
+   *  this is a real assertion, not a formality. */
+  const portFree = (port: number): Promise<boolean> =>
+    new Promise((resolve) => {
+      const srv = net.createServer();
+      srv.once('error', () => resolve(false));
+      srv.once('listening', () => srv.close(() => resolve(true)));
+      srv.listen(port);
+    });
+
+  /** Let the OS pick a free port. Hardcoded ports are a trap here: a probe that
+   *  leaked (i.e. the very bug under test) would poison every later run. */
+  const freePort = (): Promise<number> =>
+    new Promise((resolve, reject) => {
+      const srv = net.createServer();
+      srv.once('error', reject);
+      srv.listen(0, () => {
+        const addr = srv.address();
+        const port = addr && typeof addr === 'object' ? addr.port : 0;
+        srv.close(() => resolve(port));
+      });
+    });
+
+  /** A server whose `.listen(` is spelled INDIRECTLY on purpose: it must not be
+   *  classified as a server, so the test reaches the real probe and exercises
+   *  the process-group kill (the skip path never spawns anything). */
+  const sneakyServer = (port: number): string =>
+    `const net = require('net');\nconst s = new net.Server();\n` +
+    `const f = s['lis' + 'ten'];\nf.call(s, ${port}, () => console.log('up'));\n` +
+    `setInterval(() => {}, 1000);\n`;
+
+  it('looksLikeServerEntry flags servers, ignores CLIs and commented-out calls', () => {
+    expect(looksLikeServerEntry('app.listen(3000, () => {});')).toBe(true);
+    expect(looksLikeServerEntry('const s = http.createServer(h);')).toBe(true);
+    expect(looksLikeServerEntry('from flask import Flask\napp.run(port=5000)')).toBe(true);
+    expect(looksLikeServerEntry("// app.listen(3000)\nconsole.log('hi');")).toBe(false);
+    expect(looksLikeServerEntry("function main() { console.log('todos'); }")).toBe(false);
+    expect(looksLikeServerEntry('')).toBe(false);
+  });
+
+  it('runCliSmoke SKIPS a server entry instead of probing it', async () => {
+    const dir = tmpDir();
+    const content = "import express from 'express';\nconst app = express();\n" +
+      "app.get('/health', (_, res) => res.json({ ok: true }));\n" +
+      "app.listen(3000, () => console.log('listening'));\n";
+    fs.writeFileSync(path.join(dir, 'index.js'), content);
+    const v = await runCliSmoke(dir, [{ path: 'index.js', content }]);
+    expect(v.status).toBe('skipped');
+    expect(v.serverEntry).toBe(true);
+    expect(v.detail).toContain('server-style entry');
+  });
+
+  it.skipIf(!haveInfra)('a timed-out probe leaves nothing listening (caller-side group kill)', async () => {
+    const PORT = await freePort();
+    const dir = tmpDir();
+    const content = sneakyServer(PORT);
+    fs.writeFileSync(path.join(dir, 'main.cjs'), content);
+    // 5s caller budget ≪ the script's own 20s per-probe timeout, so the kill is
+    // exercised from the Node side.
+    const v = await runCliSmoke(dir, [{ path: 'main.cjs', content }], 5_000);
+    expect(v.status).toBe('unavailable');
+    expect(v.detail).toBe('timeout');
+    await new Promise((r) => setTimeout(r, 400));
+    expect(await portFree(PORT)).toBe(true);
+  }, 30_000);
+
+  it.skipIf(!haveInfra)('the probe script kills the whole group (no EADDRINUSE cascade)', async () => {
+    const PORT = await freePort();
+    const dir = tmpDir();
+    fs.writeFileSync(path.join(dir, 'main.cjs'), sneakyServer(PORT));
+    const r = spawnSync('python3', [SCRIPT, dir, '--entry', 'main.cjs', '--timeout', '3'], {
+      encoding: 'utf-8', timeout: 60_000,
+    });
+    expect(r.status).toBe(0);
+    const parsed = JSON.parse(r.stdout);
+    expect(parsed.status).toBe('failed');
+    // EVERY probe must time out. Before the group kill the first probe's server
+    // survived, so probes 2 and 3 died on EADDRINUSE instead — the cascade that
+    // used to burn two repair rounds on a failure the gate caused itself.
+    expect(parsed.runs.map((x: { timedOut: boolean }) => x.timedOut)).toEqual([true, true, true]);
+    await new Promise((r2) => setTimeout(r2, 400));
+    expect(await portFree(PORT)).toBe(true);
+  }, 60_000);
+
+  it.skipIf(!haveInfra)('a normal CLI still passes (no over-eager server classification)', async () => {
+    const dir = tmpDir();
+    const content = 'function main() {\n' +
+      '  const a = process.argv[2];\n' +
+      "  if (!a || a === '--help' || a === '-h') { console.log('Usage: todos'); return; }\n" +
+      "  console.log('ok');\n}\nmain();\n";
+    fs.writeFileSync(path.join(dir, 'main.cjs'), content);
+    const v = await runCliSmoke(dir, [{ path: 'main.cjs', content }], 30_000);
+    expect(v.status).toBe('passed');
+    expect(v.serverEntry).toBeUndefined();
+  }, 60_000);
 });

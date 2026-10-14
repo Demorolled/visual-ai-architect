@@ -215,6 +215,45 @@ export function pickCliEntryFile(files: Array<{ path: string }>): string | null 
 }
 
 /**
+ * Does this entry look like a long-running SERVER (binds a port, runs until
+ * killed) rather than a CLI?
+ *
+ * Servers must never be probed with `--help` / `-h` / a bare run, for two
+ * reasons observed live:
+ *   1. A server does not exit on `--help`, so EVERY probe "times out" — a
+ *      FALSE failure for a perfectly good server, and it burned 2 LLM repair
+ *      rounds chasing it.
+ *   2. The surviving probe kept holding its port (`app.listen(3000)`), which
+ *      leaked a `:3000` listener; the next probe then died on EADDRINUSE and
+ *      the NEXT build reported that as its failure.
+ *
+ * Comments are stripped first so a commented-out `// app.listen(...)` cannot
+ * misclassify a real CLI. Pure function — unit-testable.
+ */
+export function looksLikeServerEntry(content: string): boolean {
+  const src = (content || '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|[^:])\/\/[^\n]*/gm, '$1');
+  if (!src.trim()) return false;
+  return /\.listen\s*\(/.test(src)
+    || /\bcreateServer\s*\(/.test(src)
+    || /\b(?:Bun\.serve|Deno\.serve)\s*\(/.test(src)
+    || /\bapp\.run\s*\(/.test(src)
+    || /\buvicorn\.run\s*\(/.test(src)
+    || /\b(?:http\.server|socketserver)\b/.test(src);
+}
+
+/** Best-effort read of an entry's current source. Disk is authoritative: the
+ *  deterministic CLI pre-fixes were already written there before the probe. */
+function readEntrySource(absPath: string): string {
+  try {
+    return fs.readFileSync(absPath, 'utf-8');
+  } catch {
+    return '';
+  }
+}
+
+/**
  * Deterministic zero-LLM fix for the recurring "defines but never invokes"
  * CLI failure class: generated entries that define a module-scope `main`
  * (function or const) but never call it. tsc passes (the code compiles), the
@@ -341,13 +380,56 @@ export function runCliSmoke(
   if (!entry) return Promise.resolve({ status: 'skipped', errors: [], detail: 'no runnable entry file' });
   const absPath = safeJoin(exportDir, entry);
   if (!fs.existsSync(absPath)) return Promise.resolve({ status: 'skipped', errors: [], detail: `entry not on disk: ${entry}` });
+
+  // Skip server-style entries BEFORE spawning anything: probing a long-running
+  // server with --help always fails falsely and leaves a listener behind. The
+  // skip is honest but it is NOT verification, so it is flagged with
+  // `serverEntry` — buildVerification.ts must not read it as a green build.
+  const entrySrc = files.find(f => f.path === entry)?.content || readEntrySource(absPath);
+  if (looksLikeServerEntry(entrySrc)) {
+    console.log(`[behavioralSmoke] cli smoke: skipping server-style entry ${entry} — a long-running server cannot be probed with --help (runtime left UNVERIFIED)`);
+    return Promise.resolve({
+      status: 'skipped',
+      errors: [],
+      detail: `server-style entry ${entry} (binds a port) — not probed with --help; runtime unverified`,
+      serverEntry: true,
+    });
+  }
+
   const script = path.join(PROJECT_ROOT, 'scripts', 'smoke-test-cli.py');
   if (!fs.existsSync(script)) return Promise.resolve({ status: 'unavailable', errors: [], detail: 'smoke-test-cli.py missing' });
   return new Promise((resolve) => {
-    const proc = spawn('python3', [script, exportDir, '--entry', entry], { stdio: ['ignore', 'pipe', 'pipe'] });
+    // `detached` puts the probe in its OWN process group, so a timeout can kill
+    // the whole tree (python → tsx → node). Killing only the python wrapper is
+    // what left the server child alive holding its port.
+    // Give the script a per-probe budget that FITS inside our own timeout: all
+    // 3 probes must finish with margin, otherwise the caller's kill truncates
+    // every verdict (the old defaults gave python 3×20s = 60s under a 45s
+    // caller budget, so the caller always fired first and lost the verdict).
+    const perProbeSec = Math.max(3, Math.floor((timeoutMs / 1000 - 3) / 3));
+    const proc = spawn('python3', [script, exportDir, '--entry', entry, '--timeout', String(perProbeSec)], {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      detached: true,
+    });
     let out = '';
     let timedOut = false;
-    const killTimer = setTimeout(() => { timedOut = true; proc.kill('SIGKILL'); }, timeoutMs);
+    const killGroup = (signal: NodeJS.Signals) => {
+      try {
+        if (proc.pid) process.kill(-proc.pid, signal);   // negative = whole group
+        else proc.kill(signal);
+      } catch {
+        try { proc.kill(signal); } catch { /* already gone */ }
+      }
+    };
+    const killTimer = setTimeout(() => {
+      timedOut = true;
+      // SIGTERM, NOT SIGKILL: every probe runs in its own session, so killing
+      // THIS process's group cannot reach the probe's tsx→node child. The
+      // script's SIGTERM handler kills the probe groups it owns — that is what
+      // actually frees the port. SIGKILL is the backstop for a wedged script.
+      killGroup('SIGTERM');
+      setTimeout(() => killGroup('SIGKILL'), 2_000).unref();
+    }, timeoutMs);
     proc.stdout.on('data', (d: Buffer) => { out += String(d); });
     proc.stderr.on('data', (d: Buffer) => { out += String(d); });
     proc.on('error', (err) => {
@@ -357,6 +439,9 @@ export function runCliSmoke(
     });
     proc.on('close', () => {
       clearTimeout(killTimer);
+      // Reap anything the probe left behind: the python wrapper can exit
+      // cleanly while the tsx→node child keeps serving and holding its port.
+      killGroup('SIGKILL');
       if (timedOut) {
         console.warn('[behavioralSmoke] cli smoke timed out — CLI run NOT verified');
         resolve({ status: 'unavailable', errors: [], detail: 'timeout' });
@@ -370,7 +455,12 @@ export function runCliSmoke(
         }
         const status = parsed.status === 'passed' ? 'passed' : parsed.status === 'failed' ? 'failed' : 'skipped';
         const errors = Array.isArray(parsed.errors) ? (parsed.errors as string[]).slice(0, 8) : [];
-        resolve({ status, errors, detail: String(parsed.detail || '').slice(0, 240) });
+        resolve({
+          status,
+          errors,
+          detail: String(parsed.detail || '').slice(0, 240),
+          ...(parsed.serverEntry ? { serverEntry: true } : {}),
+        });
       } catch {
         resolve({ status: 'unavailable', errors: [], detail: `unparsable cli smoke output: ${String(out).slice(0, 160)}` });
       }
