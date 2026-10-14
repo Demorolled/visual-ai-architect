@@ -581,16 +581,33 @@ const MANIFEST_SOURCE_RE = /\.(?:ts|tsx|js|jsx|mjs|cjs)$/i;
 // export outright — `require is not defined` or `Cannot use import statement
 // outside a module`. Imported from the shared gate module (one definition).
 
-/** The file `npm start` should launch: the shallowest main/index/app/... source. */
+/**
+ * The file `npm start` should launch: the shallowest conventional source.
+ *
+ * DEPTH LEADS, the conventional name only breaks ties. Scanning the name list
+ * first let a NESTED `src/http/index.js` beat the root `server.js` that imports
+ * it — so `main` pointed at a submodule, and `type` was then derived from that
+ * submodule's syntax rather than the entry's. Measured on a real chat export:
+ * `server.js` (CommonJS `require`) + `src/http/index.ts` (ESM) declared
+ * `main: src/http/index.ts` and `type: module`, which breaks the very file the
+ * app launches with `require is not defined in ES module scope`.
+ */
 function pickManifestEntry(paths: string[]): string | null {
+  const order = ['main', 'index', 'app', 'server', 'cli', 'start'];
+  let best: { path: string; depth: number; rank: number } | null = null;
+  for (const p of paths) {
+    const base = (p.split('/').pop() || '').replace(/\.(?:ts|tsx|js|mjs|cjs)$/i, '').toLowerCase();
+    const rank = order.indexOf(base);
+    if (rank < 0) continue; // not a conventional entry name
+    const depth = p.split('/').length;
+    if (!best || depth < best.depth || (depth === best.depth && rank < best.rank)) {
+      best = { path: p, depth, rank };
+    }
+  }
+  if (best) return best.path;
   const sorted = [...paths].sort(
     (a, b) => a.split('/').length - b.split('/').length || a.localeCompare(b),
   );
-  for (const name of ['main', 'index', 'app', 'server', 'cli', 'start']) {
-    const hit = sorted.find((p) =>
-      new RegExp(`(^|/)${name}\\.(?:ts|tsx|js|mjs|cjs)$`, 'i').test(p));
-    if (hit) return hit;
-  }
   return sorted[0] ?? null;
 }
 
@@ -630,8 +647,17 @@ export function buildExportManifest(
     nodeFiles.map((f) => ({ fileName: f.path, code: f.content })),
   );
   const hasTs = nodeFiles.some((f) => /\.tsx?$/i.test(f.path));
-  const esm = nodeFiles.some((f) => usesEsmSyntax(f.content));
   const entry = pickManifestEntry(nodeFiles.map((f) => f.path));
+  // `type` decides how Node parses the files `npm start` RUNS, so derive it from
+  // the ENTRY file's own syntax, not from "does any file use ESM". A mixed
+  // export with a CommonJS entry (`server.js` doing `require`) beside an ESM
+  // sibling measured `type: module` under the any-file rule — which breaks the
+  // very file the app launches with `require is not defined in ES module
+  // scope`. With no entry to judge, fall back to the any-file rule.
+  const entryCode = entry ? (nodeFiles.find((f) => f.path === entry)?.content || '') : '';
+  const esm = entryCode.trim()
+    ? usesEsmSyntax(entryCode)
+    : nodeFiles.some((f) => usesEsmSyntax(f.content));
   const runner = hasTs ? 'tsx' : 'node';
   const name = manifestName(projectName);
 
@@ -652,6 +678,53 @@ export function buildExportManifest(
     ...(hasTs
       ? { devDependencies: { typescript: '^5.4.0', tsx: '^4.7.0', '@types/node': '^20.0.0' } }
       : {}),
+  };
+}
+
+/**
+ * Merge the DERIVED manifest over one the model wrote for itself.
+ *
+ * The derived fields are exactly the ones that decide whether the export can
+ * resolve its imports at all, so they win:
+ *   - `dependencies` — derived from the code's REAL imports. A model-authored
+ *     package.json listed a package that exists nowhere
+ *     (`@vaca/scaffolding-generator-core@^397e5b2d`) while OMITTING `express`,
+ *     which the code required. `npm install` then failed on the invented name
+ *     and left express missing, so the app could not resolve its own imports
+ *     outside this repo — the defect this manifest exists to prevent.
+ *   - `type` — declaring "module" over CommonJS output (or the reverse) breaks
+ *     the app outright.
+ *   - `main` / `scripts.start` — how the app is launched.
+ * The model's IDENTITY choices are KEPT (`name`, `description`, `version`) so
+ * its intent survives — but only when they are usable: an npm-illegal name
+ * (`My App!`) fails `npm install` outright, so a name the model got wrong is
+ * replaced by the derived one. Any extra scripts it wrote are preserved too.
+ *
+ * Returns `derived` when there is nothing to merge over, `existing` unchanged
+ * when there is nothing derived (non-Node exports are never rewritten), and
+ * `null` only when both are absent.
+ */
+export function mergeExportManifest(
+  existing: Record<string, unknown> | null,
+  derived: Record<string, unknown> | null,
+): Record<string, unknown> | null {
+  if (!derived) return existing;
+  if (!existing) return derived;
+  const asMap = (v: unknown): Record<string, unknown> => (v && typeof v === 'object' ? (v as Record<string, unknown>) : {});
+  const derivedDeps = asMap(derived.dependencies);
+  const modelName = typeof existing.name === 'string' ? existing.name : '';
+  const modelDescription = typeof existing.description === 'string' ? existing.description.trim() : '';
+  return {
+    ...existing,
+    ...derived,
+    // Identity: keep what the model chose when npm accepts it (see above).
+    ...(/^[a-z0-9][a-z0-9._-]*$/.test(modelName) ? { name: modelName } : {}),
+    ...(modelDescription ? { description: modelDescription } : {}),
+    // Derived wins once it found real imports; with none detected, keep what the
+    // model declared rather than shipping an empty dependency list.
+    dependencies: Object.keys(derivedDeps).length ? derivedDeps : asMap(existing.dependencies),
+    scripts: { ...asMap(existing.scripts), ...asMap(derived.scripts) },
+    devDependencies: { ...asMap(existing.devDependencies), ...asMap(derived.devDependencies) },
   };
 }
 

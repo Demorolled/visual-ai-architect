@@ -20,6 +20,7 @@ import {
   collectRuntimeDependencies,
   packageNameFromSpecifier,
   buildExportManifest,
+  mergeExportManifest,
 } from './perFileScaffolder.js';
 import type { GeneratedFile } from '../layers/fileGenerator.js';
 
@@ -1067,6 +1068,20 @@ describe('buildExportManifest — the chat path ships a real manifest', () => {
     expect((buildExportManifest(JS_ESM, 'x')!.scripts as Record<string, string>).build).toBeUndefined();
   });
 
+  it('takes `type` from the ENTRY file, not from any ESM sibling (mixed export)', () => {
+    // MEASURED: a CommonJS entry (`server.js` requiring express) beside an ESM
+    // sibling measured `type: module`, which breaks the launched file itself.
+    const mixed = buildExportManifest(
+      [
+        { path: 'server.js', content: "const express = require('express');\nmodule.exports = express;\n" },
+        { path: 'src/http/index.js', content: "import { x } from 'y';\nexport const y = x;\n" },
+      ],
+      'x',
+    )!;
+    expect(mixed.main).toBe('server.js');
+    expect(mixed.type).toBe('commonjs');
+  });
+
   it('never invents a dependency that is not installed (phantom class)', () => {
     const m = buildExportManifest(
       [{ path: 'index.js', content: "import { z } from 'totally-uninstalled-pkg-xyz';\n" }], 'x')!;
@@ -1083,6 +1098,70 @@ describe('buildExportManifest — the chat path ships a real manifest', () => {
     const named = buildExportManifest(JS_ESM, 'Build a small Express server! (with /health)')!;
     expect(String(named.name)).toMatch(/^[a-z0-9-]+$/);
     expect(String(buildExportManifest(JS_ESM, '!!!')!.name)).toBe('generated-app');
+  });
+});
+
+/**
+ * The model frequently plans its OWN package.json, and that file used to win:
+ * `ensureExportManifest` skipped when one already existed. MEASURED live — a
+ * model-authored package.json listed `@vaca/scaffolding-generator-core@^397e5b2d`
+ * (a package that exists nowhere) and OMITTED `express` while `server.js`
+ * required it, so `npm install` failed on the invented name and left express
+ * missing: the app could not resolve its imports outside this repo.
+ */
+describe('mergeExportManifest — the derived manifest wins on what resolves', () => {
+  // Declared here, not borrowed from the suite above (that fixture is scoped to
+  // its own describe block).
+  const ESM_FILES = [{ path: 'src/main.js', content: "import express from 'express';\nexpress();\n" }];
+  const MODEL_WROTE = {
+    name: 'health-check-server',
+    version: '1.0.0',
+    description: 'my own description',
+    main: './server.js',
+    dependencies: { '@vaca/scaffolding-generator-core@^397e5b2d': '^1.0.0' },
+    devDependencies: {},
+    scripts: {},
+  };
+
+  it('replaces an invented dependency with the real imports and adds `type`', () => {
+    const derived = buildExportManifest(
+      [
+        { path: 'server.js', content: "const express = require('express');\nmodule.exports = express;\n" },
+        { path: 'src/http/index.js', content: 'exports.handler = () => 1;\n' },
+      ],
+      'health check server',
+    )!;
+    const merged = mergeExportManifest(MODEL_WROTE, derived)!;
+    expect(Object.keys(merged.dependencies as object)).toEqual(['express']);
+    expect(merged.type).toBe('commonjs');
+    // The model's own naming survives the merge.
+    expect(merged.name).toBe('health-check-server');
+    expect(merged.description).toBe('my own description');
+  });
+
+  it('keeps the model\'s extra scripts while adding how to start the app', () => {
+    const derived = buildExportManifest(ESM_FILES, 'x')!;
+    const merged = mergeExportManifest({ ...MODEL_WROTE, scripts: { lint: 'echo lint' } }, derived)!;
+    const scripts = merged.scripts as Record<string, string>;
+    expect(scripts.lint).toBe('echo lint');
+    expect(String(scripts.start)).toContain('node');
+  });
+
+  it('keeps a declared dependency when the code shows no imports (never empties the list)', () => {
+    const derived = buildExportManifest([{ path: 'index.js', content: 'console.log(1);\n' }], 'x')!;
+    const merged = mergeExportManifest({ dependencies: { left: '^1.0.0' } }, derived)!;
+    expect(merged.dependencies).toEqual({ left: '^1.0.0' });
+  });
+
+  it('leaves a non-Node export untouched (nothing derived)', () => {
+    const existing = { name: 'site', scripts: { start: 'python3 serve.py' } };
+    expect(mergeExportManifest(existing, null)).toBe(existing);
+    expect(mergeExportManifest(null, null)).toBeNull();
+  });
+
+  it('stands alone when the model wrote no manifest', () => {
+    const derived = buildExportManifest(ESM_FILES, 'x')!;
+    expect(mergeExportManifest(null, derived)).toBe(derived);
   });
 });
 

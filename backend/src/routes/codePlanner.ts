@@ -34,7 +34,7 @@ import { sanitizeGoModuleName } from '../sandbox/nonTsCompileGate.js';
 import { repairAndParseJSON } from './architect.js';
 export { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports } from '../ai/guiShared.js';
 export type { PlannedFile, FileUse } from '../ai/guiShared.js';
-import { buildExportManifest } from '../export/perFileScaffolder.js';
+import { buildExportManifest, mergeExportManifest } from '../export/perFileScaffolder.js';
 import fs from 'fs';
 import os from 'os';
 import pathModule from 'path';
@@ -140,8 +140,16 @@ function safeJoin(exportDir: string, relPath: string): string {
  * a chat export of `index.js` + `server.js` importing express with no manifest
  * beside them.
  *
- *  - never clobbers a manifest the model wrote itself,
+ *  - MERGES over a manifest the model wrote itself rather than skipping, and
  *  - writes nothing for non-Node exports (HTML/Python/Go).
+ *
+ * The merge is the point. Skipping when the file already existed let a
+ * model-authored package.json ship as-is: it listed
+ * `@vaca/scaffolding-generator-core@^397e5b2d`, a package that exists nowhere,
+ * while omitting `express` that the code actually required — so `npm install`
+ * failed on the invented name AND left express missing. The derived fields are
+ * authoritative (see mergeExportManifest); the model's name/description stay.
+ *
  * Best-effort: a manifest is an artifact, so it must never fail a generation.
  */
 function ensureExportManifest(
@@ -151,13 +159,19 @@ function ensureExportManifest(
 ): void {
   try {
     if (!exportDir || !fs.existsSync(exportDir)) return;
+    const derived = buildExportManifest(files, projectName);
+    // Nothing derived ⇒ a non-Node export: leave whatever is there untouched.
+    if (!derived) return;
     const manifestPath = pathModule.join(exportDir, 'package.json');
-    if (fs.existsSync(manifestPath)) return;
-    const manifest = buildExportManifest(files, projectName);
+    let existing: Record<string, unknown> | null = null;
+    try {
+      existing = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    } catch { /* absent or unparseable — the derived manifest stands alone */ }
+    const manifest = mergeExportManifest(existing, derived);
     if (!manifest) return;
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
     const deps = Object.keys((manifest.dependencies as Record<string, string>) || {});
-    console.log(`[codePlanner] export manifest: type=${String(manifest.type)} deps=[${deps.join(', ') || 'none'}]`);
+    console.log(`[codePlanner] export manifest: type=${String(manifest.type)} deps=[${deps.join(', ') || 'none'}]${existing ? ' (merged over the model-authored package.json)' : ''}`);
   } catch (err) {
     console.warn('[codePlanner] export manifest write failed (non-fatal):', err);
   }
