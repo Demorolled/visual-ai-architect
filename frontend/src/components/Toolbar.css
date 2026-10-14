@@ -137,6 +137,15 @@
   color: #fff7d6;
 }
 
+/* Plan Mode is a mode, not a one-shot action: while it is on the button stays
+   lit so it is obvious why the palette offers a single node. */
+.plan-btn.active {
+  background: rgba(250, 204, 21, 0.32);
+  border-color: #fbbf24;
+  color: #fff7d6;
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.6) inset;
+}
+
 .blueprint-btn {
   background: rgba(74, 222, 128, 0.12);
   color: #86efac;

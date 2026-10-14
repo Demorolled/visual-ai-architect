@@ -1,7 +1,19 @@
 import { knowledgeStore } from './knowledgeStore.js';
 import { PatternEntry } from './knowledgeTypes.js';
-import { Project } from '../types.js';
+import { Project, OSType } from '../types.js';
 import { isQualityCode, isAutoLearnDisabled, MARKDOWN_FENCE_RE, BATCH_SEPARATOR_RE, PROMPT_ARTIFACT_RE } from './qualityGate.js';
+import { languageFromPath as detectLanguageFromPath } from '../utils/languageFromPath.js';
+
+/**
+ * Deterministic file-path → node label (write path: no canvas node exists, so
+ * the file's stem becomes the node label the pattern is stored under).
+ */
+function labelFromPath(p: string): string {
+  const base = p.split('/').pop() || p;
+  const dot = base.lastIndexOf('.');
+  const stem = dot > 0 ? base.slice(0, dot) : base;
+  return stem.replace(/[^a-zA-Z0-9_-]+/g, '_') || base;
+}
 
 class LearningEngine {
   /**
@@ -38,8 +50,9 @@ class LearningEngine {
       if (project.targetOS) tags.push(project.targetOS);
       if (node.data?.label) tags.push(node.data.label.toLowerCase().replace(/\s+/g, '_'));
 
-      // Extract key patterns from the code
-      const patternCode = this.extractKeyPattern(code);
+      // Extract key patterns from the code (language-aware: the TS regexes
+      // never match Rust/C++/Go, which used to truncate non-TS code mid-block).
+      const patternCode = this.extractKeyPattern(code, node.data?.language);
       if (!patternCode) continue;
 
       const entry = knowledgeStore.addPattern({
@@ -53,7 +66,7 @@ class LearningEngine {
         nodeType: node.type,
         language: node.data?.language || 'javascript',
         success: true,
-        qualityScore: Math.max(5.0, this.rateGeneratedCode(patternCode)),
+        qualityScore: Math.max(5.0, this.rateGeneratedCode(patternCode, node.data?.language)),
       });
 
       // addPattern returns null when the kill switch or the funnel quality
@@ -108,50 +121,152 @@ class LearningEngine {
   }
 
   /**
+   * Learn from a set of generated files belonging to an existing project
+   * (canvas / blueprint builds). Populates each node's generatedCode exactly
+   * like the frontend does after generation, then runs the same verified
+   * learning loop as learnFromProject. Extracted from fileGenerator.ts so the
+   * blueprint build route — which skips FileGenerator's generic learning while
+   * skipVerifiedCapture is set — can close the SAME loop with one call.
+   */
+  learnFromGeneratedFiles(
+    project: Project,
+    files: Array<{ nodeId?: string; code?: string; validated?: boolean }>,
+  ): PatternEntry[] {
+    if (isAutoLearnDisabled() || !project.nodes?.length) return [];
+    // Shallow-copy the project so learning never mutates the store's live
+    // project object — only the copy carries generatedCode.
+    const learnProject: Project = {
+      ...project,
+      nodes: project.nodes.map((n) => ({ ...n, data: { ...n.data } })),
+    };
+    for (const file of files) {
+      const node = learnProject.nodes.find((n) => n.id === file.nodeId);
+      if (node && file.code && file.validated && file.nodeId !== 'preview_gui_wrapper') {
+        node.data.generatedCode = file.code;
+        node.data.status = 'valid';
+      }
+    }
+    const fullAppCode = files
+      .filter((f) => f.nodeId && f.nodeId !== 'preview_gui_wrapper')
+      .map((f) => f.code)
+      .join('\n\n');
+    return this.learnFromProject(learnProject, fullAppCode, true);
+  }
+
+  /**
+   * Learn from a flat list of files with no project graph (the codePlanner
+   * write path — plan-code → write-code produces {path, content} files, not
+   * canvas nodes). Builds a synthetic one-node-per-file project so the SAME
+   * verified learning loop stores patterns from chat writes. The write route
+   * only calls this AFTER its tsc gate reports clean — broken output never
+   * enters the store.
+   */
+  learnFromFiles(opts: {
+    projectName: string;
+    projectId?: string;
+    targetOS?: OSType;
+    files: Array<{ path: string; content: string; language?: string }>;
+  }): PatternEntry[] {
+    if (isAutoLearnDisabled() || !opts.files.length) return [];
+    const nodes: Project['nodes'] = opts.files.map((f, i) => {
+      const language = f.language || detectLanguageFromPath(f.path);
+      return {
+        id: `file_${i}`,
+        type: 'logic',
+        position: { x: 0, y: i * 80 },
+        data: {
+          label: labelFromPath(f.path),
+          description: `Generated file ${f.path}`,
+          status: 'valid',
+          language,
+          generatedCode: f.content,
+        },
+      };
+    });
+    const project: Project = {
+      id: opts.projectId || `write_${Date.now()}`,
+      name: opts.projectName,
+      targetOS: opts.targetOS || 'linux',
+      nodes,
+      edges: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const fullAppCode = opts.files.map((f) => f.content).join('\n\n');
+    return this.learnFromProject(project, fullAppCode, true);
+  }
+
+  /**
    * Get context from past patterns to inject into LLM prompts
    */
-  getGenerationContext(nodeType: string, language: string, targetOS: string): string {
-    return knowledgeStore.getRelevantContext(nodeType, language, targetOS, 3);
+  getGenerationContext(nodeType: string, language: string, targetOS: string, searchText?: string): string {
+    return knowledgeStore.getRelevantContext(nodeType, language, targetOS, 3, searchText);
   }
 
   /**
    * Extract the most relevant portion of code as a reusable pattern
    */
-  private extractKeyPattern(code: string): string {
-    // Remove excessive whitespace
-    let cleaned = code.trim();
-    
-    // If code is very long, extract the most meaningful part
-    // Prioritize: function definitions > class definitions > imports > the rest
-    if (cleaned.length > 500) {
-      const lines = cleaned.split('\n');
-      
-      // Try to find a function or class definition with its body
+  private extractKeyPattern(code: string, language?: string): string {
+    const cleaned = code.trim();
+    if (cleaned.length <= 500) return cleaned;
+
+    const lang = (language || 'typescript').toLowerCase();
+    if (lang === 'typescript' || lang === 'javascript') {
+      // Prioritize: function definitions > class definitions > the rest
       const funcMatch = cleaned.match(/((?:async\s+)?function\s+\w+[^{]*\{[^}]*\})/);
       if (funcMatch) return funcMatch[1];
-      
       const classMatch = cleaned.match(/(class\s+\w+[^{]*\{[^}]*\})/);
       if (classMatch) return classMatch[1];
-      
-      // Return first 500 chars
       return cleaned.substring(0, 500) + '\n// ... (truncated)';
     }
-    
-    return cleaned;
+
+    // Non-TS: the TS regexes never match `fn`, `func`, `struct`, `impl`, `def`,
+    // `int main`, … so a long file was cut to 500 chars mid-construct. Extract
+    // the FIRST brace-balanced top-level block instead (a whole declaration).
+    const firstBrace = cleaned.indexOf('{');
+    if (firstBrace >= 0) {
+      let depth = 0;
+      for (let i = firstBrace; i < cleaned.length; i++) {
+        if (cleaned[i] === '{') depth++;
+        else if (cleaned[i] === '}') {
+          depth--;
+          if (depth === 0) return cleaned.slice(0, i + 1).slice(0, 2000);
+        }
+      }
+    }
+    // Brace-less languages (Python/Ruby) or an unbalanced tail: keep a larger
+    // head so a whole statement block survives.
+    return cleaned.slice(0, 1500);
   }
 
   /**
    * Rate the quality of generated code and update stored patterns
    */
-  rateGeneratedCode(code: string): number {
+  rateGeneratedCode(code: string, language?: string): number {
     let score = 5.0; // Start at neutral
-    
-    // Positive signals
+
+    // Positive signals — TS/JS shapes, plus a language-specific marker so a
+    // clean Rust/C++/Go/Java pattern is not scored as if it had no structure.
     if (code.includes('function') || code.includes('class')) score += 1.0;
     if (code.includes('try') || code.includes('catch')) score += 0.5;
     if (code.includes('const') || code.includes('let')) score += 0.5;
     if (code.length > 200) score += 0.5;
     if (code.includes('export')) score += 0.5;
+    const lang = (language || '').toLowerCase();
+    const MARKERS: Record<string, RegExp> = {
+      rust: /\bfn\s+\w+|\bstruct\b|\bimpl\b|\bResult\b|\buse\s+std::/,
+      cpp: /#include\s*<|std::|\bclass\b|\bint\s+main\b/,
+      c: /#include\s*<|\bint\s+main\b|\bprintf\b/,
+      go: /package\s+main|\bfunc\s+\w+|\bimport\b/,
+      java: /public\s+class|\bimport\s+java\.|System\.out/,
+      csharp: /using\s+System|\bclass\b|Console\./,
+      python: /\bdef\s+\w+|\bclass\b|\bimport\b/,
+      php: /<\?php|\bfunction\s+\w+/,
+      ruby: /\bdef\s+\w+|\bclass\b|\brequire/,
+      kotlin: /\bfun\s+\w+|\bclass\b|\bval\b/,
+      swift: /\bfunc\s+\w+|\bimport\s+\w+|\blet\b/,
+    };
+    if (MARKERS[lang]?.test(code)) score += 1.0;
     
     // Negative signals
     if (code.includes('any')) score -= 0.3;

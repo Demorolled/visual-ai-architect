@@ -9,6 +9,9 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
+    "toolchains:report": "tsx src/scripts/report-toolchains.ts",
+    "seed:knowledge": "tsx src/scripts/seed-knowledge.ts",
+    "fetch:rosetta": "tsx src/scripts/fetch-rosetta.ts",
     "librarian": "tsx src/librarian.ts"
   },
   "dependencies": {
@@ -31,6 +34,7 @@
     "@types/node": "^25.9.2",
     "@types/uuid": "^9.0.7",
     "nodemon": "^3.1.14",
+    "playwright": "^1.62.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "vitest": "^4.1.8"

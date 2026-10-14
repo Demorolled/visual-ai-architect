@@ -588,7 +588,7 @@ export const guiBuilderToolDef: ToolDef<GuiBuilderInput, GuiBuilderOutput> = {
         prompt,
         'You are an expert UI/UX designer. You generate complete, production-quality GUI layouts. ' +
         'You ALWAYS respond with valid JSON only.',
-        { maxTokens: 4096 },
+        { maxTokens: 4096, role: 'guiBuild' },
       );
     } catch (err) {
       if (isLLMConnectionError(err)) {

@@ -186,6 +186,96 @@ const LEXICON: Record<string, LexiconEntry[]> = {
   grateful: [{ emotion: 'joy', weight: 0.6, intensity: 0.4, dominance: 0.3 }, { emotion: 'trust', weight: 0.5 }],
   thankful: [{ emotion: 'joy', weight: 0.6, intensity: 0.4, dominance: 0.3 }, { emotion: 'trust', weight: 0.4 }],
   appreciate: [{ emotion: 'joy', weight: 0.5, intensity: 0.4, dominance: 0.3 }, { emotion: 'trust', weight: 0.5 }],
+
+  // ── Extended lexicon (matching Jarvis's depth) ──────────────────────
+  // Joy — additional
+  cheerful: [{ emotion: 'joy', weight: 0.6, intensity: 0.5, dominance: 0.5 }],
+  ecstatic: [{ emotion: 'joy', weight: 0.95, intensity: 0.95, dominance: 0.8 }],
+  blissful: [{ emotion: 'joy', weight: 0.8, intensity: 0.6, dominance: 0.5 }],
+  overjoyed: [{ emotion: 'joy', weight: 0.9, intensity: 0.85, dominance: 0.7 }],
+  euphoric: [{ emotion: 'joy', weight: 0.9, intensity: 0.9, dominance: 0.7 }],
+  smiles: [{ emotion: 'joy', weight: 0.4, intensity: 0.3, dominance: 0.4 }],
+  laugh: [{ emotion: 'joy', weight: 0.6, intensity: 0.6, dominance: 0.5 }],
+  celebrate: [{ emotion: 'joy', weight: 0.7, intensity: 0.7, dominance: 0.6 }],
+  cheering: [{ emotion: 'joy', weight: 0.6, intensity: 0.6, dominance: 0.5 }],
+
+  // Sadness — additional
+  melancholy: [{ emotion: 'sadness', weight: 0.7, intensity: 0.5, dominance: 0.2 }],
+  sorrow: [{ emotion: 'sadness', weight: 0.8, intensity: 0.6, dominance: 0.15 }],
+  weep: [{ emotion: 'sadness', weight: 0.75, intensity: 0.65, dominance: 0.1 }],
+  sobbing: [{ emotion: 'sadness', weight: 0.85, intensity: 0.75, dominance: 0.1 }],
+  despair: [{ emotion: 'sadness', weight: 0.9, intensity: 0.7, dominance: 0.05 }],
+  anguish: [{ emotion: 'sadness', weight: 0.9, intensity: 0.8, dominance: 0.1 }],
+  suffering: [{ emotion: 'sadness', weight: 0.7, intensity: 0.5, dominance: 0.2 }],
+  mourning: [{ emotion: 'sadness', weight: 0.8, intensity: 0.6, dominance: 0.15 }],
+  bleak: [{ emotion: 'sadness', weight: 0.5, intensity: 0.4, dominance: 0.2 }],
+  down: [{ emotion: 'sadness', weight: 0.4, intensity: 0.3, dominance: 0.3 }],
+  blue: [{ emotion: 'sadness', weight: 0.4, intensity: 0.3, dominance: 0.3 }],
+
+  // Anger — additional
+  seething: [{ emotion: 'anger', weight: 0.9, intensity: 0.9, dominance: 0.85 }],
+  infuriated: [{ emotion: 'anger', weight: 0.9, intensity: 0.9, dominance: 0.8 }],
+  resentful: [{ emotion: 'anger', weight: 0.6, intensity: 0.5, dominance: 0.4 }],
+  bitterness: [{ emotion: 'anger', weight: 0.5, intensity: 0.4, dominance: 0.3 }],
+  fuming: [{ emotion: 'anger', weight: 0.85, intensity: 0.85, dominance: 0.8 }],
+  wrath: [{ emotion: 'anger', weight: 0.9, intensity: 0.9, dominance: 0.9 }],
+
+  // Fear — additional
+  paranoia: [{ emotion: 'fear', weight: 0.7, intensity: 0.8, dominance: 0.15 }],
+  alarmed: [{ emotion: 'fear', weight: 0.6, intensity: 0.7, dominance: 0.3 }],
+  unsettled: [{ emotion: 'fear', weight: 0.4, intensity: 0.4, dominance: 0.3 }],
+  vulnerable: [{ emotion: 'fear', weight: 0.5, intensity: 0.4, dominance: 0.1 }],
+  threatened: [{ emotion: 'fear', weight: 0.6, intensity: 0.7, dominance: 0.2 }],
+  uneasy: [{ emotion: 'fear', weight: 0.4, intensity: 0.4, dominance: 0.3 }],
+  apprehensive: [{ emotion: 'fear', weight: 0.5, intensity: 0.5, dominance: 0.3 }],
+
+  // Surprise — additional
+  startled: [{ emotion: 'surprise', weight: 0.6, intensity: 0.7, dominance: 0.4 }],
+  bewildered: [{ emotion: 'surprise', weight: 0.5, intensity: 0.5, dominance: 0.3 }],
+  mindblown: [{ emotion: 'surprise', weight: 0.8, intensity: 0.8, dominance: 0.6 }],
+  unbelievable: [{ emotion: 'surprise', weight: 0.6, intensity: 0.6, dominance: 0.5 }],
+
+  // Trust — additional
+  dependable: [{ emotion: 'trust', weight: 0.6, intensity: 0.3, dominance: 0.6 }],
+  loyal: [{ emotion: 'trust', weight: 0.6, intensity: 0.4, dominance: 0.5 }],
+  devoted: [{ emotion: 'trust', weight: 0.6, intensity: 0.4, dominance: 0.5 }],
+  cherish: [{ emotion: 'trust', weight: 0.5, intensity: 0.4, dominance: 0.4 }],
+  bonding: [{ emotion: 'trust', weight: 0.5, intensity: 0.4, dominance: 0.4 }],
+
+  // Anticipation — additional
+  longing: [{ emotion: 'anticipation', weight: 0.6, intensity: 0.5, dominance: 0.3 }],
+  yearning: [{ emotion: 'anticipation', weight: 0.6, intensity: 0.5, dominance: 0.3 }],
+  restless: [{ emotion: 'anticipation', weight: 0.4, intensity: 0.6, dominance: 0.4 }],
+  impatient: [{ emotion: 'anticipation', weight: 0.5, intensity: 0.6, dominance: 0.5 }],
+  wondering: [{ emotion: 'anticipation', weight: 0.4, intensity: 0.4, dominance: 0.4 }],
+
+  // Technical frustration (common in dev conversations)
+  timeout: [{ emotion: 'anger', weight: 0.3, intensity: 0.3, dominance: 0.3 }, { emotion: 'sadness', weight: 0.2 }],
+  failing: [{ emotion: 'sadness', weight: 0.4, intensity: 0.4, dominance: 0.2 }, { emotion: 'anger', weight: 0.3 }],
+  refuses: [{ emotion: 'anger', weight: 0.4, intensity: 0.4, dominance: 0.3 }],
+  stubborn: [{ emotion: 'anger', weight: 0.4, intensity: 0.4, dominance: 0.4 }],
+  impossible: [{ emotion: 'anger', weight: 0.5, intensity: 0.5, dominance: 0.3 }, { emotion: 'sadness', weight: 0.3 }],
+  wasted: [{ emotion: 'anger', weight: 0.4, intensity: 0.4, dominance: 0.3 }, { emotion: 'sadness', weight: 0.3 }],
+  useless: [{ emotion: 'anger', weight: 0.5, intensity: 0.5, dominance: 0.3 }, { emotion: 'sadness', weight: 0.3 }],
+
+  // Social / connection
+  friend: [{ emotion: 'trust', weight: 0.4, intensity: 0.3, dominance: 0.4 }, { emotion: 'joy', weight: 0.3 }],
+  buddy: [{ emotion: 'trust', weight: 0.4, intensity: 0.3, dominance: 0.4 }, { emotion: 'joy', weight: 0.3 }],
+  together: [{ emotion: 'trust', weight: 0.4, intensity: 0.3, dominance: 0.4 }],
+  support: [{ emotion: 'trust', weight: 0.5, intensity: 0.3, dominance: 0.5 }],
+  help: [{ emotion: 'trust', weight: 0.3, intensity: 0.2, dominance: 0.4 }, { emotion: 'anticipation', weight: 0.3 }],
+
+  // Achievement / progress
+  solved: [{ emotion: 'joy', weight: 0.6, intensity: 0.5, dominance: 0.7 }],
+  fixed: [{ emotion: 'joy', weight: 0.5, intensity: 0.4, dominance: 0.6 }],
+  working: [{ emotion: 'joy', weight: 0.5, intensity: 0.4, dominance: 0.6 }, { emotion: 'trust', weight: 0.3 }],
+  deployed: [{ emotion: 'joy', weight: 0.6, intensity: 0.5, dominance: 0.7 }, { emotion: 'anticipation', weight: 0.3 }],
+  shipped: [{ emotion: 'joy', weight: 0.6, intensity: 0.5, dominance: 0.7 }],
+  pass: [{ emotion: 'joy', weight: 0.5, intensity: 0.4, dominance: 0.6 }],
+  passed: [{ emotion: 'joy', weight: 0.5, intensity: 0.4, dominance: 0.6 }],
+  success: [{ emotion: 'joy', weight: 0.6, intensity: 0.5, dominance: 0.7 }],
+  win: [{ emotion: 'joy', weight: 0.7, intensity: 0.6, dominance: 0.7 }],
+  won: [{ emotion: 'joy', weight: 0.7, intensity: 0.6, dominance: 0.7 }],
 };
 
 // ─── Intensity Modifiers ─────────────────────────────────────────────────

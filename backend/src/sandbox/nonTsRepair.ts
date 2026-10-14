@@ -19,6 +19,8 @@ import * as path from 'path';
 import { resolveGateLanguage, sanitizeGoModuleName, runNonTsProjectGates, type LanguageGate } from './nonTsCompileGate.js';
 import { runStubGate } from './buildVerification.js';
 import { memberImplementationState } from '../knowledge/qualityGate.js';
+import { resolveCrossFileDuplicates } from './duplicateDeclarations.js';
+import { findHardcodedSecrets, formatSecretGateErrors } from './secretGate.js';
 import type { PlannedFile } from '../ai/guiShared.js';
 
 const MAX_NONTS_REPAIR_ROUNDS = 2;
@@ -255,7 +257,18 @@ export async function runProjectGates(
     ...runStubGate(files),
     ...findUnimplementedPlannedExports(files, contractFiles),
   ])];
-  return { languageGates, stubFailures };
+  // Hardcoded credentials ride the SAME channel as the duplicate-definitions
+  // failures below: a synthetic gate whose error lines each LEAD WITH THE FILE
+  // PATH, so the existing grouping + repair loop fix them with no new control
+  // flow. Nothing checked this before — a build could ship a real working API
+  // key, and every other gate (compile, stub, contract) was satisfied by it.
+  const secretFailures = formatSecretGateErrors(findHardcodedSecrets(files));
+  return {
+    languageGates: secretFailures.length
+      ? [...languageGates, { language: 'hardcoded-secret', clean: false, errors: secretFailures }]
+      : languageGates,
+    stubFailures,
+  };
 }
 
 // ─── Repair prompt ───────────────────────────────────────────────────────
@@ -345,8 +358,42 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
     return n;
   };
 
+  /**
+   * Deterministic cross-file duplicate-declaration pass (see
+   * sandbox/duplicateDeclarations.ts). A shared domain type declared by two
+   * nodes is a redeclaration error in Swift/C#/Kotlin/Java; this removes the
+   * redundant copy from the non-owner file instead of spending a repair round
+   * on a full-file rewrite that is not convergent for this defect class.
+   * Returns the failures for the duplicates it could NOT safely resolve.
+   */
+  const dedupeAll = (): string[] => {
+    const res = resolveCrossFileDuplicates(files, contractFiles);
+    for (const p of res.changedPaths) {
+      const f = files.find((w) => normalizeContractPath(w.path) === normalizeContractPath(p));
+      if (!f) continue;
+      try { fs.writeFileSync(safeJoin(exportDir, f.path), f.content, 'utf-8'); } catch { /* noop */ }
+    }
+    for (const n of res.notes) {
+      log(
+        `[nonTsRepair] duplicate '${n.symbol}' ${n.action === 'deleted' ? 'removed from' : 'reported in'} ${n.path} (owner ${n.ownerPath})`,
+        'warn',
+      );
+    }
+    return res.failures;
+  };
+
+  /**
+   * Fold the duplicates that could not be resolved into the verdict as one
+   * attributed gate, so the repair loop fixes them with the OWNER named — the
+   * fact a bare `CS0101` never carried.
+   */
+  const withDuplicateFailures = (gates: LanguageGate[], failures: string[]): LanguageGate[] =>
+    failures.length > 0 ? [...gates, { language: 'duplicate-definitions', clean: false, errors: failures }] : gates;
+
   const sanitizedPre = sanitizeAll();
+  const duplicateFailuresPre = dedupeAll();
   let { languageGates, stubFailures } = await runProjectGates(request, files, contractFiles);
+  languageGates = withDuplicateFailures(languageGates, duplicateFailuresPre);
   if (sanitizedPre) {
     log(`[nonTsRepair] gates after sanitize: ${languageGates.map((g) => `${g.language}=${g.clean ? 'PASS' : 'FAIL'}`).join(', ') || '(none)'}`);
   }
@@ -361,9 +408,19 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
     const failingPaths = [...new Set([...compileByFile.keys(), ...stubByFile.keys()])];
     if (!failingPaths.length) break;
     rounds += 1;
-    const failingLangs = languageGates.filter((g) => !g.clean).map((g) => g.language).join('/');
+    const failingLangs = languageGates
+      .filter((g) => !g.clean && g.language !== 'duplicate-definitions' && g.language !== 'hardcoded-secret')
+      .map((g) => g.language)
+      .join('/');
+    const duplicateCount = languageGates.find((g) => g.language === 'duplicate-definitions')?.errors.length || 0;
+    // Reported separately from `failingLangs` so the log says what it is: a
+    // credential problem is NOT a compile error, and `hardcoded-secret` must
+    // not be rendered as "hardcoded-secret compile error(s)".
+    const secretCount = languageGates.find((g) => g.language === 'hardcoded-secret')?.errors.length || 0;
     const what = [
       failingLangs ? `${failingLangs} compile error(s)` : '',
+      duplicateCount ? `${duplicateCount} duplicate definition(s)` : '',
+      secretCount ? `${secretCount} hardcoded credential(s)` : '',
       stubFailures.length ? `${stubFailures.length} stub/unimplemented` : '',
     ].filter(Boolean).join(' + ');
     log(`[nonTsRepair] repair (round ${rounds}) — ${what}: ${failingPaths.join(', ')}`, 'warn');
@@ -395,8 +452,9 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
       }
     }
     sanitizeAll();
+    const duplicateFailures = dedupeAll();
     const regate = await runProjectGates(request, files, contractFiles);
-    languageGates = regate.languageGates;
+    languageGates = withDuplicateFailures(regate.languageGates, duplicateFailures);
     stubFailures = regate.stubFailures;
     if (!changed) break;
   }

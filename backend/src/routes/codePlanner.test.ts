@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports, verifyGeneratedContracts, findMissingPlannedFiles, buildMissingImportRepairPrompt, buildRegenerateWithErrorsPrompt, runTscCheck, normalizeTscError, isSafeNonRelativeImport, stripPhantomPackageImports, tscErrorCode, isMechanicalTscClass, applyDeterministicMissingReturnFix, applyDeterministicVoidReturnFix, selectWholeProjectRepairFiles, buildWholeProjectRepairPrompt, shouldRunNextWholeProjectRound, extractExportedFunctionArity, countCallArgumentCounts, estimateFileOutputTokens, estimatePlanOutputTokens, estimateAutoChunkSize, computeRequiredImportLines, applyDeterministicImportPatch, applyDeterministicNameDriftFix, applyImportPatch, buildImportPatchPrompt, emitCodegenProgress, buildErrorFocusedNumberedSource, buildRenderSmokeRepairPrompt, pickCliEntryFile, buildCliSmokeRepairPrompt, runBehavioralSmokeGates, type SmokeVerdict } from './codePlanner.js';
+import { learningEngine } from '../knowledge/learningEngine.js';
+import { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports, verifyGeneratedContracts, findMissingPlannedFiles, buildMissingImportRepairPrompt, buildRegenerateWithErrorsPrompt, runTscCheck, normalizeTscError, isSafeNonRelativeImport, stripPhantomPackageImports, tscErrorCode, isMechanicalTscClass, applyDeterministicMissingReturnFix, applyDeterministicVoidReturnFix, selectWholeProjectRepairFiles, buildWholeProjectRepairPrompt, shouldRunNextWholeProjectRound, extractExportedFunctionArity, countCallArgumentCounts, estimateFileOutputTokens, estimatePlanOutputTokens, estimateAutoChunkSize, computeRequiredImportLines, applyDeterministicImportPatch, groupGateErrorsByFile, sanitizeNonTsSource, braceBalance, findUnimplementedPlannedExports, groupStubFailuresByFile, pathFromGateFailure, applyDeterministicNameDriftFix, applyContentDrivenImportFix, applyDeterministicLocalCollisionFix, applyDeterministicSiblingPathFix, applyDeterministicMissingExportFix, normalizeImportExtensions, applyDeterministicPartialObjectFix, applyDeterministicHtmlRuntimeFixes, detectHtmlTruncation, repairLLMJson, bucketTscClasses, snapshotFirstDrafts, applyImportPatch, buildImportPatchPrompt, emitCodegenProgress, buildErrorFocusedNumberedSource, buildRenderSmokeRepairPrompt, buildTruncationCompletionPrompt, pickCliEntryFile, fixUninvokedEntryMain, addDeterministicHelpHandler, buildCliSmokeRepairPrompt, runBehavioralSmokeGates, getInternalKnowledgeBlock, buildWriteSummary, learnFromWrite, type SmokeVerdict } from './codePlanner.js';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // codePlanner — Interactive CLI Code Planning & Writing
@@ -607,6 +608,70 @@ describe('getWritePromptWithContext library modes', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 2g. getInternalKnowledgeBlock — VACA's OWN patterns + wiki in write prompts
+// ═══════════════════════════════════════════════════════════════════════════
+
+describe('getInternalKnowledgeBlock', () => {
+  it('returns empty for a request with no matching internal knowledge', () => {
+    const out = getInternalKnowledgeBlock('zzzz quantum-entanglement-xyzzy');
+    expect(out).toBe('');
+  });
+
+  it('injects patterns + wiki sections for an arcade-game goal (live store + wiki)', () => {
+    const out = getInternalKnowledgeBlock('build a classic arcade game void raider');
+    expect(out).toContain('VACA INTERNAL KNOWLEDGE (patterns + wiki');
+    expect(out).toContain('MATCHING INTERNAL PATTERNS');
+    expect(out).toContain('MATCHING WIKI SECTIONS');
+    // The block carries the actual void-raider wiki knowledge: §59's title
+    // (VOID RAIDER — spaces; it was renamed from the underscore form) must
+    // reach the prompt. The underscore `void_raider` string only appears deep
+    // in §59's body, past the 300-char section cap, so assert on the title
+    // text that actually ships in the block.
+    expect(out).toMatch(/Section 59: .*VOID RAIDER/);
+  });
+
+  it('caps the block to keep local-model prompts small', () => {
+    const out = getInternalKnowledgeBlock('classic arcade game void raider');
+    expect(out.length).toBeLessThan(1300);
+  });
+
+  // Deterministic (seam-injected) tests for the language filter — these do not
+  // read the live store, so a sheet rotation can't fail them.
+  const row = (over: Record<string, unknown>) => ({
+    id: 'id', category: 'code_pattern', title: 't', description: '', tags: [],
+    projectId: 'test', targetOS: 'linux', nodeType: 'logic', language: 'go',
+    success: true, usageCount: 0, qualityScore: 7, createdAt: '2026-01-01T00:00:00.000Z',
+    code: 'package main', ...over,
+  }) as any;
+  const rows = [
+    row({ title: 'go — Factorial', language: 'go', description: 'factorial in go' }),
+    row({ title: 'java — Factorial', language: 'java', description: 'factorial in java' }),
+  ];
+  const query = (q: any) =>
+    rows
+      .filter((r) => !q.language || r.language === q.language)
+      .filter((r) => !q.searchText || `${r.title} ${r.description}`.toLowerCase().includes(q.searchText.toLowerCase()))
+      .slice(0, q.limit ?? 5);
+
+  it('injects patterns in the requested language only', () => {
+    const out = getInternalKnowledgeBlock('factorial', 'go', query);
+    expect(out).toContain('go — Factorial');
+    expect(out).not.toContain('java — Factorial');
+  });
+
+  it('falls back to any language when the requested one has no pattern', () => {
+    const out = getInternalKnowledgeBlock('factorial', 'rust', query);
+    expect(out).toContain('Factorial');
+    expect(out).not.toBe('');
+  });
+
+  it('is unchanged when no language is given', () => {
+    const out = getInternalKnowledgeBlock('factorial', undefined, query);
+    expect(out).toContain('MATCHING INTERNAL PATTERNS');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
 // 2h. CHUNK_WRITE_PROMPT — chunked-mode system prompt variant
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -786,6 +851,145 @@ describe('applyDeterministicImportPatch (zero-LLM missing-import fix)', () => {
   it('returns null for a file with no declared uses', () => {
     expect(applyDeterministicImportPatch('export const x = 1;', all[0], all)).toBeNull();
   });
+
+  it('never injects JS-style imports into a non-TS file (Java)', () => {
+    const java = [
+      { path: 'src/Game.java', summary: '', language: 'java', exports: ['Game'], uses: [] },
+      { path: 'src/TicTacToe.java', summary: '', language: 'java', exports: ['main'], uses: [{ from: 'src/Game.java', members: ['Game'] }] },
+    ];
+    // Even though TicTacToe.java declares a `use` of Game.java, the JS-style
+    // `import { Game } from './Game';` line would be invalid Java — must not patch.
+    expect(applyDeterministicImportPatch('public class TicTacToe {}', java[1], java)).toBeNull();
+  });
+});
+
+describe('sanitizeNonTsSource (deterministic non-TS source fixups)', () => {
+  it('strips bare Java same-package imports (always a javac compile error)', () => {
+    const src = 'import Board;\nimport java.util.Scanner;\npublic class Main { public static void main(String[] a) {} }';
+    const out = sanitizeNonTsSource(src, 'java')!;
+    expect(out).not.toContain('import Board;');
+    expect(out).toContain('import java.util.Scanner;'); // a REAL qualified import is kept
+  });
+
+  it('closes braces on a truncated brace-language file', () => {
+    const src = 'class Main {\n  void go() {\n    if (true) {\n      return;';
+    const out = sanitizeNonTsSource(src, 'java')!;
+    expect(braceBalance(out)).toBe(0);
+    expect(out.trimEnd().endsWith('}')).toBe(true);
+  });
+
+  it('returns null when nothing needs changing', () => {
+    expect(sanitizeNonTsSource('public class A { }', 'java')).toBeNull();
+    expect(sanitizeNonTsSource('def f():\n    return 1\n', 'python')).toBeNull();
+  });
+
+  it('braceBalance ignores braces in strings and comments', () => {
+    expect(braceBalance('// { fake\nString s = "{"; // }\n')).toBe(0);
+    expect(braceBalance('class A { /* { */ }')).toBe(0);
+    expect(braceBalance('class A { void f() {')).toBe(2);
+  });
+});
+
+describe('findUnimplementedPlannedExports (contract-aware build rejection)', () => {
+  it('flags a Java planned export whose body is a placeholder return', () => {
+    const contracts = [
+      { path: 'src/Board.java', summary: 'Board', language: 'java', exports: ['Board', 'checkWin'], uses: [] },
+    ];
+    const files = [{ path: 'src/Board.java', content: 'class Board {\n  boolean checkWin(char p) {\n    // rows/cols\n    return false;\n  }\n}' }];
+    const out = findUnimplementedPlannedExports(files, contracts as any);
+    expect(out.some((v) => v.includes("'checkWin'") && v.includes('trivial'))).toBe(true);
+  });
+
+  it('flags a non-TS planned export that was never implemented', () => {
+    const contracts = [
+      { path: 'src/Game.java', summary: 'Game', language: 'java', exports: ['Game', 'play'], uses: [] },
+    ];
+    const files = [{ path: 'src/Game.java', content: 'class Game { }' }];
+    const out = findUnimplementedPlannedExports(files, contracts as any);
+    expect(out.some((v) => v.includes("'play'") && v.includes('not implemented'))).toBe(true);
+  });
+
+  it('passes when every planned callable export has a real body', () => {
+    const contracts = [
+      { path: 'src/Board.java', summary: 'Board', language: 'java', exports: ['Board', 'mark', 'checkWin'], uses: [] },
+    ];
+    const files = [{ path: 'src/Board.java', content: 'class Board {\n  void mark(int r, int c, char p) { grid[r][c] = p; }\n  char checkWin() { return winner(); }\n}' }];
+    expect(findUnimplementedPlannedExports(files, contracts as any)).toEqual([]);
+  });
+
+  it('does NOT flag class/type exports (no callable body)', () => {
+    const contracts = [
+      { path: 'src/Todo.ts', summary: 'types', language: 'typescript', exports: ['TodoItem'], uses: [] },
+    ];
+    const files = [{ path: 'src/Todo.ts', content: 'export interface TodoItem { id: string; title: string; }\nexport const x = 1;' }];
+    expect(findUnimplementedPlannedExports(files, contracts as any)).toEqual([]);
+  });
+});
+
+describe('groupStubFailuresByFile (stub-repair routing)', () => {
+  const files = [{ path: 'src/Board.java', content: '' }, { path: 'src/Game.java', content: '' }];
+
+  it('parses the path from both bare and `path: detail` stub failures', () => {
+    expect(pathFromGateFailure('src/Game.java')).toBe('src/Game.java');
+    expect(pathFromGateFailure("src/Board.java: planned export 'checkWin' has a trivial/unimplemented body")).toBe('src/Board.java');
+    expect(pathFromGateFailure('no path here')).toBe('');
+  });
+
+  it('groups stub failures by their owning working file', () => {
+    const m = groupStubFailuresByFile([
+      "src/Board.java: planned export 'checkWin' has a trivial/unimplemented body",
+      'src/Game.java',
+    ], files);
+    expect([...m.keys()].sort()).toEqual(['src/Board.java', 'src/Game.java']);
+    expect(m.get('src/Board.java')![0]).toContain('checkWin');
+  });
+});
+
+describe('groupGateErrorsByFile (non-TS compile-gate error routing)', () => {
+  const files = [
+    { path: 'src/Game.java', content: '' },
+    { path: 'src/TicTacToe.java', content: '' },
+  ];
+
+  it('maps a temp-staging compiler error back to the working file', () => {
+    const gates = [{ language: 'java', clean: false, errors: ["/tmp/vaca-javagate-Q7db2Z/src/TicTacToe.java:1: error: '.' expected"] }];
+    const m = groupGateErrorsByFile(gates, files);
+    expect([...m.keys()]).toEqual(['src/TicTacToe.java']);
+    expect(m.get('src/TicTacToe.java')![0]).toContain("'.' expected");
+  });
+
+  it('attributes a MULTI-FILE concatenated compiler string per file, not all to one', () => {
+    // `javac <all files>` returns ONE string with many files' errors. Attributing
+    // the whole string to the longest-matching path collapsed Util.java's errors
+    // onto TicTacToe.java and left the real breakage unrepaired.
+    const gates = [{
+      language: 'java', clean: false, errors: [
+        "/tmp/x/src/Util.java:8: error: cannot find symbol\n                System.out.print(board.mark[i][j]);\n  symbol:   variable mark\n/tmp/x/src/TicTacToe.java:3: error: cannot find symbol\n  symbol: class Foo",
+      ],
+    }];
+    const m = groupGateErrorsByFile(gates, [
+      { path: 'src/Util.java', content: '' },
+      { path: 'src/TicTacToe.java', content: '' },
+    ]);
+    expect([...m.keys()].sort()).toEqual(['src/TicTacToe.java', 'src/Util.java']);
+    expect(m.get('src/Util.java')!.join('\n')).toContain('variable mark');
+    expect(m.get('src/TicTacToe.java')!.join('\n')).toContain('class Foo');
+  });
+
+  it('prefers the LONGEST matching path (src/a.java does not steal a.java errors)', () => {
+    const ambiguous = [{ path: 'a.java', content: '' }, { path: 'src/a.java', content: '' }];
+    const gates = [{ language: 'java', clean: false, errors: ['/tmp/x/src/a.java:3: error: boom'] }];
+    const m = groupGateErrorsByFile(gates, ambiguous);
+    expect([...m.keys()]).toEqual(['src/a.java']);
+  });
+
+  it('ignores clean gates and errors that match no file', () => {
+    const gates = [
+      { language: 'go', clean: true, errors: [] },
+      { language: 'java', clean: false, errors: ['/tmp/x/other/Thing.java:1: error: nope'] },
+    ];
+    expect(groupGateErrorsByFile(gates, files).size).toBe(0);
+  });
 });
 
 describe('applyDeterministicNameDriftFix (zero-LLM TS2305 import align)', () => {
@@ -832,6 +1036,567 @@ describe('applyDeterministicNameDriftFix (zero-LLM TS2305 import align)', () => 
   it('returns null when no export plausibly matches the missing member', () => {
     const errs = ["src/main.ts(2,10): error TS2305: Module '\"./todo\"' has no exported member 'Zebra'."];
     expect(applyDeterministicNameDriftFix("import { Zebra } from './todo';\n", 'src/main.ts', files, errs)).toBeNull();
+  });
+});
+
+describe('applyContentDrivenImportFix (zero-LLM TS2304 — content-driven, beyond the plan)', () => {
+  const files = [
+    { path: 'src/task-store.ts', content: 'export interface Task { id: string; description: string; }\nexport function addTask(t: Task): Task[] { return [t]; }\n' },
+    { path: 'src/core-engine.ts', content: 'export function runEngine(tasks: Task[]): number { return tasks.length; }\n' },
+  ];
+
+  it('inserts an import for a name exported by EXACTLY ONE sibling (not in the plan uses)', () => {
+    const content = "export function handle(t: Task): number { return t.id.length; }\n";
+    const errs = ["src/ui.ts(1,26): error TS2304: Cannot find name 'Task'."];
+    const patched = applyContentDrivenImportFix(content, 'src/ui.ts', files, errs)!;
+    expect(patched).toContain("import { Task } from './task-store';");
+    expect(patched).toContain('export function handle(t: Task): number { return t.id.length; }'); // body untouched
+  });
+
+  it('does NOT insert when the name is exported by MULTIPLE siblings (ambiguous → LLM)', () => {
+    const multi = [
+      ...files,
+      { path: 'src/other.ts', content: 'export interface Task { x: number; }\n' },
+    ];
+    const errs = ["src/ui.ts(1,26): error TS2304: Cannot find name 'Task'."];
+    expect(applyContentDrivenImportFix("export function handle(t: Task): number { return 1; }\n", 'src/ui.ts', multi, errs)).toBeNull();
+  });
+
+  it('does NOT insert when the name is already imported or declared locally', () => {
+    const errs = ["src/ui.ts(1,26): error TS2304: Cannot find name 'Task'."];
+    const already = "import { Task } from './task-store';\nexport const t: Task = { id: 'x', description: 'y' };\n";
+    expect(applyContentDrivenImportFix(already, 'src/ui.ts', files, errs)).toBeNull();
+    const local = "export interface Task { id: string; }\nexport const t: Task = { id: 'x' };\n";
+    expect(applyContentDrivenImportFix(local, 'src/ui.ts', files, errs)).toBeNull();
+  });
+
+  it('returns null when the name is not exported by any sibling (invented symbol → LLM)', () => {
+    const errs = ["src/ui.ts(1,26): error TS2304: Cannot find name 'Zebra'."];
+    expect(applyContentDrivenImportFix("export const z = Zebra;\n", 'src/ui.ts', files, errs)).toBeNull();
+  });
+
+  it('returns null when there are no TS2304 errors', () => {
+    const errs = ["src/ui.ts(1,10): error TS2339: Property 'push' does not exist on type 'Task'."];
+    expect(applyContentDrivenImportFix('export const x = 1;', 'src/ui.ts', files, errs)).toBeNull();
+  });
+});
+
+describe('applyDeterministicSiblingPathFix (zero-LLM TS2307 sibling-path resolver)', () => {
+  const files = [
+    { path: 'src/controllers.ts', content: 'export function handle() {}\n' },
+    { path: 'src/database.ts', content: 'export interface Row { id: number }\n' },
+    { path: 'src/controllers.test.ts', content: 'import { handle } from \'../controllers\';\n' },
+  ];
+
+  it('rewrites a ../ specifier for a SAME-DIRECTORY sibling (probe case: controllers.test → controllers)', () => {
+    const content = "import { handle } from '../controllers';\nhandle();\n";
+    const errs = ["src/controllers.test.ts(1,62): error TS2307: Cannot find module '../controllers'."];
+    const patched = applyDeterministicSiblingPathFix(content, 'src/controllers.test.ts', files, errs)!;
+    expect(patched).toContain("import { handle } from './controllers';");
+    expect(patched).toContain('handle();'); // body untouched
+  });
+
+  it('rewrites a wrong-directory + .ts-extension specifier to the actual sibling (probe case: ../database/database.ts → ./database)', () => {
+    const content = "import type { Row } from '../database/database.ts';\nconst r: Row = { id: 1 };\n";
+    const errs = ["src/controllers.ts(1,60): error TS2307: Cannot find module '../database/database.ts'."];
+    const patched = applyDeterministicSiblingPathFix(content, 'src/controllers.ts', files, errs)!;
+    expect(patched).toContain("import type { Row } from './database';");
+    expect(patched).toContain('const r: Row = { id: 1 };'); // body untouched
+  });
+
+  it('rewrites multi-line + double-quoted + side-effect imports too', () => {
+    const multi = "import {\n  handle,\n} from \"../controllers\";\nimport \"../controllers\";\n";
+    const errs = ["src/app.ts(1,20): error TS2307: Cannot find module '../controllers'."];
+    const patched = applyDeterministicSiblingPathFix(multi, 'src/app.ts', files, errs)!;
+    expect(patched).toContain("from './controllers'");
+    expect(patched).not.toContain('../controllers');
+  });
+
+  it('rewrites CJS require() sibling paths too', () => {
+    const content = "const { handle } = require('../controllers');\nmodule.exports = { handle };\n";
+    const errs = ["src/app.js(1,26): error TS2307: Cannot find module '../controllers'."];
+    const patched = applyDeterministicSiblingPathFix(content, 'src/app.js', files, errs)!;
+    expect(patched).toContain("require('./controllers')");
+    expect(patched).toContain('module.exports = { handle };');
+  });
+
+  it('is case-insensitive + extension-tolerant on the basename match', () => {
+    const mixed = [
+      { path: 'src/controllers.ts', content: 'export function handle() {}\n' },
+      { path: 'src/Database.ts', content: 'export const DB = 1;\n' },
+    ];
+    const content = "import { DB } from '../database';\nconsole.log(DB);\n";
+    const errs = ["src/controllers.ts(1,60): error TS2307: Cannot find module '../database'."];
+    const patched = applyDeterministicSiblingPathFix(content, 'src/controllers.ts', mixed, errs)!;
+    expect(patched).toContain("import { DB } from './Database';");
+  });
+
+  it('resolves directory-index siblings ("components" → components/index.ts)', () => {
+    const indexed = [...files, { path: 'src/components/index.ts', content: 'export const Card = () => null;\n' }];
+    const content = "import { Card } from '../components';\nCard();\n";
+    const errs = ["src/app.ts(1,20): error TS2307: Cannot find module '../components'."];
+    const patched = applyDeterministicSiblingPathFix(content, 'src/app.ts', indexed, errs)!;
+    expect(patched).toContain("import { Card } from './components';");
+  });
+
+  it('returns null when MULTIPLE files match the basename (ambiguous → LLM)', () => {
+    const ambiguous = [...files, { path: 'lib/controllers.ts', content: 'export function handle() {}\n' }];
+    const content = "import { handle } from '../controllers';\nhandle();\n";
+    const errs = ["src/controllers.test.ts(1,62): error TS2307: Cannot find module '../controllers'."];
+    expect(applyDeterministicSiblingPathFix(content, 'src/controllers.test.ts', ambiguous, errs)).toBeNull();
+  });
+
+  it('returns null when no file matches the basename (unresolved → LLM)', () => {
+    const content = "import { Zebra } from '../zebra';\nZebra();\n";
+    const errs = ["src/controllers.ts(1,10): error TS2307: Cannot find module '../zebra'."];
+    expect(applyDeterministicSiblingPathFix(content, 'src/controllers.ts', files, errs)).toBeNull();
+  });
+
+  it('returns null when the failing specifier is non-relative (npm phantom → strip class)', () => {
+    const content = "import csv from 'csv-parser';\nexport const x = 1;\n";
+    const errs = ["src/controllers.ts(1,10): error TS2307: Cannot find module 'csv-parser'."];
+    expect(applyDeterministicSiblingPathFix(content, 'src/controllers.ts', files, errs)).toBeNull();
+  });
+
+  it('returns null when there are no TS2307 errors', () => {
+    const errs = ["src/controllers.ts(1,10): error TS2339: Property 'x' does not exist on type 'Row'."];
+    expect(applyDeterministicSiblingPathFix("import { Row } from './database';", 'src/controllers.ts', files, errs)).toBeNull();
+  });
+
+  it('never touches a body string literal that equals the failing spec', () => {
+    const content = "import { handle } from '../controllers';\nconst msg = 'import ../controllers here';\nhandle();\n";
+    const errs = ["src/controllers.test.ts(1,62): error TS2307: Cannot find module '../controllers'."];
+    const patched = applyDeterministicSiblingPathFix(content, 'src/controllers.test.ts', files, errs)!;
+    expect(patched).toContain("import { handle } from './controllers';");
+    expect(patched).toContain("const msg = 'import ../controllers here';"); // body literal untouched
+  });
+});
+
+describe('applyDeterministicMissingExportFix (zero-LLM TS2459 root-cause export)', () => {
+  const noteTs = {
+    path: 'src/note.ts',
+    content: 'interface Note {\n  id: string;\n  title: string;\n  content: string;\n}\n\nconst notes: Note[] = [];\n\nexport function addNote(note: Note): void {}\n',
+  };
+  const files = [
+    noteTs,
+    { path: 'src/server.ts', content: "import { Note } from './note';\nexport const n: Note = { id: '1', title: 't', content: 'c' };\n" },
+  ];
+
+  it('adds export to the CAUSING file\'s local declaration (probe write-6: note.ts Note)', () => {
+    const errs = [`src/server.ts(1,10): error TS2459: Module '"./note"' declares 'Note' locally, but it is not exported.`];
+    const fix = applyDeterministicMissingExportFix('src/server.ts', files, errs)!;
+    expect(fix.path).toBe('src/note.ts'); // the TARGET, not the erroring file
+    expect(fix.content).toContain('export interface Note {');
+    expect(fix.content).toContain('const notes: Note[] = [];'); // body untouched
+    expect(fix.content).toContain('export function addNote'); // other exports untouched
+  });
+
+  it('returns null when there are no TS2459 errors', () => {
+    const errs = ["src/server.ts(1,10): error TS2304: Cannot find name 'Note'."];
+    expect(applyDeterministicMissingExportFix('src/server.ts', files, errs)).toBeNull();
+  });
+
+  it('returns null when the name has MULTIPLE declarations (ambiguous → LLM)', () => {
+    const dup = [{ ...noteTs, content: noteTs.content + '\ninterface Note { x: number; }\n' }];
+    const errs = [`src/server.ts(1,10): error TS2459: Module '"./note"' declares 'Note' locally, but it is not exported.`];
+    expect(applyDeterministicMissingExportFix('src/server.ts', dup, errs)).toBeNull();
+  });
+
+  it('returns null when the declaration is ALREADY exported (no-op)', () => {
+    const exp = [{ ...noteTs, content: noteTs.content.replace('interface Note', 'export interface Note') }];
+    const errs = [`src/server.ts(1,10): error TS2459: Module '"./note"' declares 'Note' locally, but it is not exported.`];
+    expect(applyDeterministicMissingExportFix('src/server.ts', exp, errs)).toBeNull();
+  });
+
+  it('returns null when the target module is not in the project', () => {
+    const errs = [`src/server.ts(1,10): error TS2459: Module '"./ghost"' declares 'Note' locally, but it is not exported.`];
+    expect(applyDeterministicMissingExportFix('src/server.ts', files, errs)).toBeNull();
+  });
+});
+
+describe('normalizeImportExtensions (zero-LLM TS5097 extension strip)', () => {
+  const files = [
+    { path: 'src/note.ts', content: 'export interface Note { id: string }\n' },
+    { path: 'tests/app.test.ts', content: "import { Note } from '../src/note.ts';\n" },
+  ];
+
+  it('strips a .ts extension from a RESOLVABLE relative import (probe write-6: ../src/note.ts)', () => {
+    const content = "import { addNote } from '../src/note.ts';\naddNote({ content: 'x' });\n";
+    const out = normalizeImportExtensions(content, 'tests/app.test.ts', files)!;
+    expect(out).toContain("from '../src/note';");
+    expect(out).toContain("addNote({ content: 'x' });"); // body untouched
+  });
+
+  it('does NOT strip when the extension-less path would NOT resolve (keeps valid imports intact)', () => {
+    const content = "import fs from 'fs';\nimport { X } from './ghost.ts';\n";
+    const out = normalizeImportExtensions(content, 'tests/app.test.ts', files);
+    expect(out).toBeNull(); // './ghost' doesn't exist and 'fs' is non-relative
+  });
+
+  it('handles export-from and require() forms too', () => {
+    const content = "export { Note } from '../src/note.ts';\nconst n = require('../src/note.ts');\n";
+    const out = normalizeImportExtensions(content, 'tests/app.test.ts', files)!;
+    expect(out).not.toContain('../src/note.ts');
+    expect(out).toContain("from '../src/note';");
+    expect(out).toContain("require('../src/note')");
+  });
+
+  it('returns null when there are no extensions to strip', () => {
+    const content = "import { Note } from '../src/note';\n";
+    expect(normalizeImportExtensions(content, 'tests/app.test.ts', files)).toBeNull();
+  });
+});
+
+describe('repairLLMJson (raw-newline + truncation repair — the whole-project JSON killer)', () => {
+  it('escapes RAW newlines inside string values so the whole-project {"files":...} shape parses', () => {
+    // The 14B emits file content with REAL line breaks instead of \n escapes.
+    const raw = '{"files": {"src/a.ts": "export const x = 1;\nconst y = 2;", "src/b.ts": "export const z = 3;\n"}}';
+    const out = repairLLMJson(raw);
+    expect(() => JSON.parse(out)).not.toThrow();
+    const parsed = JSON.parse(out) as { files: Record<string, string> };
+    expect(parsed.files['src/a.ts']).toBe('export const x = 1;\nconst y = 2;');
+    expect(parsed.files['src/b.ts']).toBe('export const z = 3;\n');
+  });
+
+  it('passes VALID JSON through byte-identical (raw newlines outside strings are whitespace)', () => {
+    const valid = '{\n  "files": {\n    "src/a.ts": "export const x = 1;\\nconst y = 2;"\n  }\n}';
+    expect(repairLLMJson(valid)).toBe(valid);
+  });
+
+  it('never double-escapes an existing \\n sequence inside a string', () => {
+    const out = repairLLMJson('{"a": "x\\ny"}');
+    const parsed = JSON.parse(out) as { a: string };
+    expect(parsed.a).toBe('x\ny'); // one real newline, not \\n
+  });
+
+  it('survives escaped quotes inside string values (code with string literals)', () => {
+    const raw = '{"files": {"src/a.ts": "const s = \\"hi\\";\n"}}';
+    const out = repairLLMJson(raw);
+    const parsed = JSON.parse(out) as { files: Record<string, string> };
+    expect(parsed.files['src/a.ts']).toContain('const s = "hi";');
+  });
+
+  it('closes an UNTERMINATED trailing string + structure (maxTokens truncation)', () => {
+    const raw = '{"files": {"src/a.ts": "export const x = 1;';
+    const out = repairLLMJson(raw);
+    const parsed = JSON.parse(out) as { files: Record<string, string> };
+    expect(parsed.files['src/a.ts']).toBe('export const x = 1;');
+  });
+
+  it('closes an unterminated structure with the right LIFO order (braces inside strings ignored)', () => {
+    const raw = '{"files": {"src/a.ts": "export function f() {\n  return 1;\n}"';
+    const out = repairLLMJson(raw);
+    const parsed = JSON.parse(out) as { files: Record<string, string> };
+    expect(parsed.files['src/a.ts']).toContain('export function f() {');
+  });
+});
+
+describe('applyDeterministicHtmlRuntimeFixes (zero-LLM JS runtime fixes for the render smoke repair)', () => {
+  it('coerces dataset-string vs number comparisons (the first-click crash class)', () => {
+    const html = `<script>
+const square = squares.find(s => s.dataset.row === row && s.dataset.col === col);
+const piece = square.querySelector('.checker');
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    expect(out).toContain('s.dataset.row === String(row)');
+    expect(out).toContain('s.dataset.col === String(col)');
+  });
+
+  it('never mangles an element accessor (e.target.dataset.row case)', () => {
+    const html = `<script>
+const square = squares.find(s => s.dataset.row === e.target.dataset.row);
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    // Coercing 'e.target' itself would be a ReferenceError — the wrap must
+    // apply to the WHOLE member expression, leaving the accessor intact.
+    expect(out).toContain('s.dataset.row === String(e.target.dataset.row)');
+    expect(out).not.toMatch(/\+e\.target/);
+  });
+
+  it('coerces member-expression coordinates (m.row from a moves list)', () => {
+    const html = `<script>
+moves.forEach(m => {
+  const moveSquare = squares.find(s => s.dataset.row === m.row && s.dataset.col === m.col);
+  moveSquare.style.transform = 'scale(1.2)';
+});
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    expect(out).toContain('s.dataset.row === String(m.row)');
+    expect(out).toContain('s.dataset.col === String(m.col)');
+  });
+
+  it('leaves legitimate string comparisons untouched', () => {
+    const html = `<script>
+if (piece.dataset.player === currentPlayer) {}
+if (el.dataset.mode === 'edit') {}
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    expect(out).toContain("piece.dataset.player === currentPlayer");
+    expect(out).toContain("el.dataset.mode === 'edit'");
+    // 'currentPlayer' is not a coordinate name; 'mode' is not one either
+    expect(out).not.toContain('+piece');
+  });
+
+  it('reorders use-after-null timing so the read happens before the null', () => {
+    const html = `<script>
+        selectedSquare = null;
+        selectedPiece = null;
+        board[parseInt(selectedSquare.dataset.row)][parseInt(selectedSquare.dataset.col)] = null;
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    expect(out).not.toMatch(/selectedSquare = null;[\s\S]{0,120}selectedSquare\./);
+  });
+
+  it('guards unguarded computed lookups with a capture midpoint (method call → ?.)', () => {
+    const html = `<script>
+const capturedPiece = squares.find(s => s.dataset.row === capturedRow && s.dataset.col === capturedCol).querySelector('.checker');
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    // `|| {}` would give ({ }).querySelector → "not a function"; optional
+    // chaining degrades to undefined so `if (capturedPiece)` skips cleanly
+    expect(out).toContain('?.querySelector');
+    expect(out).not.toContain('|| {}');
+  });
+
+  it('guards computed property access with || {} (never ?. on a write target)', () => {
+    const html = `<script>
+const el = squares.find(s => s.dataset.row === r && s.dataset.col === c);
+const w = squares.find(s => s.dataset.row === r && s.dataset.col === c).style.transform;
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    // property access (no call parens) keeps the || {} guard
+    expect(out).toContain('|| {}');
+    // the var-assigned find gets the coordinate coercion (A) but no || {} guard
+    expect(out).toContain('const el = squares.find(s => s.dataset.row === String(r) && s.dataset.col === String(c));');
+  });
+
+  it('leaves plain identity find() lookups alone', () => {
+    const html = `<script>
+const item = items.find(x => x.id === id);
+</script>`;
+    const out = applyDeterministicHtmlRuntimeFixes(html)!;
+    expect(out).toContain('items.find(x => x.id === id)');
+  });
+
+  it('returns identical content when nothing matches (idempotent, no-op)', () => {
+    const html = `<script>const a = 1; const b = a + 1;</script>`;
+    expect(applyDeterministicHtmlRuntimeFixes(html)).toBe(html);
+  });
+});
+
+describe('detectHtmlTruncation (structural HTML truncation — the smoke blind spot)', () => {
+  it('flags an unclosed <script> with missing </body></html> (the token-cap cut)', () => {
+    const html = `<!DOCTYPE html><html><body><div id="board"></div><script>
+const board = document.getElementById('board');
+for (let i = 0; i < 8; i++) {
+  const cell = document.createElement('div');
+  cell.classList.`;
+    const note = detectHtmlTruncation(html);
+    expect(note).toContain('unclosed <script>');
+    expect(note).toContain('</html>');
+    expect(note).toContain('INCOMPLETE');
+  });
+
+  it('flags a document missing only </html> (closed script/body, cut before the end)', () => {
+    const html = `<!DOCTYPE html><html><body><div id="board"></div>
+<script>document.getElementById('board').textContent = 'hi';</script></body>`;
+    const note = detectHtmlTruncation(html);
+    expect(note).toContain('</html>');
+    expect(note).not.toContain('unclosed <script>');
+  });
+
+  it('flags an unclosed <style> block', () => {
+    const html = `<!DOCTYPE html><html><head><style>
+.cell { width: 50px; }
+</head><body></body></html>`;
+    const note = detectHtmlTruncation(html);
+    expect(note).toContain('unclosed <style>');
+  });
+
+  it('returns empty for a structurally complete document (no false positive)', () => {
+    const html = `<!DOCTYPE html><html><head><style>.c{}</style></head><body>
+<div id="board"></div>
+<script>document.getElementById('board').textContent = 'hi';</script>
+</body></html>`;
+    expect(detectHtmlTruncation(html)).toBe('');
+  });
+
+  it('returns empty for a bare fragment with no <html> at all (legit tagless content)', () => {
+    expect(detectHtmlTruncation('<div>hello</div>')).toBe('');
+    expect(detectHtmlTruncation('')).toBe('');
+  });
+});
+
+describe('applyDeterministicPartialObjectFix (zero-LLM TS2345 partial-object call sites)', () => {
+  const files = [
+    { path: 'src/note.ts', content: 'interface Note {\n  id: string;\n  title: string;\n  content: string;\n}\nexport function addNote(note: Note): void {}\n' },
+    { path: 'tests/app.test.ts', content: 'addNote({ content: \'Test Note 1\' });\n' },
+  ];
+  const err = (line: number) => `tests/app.test.ts(${line},11): error TS2345: Argument of type '{ content: string; }' is not assignable to parameter of type 'Note'.`;
+
+  it('inserts the missing primitive-typed members at the call site (probe write-6: addNote({ content }) → Note)', () => {
+    const content = "addNote({ content: 'Test Note 1' });\n";
+    const patched = applyDeterministicPartialObjectFix(content, 'tests/app.test.ts', files, [err(1)])!;
+    expect(patched).toContain("addNote({ content: 'Test Note 1', id: '', title: '' });");
+  });
+
+  it('does NOT patch when a missing member is REFERENCED in the file (its value matters → LLM)', () => {
+    const content = "addNote({ content: 'Test Note 1' });\ncheck(notes[0].id, 'note-1');\n";
+    expect(applyDeterministicPartialObjectFix(content, 'tests/app.test.ts', files, [err(1)])).toBeNull();
+  });
+
+  it('does NOT patch when a missing member has a COMPLEX type (placeholder would not compile → LLM)', () => {
+    const complex = [
+      { path: 'src/note.ts', content: 'interface Note {\n  id: string;\n  createdAt: Date;\n  content: string;\n}\n' },
+      { path: 'tests/app.test.ts', content: 'addNote({ content: \'x\' });\n' },
+    ];
+    const content = "addNote({ content: 'x' });\n";
+    expect(applyDeterministicPartialObjectFix(content, 'tests/app.test.ts', complex, [err(1)])).toBeNull();
+  });
+
+  it('uses type-appropriate placeholders (number → 0, boolean → false, array → [])', () => {
+    const typed = [
+      { path: 'src/item.ts', content: 'interface Item {\n  id: string;\n  qty: number;\n  active: boolean;\n  tags: string[];\n  name: string;\n}\n' },
+      { path: 'src/main.ts', content: 'add({ name: \'x\' });\n' },
+    ];
+    const content = "add({ name: 'x' });\n";
+    const e = "src/main.ts(1,5): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'Item'.";
+    const patched = applyDeterministicPartialObjectFix(content, 'src/main.ts', typed, [e])!;
+    expect(patched).toContain("add({ name: 'x', id: '', qty: 0, active: false, tags: [] });");
+  });
+
+  it('skips multi-literal / multi-line lines (ambiguous → LLM)', () => {
+    const content = "add({ content: 'a' }); add({ content: 'b' });\n";
+    expect(applyDeterministicPartialObjectFix(content, 'tests/app.test.ts', files, [err(1)])).toBeNull();
+  });
+
+  it('returns null when there are no object-literal TS2345 errors', () => {
+    const e = "src/main.ts(1,5): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.";
+    expect(applyDeterministicPartialObjectFix('add(1);', 'src/main.ts', files, [e])).toBeNull();
+  });
+
+  it('returns null when the target type is not declared in any sibling', () => {
+    const e = "tests/app.test.ts(1,11): error TS2345: Argument of type '{ content: string; }' is not assignable to parameter of type 'Ghost'.";
+    expect(applyDeterministicPartialObjectFix("addNote({ content: 'x' });\n", 'tests/app.test.ts', files, [e])).toBeNull();
+  });
+
+  it('prefers the IMPORT-LINKED sibling over a same-named smaller interface elsewhere (probe write-6 NoteList trap)', () => {
+    // client/src/components/NoteList.tsx declares its OWN smaller `Note`; the
+    // test imports from src/note.ts (the full `Note`). First-match-wins over
+    // siblings would pick the wrong shape and miss `title`.
+    const trap = [
+      { path: 'client/src/components/NoteList.tsx', content: 'interface Note {\n  id: string;\n  content: string;\n}\n' },
+      { path: 'src/note.ts', content: 'interface Note {\n  id: string;\n  title: string;\n  content: string;\n}\nexport function addNote(note: Note): void {}\n' },
+      { path: 'tests/app.test.ts', content: "import { addNote } from '../src/note';\naddNote({ content: 'Test Note 1' });\n" },
+    ];
+    const content = "import { addNote } from '../src/note';\naddNote({ content: 'Test Note 1' });\n";
+    const e = "tests/app.test.ts(2,11): error TS2345: Argument of type '{ content: string; }' is not assignable to parameter of type 'Note'.";
+    const patched = applyDeterministicPartialObjectFix(content, 'tests/app.test.ts', trap, [e])!;
+    // title from the IMPORTED Note — the smaller NoteList.tsx shape would omit it
+    expect(patched).toContain("addNote({ content: 'Test Note 1', id: '', title: '' });");
+  });
+});
+
+describe('applyDeterministicLocalCollisionFix (zero-LLM TS2451 import/local dedup)', () => {
+  it('drops an imported member that the file also declares locally', () => {
+    const content = "import { Task } from './task-store';\n\nexport interface Task { id: string; }\nexport const t: Task = { id: 'x' };\n";
+    const errs = ["src/ui.ts(1,10): error TS2451: Cannot redeclare block-scoped variable 'Task'."];
+    const patched = applyDeterministicLocalCollisionFix(content, errs)!;
+    expect(patched).not.toContain("import { Task } from './task-store';");
+    expect(patched).toContain('export interface Task { id: string; }'); // local wins
+  });
+
+  it('keeps other members on the same import line', () => {
+    const content = "import { Task, addTask } from './task-store';\n\nexport interface Task { id: string; }\nconst t = addTask({ id: 'x', description: 'y' });\n";
+    const errs = ["src/ui.ts(1,10): error TS2451: Cannot redeclare block-scoped variable 'Task'."];
+    const patched = applyDeterministicLocalCollisionFix(content, errs)!;
+    expect(patched).toContain("import { addTask } from './task-store';");
+    expect(patched).not.toContain('Task,');
+  });
+
+  it('returns null when there are no TS2451 errors', () => {
+    const errs = ["src/ui.ts(3,5): error TS2304: Cannot find name 'Task'."];
+    expect(applyDeterministicLocalCollisionFix("import { Task } from './task-store';", errs)).toBeNull();
+  });
+
+  it('returns null when the colliding name is not imported (pure local/local redeclare → LLM)', () => {
+    const content = "export interface Task { id: string; }\nexport const Task = 1;\n";
+    const errs = ["src/ui.ts(2,14): error TS2451: Cannot redeclare block-scoped variable 'Task'."];
+    expect(applyDeterministicLocalCollisionFix(content, errs)).toBeNull();
+  });
+});
+
+describe('snapshotFirstDrafts (ORPO first-draft capture)', () => {
+  const mk = (): { dir: string; cleanup: () => void } => {
+    const os = require('os');
+    const fs = require('fs');
+    const dir = fs.mkdtempSync(os.tmpdir() + '/vaca-draft-');
+    return { dir, cleanup: () => { try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* */ } } };
+  };
+
+  it('writes first-draft content for .ts files into _first-drafts/', () => {
+    const { dir, cleanup } = mk();
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      snapshotFirstDrafts(dir, [{ path: 'src/core.ts', content: 'export const x = 1;' }]);
+      const saved = fs.readFileSync(path.join(dir, '_first-drafts', 'src', 'core.ts'), 'utf-8');
+      expect(saved).toBe('export const x = 1;');
+    } finally { cleanup(); }
+  });
+
+  it('never overwrites an existing snapshot (later repair mutations can\'t clobber the draft)', () => {
+    const { dir, cleanup } = mk();
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      snapshotFirstDrafts(dir, [{ path: 'src/core.ts', content: 'draft v1' }]);
+      snapshotFirstDrafts(dir, [{ path: 'src/core.ts', content: 'draft v2 (repaired)' }]);
+      const saved = fs.readFileSync(path.join(dir, '_first-drafts', 'src', 'core.ts'), 'utf-8');
+      expect(saved).toBe('draft v1');
+    } finally { cleanup(); }
+  });
+
+  it('skips non-TS files (html/css have no tsc verdict to pair against)', () => {
+    const { dir, cleanup } = mk();
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      snapshotFirstDrafts(dir, [
+        { path: 'index.html', content: '<html></html>' },
+        { path: 'src/style.css', content: 'body {}' },
+      ]);
+      expect(fs.existsSync(path.join(dir, '_first-drafts', 'index.html'))).toBe(false);
+      expect(fs.existsSync(path.join(dir, '_first-drafts', 'src', 'style.css'))).toBe(false);
+    } finally { cleanup(); }
+  });
+
+  it('handles .tsx files too', () => {
+    const { dir, cleanup } = mk();
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      snapshotFirstDrafts(dir, [{ path: 'frontend/src/App.tsx', content: 'export const App = () => null;' }]);
+      expect(fs.readFileSync(path.join(dir, '_first-drafts', 'frontend', 'src', 'App.tsx'), 'utf-8')
+        .startsWith('export const App')).toBe(true);
+    } finally { cleanup(); }
+  });
+});
+
+describe('bucketTscClasses (error-class telemetry)', () => {
+  it('counts residual errors by TS class', () => {
+    const errs = [
+      "src/a.ts(1,1): error TS2304: Cannot find name 'Task'.",
+      "src/b.ts(2,2): error TS2304: Cannot find name 'addTask'.",
+      "src/c.ts(3,3): error TS2451: Cannot redeclare block-scoped variable 'X'.",
+      "src/d.ts(4,4): error TS2339: Property 'push' does not exist on type 'Task'.",
+    ];
+    expect(bucketTscClasses(errs)).toEqual({ TS2304: 2, TS2451: 1, TS2339: 1 });
+  });
+
+  it('returns an empty object for non-tsc or error-free input', () => {
+    expect(bucketTscClasses([])).toEqual({});
+    expect(bucketTscClasses(['some warning line'])).toEqual({});
   });
 });
 
@@ -1188,6 +1953,24 @@ describe('verifyGeneratedContracts (post-write)', () => {
   it('returns empty for no generated files', () => {
     expect(verifyGeneratedContracts([], contracts)).toEqual([]);
   });
+
+  it('does NOT apply JS import/export checks to non-TS files (Java)', () => {
+    // Reproduces the live tic-tac-toe build: `import Game;` / `import board.Board;`
+    // / `import util.Util;` are ordinary (or at least native) Java, NOT JS module
+    // specifiers — the JS contract alphabet flagged them as phantom modules and
+    // the repair loop could never fix them.
+    const javaContracts = [
+      { path: 'src/Board.java', summary: 'Board', language: 'java', exports: ['Board', 'printBoard', 'checkWin'], uses: [] },
+      { path: 'src/Game.java', summary: 'Game', language: 'java', exports: ['Game', 'play'], uses: [{ from: 'src/Board.java', members: ['Board'] }] },
+      { path: 'src/TicTacToe.java', summary: 'Entry', language: 'java', exports: ['main'], uses: [{ from: 'src/Game.java', members: ['Game', 'play'] }] },
+    ];
+    const javaFiles = [
+      { path: 'src/Board.java', content: 'public class Board {\n  public boolean checkWin() { return false; }\n}' },
+      { path: 'src/Game.java', content: 'import board.Board;\nimport util.Util;\n\npublic class Game { public void play() { Board b = new Board(); } }' },
+      { path: 'src/TicTacToe.java', content: 'import Game;\n\npublic class TicTacToe { public static void main(String[] a) { new Game().play(); } }' },
+    ];
+    expect(verifyGeneratedContracts(javaFiles, javaContracts)).toEqual([]);
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1386,6 +2169,34 @@ describe('buildRegenerateWithErrorsPrompt (round-2+ regenerate-in-context)', () 
     expect(prompt).toContain('src/game.ts exports: ChessGame');
   });
 
+  it('shows the REAL interface for TS2345 assignability errors (the write-6 partial-object class)', () => {
+    // R20 probe write-6: tests/app.test.ts calls addNote({ content }) 7× while
+    // src/note.ts declares interface Note { id; title; content }. The repair
+    // loop used to regenerate against the model's own broken calls with NO
+    // view of the real interface — the shape block now covers TS2345.
+    const content = "import { addNote } from '../src/note';\naddNote({ content: 'Test Note 1' });\n";
+    const noteTs = {
+      path: 'src/note.ts',
+      content: 'interface Note {\n  id: string;\n  title: string;\n  content: string;\n}\nexport function addNote(note: Note): void {}\n',
+    };
+    const errs = [
+      "tests/app.test.ts(2,11): error TS2345: Argument of type '{ content: string; }' is not assignable to parameter of type 'Note'.",
+      "  Type '{ content: string; }' is missing the following properties from type 'Note': id, title",
+    ];
+    const prompt = buildRegenerateWithErrorsPrompt(
+      'build a note-taking app',
+      { path: 'tests/app.test.ts', summary: 'tests', language: 'typescript' },
+      content,
+      errs,
+      [],
+      [noteTs],
+    );
+    expect(prompt).toContain("declares type 'Note':");
+    expect(prompt).toContain('id: string;');
+    expect(prompt).toContain('title: string;');
+    expect(prompt).toContain('content: string;'); // the real shape is now visible to the rewrite
+  });
+
   it('shows the ERROR LINE even when the file is huge (no blind 8000-char truncation)', () => {
     // 240 long filler lines; the error points at line 241 — beyond the old
     // substring(0, 8000) cut (≈ 200 lines) where the line was invisible.
@@ -1504,6 +2315,32 @@ describe('buildRenderSmokeRepairPrompt (behavioral repair)', () => {
     expect(p).toContain('function referenced by an inline onclick');
     expect(p).toContain('calling a DOM method on null');
     expect(p).toContain('blank page');
+  });
+});
+
+describe('buildTruncationCompletionPrompt (continue-from-cut-point repair)', () => {
+  const htmlFile = { path: 'index.html', summary: 'checkers', language: 'html', exports: [], uses: [] };
+
+  it('shows the cut point and demands ONLY the missing tail, not a rewrite', () => {
+    const content = '<!DOCTYPE html><html><body><div id="board"></div><script>\nfor (let i = 0; i < 8; i++) { const c = document.createElement("div"); c.classList.';
+    const p = buildTruncationCompletionPrompt('build a checkers game', htmlFile, content, 'truncated: file is INCOMPLETE — 1 unclosed <script> block(s)');
+    expect(p).toContain('CUT OFF mid-generation');
+    expect(p).toContain('CONTINUE from EXACTLY where the file above stops');
+    // The cut point (the last part of the current content) must be visible.
+    expect(p).toContain('c.classList.');
+    // It must NOT ask to regenerate the whole file.
+    expect(p).not.toContain('RE-GENERATE the COMPLETE file');
+    expect(p).toContain('Do NOT regenerate the whole file');
+    // Closing tags contract.
+    expect(p).toContain('</script></body></html>');
+  });
+
+  it('caps the shown tail so the prompt stays small', () => {
+    const big = '<!DOCTYPE html>' + 'x'.repeat(5000);
+    const p = buildTruncationCompletionPrompt('x', htmlFile, big, 'truncated: incomplete');
+    // Only the last 1200 chars are shown.
+    expect(p).not.toContain('<!DOCTYPE html>');
+    expect(p.length).toBeLessThan(2500);
   });
 });
 
@@ -1626,28 +2463,112 @@ function chunkFiles(arr: any[], size: number): any[][] {
   return chunks;
 }
 
+function buildWrittenFileSummaryForTest(
+  path: string,
+  content: string,
+  opts?: { maxChars?: number; maxExports?: number; maxImports?: number }
+): string {
+  const maxChars = opts?.maxChars ?? 600;
+  const maxExports = opts?.maxExports ?? 8;
+  const maxImports = opts?.maxImports ?? 6;
+  const lines = content.split('\n');
+  const lang = (path.match(/\.(\w+)$/) || [])[1] || '?';
+  let purpose = '';
+  const exportsFound: string[] = [];
+  const declsFound: string[] = [];
+  const importsFound: string[] = [];
+  const seen = new Set<string>();
+  const push = (arr: string[], v: string, cap: number) => {
+    if (arr.length >= cap) return;
+    const key = v.replace(/\s+/g, ' ').trim();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    arr.push(key);
+  };
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (!purpose && (line.startsWith('//') || line.startsWith('*') || line.startsWith('/*'))) {
+      purpose = line.replace(/^[/*\s]+/, '').replace(/\s*[/*]+\s*$/, '').slice(0, 120);
+      continue;
+    }
+    const im = line.match(/^import\s+(?:type\s+)?.*?\s+from\s+['"]([^'"]+)['"]/);
+    if (im) { push(importsFound, im[1], maxImports); continue; }
+    const req = line.match(/^import\s*\(\s*['"]([^'"]+)['"]\s*\)/);
+    if (req) { push(importsFound, req[1], maxImports); continue; }
+    const ex = line.match(/^export\s+(?:default\s+)?(?:async\s+)?(?:abstract\s+)?(?:function|class|interface|type|const|let|var|enum)\s+([A-Za-z_$][\w$]*)/);
+    if (ex) { push(exportsFound, ex[1], maxExports); continue; }
+    const dc = line.match(/^(?:async\s+)?(?:abstract\s+)?(?:function|class|interface|type|enum)\s+([A-Za-z_$][\w$]*)/);
+    if (dc) { push(declsFound, dc[1], maxExports); continue; }
+  }
+  const out: string[] = [`[${path}] (${lang}, ${lines.length} lines)`];
+  if (purpose) out[0] += ` — ${purpose}`;
+  const parts: string[] = [];
+  if (importsFound.length) parts.push(`imports: ${importsFound.join(', ')}`);
+  if (exportsFound.length) parts.push(`exports: ${exportsFound.join(', ')}`);
+  if (declsFound.length) parts.push(`declares: ${declsFound.join(', ')}`);
+  if (parts.length) out.push('  ' + parts.join('\n  '));
+  let text = out.join('\n');
+  if (text.length > maxChars) text = text.slice(0, maxChars) + '…';
+  return text;
+}
+
+function buildWrittenFilesBlockForTest(
+  alreadyWritten: Array<{ path: string; exports?: string[]; content?: string }>
+): string {
+  if (!alreadyWritten.length) return '(none yet — this is the first chunk)';
+  const PER_FILE_CAP = 8000;
+  const TOTAL_BUDGET = 48000;
+  const parts: string[] = [];
+  let budgetLeft = TOTAL_BUDGET;
+  for (const f of alreadyWritten) {
+    if (!f.content) {
+      parts.push(`[${f.path}] exports: ${f.exports?.length ? f.exports.join(', ') : '(none)'}`);
+      continue;
+    }
+    const header = `━━━ FILE: ${f.path} (${f.content.length} chars) — FULL SOURCE BELOW ━━━`;
+    if (f.content.length <= PER_FILE_CAP && f.content.length <= budgetLeft) {
+      budgetLeft -= f.content.length;
+      parts.push(`${header}\n\`\`\`\n${f.content}\n\`\`\``);
+    } else {
+      parts.push(`${buildWrittenFileSummaryForTest(f.path, f.content)}`);
+    }
+  }
+  return parts.join('\n\n');
+}
+
 function buildChunkPrompt(
   request: string,
   intentSection: string,
   fileList: string,
   contractsSection: string,
   answersText: string,
-  alreadyWritten: Array<{ path: string; exports?: string[] }>,
+  alreadyWritten: Array<{ path: string; exports?: string[]; content?: string }>,
   chunk: any[],
   chunkIndex: number,
   totalChunks: number,
+  relayThread?: Array<{ question: string; answer: string; toRole?: string }>,
+  designBrief?: string,
+  conductorFindings?: Array<{ chunkNo: number; findings: string[]; note: string }>,
 ): string {
-  const writtenBlock = alreadyWritten.length
-    ? alreadyWritten.map(f => `[${f.path}] exports: ${f.exports?.length ? f.exports.join(', ') : '(none)'}`).join('\n')
-    : '(none yet — this is the first chunk)';
+  const writtenBlock = buildWrittenFilesBlockForTest(alreadyWritten);
   const chunkBlock = chunk.map((f, i) => {
     const uses = f.uses?.length ? '\n  uses: ' + f.uses.map((u: any) => `from ${u.from}: ${u.members.join(', ')}`).join('; ') : '';
     return `[${i + 1}] ${f.path} (${f.language}) — ${f.summary}\n  exports: ${f.exports?.length ? f.exports.join(', ') : '(none)'}${uses}`;
   }).join('\n');
-  return `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN (ALL FILES) ━━━\n${fileList}\n\n${contractsSection}\n\n━━━ ALREADY-WRITTEN FILES (ON DISK — import from these using their declared exports) ━━━\n${writtenBlock}\n\n━━━ CHUNK ${chunkIndex}/${totalChunks} — FILES TO WRITE NOW ━━━\n${chunkBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n\n━━━ TASK ━━━\nWrite COMPLETE, working code ONLY for the ${chunk.length} file(s) listed in THIS CHUNK. Files in the ALREADY-WRITTEN list exist on disk — import from them ONLY the members in their declared exports. NEVER import from a file that is neither in the ALREADY-WRITTEN list nor in THIS CHUNK — it does not exist. HONOR the FILE CONTRACTS: never reference an undeclared member.\n\nCOMPACTNESS: Write DENSE code — no boilerplate comments, no verbose docstrings, minimal whitespace. Keep every file tight but complete.\n\nIMPORTANT: Write the ACTUAL file content. Not stubs, not placeholders — real working code.\n\nReturn ONLY valid JSON with a "files" array, where each entry has "path" and "content".`;
+  const relayBlock = relayThread?.length
+    ? `\n\n━━━ RELAYED Q&A (answers the OTHER LLM gave to earlier chunks) ━━━\n${relayThread.map((r, i) => `Q${i + 1} (asked by ${r.toRole ?? 'a band member'}): ${r.question}\nA${i + 1}: ${r.answer}`).join('\n\n')}`
+    : '';
+  const designBriefBlock = designBrief
+    ? `\n\n━━━ DESIGN BRIEF (from the conductor — the band's architecture) ━━━\n${designBrief}`
+    : '';
+  const conductorBlock = conductorFindings?.length
+    ? `\n\n━━━ CONDUCTOR REVIEW (what the conductor flagged in earlier chunks) ━━━\n${conductorFindings.map(f => `Chunk ${f.chunkNo}: ${f.findings.join('; ')}${f.note ? ` (${f.note})` : ''}`).join('\n')}`
+    : '';
+  return `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN (ALL FILES) ━━━\n${fileList}\n\n${contractsSection}${designBriefBlock}${conductorBlock}\n\n━━━ ALREADY-WRITTEN FILES (FULL SOURCE — import from these using their declared exports) ━━━\n${writtenBlock}\n\n━━━ CHUNK ${chunkIndex}/${totalChunks} — FILES TO WRITE NOW ━━━\n${chunkBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}${relayBlock}\n\n━━━ TASK ━━━\nWrite COMPLETE, working code ONLY for the ${chunk.length} file(s) listed in THIS CHUNK. The ALREADY-WRITTEN block above contains the FULL SOURCE of every file previous chunks already wrote (a file whose source was too large or the budget ran out shows a compact summary instead). Read that source carefully — match its exact function signatures, parameter names, type shapes, and exported members so this chunk's code compiles against what already exists. Files in the ALREADY-WRITTEN list exist on disk — import from them ONLY the members their source actually exports. NEVER import from a file that is neither in the ALREADY-WRITTEN list nor in THIS CHUNK — it does not exist. HONOR the FILE CONTRACTS: never reference an undeclared member.\n\nCOMPACTNESS: Write DENSE code — no boilerplate comments, no verbose docstrings, minimal whitespace. Keep every file tight but complete.\n\nIMPORTANT: Write the ACTUAL file content. Not stubs, not placeholders — real working code.\n\nReturn ONLY valid JSON with a "files" array, where each entry has "path" and "content".`;
 }
 
-function buildRepairPrompt(request: string, file: any, currentContent: string, errors: string[], allFiles: any[] = []): string {
+function buildRepairPrompt(request: string, file: any, currentContent: string, errors: string[], allFiles: any[] = [], relayThread?: Array<{ question: string; answer: string; toRole?: string }>): string {
   const targets = (file.uses || []).map((u: any) => {
     const t = allFiles.find((x: any) => normalizeContractPath(x.path) === normalizeContractPath(u.from));
     return `  ${u.from} exports: ${t?.exports?.length ? t.exports.join(', ') : '(unknown — declared nowhere)'}`;
@@ -1655,7 +2576,10 @@ function buildRepairPrompt(request: string, file: any, currentContent: string, e
   const targetBlock = targets.length
     ? `\n\n━━━ IMPORT TARGETS (may ONLY reference these declared members) ━━━\n${targets.join('\n')}`
     : '';
-  return `User request: ${request}\n\nThe file ${file.path} was just generated but does not compile.\n\n━━━ CURRENT CONTENT ━━━\n${currentContent.substring(0, 6000)}\n\n━━━ TSC ERRORS ━━━\n${errors.join('\n')}${targetBlock}\n\n━━━ TASK ━━━\nFix the compile errors above. Return the COMPLETE corrected content for ${file.path} — the entire file, not a diff. Honor the file contracts: never reference a member not declared in the importing file's exports.\n\nReturn ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+  const relayBlock = relayThread?.length
+    ? `\n\n━━━ RELAYED Q&A (answers the OTHER LLM gave mid-build) ━━━\n${relayThread.map((r, i) => `Q${i + 1} (asked by ${r.toRole ?? 'a band member'}): ${r.question}\nA${i + 1}: ${r.answer}`).join('\n\n')}`
+    : '';
+  return `User request: ${request}\n\nThe file ${file.path} was just generated but does not compile.\n\n━━━ CURRENT CONTENT ━━━\n${currentContent.substring(0, 6000)}\n\n━━━ TSC ERRORS ━━━\n${errors.join('\n')}${targetBlock}${relayBlock}\n\n━━━ TASK ━━━\nFix the compile errors above. Return the COMPLETE corrected content for ${file.path} — the entire file, not a diff. Honor the file contracts: never reference a member not declared in the importing file's exports.\n\nReturn ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
 }
 
 describe('chunked generation helpers', () => {
@@ -1713,6 +2637,163 @@ describe('chunked generation helpers', () => {
   it('chunk prompt marks the first chunk with none-yet note', () => {
     const p = buildChunkPrompt('x', 'I', 'L', 'C', 'A', [], [{ path: 'main.ts', summary: 'M', language: 'ts' }], 1, 1);
     expect(p).toContain('(none yet — this is the first chunk)');
+  });
+
+  it('relay: chunk prompt includes the FULL SOURCE of written files, not just export names', () => {
+    const content = `// Chess engine: legal moves, check detection, and castling.\nimport { Piece } from './types.ts';\nexport class ChessGame {\n  constructor() {}\n}\nexport function isCheckmate(board: string[]): boolean { return false; }\nfunction internalHelper() {}\n`;
+    const p = buildChunkPrompt(
+      'chess', 'INTENT', 'FILE LIST', 'CONTRACTS', 'ANSWERS',
+      [{ path: 'src/game.ts', exports: ['ChessGame', 'isCheckmate'], content }],
+      [{ path: 'src/ai.ts', summary: 'AI', language: 'ts' }],
+      2, 3,
+    );
+    // The next writer sees the REAL source: the exact signature, imports, and body.
+    expect(p).toContain('FULL SOURCE');
+    expect(p).toContain('━━━ FILE: src/game.ts (');
+    expect(p).toContain('export function isCheckmate(board: string[]): boolean { return false; }');
+    expect(p).toContain("import { Piece } from './types.ts';");
+    expect(p).toContain('constructor() {}');
+    expect(p).toContain('match its exact function signatures, parameter names, type shapes');
+  });
+
+  it('relay: falls back to export names when a written file has no content', () => {
+    const p = buildChunkPrompt(
+      'chess', 'INTENT', 'FILE LIST', 'CONTRACTS', 'ANSWERS',
+      [{ path: 'src/game.ts', exports: ['ChessGame'] }],
+      [{ path: 'src/ai.ts', summary: 'AI', language: 'ts' }],
+      2, 3,
+    );
+    expect(p).toContain('[src/game.ts] exports: ChessGame');
+  });
+
+  it('relay: falls back to a compact summary for a written file over the per-file size cap', () => {
+    // 8000-char per-file cap — a file with 9000 chars of real content must not
+    // be dumped verbatim; it collapses to the summary (which still lists
+    // purpose/imports/exports so imports stay safe).
+    const big = `// Big storage module: keeps everything in memory and on disk.\n` + 'export const DATA = ' + 'x'.repeat(9000) + ';\n';
+    const p = buildChunkPrompt('big', 'I', 'L', 'C', 'A', [{ path: 'store.ts', content: big }], [], 2, 2);
+    expect(p).not.toContain('x'.repeat(9000));
+    expect(p).toContain('Big storage module: keeps everything in memory and on disk.');
+    expect(p).toContain('exports: DATA');
+  });
+
+  it('relay: falls back to summaries once the total source budget is exhausted', () => {
+    // 48000-char total budget, 8000-char per-file cap. Six files at ~7.4k chars
+    // each fit as full source; the seventh exceeds what's left of the budget
+    // (still under the per-file cap) and must collapse to its compact summary.
+    const big = (n: number) => `// Helper module ${n}.\n` + 'export const V' + n + ' = ' + 'y'.repeat(7400) + ';\n';
+    const files = [1, 2, 3, 4, 5, 6, 7].map(n => ({ path: `m${n}.ts`, content: big(n) }));
+    const p = buildChunkPrompt('big', 'I', 'L', 'C', 'A', files, [], 2, 2);
+    // The first six ship as full source (under cap, budget still available)...
+    expect(p).toContain('━━━ FILE: m1.ts (');
+    expect(p).toContain('━━━ FILE: m6.ts (');
+    // ...m7's source is still under the per-file cap but the BUDGET ran out, so
+    // it appears as the compact summary (declares V7, not the 7.4k-char body).
+    expect(p).not.toContain('━━━ FILE: m7.ts (');
+    expect(p).toContain('[m7.ts]');
+    expect(p).toContain('exports: V7');
+  });
+
+  it('relay: chunk prompt includes the RELAYED Q&A block from earlier chunks', () => {
+    const p = buildChunkPrompt(
+      'chess', 'INTENT', 'FILE LIST', 'CONTRACTS', 'ANSWERS',
+      [{ path: 'src/game.ts', exports: ['ChessGame'] }],
+      [{ path: 'src/ai.ts', summary: 'AI', language: 'ts' }],
+      2, 3,
+      [{ question: 'What does initDb() return?', answer: 'It returns a Promise<Database>.', toRole: 'reasoning' }],
+    );
+    expect(p).toContain('RELAYED Q&A');
+    expect(p).toContain('What does initDb() return?');
+    expect(p).toContain('It returns a Promise<Database>.');
+    expect(p).toContain('asked by reasoning');
+  });
+
+  it('relay: chunk prompt omits the RELAYED Q&A block when no questions were asked', () => {
+    const p = buildChunkPrompt('x', 'I', 'L', 'C', 'A', [], [{ path: 'main.ts', summary: 'M', language: 'ts' }], 1, 1);
+    expect(p).not.toContain('RELAYED Q&A');
+  });
+
+  it('relay: repair prompt includes the RELAYED Q&A block', () => {
+    const p = buildRepairPrompt('chess', { path: 'src/ai.ts' }, 'LINE', ['error TS2304'], [], [
+      { question: 'What shape is the Player type?', answer: 'interface Player { id: string; name: string }', toRole: 'reasoning' },
+    ]);
+    expect(p).toContain('RELAYED Q&A');
+    expect(p).toContain('What shape is the Player type?');
+    expect(p).toContain('interface Player { id: string; name: string }');
+  });
+
+  it('relay: repair prompt omits the RELAYED Q&A block when nothing was relayed', () => {
+    const p = buildRepairPrompt('chess', { path: 'src/ai.ts' }, 'LINE', ['error TS2304']);
+    expect(p).not.toContain('RELAYED Q&A');
+  });
+
+  it('relay: extractJSON surfaces an ask field next to files', () => {
+    const parsed = extractJSON<{ files: Array<{ path: string; content: string }>; ask?: { question?: string; toRole?: string } }>(
+      '{"files":[{"path":"a.ts","content":"x"}],"ask":{"question":"What does initDb() return?","toRole":"reasoning"}}'
+    );
+    expect(parsed?.files?.[0]?.path).toBe('a.ts');
+    expect(parsed?.ask?.question).toBe('What does initDb() return?');
+    expect(parsed?.ask?.toRole).toBe('reasoning');
+  });
+
+  it('relay: buildRelaySystemPrompt names both roles and includes context', async () => {
+    const { buildRelaySystemPrompt } = await import('../ai/translator.js');
+    const sys = buildRelaySystemPrompt({ fromRole: 'codeGeneration', toRole: 'reasoning', context: '[src/db.ts] — initDb' });
+    expect(sys).toContain('VACA BAND RELAY');
+    // The asker's instrument (codeGeneration → RHYTHM GUITAR) and the answering
+    // role's instrument (reasoning → LEAD VOCALIST) are rendered as their band
+    // intros, not raw role keys.
+    expect(sys).toContain('RHYTHM GUITAR');
+    expect(sys).toContain('LEAD VOCALIST');
+    expect(sys).toContain('The asker is —');
+    expect(sys).toContain('Your instrument is —');
+    expect(sys).toContain('[src/db.ts] — initDb');
+    expect(sys).toContain('concrete answer');
+  });
+
+  it('conductor: chunk prompt includes the DESIGN BRIEF from the conductor', () => {
+    const p = buildChunkPrompt(
+      'chess', 'INTENT', 'FILE LIST', 'CONTRACTS', 'ANSWERS',
+      [], [{ path: 'src/ai.ts', summary: 'AI', language: 'ts' }], 2, 3,
+      undefined,
+      'Chess engine with a clean Board/Game split; rules live in game.ts, AI only calls legalMoves().',
+    );
+    expect(p).toContain('DESIGN BRIEF (from the conductor');
+    expect(p).toContain('Chess engine with a clean Board/Game split');
+  });
+
+  it('conductor: chunk prompt omits the DESIGN BRIEF block when none was produced', () => {
+    const p = buildChunkPrompt('x', 'I', 'L', 'C', 'A', [], [{ path: 'main.ts', summary: 'M', language: 'ts' }], 1, 1);
+    expect(p).not.toContain('DESIGN BRIEF');
+  });
+
+  it('conductor: chunk prompt includes earlier chunk review findings', () => {
+    const p = buildChunkPrompt(
+      'chess', 'INTENT', 'FILE LIST', 'CONTRACTS', 'ANSWERS',
+      [], [{ path: 'src/ai.ts', summary: 'AI', language: 'ts' }], 2, 3,
+      undefined,
+      'brief',
+      [{ chunkNo: 1, findings: ['src/game.ts: isCheckmate takes a board array, not a string'], note: 'signature drift' }],
+    );
+    expect(p).toContain('CONDUCTOR REVIEW');
+    expect(p).toContain('Chunk 1:');
+    expect(p).toContain('isCheckmate takes a board array, not a string');
+    expect(p).toContain('signature drift');
+  });
+
+  it('conductor: buildConductorSystemPrompt is stage-aware and includes context', async () => {
+    const { buildConductorSystemPrompt } = await import('../ai/translator.js');
+    const kick = buildConductorSystemPrompt('kickoff', 'fileList');
+    expect(kick).toContain('VACA BAND CONDUCTOR');
+    expect(kick).toContain('kickoff');
+    expect(kick).toContain('DESIGN BRIEF');
+    expect(kick).toContain('fileList');
+    const rev = buildConductorSystemPrompt('review', 'chunk source');
+    expect(rev).toContain('review');
+    expect(rev).toContain('CONCRETE');
+    const integ = buildConductorSystemPrompt('integration');
+    expect(integ).toContain('integration');
+    expect(integ).toContain('final integration review');
   });
 
   it('repair prompt feeds back the file content and tsc errors', () => {
@@ -2145,6 +3226,15 @@ describe('isGuiRequest', () => {
     expect(isGuiRequest('terminal checkers game')).toBe(false);
     expect(isGuiRequest('a command line chess game')).toBe(false);
   });
+
+  it('treats HYPHENATED "command-line" games as headless (the injected-index.html bug)', () => {
+    // `command\s*line` never matched "command-line" (the common spelling), so an
+    // explicit CLI game fell through to the bare word "game" and got a stray
+    // index.html appended (which then hijacked the CLI smoke gate).
+    expect(isGuiRequest('a command-line chess game')).toBe(false);
+    expect(isGuiRequest('Build a simple command-line tic-tac-toe game in Java')).toBe(false);
+    expect(isGuiRequest('CLI tic-tac-toe')).toBe(false);
+  });
 });
 
 describe('ensureGuiEntryFile', () => {
@@ -2247,6 +3337,161 @@ describe('pickCliEntryFile (CLI behavioral gate entry discovery)', () => {
 
   it('ignores non-runnable extensions (html/css)', () => {
     expect(pickCliEntryFile([{ path: 'index.html' }, { path: 'app.js' }])).toBe('app.js');
+  });
+});
+
+describe('fixUninvokedEntryMain (deterministic zero-LLM main() invocation fix)', () => {
+  it('appends main() when an exported function main is never called', () => {
+    const src = `import fs from 'fs';
+
+export function main(): void {
+  console.log('hi');
+}
+`;
+    const fixed = fixUninvokedEntryMain(src);
+    expect(fixed).not.toBeNull();
+    expect(fixed!).toContain('main();');
+    expect(fixed!.indexOf('main();')).toBeGreaterThan(src.indexOf('function main'));
+  });
+
+  it('does not touch code that already invokes main()', () => {
+    const src = `export function main(): void {
+  console.log('hi');
+}
+main();
+`;
+    expect(fixUninvokedEntryMain(src)).toBeNull();
+  });
+
+  it('handles async main with a void guard', () => {
+    const src = `export async function main(): Promise<void> {
+  await run();
+}
+`;
+    const fixed = fixUninvokedEntryMain(src);
+    expect(fixed).not.toBeNull();
+    expect(fixed!).toContain('void main();');
+  });
+
+  it('handles const arrow definitions', () => {
+    const src = `const main = () => {
+  console.log('cli');
+};
+`;
+    const fixed = fixUninvokedEntryMain(src);
+    expect(fixed).not.toBeNull();
+    expect(fixed!).toContain('main();');
+  });
+
+  it('does not touch non-main files', () => {
+    expect(fixUninvokedEntryMain('export const add = (a: number, b: number) => a + b;')).toBeNull();
+  });
+
+  it('ignores a comment-only mention of main()', () => {
+    const src = `// entrypoint: call main() at the bottom
+function main(): void {
+  console.log('hi');
+}
+`;
+    const fixed = fixUninvokedEntryMain(src);
+    expect(fixed).not.toBeNull();
+    expect(fixed!).toContain('main();');
+  });
+
+  it('returns null for empty content', () => {
+    expect(fixUninvokedEntryMain('')).toBeNull();
+    expect(fixUninvokedEntryMain('   \n  ')).toBeNull();
+  });
+});
+
+describe('addDeterministicHelpHandler (deterministic zero-LLM --help injection)', () => {
+  const passwordApp = `import { generatePassword, checkPasswordStrength } from './commands';
+
+export async function run(args: string[]): Promise<void> {
+  if (args.length === 0) {
+    console.error('Usage: password-gen generate <length> | password-gen strength-check <password>');
+    process.exit(1);
+  }
+  const command = args[0];
+  switch (command) {
+    case 'generate':
+      console.log(generatePassword(parseInt(args[1], 10)));
+      break;
+    case 'strength-check':
+      console.log(checkPasswordStrength(args[1]));
+      break;
+    default:
+      console.error('Unknown command: ' + command);
+      process.exit(1);
+  }
+}
+
+export async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  await run(args);
+}
+
+void main();
+`;
+
+  it('injects a help handler with extracted commands when dispatch has no help handling', () => {
+    const fixed = addDeterministicHelpHandler(passwordApp);
+    expect(fixed).not.toBeNull();
+    expect(fixed!).toContain("'--help'");
+    expect(fixed!).toContain("'generate'");
+    expect(fixed!).toContain("'strength-check'");
+    expect(fixed!).toContain('Usage: password-gen generate <length>');
+    // injected into main() (the entry), before the run() call
+    expect(fixed!.indexOf('__vacaHelp')).toBeLessThan(fixed!.indexOf('await run(args)'));
+  });
+
+  it('is idempotent — a second pass leaves it alone', () => {
+    const once = addDeterministicHelpHandler(passwordApp);
+    expect(once).not.toBeNull();
+    expect(addDeterministicHelpHandler(once!)).toBeNull();
+  });
+
+  it('leaves apps that already handle help alone', () => {
+    const withHelp = passwordApp.replace(
+      "if (args.length === 0) {",
+      "if (args.length === 0 || args[0] === '--help') {"
+    );
+    expect(addDeterministicHelpHandler(withHelp)).toBeNull();
+  });
+
+  it('returns null when there is no command dispatch', () => {
+    const noDispatch = `export function main(): void {\n  console.log('hello');\n}\nmain();\n`;
+    expect(addDeterministicHelpHandler(noDispatch)).toBeNull();
+  });
+
+  it('returns null when there is no main/run entry function', () => {
+    const noEntry = `export const helper = () => {\n  switch (x) { case 'a': break; }\n};\n`;
+    expect(addDeterministicHelpHandler(noEntry)).toBeNull();
+  });
+
+  it('passes the REAL smoke gate (temp export dir + scripts/smoke-test-cli.py)', () => {
+    const fixed = addDeterministicHelpHandler(passwordApp);
+    expect(fixed).not.toBeNull();
+    const projectRoot = path.resolve(__dirname, '../../..');
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'help-fix-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'main.ts'), fixed!);
+      fs.writeFileSync(path.join(dir, 'commands.ts'), [
+        `export function generatePassword(n: number): string { return 'x'.repeat(n); }`,
+        `export function checkPasswordStrength(s: string): string { return s.length > 8 ? 'strong' : 'weak'; }`,
+      ].join('\n'));
+      const { spawnSync } = require('child_process');
+      const res = spawnSync('python3', [path.join(projectRoot, 'scripts', 'smoke-test-cli.py'), dir], { encoding: 'utf-8' });
+      let parsed: any = {};
+      try { parsed = JSON.parse(res.stdout); } catch { /* fall through */ }
+      expect(parsed.status).toBe('passed');
+      const probeOut = (parsed.runs || []).map((r: any) => r.out).join('\n');
+      expect(probeOut).toContain('Usage:');
+      expect(probeOut).toContain('generate');
+      expect(probeOut).toContain('strength-check');
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
@@ -2385,6 +3630,206 @@ describe('runBehavioralSmokeGates (shared render + CLI repair loop)', () => {
     expect(renderSmoke.status).toBe('passed');
     expect(cliSmoke.status).toBe('skipped'); // HTML entry present → CLI gate skipped
     expect(repairs).toBe(1);
+  });
+
+  it('FORCES a repair round when the smoke PASSED but the source is truncated (the blind spot)', async () => {
+    const exportDir = mkExportDir();
+    // The file ends mid-<script> with no closing tags — Chrome swallows it, so
+    // the probe reports PASSED; the source-level truncation check must flip the
+    // verdict to failed so the repair loop actually fires.
+    const files = [{ path: 'index.html', content: `<!DOCTYPE html><html><body><div id="board"></div><script>
+const b = document.getElementById('board');
+for (let i = 0; i < 8; i++) { const c = document.createElement('div'); c.classList.` }];
+    let repairs = 0;
+    const renderProbe = mkProbe([{ status: 'passed' }, { status: 'passed' }]);
+    const { renderSmoke } = await runBehavioralSmokeGates({
+      ...baseOpts(exportDir),
+      request: 'build a checkers game',
+      contractFiles: [{ path: 'index.html', summary: 'GUI', language: 'html', exports: [], uses: [] }],
+      files,
+      canRepair: () => true,
+      consumeRepair: () => { repairs += 1; },
+      renderProbe,
+      cliProbe: async () => ({ status: 'skipped', errors: [], detail: 'no html' }) as SmokeVerdict,
+      // The repair completes the file; the probe then passes for real.
+      repairCall: async () => `<!DOCTYPE html><html><body><div id="board"></div><script>
+const b = document.getElementById('board');
+for (let i = 0; i < 8; i++) { const c = document.createElement('div'); c.classList.add('c'); }
+</script></body></html>`,
+    });
+    // One forced repair round: the truncation forced the loop, the rewrite
+    // completed the file, and the probe passed on re-run.
+    expect(repairs).toBe(1);
+    expect(renderSmoke.status).toBe('passed');
+  });
+
+  it('COMPLETES a truncated file by appending the repair tail (no full re-gen)', async () => {
+    const exportDir = mkExportDir();
+    // The file ends mid-expression — the exact live shape (cell.classList.).
+    const files = [{ path: 'index.html', content: `<!DOCTYPE html><html><body><div id="board"></div><script>
+const b = document.getElementById('board');
+for (let i = 0; i < 8; i++) { const c = document.createElement('div'); c.classList.` }];
+    let repairs = 0;
+    const renderProbe = mkProbe([{ status: 'failed', errors: ['TRUNCATION: file is INCOMPLETE — 1 unclosed <script> block(s)'], detail: 'truncated: file is INCOMPLETE' }, { status: 'passed' }]);
+    const { renderSmoke, cliSmoke } = await runBehavioralSmokeGates({
+      ...baseOpts(exportDir),
+      request: 'build a checkers game',
+      contractFiles: [{ path: 'index.html', summary: 'GUI', language: 'html', exports: [], uses: [] }],
+      files,
+      canRepair: () => true,
+      consumeRepair: () => { repairs += 1; },
+      renderProbe,
+      cliProbe: async () => ({ status: 'skipped', errors: [], detail: 'no html' }) as SmokeVerdict,
+      // The model returns ONLY the missing tail (the completion contract) —
+      // the loop must APPEND it, not replace the whole file.
+      repairCall: async () => `add('c'); }
+</script></body></html>`,
+    });
+    expect(renderSmoke.status).toBe('passed');
+    expect(cliSmoke.status).toBe('skipped');
+    expect(repairs).toBe(1);
+    // The tail was appended: the file now ends with the closing tags.
+    expect(files[0].content).toContain(`c.classList.add('c'); }`);
+    expect(files[0].content.endsWith('</script></body></html>')).toBe(true);
+  });
+
+  it('stops forcing repair when the model cannot complete the truncated file', async () => {
+    const exportDir = mkExportDir();
+    // NOTE: the initial content is distinct from every rewrite (x = 0), so a
+    // "no usable rewrite" early-stop never triggers — the loop must run its
+    // full MAX_SMOKE_REPAIR_ROUNDS because each rewrite is STILL truncated.
+    const files = [{ path: 'index.html', content: '<!DOCTYPE html><html><body><script>const x = 0;</script>' }];
+    let repairs = 0;
+    const renderProbe = mkProbe([{ status: 'passed' }, { status: 'passed' }, { status: 'passed' }]);
+    const { renderSmoke } = await runBehavioralSmokeGates({
+      ...baseOpts(exportDir),
+      request: 'build an html app',
+      contractFiles: [{ path: 'index.html', summary: 'GUI', language: 'html', exports: [], uses: [] }],
+      files,
+      canRepair: () => true,
+      consumeRepair: () => { repairs += 1; },
+      renderProbe,
+      cliProbe: async () => ({ status: 'skipped', errors: [], detail: 'no html' }) as SmokeVerdict,
+      // Each rewrite is DIFFERENT but STILL truncated (missing </html>) — the
+      // guard re-forces the round until MAX_SMOKE_REPAIR_ROUNDS is spent.
+      repairCall: (() => {
+        let n = 0;
+        return async (): Promise<string> => { n += 1; return `<!DOCTYPE html><html><body><script>const x = ${n};</script>`; };
+      })(),
+    });
+    // The source stayed truncated after every rewrite, so the loop forces
+    // rounds up to MAX_SMOKE_REPAIR_ROUNDS=2 and ends failed.
+    expect(repairs).toBe(2);
+    expect(renderSmoke.status).toBe('failed');
+  });
+});
+
+describe('buildWriteSummary (honest ⚠️ vs ✅ write verdict)', () => {
+  const base = { successCount: 1, remainingTsc: 0, modeSuffix: '', fallbackNote: '' };
+
+  it('green ✅ when tsc-clean and no smoke failure', () => {
+    expect(buildWriteSummary({ ...base, renderSmoke: { status: 'passed', errors: [], detail: 'playable' } }))
+      .toBe('✅ Wrote 1 file successfully');
+  });
+
+  it('⚠️ when render smoke FAILED — the ✅ blind spot', () => {
+    const s = buildWriteSummary({
+      ...base,
+      renderSmoke: { status: 'failed', errors: ['truncation'], detail: 'file is INCOMPLETE — unclosed <script> block(s)' },
+    });
+    expect(s.startsWith('⚠️ Wrote 1 file — render smoke check FAILED')).toBe(true);
+    expect(s).toContain('unclosed <script> block(s)');
+    expect(s).not.toContain('✅');
+  });
+
+  it('⚠️ when cli smoke FAILED', () => {
+    const s = buildWriteSummary({ ...base, cliSmoke: { status: 'failed', errors: ['blank'], detail: 'exited 0 but printed NOTHING' } });
+    expect(s.startsWith('⚠️ Wrote 1 file — cli smoke check FAILED')).toBe(true);
+    expect(s).toContain('NOTHING');
+    expect(s).not.toContain('✅');
+  });
+
+  it('compile errors stay ⚠️ (regression guard)', () => {
+    const s = buildWriteSummary({ ...base, remainingTsc: 3, contractViolations: 1 });
+    expect(s).toContain('⚠️ Wrote 1 file — 3 compile error(s) remain');
+    expect(s).toContain('1 contract violation(s)');
+  });
+
+  it('pluralizes files and carries the mode suffix', () => {
+    const s = buildWriteSummary({ ...base, successCount: 2, modeSuffix: ' (chunked mode, 1 repair round(s))' });
+    expect(s).toBe('✅ Wrote 2 files successfully (chunked mode, 1 repair round(s))');
+  });
+
+  it('❌ when no files were written', () => {
+    expect(buildWriteSummary({ ...base, successCount: 0 })).toBe('❌ Failed to write any files');
+  });
+
+  it('caps the smoke detail at 140 chars', () => {
+    const longDetail = 'x'.repeat(300);
+    const s = buildWriteSummary({ ...base, renderSmoke: { status: 'failed', errors: [], detail: longDetail } });
+    expect(s).toContain('x'.repeat(140));
+    expect(s).not.toContain('x'.repeat(141));
+  });
+});
+
+describe('learnFromWrite (smoke-gated pattern-store learning)', () => {
+  const written = [{
+    path: 'index.html',
+    content: '<!DOCTYPE html><html><body><div id="b"></div><script>const b = document.getElementById("b");</script></body></html>',
+    status: 'written' as const,
+  }];
+
+  it('skips learning when the render smoke FAILED (the self-poisoning gate)', () => {
+    const spy = vi.spyOn(learningEngine, 'learnFromFiles').mockReturnValue([]);
+    try {
+      learnFromWrite('/tmp/export-test', 'build a checkers game', written, {
+        compileStatus: 'skipped',
+        remainingTsc: 0,
+        renderSmoke: { status: 'failed', errors: ['truncation'], detail: 'file is INCOMPLETE' },
+      });
+      expect(spy).not.toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('skips learning when the cli smoke FAILED', () => {
+    const spy = vi.spyOn(learningEngine, 'learnFromFiles').mockReturnValue([]);
+    try {
+      learnFromWrite('/tmp/export-test', 'build a cli', written, {
+        compileStatus: 'skipped',
+        remainingTsc: 0,
+        cliSmoke: { status: 'failed', errors: [], detail: 'blank output' },
+      });
+      expect(spy).not.toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('still learns when tsc-clean AND smoke passed', () => {
+    const spy = vi.spyOn(learningEngine, 'learnFromFiles').mockReturnValue([]);
+    try {
+      learnFromWrite('/tmp/export-test', 'build a todo app', written, {
+        compileStatus: 'clean',
+        remainingTsc: 0,
+        renderSmoke: { status: 'passed', errors: [], detail: 'playable' },
+      });
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][0].projectName).toBe('build a todo app');
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('compile gate stays intact (remainingTsc > 0 never learns)', () => {
+    const spy = vi.spyOn(learningEngine, 'learnFromFiles').mockReturnValue([]);
+    try {
+      learnFromWrite('/tmp/export-test', 'build an app', written, { compileStatus: 'errors', remainingTsc: 2 });
+      expect(spy).not.toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
 
@@ -2535,6 +3980,17 @@ import express from 'express';
 export const x = 1;`;
     expect(stripPhantomPackageImports(src)).toBeNull();
   });
+  it('strips test-utility package imports (@testing-library/*) — never installed in the sandbox; keeps resolvable ones (vitest)', () => {
+    const src = `import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { add } from './add';
+export const x = 1;`;
+    const out = stripPhantomPackageImports(src);
+    expect(out).not.toContain('@testing-library');
+    expect(out).toContain("import { describe, it, expect } from 'vitest';"); // installed → resolvable → kept
+    expect(out).toContain("import { add } from './add';");
+    expect(out).toContain('export const x = 1;');
+  });
   it('removes multi-line, side-effect and re-export phantom imports too', () => {
     const src = `import {
   readCSV,
@@ -2548,6 +4004,36 @@ export const x = 1;`;
     expect(out).not.toContain('fake-polyfill');
     expect(out).toContain("import fs from 'fs';");
     expect(out).toContain('export const x = 1;');
+  });
+  it('strips CJS require() phantoms (node-fetch observed live) but keeps builtin + relative requires', () => {
+    const src = `const fetch = require('node-fetch');
+const fs = require('fs');
+const { addTodo } = require('./todo');
+module.exports = { run: () => fetch('http://x') };`;
+    const out = stripPhantomPackageImports(src);
+    expect(out).not.toContain('node-fetch');
+    expect(out).toContain("const fs = require('fs');");
+    expect(out).toContain("const { addTodo } = require('./todo');");
+    expect(out).toContain("module.exports = { run: () => fetch('http://x') };");
+  });
+  it('strips destructured + side-effect CJS require() phantoms too', () => {
+    const src = `const { render, screen } = require('@testing-library/react');
+require('fake-polyfill');
+const path = require('node:path');
+export const x = 1;`;
+    const out = stripPhantomPackageImports(src);
+    expect(out).not.toContain('@testing-library');
+    expect(out).not.toContain('fake-polyfill');
+    expect(out).toContain("const path = require('node:path');");
+    expect(out).toContain('export const x = 1;');
+  });
+  it('NEVER touches non-JS source: keeps Go `import "fmt"` (real `go build` regression)', () => {
+    // Go's side-effect-style `import "fmt"` matched the npm side-effect-import
+    // regex and was DELETED from generated Go files — the real `go build` then
+    // failed with `undefined: fmt`. With the file path supplied, non-JS files
+    // are never stripped.
+    const go = `package main\n\nimport "fmt"\n\nfunc main() { fmt.Println("hi") }\n`;
+    expect(stripPhantomPackageImports(go, 'main.go')).toBeNull();
   });
 });
 
@@ -3129,6 +4615,87 @@ describe('runTscCheck (independent tsc gate)', () => {
     try {
       fs.writeFileSync(path.join(dir, 'good.ts'), 'export const n: number = 1;\n');
       const verdict = await runTscCheck(dir, [{ path: 'good.ts' }]);
+      expect(verdict.status).toBe('clean');
+      expect(verdict.errors).toEqual([]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('compiles vitest-style test files (bare test/expect/describe globals) clean', async () => {
+    // Regression for the R9 audit full-stack write: generated test files use
+    // bare test/expect/describe (the prompts ban third-party packages, so
+    // @types/jest / @types/vitest are never installed) and previously failed
+    // the gate with TS2304/TS2593 — 33 tsc errors, 12 files, repair gave up.
+    // The sandbox now declares the test globals (sandbox/testGlobals.ts).
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-gate-test-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'app.test.ts'), `
+import { add } from './app';
+
+describe('add', () => {
+  it('adds two numbers', () => {
+    expect(add(1, 2)).toBe(3);
+  });
+
+  test('handles negatives', () => {
+    expect(add(-1, 1)).toBe(0);
+  });
+
+  beforeEach(() => {
+    // reset state
+  });
+
+  afterEach(() => {
+    // teardown
+  });
+});
+`);
+      fs.writeFileSync(path.join(dir, 'app.ts'), 'export function add(a: number, b: number): number { return a + b; }\n');
+      const verdict = await runTscCheck(dir, [{ path: 'app.ts' }, { path: 'app.test.ts' }]);
+      expect(verdict.status).toBe('clean');
+      expect(verdict.errors).toEqual([]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('still reports REAL errors in test files (the gate stays honest)', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-gate-test-bad-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'app.test.ts'), `
+import { add } from './app';
+describe('add', () => {
+  it('calls a non-existent member', () => {
+    add(1, 2).totallyMissing();
+  });
+});
+`);
+      fs.writeFileSync(path.join(dir, 'app.ts'), 'export function add(a: number, b: number): number { return a + b; }\n');
+      const verdict = await runTscCheck(dir, [{ path: 'app.ts' }, { path: 'app.test.ts' }]);
+      expect(verdict.status).toBe('errors');
+      expect(verdict.errors.some(e => e.includes('TS2339'))).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('compiles JSX in .tsx files clean (--jsx react-jsx — harness artifact fix)', async () => {
+    // Regression: without --jsx, tsc refused EVERY JSX element with TS17004
+    // ("Cannot use JSX unless the '--jsx' flag is provided") + TS6142 — the R10
+    // audit's full-stack write showed 19 gate errors, ~16 of them pure
+    // JSX-flag noise on 4 .tsx client files (with the flag, the same export
+    // has 1 real error). react is installed and the render smoke gate runs
+    // these files in Chrome, so the gate must compile JSX. The temp dir is
+    // created under the backend cwd so react/jsx-runtime resolves up the tree
+    // (exports dirs live under PROJECT_ROOT in production, same resolution).
+    const dir = fs.mkdtempSync(path.join(process.cwd(), 'vaca-gate-jsx-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'App.tsx'), `export function App() {
+  return <div className="app"><h1>Hello</h1></div>;
+}
+`);
+      const verdict = await runTscCheck(dir, [{ path: 'App.tsx' }]);
       expect(verdict.status).toBe('clean');
       expect(verdict.errors).toEqual([]);
     } finally {

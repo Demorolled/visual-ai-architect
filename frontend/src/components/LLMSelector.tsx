@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useLlmStore, LlmStatus, DSparkStatus, PROVIDERS } from '../store/llmStore';
+import { useLlmStore, LlmStatus, DSparkStatus, PROVIDERS, ROLE_META, LlmRole, RoleAssignment } from '../store/llmStore';
 import './LLMSelector.css';
 
 export default function LLMSelector() {
@@ -17,6 +17,13 @@ export default function LLMSelector() {
     autoConnectedProvider,
     dsparkStatus,
     dsparkBenchmark,
+    roleAssignments,
+    backendProviders,
+    rolesSaving,
+    rolesError,
+    fetchRoles,
+    fetchBackendProviders,
+    saveRoles,
     fetchDsparkStatus,
     fetchDsparkBenchmark,
     fetchModels,
@@ -30,6 +37,11 @@ export default function LLMSelector() {
   const [editingUrl, setEditingUrl] = useState(false);
   const [urlInput, setUrlInput] = useState(llmUrl);
   const [scanResult, setScanResult] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
+  // Local editable draft of role assignments — saved via saveRoles()
+  const [roleDraft, setRoleDraft] = useState<Partial<Record<LlmRole, RoleAssignment>>>({});
+  const [rolesSaved, setRolesSaved] = useState(false);
+  // Which role rows currently show their API key in plaintext (default hidden)
+  const [revealedKeys, setRevealedKeys] = useState<Set<LlmRole>>(new Set());
 
   // Fetch models on mount
   useEffect(() => {
@@ -40,6 +52,18 @@ export default function LLMSelector() {
   useEffect(() => {
     scanAllProviders();
   }, []);
+
+  // Load persisted role assignments + configured providers
+  useEffect(() => {
+    fetchRoles();
+    fetchBackendProviders();
+  }, [fetchRoles, fetchBackendProviders]);
+
+  // Sync the local draft whenever the backend state arrives/changes
+  useEffect(() => {
+    setRoleDraft(roleAssignments);
+    setRolesSaved(false);
+  }, [roleAssignments]);
 
   // Poll DSpark server status — faster while loading (model boot ~30-60s), slow
   // otherwise. The tuned-vs-stock benchmark piggybacks on this interval so its
@@ -227,7 +251,7 @@ export default function LLMSelector() {
                 ⚡ {dsparkStatus.tokensPerSec !== null ? `${dsparkStatus.tokensPerSec.toFixed(1)} tok/s` : '— tok/s'}
               </span>
               {dsparkStatus.speculativeDecoding && (
-                <span className="llm-dspark-accel" title="Speculative decoding is active">🚀 draft-accelerated</span>
+                <span className="llm-dspark-accel" title="Draft model attached (experimental — no speedup on llama-cpp-python 0.3.x)">⚙️ draft mode</span>
               )}
               {dsparkStatus.totalRequests > 0 && (
                 <span className="llm-dspark-total">
@@ -282,10 +306,10 @@ export default function LLMSelector() {
                   )}
                   <div className={`llm-dspark-bench-draft ${dsparkBenchmark.draftOk ? 'ok' : dsparkBenchmark.draftOk === false ? 'fail' : ''}`}>
                     {dsparkBenchmark.draftOk === true && (
-                      <>🚀 draft-mode OK{ dsparkBenchmark.draftMode ? ` (${dsparkBenchmark.draftMode})` : ''}{dsparkBenchmark.draftTps !== null ? ` · ${dsparkBenchmark.draftTps.toFixed(1)} tok/s` : ''}</>
+                      <>⚙️ draft-mode OK{ dsparkBenchmark.draftMode ? ` (${dsparkBenchmark.draftMode})` : ''}{dsparkBenchmark.draftTps !== null ? ` · ${dsparkBenchmark.draftTps.toFixed(1)} tok/s` : ''}</>
                     )}
                     {dsparkBenchmark.draftOk === false && (
-                      <>⚠️ draft-mode FAILED — speculative decoding broken with the tuned GGUF</>
+                      <>⚠️ draft-mode FAILED — drafter failed with the tuned GGUF</>
                     )}
                     {dsparkBenchmark.draftOk === null && dsparkBenchmark.exists && (
                       <>· draft check pending</>
@@ -355,6 +379,178 @@ export default function LLMSelector() {
             })}
           </div>
         )}
+      </div>
+
+      {/* ── Role Routing (which LLM handles which job) ── */}
+      <div className="llm-selector-section llm-roles-section">
+        <div className="llm-selector-section-title">
+          🧭 Role Routing
+          <span className="llm-roles-count">{Object.keys(ROLE_META).length}</span>
+        </div>
+        <div className="llm-roles-intro">
+          Assign which provider/model handles each job — reasoning, code generation, GUI builds, and fast chat. Each role falls back to the primary model when unassigned. Assignments persist to the backend and survive restarts.
+        </div>
+        <div className="llm-roles-band">
+          🎸 <strong>Like a band.</strong> Every LLM you connect reads <code>LLM_ORIENTATION.md</code> (the band chart) first, so it knows its instrument and stays in its lane — the trained VACA model (🎤 Veronica) sets the direction while the LLMs you assign play their part.
+        </div>
+        <div className="llm-roles-grid">
+          {(Object.keys(ROLE_META) as LlmRole[]).map((role) => {
+            const meta = ROLE_META[role];
+            const current = roleDraft[role];
+            const isInline = !!current && typeof current !== 'string' && 'baseUrl' in current;
+            const currentBaseUrl = isInline
+              ? (current as { baseUrl: string }).baseUrl
+              : typeof current === 'string'
+                ? backendProviders.find((p) => p.key === current)?.baseUrl || ''
+                : '';
+            const currentModel = isInline
+              ? (current as { baseUrl: string; model: string }).model
+              : typeof current === 'string'
+                ? backendProviders.find((p) => p.key === current)?.model || ''
+                : '';
+            const currentApiKey = isInline
+              ? (current as { baseUrl: string; model: string; apiKey?: string }).apiKey || ''
+              : '';
+            const providerKey = isInline
+              ? backendProviders.find((p) => p.baseUrl === currentBaseUrl)?.key || 'custom'
+              : typeof current === 'string'
+                ? current
+                : '';
+            const knownModels = availableModels;
+            const keyRevealed = revealedKeys.has(role);
+            return (
+              <div key={role} className="llm-role-row">
+                <div className="llm-role-head">
+                  <span className="llm-role-icon">{meta.icon}</span>
+                  <div className="llm-role-titles">
+                    <span className="llm-role-name">{meta.label}</span>
+                    <span className="llm-role-hint">{meta.hint}</span>
+                  </div>
+                </div>
+                <div className="llm-role-controls">
+                  <select
+                    className="llm-role-provider"
+                    value={providerKey}
+                    onChange={(e) => {
+                      const key = e.target.value;
+                      setRoleDraft((d) => {
+                        if (!key) {
+                          const { [role]: _drop, ...rest } = d;
+                          return rest;
+                        }
+                        const bp = backendProviders.find((p) => p.key === key);
+                        if (bp) {
+                          return { ...d, [role]: { baseUrl: bp.baseUrl.replace(/\/v1$/, ''), model: bp.model || currentModel || '' } };
+                        }
+                        const fp = PROVIDERS.find((p) => p.id === key);
+                        if (fp) {
+                          return { ...d, [role]: { baseUrl: fp.baseUrl, model: currentModel || '' } };
+                        }
+                        return d;
+                      });
+                      setRolesSaved(false);
+                    }}
+                  >
+                    <option value="">— Default (unassigned) —</option>
+                    {backendProviders
+                      .filter((p) => p.baseUrl)
+                      .map((p) => (
+                        <option key={p.key} value={p.key}>{p.key} {p.alive ? '✅' : '·'} {p.baseUrl}</option>
+                      ))}
+                    {PROVIDERS.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name} · {p.baseUrl}</option>
+                    ))}
+                  </select>
+                  <div className="llm-role-model-row">
+                    <input
+                      className="llm-role-model"
+                      value={currentModel}
+                      placeholder="model id (e.g. qwen2.5-coder:7b)"
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setRoleDraft((d) => {
+                          const cur = d[role];
+                          if (cur && typeof cur !== 'string' && 'baseUrl' in cur) {
+                            return { ...d, [role]: { ...cur, model: v } };
+                          }
+                          const bp = backendProviders.find((p) => p.key === providerKey);
+                          const base = bp?.baseUrl.replace(/\/v1$/, '') || (typeof cur === 'string' ? (backendProviders.find((p) => p.key === cur)?.baseUrl || '') : '');
+                          return base ? { ...d, [role]: { baseUrl: base, model: v } } : d;
+                        });
+                        setRolesSaved(false);
+                      }}
+                      list={`llm-role-models-${role}`}
+                    />
+                    <datalist id={`llm-role-models-${role}`}>
+                      {knownModels.map((m) => (
+                        <option key={m.id} value={m.id} />
+                      ))}
+                    </datalist>
+                  </div>
+                  <div className="llm-role-key-row">
+                    <span className="llm-role-key-label">🔑 API Key</span>
+                    <input
+                      className="llm-role-key"
+                      type={keyRevealed ? 'text' : 'password'}
+                      value={currentApiKey}
+                      placeholder={isInline ? 'optional — e.g. sk-… (blank = no key)' : 'select a provider first'}
+                      disabled={!isInline}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setRoleDraft((d) => {
+                          const cur = d[role];
+                          if (cur && typeof cur !== 'string' && 'baseUrl' in cur) {
+                            return { ...d, [role]: { ...cur, apiKey: v } };
+                          }
+                          return d;
+                        });
+                        setRolesSaved(false);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="llm-role-key-toggle"
+                      title={keyRevealed ? 'Hide API key' : 'Show API key'}
+                      disabled={!isInline}
+                      onClick={() => {
+                        setRevealedKeys((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(role)) next.delete(role); else next.add(role);
+                          return next;
+                        });
+                      }}
+                    >
+                      {keyRevealed ? '🙈' : '👁'}
+                    </button>
+                  </div>
+                </div>
+                {isInline && (
+                  <div className="llm-role-current">
+                    → {currentBaseUrl.replace(/\/v1$/, '')} · {currentModel || '(model required)'}
+                    {currentApiKey ? ' · 🔑 key set' : ' · no key'}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="llm-role-actions">
+          <button
+            className="llm-action-btn llm-action-btn-primary"
+            onClick={async () => {
+              const ok = await saveRoles(roleDraft);
+              if (ok) {
+                setRolesSaved(true);
+                setTimeout(() => setRolesSaved(false), 4000);
+              }
+            }}
+            disabled={rolesSaving}
+          >
+            {rolesSaving ? '⏳ Saving...' : '💾 Save Role Routing'}
+          </button>
+          {rolesSaved && <span className="llm-roles-saved">✅ Saved</span>}
+          {rolesError && <span className="llm-roles-error">⚠️ {rolesError}</span>}
+        </div>
       </div>
 
       {/* ── Quick Actions ── */}

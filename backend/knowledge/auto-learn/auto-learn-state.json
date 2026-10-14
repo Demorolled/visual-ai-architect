@@ -1,11 +1,11 @@
 {
   "sessionId": "auto_live_demo",
   "startedAt": "2026-06-12T13:40:00.000Z",
-  "totalCaptured": 24858,
-  "totalFlushed": 24858,
-  "lastFlushTime": "2026-08-14T09:23:57.975Z",
-  "mindspaceTrainingCount": 3,
-  "lastTrainingTrigger": "2026-07-27T19:27:47.843Z",
-  "interactionsSinceLastTraining": 436,
+  "totalCaptured": 25004,
+  "totalFlushed": 25004,
+  "lastFlushTime": "2026-10-07T03:15:58.288Z",
+  "mindspaceTrainingCount": 4,
+  "lastTrainingTrigger": "2026-08-31T09:56:13.318Z",
+  "interactionsSinceLastTraining": 82,
   "currentBuffer": 0
 }

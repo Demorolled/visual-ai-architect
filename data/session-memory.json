@@ -31,7 +31,31 @@
       "timestamp": "2026-08-13T22:47:27.200Z"
     }
   ],
-  "recentFiles": [],
-  "recentLocations": [],
-  "notes": []
+  "recentFiles": [
+    {
+      "path": "Untitled 1.odt",
+      "type": "veronica-scan",
+      "projectName": "Untitled Project",
+      "timestamp": "2026-09-07T04:53:36.180Z"
+    }
+  ],
+  "recentLocations": [
+    "."
+  ],
+  "notes": [
+    {
+      "id": "1788757773017-a5fr1p",
+      "topic": "User: [SYSTEM CONTEXT — The user has a project loaded on ...",
+      "content": "User: [SYSTEM CONTEXT — The user has a project loaded on the canvas. IGNORE any previous conversation that mentions unrelated topics like Webflow or other tools.]\nProject: Untitled Project\nGoal: (not set)\nTarget OS: linux\nCanvas: 1 nodes (none), 0 edges.\nWhen asked about my canvas/nodes/nods, I MUST describe THIS project — not any other tool or topic.\n\nUser: [CANVAS SCAN — Full node details from the current project. Use this to answer the user's question.]\n\n[CANVAS NODES]\nProject: Untitled Project\nGoal: (not set)\nTarget OS: linux\n────────────────────────────────────────\nTotal: 0 nodes · 0 edges · 0 chars of generated code\n\n(No work nodes on canvas — only a master/blueprint node)\n\nIMPORTANT: If the user typed \"nods\" or \"nood\" they meant \"nodes\" — answer about the architecture nodes on the canvas. DO NOT talk about Webflow, p5.js, or any other unrelated topic.",
+      "source": "user-request",
+      "timestamp": "2026-09-07T05:09:33.017Z"
+    },
+    {
+      "id": "1788381523456-vs546c",
+      "topic": "my favorite color is teal",
+      "content": "my favorite color is teal",
+      "source": "user-request",
+      "timestamp": "2026-09-02T20:38:43.456Z"
+    }
+  ]
 }

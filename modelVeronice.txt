@@ -3995,3 +3995,332 @@ Logged in VACA_CHANGE_LIST.md (#32).
 END OF SECTION 55
 ======================================================================
 
+56. SESSION UPDATE — August 14, 2026: TODO 1.1 DONE — THE CODEBASE IS
+    NOW UNDER VERSION CONTROL (was: zero commits, nothing protected)
+======================================================================
+
+WHAT WAS DONE (deep-scan TODO fixes.txt item 1.1 / quick-win 8.1):
+1. REPO ROOT — visual-ai-architect/ (git was already initialized there,
+   branch master, ZERO commits). First commit 8d3eb02: 4,543 files,
+   ~68M — all source, docs, config, and small datasets (incl. the
+   canonical training/cloud jsonl train sets).
+2. .gitignore now excludes the heavy/regenerable artifacts:
+   - models/*.gguf (9GB of weights — the small Modelfiles stay tracked)
+   - training/cloud/out (20G of cloud-training output)
+   - out/ (305M), curriculum/out/
+   - the 63 training/dataset/backup-* timestamped snapshots (~250M)
+   - adapters/ + adapters_raw/ (LoRA safetensors)
+   - caches: huggingface_tokenizers_cache/, unsloth_compiled_cache/,
+     __pycache__/, *.pyc, .pytest_cache/
+   - studio uploads: llm-training-app/data/uploads/ + the stale
+     backend/llm-training-app/data/ copy (metadata.json stays tracked)
+   - cloned dataset repos: data/rico/ (179M), data/galaxy/ (24M) — each
+     keeps its OWN git history, so it stays protected
+   - $BACKUP_DIR (../model-backups/)
+3. FIX DURING STAGING: data/galaxy was being added as a broken gitlink
+   (it contains a nested .git) — removed from the index and ignored.
+4. TODO fixes.txt items 1.1 and 8.1 marked [x] with completion notes.
+
+CAVEAT: the 9GB of models and 20G of cloud output are intentionally NOT
+in git — they are protected from accidental SOURCE changes but still need
+real off-disk backup (a future copy to external storage).
+
+VERIFIED: git log shows the initial commit; working tree clean (only
+scripts/.vaca-speak-seen.json shows a runtime modification, expected).
+Logged in VACA_CHANGE_LIST.md (#33).
+
+======================================================================
+END OF SECTION 56
+======================================================================
+
+======================================================================
+57. SESSION UPDATE — August 14, 2026: TODO 1.2 DONE — DSPARK SERVES THE
+    TUNED R16 MODEL (verified + A/B benchmarked; premise was stale)
+======================================================================
+
+The Aug-9 deep-scan claimed dspark served the STOCK GGUF while tuned R6
+sat unused. By today that premise was already stale: R6 was long
+superseded (R15 → R16 anti-fence round, 10/10) and the deploy pipeline
+(deploy-tuned-dspark.sh → copies to models/, persists dspark-target.env,
+restarts, health-checks) had been used.
+
+VERIFIED LIVE:
+1. The running dspark process: --target models/Qwen2.5-7B-Instruct-
+   Uncensored.R16.Q4_K_M.gguf.
+2. /v1/health reports that model loaded (qwen2.5-7b-instruct-uncensored-
+   dspark; draft_mode none — that's a separate TODO 2.1 item).
+3. scripts/dspark-target.env persists the R16 path, so ANY future launch
+   (incl. backend DSPARK_AUTOSTART) serves the tuned model.
+4. sha256sum of the deployed models/ copy is IDENTICAL to
+   training/cloud/out/round16 (0fc72339…) — genuine round artifact, not
+   a partial/corrupt file.
+
+DECISION: tuned deployment is INTENTIONAL (not a regression). The stock
+GGUF was removed from models/ (only R15 + R16 remain), so the A/B ran the
+stock qwen2.5-7b-instruct-uncensored:latest from Ollama instead (the
+ab-test-tuned-vs-stock.py script's in-process stock-GGUF path is now
+stale — needs updating if reused).
+
+A/B RESULT (countdown-engine node, same prompt, t=0.2, quality gates +
+tsc): TUNED R16 → one coherent DOM implementation, 0 imports / 0 JSX /
+0 stubs, double-start guard + completing-at-zero edge case; single
+trivial tsc nit (browser setInterval returns Timeout, not number). STOCK
+→ markdown code fence + class CountdownEngine repeated FIVE times +
+unterminated template literal (TS1160) — does not compile at all.
+Tuned wins decisively; deployment stands.
+
+TODO fixes.txt 1.2 → [x]. Logged in VACA_CHANGE_LIST.md (#34).
+
+======================================================================
+END OF SECTION 57
+======================================================================
+
+======================================================================
+58. SESSION UPDATE — August 14, 2026: TODO 2.1 DONE — "SPECULATIVE
+    DECODING" BRANDING DROPPED (server is an OpenAI-compatible GGUF server)
+======================================================================
+
+The todo complained the server was branded "speculative decoding" while
+draft mode was OFF by default and SLOWER when on — misleading marketing.
+
+MEASUREMENTS SETTLED IT: live none mode = 60.6 tok/s; draft model mode =
+56.4 vs 61.1 tok/s none (data/benchmark-dspark.json). On llama-cpp-python
+0.3.x the drafter re-evaluates the full context per draft step, so it
+provides NO speedup — "speculative decoding / draft-accelerated" was
+pure marketing. Chose the honest option (a real llama.cpp upgrade is a
+heavy, uncertain GPU build).
+
+WHAT CHANGED (every user-visible surface):
+1. scripts/dspark_server.py — docstring rewritten ("OpenAI-compatible
+   GGUF server … optional draft-model acceleration, NOT an accelerator"),
+   FastAPI title → "DSpark GGUF Server (OpenAI-compatible)", argparse
+   description, log lines, and the FALSE claim "same mechanism as
+   DeepSeek's DSpark framework" REMOVED.
+2. scripts/start-dspark.sh — header + DRAFT_MODE docs now state draft
+   mode is experimental, ~parity-to-slower (56 vs 61 tok/s), default none.
+3. scripts/benchmark-dspark.py + runtime-up.sh — wording updated.
+4. backend — index.ts / translator.ts / llm.ts comments, llm-config.json
+   description ("local DSpark GGUF server (llama.cpp, OpenAI-compatible)").
+5. frontend — llmStore provider description; LLMSelector badge
+   🚀 draft-accelerated → ⚙️ draft mode, failure copy reworded.
+6. Docs — modelVeronice.txt current-facts lines (running-services table,
+   llm-config section, L.2/36.1) + data/VACA-MASTER-KNOWLEDGE.md B.4 →
+   "Draft Mode (experimental — NOT an accelerator)".
+
+KEPT: the /v1/health field `speculative_decoding` — it is factual (a
+DRAFTER is attached when draft_mode≠none); only the marketing around it
+changed. Default draft mode stays none (fastest).
+
+VERIFIED: python files parse, shell scripts bash -n clean, server still
+serving the tuned R16 (runtime unchanged), 883 backend tests (todo.test
+real-file assertions made state-agnostic after 1.1/2.1 flipped to [x]) +
+186 frontend tests, tsc clean both. TODO 2.1 → [x]. Logged in
+VACA_CHANGE_LIST.md (#35).
+
+======================================================================
+END OF SECTION 58
+======================================================================
+
+
+======================================================================
+59. SESSION UPDATE — August 14, 2026: VOID RAIDER GAME BUILDS + BLUEPRINT
+    RESEARCH INJECTION (what it takes to build an arcade game)
+======================================================================
+
+Four full builds of the arcade space-shooter "void raider" ran through the
+blueprint pipeline this session. This section records what they taught.
+
+1. WHAT WAS BUILT
+   - space_shooter blueprint build → 5 modules passed tsc except
+     game-renderer (truncated mid-class); world-state had 8 real type
+     errors the build under-reported (sandbox is syntax-only).
+   - void_raider blueprint build → 4/5 modules failed tsc and the one
+     "validated" file was unusable (undefined types, duplicated classes,
+     no canvas in the HTML).
+   - Research-informed void_raider build (goal: "void raider") → 3/5
+     modules passed the gate (research in the prompt measurably helps),
+     2 failed on tiny issues (missing enemy id; progress.value as string).
+   - Java CLI version via plan-code/write-code → generated Java was broken
+     (5 files in 5 packages, phantom classes, invalid char literals, no
+     main); rewritten clean (javac 21, one package) and playable.
+
+2. THE void_raider BLUEPRINT (backend/blueprints/generated/void_raider.json)
+   Modules: Ship Controls / Wave Manager / Enemy AI / Combat Engine /
+   Game Renderer. Wiring: Ship Controls → Combat Engine (requests),
+   Wave Manager → Enemy AI (state_and_events), Enemy AI → Combat Engine
+   (data), Combat Engine → Game Renderer (data). Genre matching gives
+   shooter-family goals +0.6 (GENRE_FAMILIES) and de-weights generic words
+   "classic/game" (GENERIC_VOCAB) so they never misroute a game.
+
+3. WHAT THE 7B MODEL CANNOT DO FOR GAMES (measured, every build)
+   - No playable game loop: combat engines come out turn-based simulators,
+     renderers come out static DOM HUDs (never canvas + rAF).
+   - Long files truncate mid-class (missing brace + called-but-missing
+     methods).
+   - Phantom members (ship.update()/wave.move() on types without them),
+     isExpired() called as a function when it's a boolean.
+   - Array.fill({...}) shares ONE object across the whole wave.
+   - Multi-file Java comes out incoherent (packages, constructors, mains).
+
+4. THE WORKING RECIPE
+   - Pipeline generates the typed module skeletons (they pass the gate and
+     capture as verified rows); the playable entry (index.html / CLI) is
+     completed by hand mirroring the module contracts 1:1.
+   - Full-project tsc (strict:false, allowImportingTsExtensions, bundler)
+     is the real gate; the per-file sandbox under-reports.
+   - Exports: backend/exports/void-raider-ts-1786754094000 (TS canvas,
+     sess-50o1), backend/exports/build-a-classic-arcade-game-called-void--
+     1786753866772 (Java CLI).
+
+5. BLUEPRINT RESEARCH INJECTION (the "search the web for the design" fix)
+   Root cause: /api/blueprint/build never ran research — it matched the
+   blueprint and generated, so "search the internet for the design"
+   produced canned boilerplate. Fix: the build route now runs
+   researchDesign(goal + purpose) before blueprintToProject (15s timeout,
+   non-fatal), formats top-2-per-source via formatResearchContext(), and
+   appends a "DESIGN RESEARCH (live web search)" section to the master
+   node's blueprintContext, which FileGenerator fuses into EVERY module
+   prompt. Response carries research.searched/totalReferences/context.
+   Measured: 0/5 → 3/5 modules passing the gate with research.
+
+6. VERIFIED
+   Backend 895 tests (5 new: formatResearchContext x3, blueprintToProject
+   research injection x2), frontend 198 tests, tsc clean both. Live probe:
+   goal "classic arcade game void raider" → 6 real references found and
+   confirmed injected into the master blueprintContext. Logged in
+   VACA_CHANGE_LIST.md (#36) and VACA-MASTER-KNOWLEDGE.md Part O.
+
+======================================================================
+END OF SECTION 59
+======================================================================
+
+======================================================================
+60. SESSION UPDATE — August 15, 2026: R17 14B DEPLOYED (Q4_K_M) + MEASURED SPEED
+======================================================================
+
+1. WHAT HAPPENED
+   - The R17 fine-tune COMPLETED on Kaggle (train_loss 0.4251, step 232/232
+     epoch 1.0). The kernel reported ERROR but only because the post-training
+     save/eval epilogue CUDA-OOM'd — the full trained adapter was salvaged
+     from checkpoint-232 (137 MB, r=8/alpha=16, verified 673 LoRA tensors
+     against the 14B coder base). None of the ~10h training was wasted.
+   - Merged base+adapter to fp16 (29.5 GB clean, zero quantized tensors),
+     converted to GGUF, deployed to dspark. FIRST DEPLOYED AS Q8_0, then
+     RE-QUANTIZED TO Q4_K_M for speed (see #3).
+   - Base: BlossomsAI/Qwen2.5-Coder-14B-Instruct-Uncensored. This is a fresh
+     base (not a continuation of the 7B chain), ~2x the capability, still
+     unrestricted, plus the emotion register (1,275 Gemma-distilled rows)
+     restored in the R17 corpus.
+
+2. LIVE MODEL (current)
+   - Deployed GGUF:  models/Qwen2.5-Coder-14B-Instruct-Uncensored.R17.Q4_K_M.gguf (8.99 GB)
+   - Health model id: qwen2.5-coder-14b-uncensored-dspark
+   - Target env:      scripts/dspark-target.env → the Q4 path above
+   - Load:            n-ctx 16384, n-gpu-layers -1 (both RTX 3060s), draft none
+   - VRAM:            ~8.3 GB GPU0 + ~7.8 GB GPU1 (fits with ~6 GB KV headroom)
+   - Q8_0 fallback:   training/cloud/out/round17/...R17.Q8_0.gguf (15.7 GB,
+                     near-lossless) — swap back via scripts/dspark-target.env
+
+3. MEASURED SPEED (client-side, non-streaming, t=0.2-0.4)
+   Q4_K_M:  long essay 30.0 tok/s | code 32.3 tok/s | short chat 19.7 tok/s
+            (300 tok/10.0s, 200 tok/6.2s, 3 tok/0.15s)
+   Q8_0:    long essay 18.1 tok/s | short chat 11.1 tok/s
+   7B R16:  ~60 tok/s (4x smaller model — expected to be much faster)
+   → Q4 vs Q8 on the same 14B = ~1.7x speedup; ~3x slower than the 7B but
+     a much stronger coder model. Draft mode still gives no speedup on this
+     llama-cpp-python 0.3.x build (draft_mode=none is default and fastest).
+
+4. QUALITY
+   Q4 smoke tests passed: clean typed Fibonacci function (correct output),
+   coherent paragraphs. Q4 is slightly lossier than Q8 — expect rare small
+   drops on tricky outputs, barely noticeable for code generation. Q8 kept
+   as the quality fallback.
+
+5. VOICE (companion change)
+   whisper moved to auto-fallback CUDA→CPU(int8): with the 14B Q4 holding
+   ~16 GB VRAM there is no room for the medium whisper model on GPU, so it
+   loads on CPU (medium, int8) — slightly slower (~1-2s/utterance vs 0.3s)
+   but reliable. tools/voice/talk.py handles this automatically.
+
+6. VERIFIED
+   Health endpoint OK (model id matches), generation smoke test passed,
+   speed measured on the live server. Logged in VACA_CHANGE_LIST.md (#42)
+   and VACA-MASTER-KNOWLEDGE.md Part K / B.5 additions.
+
+======================================================================
+END OF SECTION 60
+======================================================================
+
+======================================================================
+61. CODE-RENDERED IMAGE CREATION — HOW VACA MAKES IMAGES (verified recipe)
+======================================================================
+
+VACA creates images by WRITING CODE that renders them — NOT by diffusion,
+NOT by describing them in words. When the user asks for an image (a picture,
+scene, logo, icon, sprite, artwork, poster, wallpaper, album cover, game
+asset, 3D model view, hero render, product shot), generate a self-contained
+renderer and let the platform draw it. The headless-Chrome smoke gate
+screenshots the result, so the render must be REAL and visible on load.
+
+1. THE THREE VERIFIED RENDER PATHS (pick by context)
+   a. THREE.JS / WEBGL (browser) — 3D scenes, product shots, game heroes,
+      low-poly models. One self-contained index.html: THREE scene + camera +
+      lights + meshes + renderer loop, or a static frame rendered to a
+      <canvas>. Use a CDN import (unpkg/jsdelivr) — never bundle.
+   b. CANVAS 2D (browser) — procedural art, generative patterns, sprites,
+      portraits, data-art. One index.html with <canvas> + a draw() that
+      paints shapes/gradients/filters directly. Reliable, zero dependencies.
+   c. SVG (browser) — logos, icons, badges, diagrams, flat vector art.
+      Inline <svg> markup with gradients + filters. Crisp at any size.
+   d. PYTHON PYGAME SOFTWARE 3D (native/standalone) — the crystal-chess
+      pattern: a tiny math-only 3D pipeline (Vec3, Camera, Poly, Mesh,
+      painter's-algorithm back-to-front draw, flat directional shading) with
+      meshes built from stacked primitives (boxes, tapered prisms, discs).
+      No numpy, no OpenGL — pure pygame, fully self-contained.
+
+2. THE CRYSTAL-CHESS VERIFIED EXAMPLE (apps/crystal-chess/)
+   engine3d.py = minimal software 3D pipeline (Vec3 ops, orbit Camera with
+   perspective project(), Poly with shade(), Mesh, render() drawing
+   back-to-front). models3d.py = pieces built by stacking primitives:
+   base box → tapered prism stem → collar → head prism → knob/disc, each
+   face colored from a 3-tone crystal palette (light/mid/dark) so the piece
+   reads as faceted cut glass. White crystal = (246,250,255)/(192,220,248)/
+   (122,160,202); black = (152,122,240)/(94,68,170)/(42,28,86). Board =
+   64 alternating two-tone squares + frame + base. The hero render was
+   screenshot-verified and exported to assets/hero-pawn.png.
+
+3. ART DIRECTION RULES THAT MADE THE RENDER LOOK PREMIUM
+   - STUDIO LIGHTING MODEL: key light upper-left, rim light from the right,
+     soft contact shadow under the subject, no pure black in the scene.
+   - MATERIALS = PALETTES: pick 3 tones (light/mid/dark) per material and
+     alternate them across faces — flat shading with directional light,
+     never flat single-color fills on 3D shapes.
+   - BACKDROP: radial-gradient lit center-left, crushed corners, subtle
+     vignette; drifting light overlay for hero pages.
+   - PERSPECTIVE: orbit camera at a slight pitch (~0.55 rad), fov ~52°,
+     never looking straight down.
+   - READABLE AT A GLANCE: strong silhouette, visible contact with the
+     floor/ground plane, contrasting subject vs background.
+
+4. VERIFICATION (how an image build is proven real)
+   - Browser renders: the smoke gate loads the page in headless Chrome and
+     screenshots it — a real <canvas>/<svg>/three.js render passes; a text
+     description of an image fails (nothing rendered). A black/blank
+     screenshot means the render never ran.
+   - Native (pygame) renders: pygame's display surface must be saved to a
+     PNG (pygame.image.save) or drawn interactively — the gate checks the
+     app boots and the window/surface is created.
+
+5. RULES
+   - NEVER answer an image request with words alone ("here's a concept for
+     your image…") — emit render code.
+   - NEVER claim image generation is unavailable — code rendering is always
+     available.
+   - For app builds that need art (games, apps with heroes/icons), include a
+     render node that generates the visual asset(s) in code.
+   - Prefer self-contained single-file renders (one index.html, or one .py)
+     so the smoke gate can run them without extra setup.
+
+======================================================================
+END OF SECTION 61
+======================================================================

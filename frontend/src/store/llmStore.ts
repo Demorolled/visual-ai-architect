@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const DEFAULT_LLM_URL = 'http://127.0.0.1:8000';
-const DEFAULT_MODEL = 'qwen2.5-7b-instruct-uncensored';
+const DEFAULT_MODEL = 'Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-BF16.Q4_K_M.gguf';
 
 export type LlmStatus = 'testing' | 'connected' | 'disconnected' | 'idle';
 
@@ -89,6 +89,32 @@ export interface ProviderScanResult {
   modelLatencyMs?: number | null;
 }
 
+// ── Role-based LLM assignment ──
+// Each job role can be assigned a specific provider/model so the user can
+// choose which local LLM handles reasoning vs. code generation vs. GUI builds.
+// These persist to the backend's llm-config.json "roles" map so the choice
+// survives backend restarts (translator re-reads it at startup).
+export type LlmRole = 'reasoning' | 'codeGeneration' | 'guiBuild' | 'fastChat';
+
+export interface RoleMeta {
+  label: string;
+  icon: string;
+  hint: string;
+}
+
+export const ROLE_META: Record<LlmRole, RoleMeta> = {
+  reasoning: { label: 'Reasoning / Chat', icon: '💬', hint: 'Chat, reasoning panel, planning, and general analysis' },
+  codeGeneration: { label: 'Code Handling', icon: '🧩', hint: 'Per-file code generation & repair' },
+  guiBuild: { label: 'GUI Build', icon: '🖥', hint: 'GUI builder / blueprint & mockup synthesis' },
+  fastChat: { label: 'Fast Chat', icon: '⚡', hint: 'Casual conversational replies (falls back to reasoning)' },
+};
+
+/** How a role is currently assigned: either a provider-key string (points to a
+ *  configured entry in llm-config.json) or an inline { baseUrl, model } object. */
+export type RoleAssignment =
+  | { provider: string }
+  | { baseUrl: string; model: string; apiKey?: string; nCtx?: number };
+
 export const PROVIDERS: LlmProvider[] = [
   {
     id: 'ollama',
@@ -106,7 +132,7 @@ export const PROVIDERS: LlmProvider[] = [
     icon: '⚡',
     matchUrl: '127.0.0.1:8000',
     baseUrl: 'http://127.0.0.1:8000',
-    description: 'Speculative decoding — qwen2.5-7b target + qwen2.5-coder:0.5b draft (DSpark-style, local)',
+    description: 'Local OpenAI-compatible GGUF server (llama.cpp) — Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED Q4_K_M target, optional qwen2.5-coder:0.5b draft (experimental, no speedup on this build)',
     apiKeyHint: null,
     needsConfig: false,
   },
@@ -132,6 +158,14 @@ export const PROVIDERS: LlmProvider[] = [
   },
 ];
 
+/** A configured provider entry from GET /api/llm/providers */
+export interface BackendProviderInfo {
+  key: string;
+  baseUrl: string;
+  model: string | null;
+  alive: boolean;
+}
+
 interface LlmState {
   llmUrl: string;
   selectedModel: string;
@@ -148,10 +182,21 @@ interface LlmState {
   lastScanTimestamp: number | null;
   /** Provider name that was auto-connected on last scan (null if none) */
   autoConnectedProvider: string | null;
-  /** Live status of the local DSpark speculative-decoding server */
+  /** Live status of the local DSpark GGUF server (OpenAI-compatible) */
   dsparkStatus: DSparkStatusInfo;
   /** Latest tuned-vs-stock benchmark report (null until the benchmark runs) */
   dsparkBenchmark: DSparkBenchmarkInfo | null;
+  /** Role→assignment map persisted to the backend (llm-config.json roles). */
+  roleAssignments: Partial<Record<LlmRole, RoleAssignment>>;
+  /** Configured provider entries from GET /api/llm/providers */
+  backendProviders: BackendProviderInfo[];
+  /** Whether a roles save is in flight */
+  rolesSaving: boolean;
+  /** Last save error (cleared on success) */
+  rolesError: string;
+  fetchRoles: () => Promise<void>;
+  fetchBackendProviders: () => Promise<void>;
+  saveRoles: (roles: Partial<Record<LlmRole, RoleAssignment>>) => Promise<boolean>;
   fetchDsparkStatus: () => Promise<void>;
   fetchDsparkBenchmark: () => Promise<void>;
   fetchModels: () => Promise<void>;
@@ -220,6 +265,10 @@ export const useLlmStore = create<LlmState>((set, get) => ({
   autoConnectedProvider: null,
   dsparkStatus: { status: 'unknown', draftMode: null, model: null, speculativeDecoding: false, latencyMs: null, port: '8000', tokensPerSec: null, avgLatencyMs: null, totalCompletionTokens: 0, totalRequests: 0 },
   dsparkBenchmark: null,
+  roleAssignments: {},
+  backendProviders: [],
+  rolesSaving: false,
+  rolesError: '',
   lastScanTimestamp: (() => {
     try {
       const version = localStorage.getItem('vaia-llm-scan-version');
@@ -480,6 +529,47 @@ export const useLlmStore = create<LlmState>((set, get) => ({
     set({ providerScanResults: updated, isProviderScanning: false, lastScanTimestamp: timestamp, autoConnectedProvider: autoConnected });
     localStorage.setItem(SCAN_RESULTS_KEY, JSON.stringify(updated));
     localStorage.setItem(SCAN_TIMESTAMP_KEY, String(timestamp));
+  },
+
+  fetchRoles: async () => {
+    try {
+      const res = await fetch('/api/llm/roles', { signal: AbortSignal.timeout(6000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      set({ roleAssignments: data?.roles || {} });
+    } catch {
+      // Backend unreachable — keep last known assignments.
+    }
+  },
+
+  fetchBackendProviders: async () => {
+    try {
+      const res = await fetch('/api/llm/providers', { signal: AbortSignal.timeout(6000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      set({ backendProviders: data?.providers || [] });
+    } catch {
+      set({ backendProviders: [] });
+    }
+  },
+
+  saveRoles: async (roles) => {
+    set({ rolesSaving: true, rolesError: '' });
+    try {
+      const res = await fetch('/api/llm/roles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roles }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      set({ roleAssignments: data?.roles || roles, rolesSaving: false, rolesError: '' });
+      return true;
+    } catch (err: any) {
+      set({ rolesSaving: false, rolesError: err?.message || 'Failed to save roles' });
+      return false;
+    }
   },
 
   fetchDsparkStatus: async () => {

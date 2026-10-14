@@ -10,7 +10,6 @@ coverage
 *.swp
 *.swo
 .davinci_cache/
-sandbox/
 projects/*/generated/
 projects/*/output/
 knowledge/rnn-model.json
@@ -37,6 +36,10 @@ training/cloud/out/
 # LoRA adapters (regenerable training artifacts)
 adapters/
 adapters_raw/
+
+# Dequantized HF checkpoints — rebuilt from a GGUF by training/unlearn/gguf_to_hf.py
+# (~30GB each, so they must never be committed)
+training/unlearn/models/
 
 # Caches
 huggingface_tokenizers_cache/

@@ -1,15 +1,126 @@
 import { Router, Request, Response } from 'express';
 import { execSync } from 'child_process';
-import { readFileSync, statSync } from 'fs';
+import { readFileSync, statSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { isAboutVacaRequest } from './voice-action.js';
+import { clearRolesRoleCache } from '../ai/translator.js';
+import { coderTierAlive } from '../ai/translator.js';
+import { askOtherLlm } from '../ai/translator.js';
+import { buildRelaySystemPrompt } from '../ai/translator.js';
 
 // ESM: this module runs via tsx where __dirname is NOT a global. Derive it
 // the same way the other route modules do (e.g. routes/soul.ts).
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const llmRoutes = Router();
+
+// backend/src/routes → up 2 = backend/ (llm-config.json lives there — same
+// layout translator.ts uses: backend/src/ai → up 2 = backend/).
+const LLM_CONFIG_PATH = join(__dirname, '..', '..', 'llm-config.json');
+
+/** The job roles the user can assign a provider/model to. */
+export const LLM_ROLES = ['reasoning', 'codeGeneration', 'guiBuild', 'fastChat'] as const;
+
+/** Pretty labels + icons for each role */
+const ROLE_META: Record<string, { label: string; icon: string; hint: string }> = {
+  reasoning: { label: 'Reasoning / Chat', icon: '💬', hint: 'Chat, reasoning panel, planning, and general analysis' },
+  codeGeneration: { label: 'Code Handling', icon: '🧩', hint: 'Per-file code generation & repair (delegator / fast coder chain)' },
+  guiBuild: { label: 'GUI Build', icon: '🖥', hint: 'GUI builder / app blueprint & mockup synthesis' },
+  fastChat: { label: 'Fast Chat', icon: '⚡', hint: 'Casual conversational replies (falls back to reasoning)' },
+};
+
+/**
+ * GET /api/llm/roles
+ * Returns the current role→model assignment map from llm-config.json
+ * (top-level "roles"), plus role metadata and which provider keys exist.
+ */
+llmRoutes.get('/roles', async (_req: Request, res: Response) => {
+  let roles: Record<string, unknown> = {};
+  try {
+    const config = JSON.parse(readFileSync(LLM_CONFIG_PATH, 'utf-8'));
+    roles = config?.roles ?? {};
+  } catch {
+    // Missing/corrupt config → empty roles (defaults apply).
+  }
+  res.json({
+    roles,
+    roleMeta: ROLE_META,
+    providers: LLM_ROLES.map((r) => ({ role: r, ...ROLE_META[r], active: Boolean(roles[r]) })),
+  });
+});
+
+/**
+ * POST /api/llm/roles
+ * Persist a role→{ provider|baseUrl, model } assignment into llm-config.json's
+ * top-level "roles" map, then clear the translator's role cache so the next
+ * request honors it. Body: { roles: { [role]: { baseUrl, model, apiKey?, nCtx? } | providerKey } }
+ */
+llmRoutes.post('/roles', async (req: Request, res: Response) => {
+  const incoming = req.body?.roles as Record<string, unknown> | undefined;
+  if (!incoming || typeof incoming !== 'object') {
+    return res.status(400).json({ error: 'roles object is required' });
+  }
+  const allowed = new Set<string>(LLM_ROLES);
+  const clean: Record<string, unknown> = {};
+  for (const [role, entry] of Object.entries(incoming)) {
+    if (!allowed.has(role)) continue;
+    // Accept either a provider-key string OR an inline { baseUrl, model } object.
+    if (typeof entry === 'string' && entry.trim()) {
+      clean[role] = entry.trim();
+    } else if (entry && typeof entry === 'object') {
+      const e = entry as { baseUrl?: string; model?: string; apiKey?: string; nCtx?: number; provider?: string };
+      if (e.provider && !e.baseUrl) {
+        clean[role] = e.provider;
+      } else if (e.baseUrl && e.model) {
+        clean[role] = { baseUrl: e.baseUrl.replace(/\/+$/, ''), model: e.model, apiKey: e.apiKey || 'not-needed', nCtx: e.nCtx };
+      }
+    }
+  }
+  try {
+    const config = JSON.parse(readFileSync(LLM_CONFIG_PATH, 'utf-8'));
+    // REPLACE (not merge): the client sends the COMPLETE role map (each role
+    // either assigned or absent), so merging kept stale entries alive when a
+    // role was unassigned — "clear all" (roles: {}) did nothing. A client that
+    // wants to preserve unlisted roles must send them explicitly.
+    config.roles = clean;
+    writeFileSync(LLM_CONFIG_PATH, JSON.stringify(config, null, 2) + '\n');
+    // Drop the translator's cached role clients so this takes effect now.
+    clearRolesRoleCache();
+    res.json({ success: true, roles: config.roles });
+  } catch (err: any) {
+    res.status(500).json({ error: `Failed to persist roles: ${err?.message || err}` });
+  }
+});
+
+/**
+ * GET /api/llm/providers
+ * Lists the known provider keys in llm-config.json plus a live reachability
+ * check, so the role UI can offer the configured backends as assignable.
+ * Returns { error: true } rather than hard-failing if the config is unreadable.
+ */
+llmRoutes.get('/providers', async (_req: Request, res: Response) => {
+  let providers: Record<string, unknown> = {};
+  try {
+    providers = JSON.parse(readFileSync(LLM_CONFIG_PATH, 'utf-8')) || {};
+  } catch {
+    return res.json({ providers: [], modelProviders: [] });
+  }
+  const knownKeys = Object.keys(providers).filter((k) => typeof providers[k] === 'object' && providers[k] !== null);
+  const details = await Promise.all(
+    knownKeys.map(async (k) => {
+      const p = providers[k] as { baseUrl?: string; model?: string; apiKey?: string; nCtx?: number };
+      const baseUrl = p?.baseUrl || '';
+      let alive = false;
+      // coderTierAlive appends /models itself — do NOT add /v1 again (baseUrl
+      // already ends in /v1, so appending /v1/models produced /v1/v1/models and
+      // every provider looked offline).
+      if (baseUrl) alive = await coderTierAlive(baseUrl, 2000).catch(() => false);
+      return { key: k, baseUrl, model: p?.model || null, alive };
+    })
+  );
+  res.json({ providers: details });
+});
 
 interface OllamaModel {
   name: string;
@@ -132,7 +243,7 @@ llmRoutes.get('/ollama-scan/raw', async (_req: Request, res: Response) => {
  * Query params: url (optional, defaults to Ollama)
  */
 llmRoutes.get('/proxy/models', async (req: Request, res: Response) => {
-  const targetUrl = (req.query.url as string) || 'http://127.0.0.1:11434/v1/models';
+  const targetUrl = (req.query.url as string) || 'http://192.168.1.234:11434/v1/models';
   try {
     const response = await fetch(targetUrl, {
       signal: AbortSignal.timeout(10000),
@@ -210,7 +321,7 @@ llmRoutes.post('/proxy/chat', async (req: Request, res: Response) => {
     return;
   }
 
-  const targetUrl = url || 'http://127.0.0.1:11434/v1/chat/completions';
+  const targetUrl = url || 'http://192.168.1.234:11434/v1/chat/completions';
   try {
     const response = await fetch(targetUrl, {
       method: 'POST',
@@ -226,6 +337,39 @@ llmRoutes.post('/proxy/chat', async (req: Request, res: Response) => {
   } catch (err: any) {
     res.status(502).json({
       error: `LLM proxy chat request failed: ${err.message}`,
+    });
+  }
+});
+
+/**
+ * POST /api/llm/relay
+ * Relay a mid-build question from one band LLM to the OTHER LLM. This is the
+ * "phone line" between the two voices: the asker's question is sent to the
+ * answering role's configured client+model (with the band-chart relay system
+ * prompt, so it knows it is answering a fellow band member mid-build), and the
+ * reply is returned so the asker's chunk can incorporate it.
+ * Body: { question, fromRole?, toRole?, context?, maxTokens? }
+ *   - question  (required) the direct question one LLM asks the other
+ *   - fromRole  which role is asking (default 'codeGeneration' — the writer)
+ *   - toRole    which role should answer (default 'reasoning' — the 2nd voice)
+ *   - context   optional work-so-far summary / file contents to ground the answer
+ */
+llmRoutes.post('/relay', async (req: Request, res: Response) => {
+  const { question, fromRole, toRole, context, maxTokens } = req.body ?? {};
+  if (!question || typeof question !== 'string') {
+    return res.status(400).json({ error: 'question (string) is required' });
+  }
+  try {
+    const answer = await askOtherLlm(String(question), {
+      toRole: (toRole as any) || undefined,
+      fromRole: (fromRole as any) || undefined,
+      context: typeof context === 'string' ? context : undefined,
+      maxTokens: typeof maxTokens === 'number' ? maxTokens : undefined,
+    });
+    res.json({ answer, toRole: toRole ?? 'reasoning', fromRole: fromRole ?? 'codeGeneration' });
+  } catch (err: any) {
+    res.status(502).json({
+      error: `LLM relay failed: ${err.message}`,
     });
   }
 });
@@ -345,7 +489,7 @@ function _getGpuFacts(): { vramUsedMiB: number | null; vramTotalMiB: number | nu
 
 /**
  * GET /api/llm/dspark-status
- * Live status of the DSpark speculative-decoding server (port 8000):
+ * Live status of the DSpark GGUF server (OpenAI-compatible, port 8000):
  *   running  — /v1/health responded OK (includes draft_mode + model)
  *   loading  — pid file alive but health not responding (model still loading)
  *   offline  — nothing on the port and no live pid

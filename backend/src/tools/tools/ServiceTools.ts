@@ -174,7 +174,8 @@ const knowledgeQueryToolDef: ToolDef<KnowledgeQueryInput, { patterns: any[]; con
         targetOS: input.os,
         searchText: input.query,
       });
-      const context = store.getRelevantContext(input.nodeType || '', input.language || '', input.os || '');
+      // `input.query` is the caller's goal — rank the context by relevance to it.
+      const context = store.getRelevantContext(input.nodeType || '', input.language || '', input.os || '', 5, input.query);
       return { success: true, data: { patterns: patterns.slice(0, input.maxResults || 10), context } };
     } catch (err: unknown) {
       return { success: false, error: err instanceof Error ? err.message : String(err), errorCode: 'KNOWLEDGE_ERROR' };

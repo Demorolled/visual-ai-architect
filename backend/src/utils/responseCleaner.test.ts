@@ -86,6 +86,19 @@ describe('cleanLLMResponse — system-prompt leak guard', () => {
     expect(cleaned).toBe('Some answer.');
   });
 
+  it('cuts the ROLE-SWAPPED identity regurgitation, keeping the "I\'m Veronica" prefix', () => {
+    // The live failure: the model re-emitted the identity rule but applied
+    // "You are Veronica" to the USER. The verbatim marker ("Your name is
+    // Veronica.") never matched because the model paraphrased it.
+    const swapped =
+      "I'm Veronica, the assistant of the VACA platform. You are Veronica, the assistant of the VACA platform.";
+    const cleaned = cleanLLMResponse(swapped);
+    // Everything from "You are Veronica" onward is dropped — the model never
+    // legitimately tells the user they are the assistant.
+    expect(cleaned).not.toContain('You are Veronica');
+    expect(cleaned).toContain('I\'m Veronica');
+  });
+
   it('keeps normal answers that never mention system-prompt markers', () => {
     const text = "I'd use fs.readFile for that. The docs cover it well.";
     expect(cleanLLMResponse(text)).toBe(text);
@@ -188,6 +201,36 @@ describe('cleanLLMResponse — static-file degeneration guard', () => {
     const text =
       'A static file is served to the browser exactly as stored, with no server-side processing. ' +
       'To serve one, put it in the public directory and link it from your HTML.';
+    expect(cleanLLMResponse(text)).toBe(text);
+  });
+});
+
+describe('cleanLLMResponse — AEON thinking-trace delimiter', () => {
+  it('strips the "We need to…" narration up to the lone response marker', () => {
+    const text =
+      'We need to respond to user "hi" twice. Need keep it natural.\n response\n\nHi! How can I help you today?';
+    expect(cleanLLMResponse(text)).toBe('Hi! How can I help you today?');
+  });
+
+  it('strips a capitalized Response delimiter too', () => {
+    const text =
+      'User wants one line. Need final with just the code.\n Response\n\nprint("Hello, World!")';
+    expect(cleanLLMResponse(text)).toBe('print("Hello, World!")');
+  });
+
+  it('keeps the real answer after a multi-line trace', () => {
+    const text =
+      'User said "how are you". Need to respond briefly friendly. Need maybe ask how can help. Keep natural.\n response\n\nI am well, thanks. What can I build for you?';
+    expect(cleanLLMResponse(text)).toBe('I am well, thanks. What can I build for you?');
+  });
+
+  it('does not touch a standalone \"response\" line with no trailing content', () => {
+    const text = 'We need to answer this.\n response';
+    expect(cleanLLMResponse(text)).toBe(text);
+  });
+
+  it('leaves prose containing the word \"response\" (non-delimiter) intact', () => {
+    const text = 'My short response: that depends on the context of what you are building.';
     expect(cleanLLMResponse(text)).toBe(text);
   });
 });

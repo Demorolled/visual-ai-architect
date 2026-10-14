@@ -76,6 +76,10 @@ function CustomNode({ id, data, selected }: NodeProps<CustomNodeData>) {
   const [debugResult, setDebugResult] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResult, setAiResult] = useState<string | null>(null);
+  // Big Plan Mode: show the co-worker's questions and the user's answers here,
+  // on the node they belong to. Closed by default — the node is a design
+  // surface, and the answers are reference material, not the headline.
+  const [qaOpen, setQaOpen] = useState(false);
   const isGuiLayout = data.type === 'gui-layout';
 
   // Detect language extension conflict
@@ -489,6 +493,37 @@ function CustomNode({ id, data, selected }: NodeProps<CustomNodeData>) {
           rows={expanded ? 6 : 3}
           title="Describe what this node should do — this helps the AI generate better code"
         />
+
+        {/* ── Plan Mode: this node's co-worker answers ──
+             The answers are filed against the node they were asked about, so
+             they are shown here rather than only in the co-worker panel and
+             plan.md — the decision lives with the thing it decides. ── */}
+        {data.planQa && data.planQa.length > 0 && (
+          <div className="node-qa">
+            <button
+              className="node-qa-badge react-flow__nodrag"
+              onClick={(e) => { e.stopPropagation(); setQaOpen((o) => !o); }}
+              onPointerDown={onPointerDown}
+              title={
+                qaOpen
+                  ? 'Hide the questions and answers on this node'
+                  : `${data.planQa.length} question${data.planQa.length === 1 ? '' : 's'} answered on this node`
+              }
+            >
+              🤝 {data.planQa.length} answered {qaOpen ? '▴' : '▾'}
+            </button>
+            {qaOpen && (
+              <div className="node-qa-list">
+                {data.planQa.map((qa, i) => (
+                  <div key={i} className="node-qa-item">
+                    <div className="node-qa-q">{qa.q}</div>
+                    <div className="node-qa-a">{qa.a}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ── Deep-scan metadata: the files this node connects to + external tag ── */}
         {(data.external || (data.files && data.files.length > 0)) && (

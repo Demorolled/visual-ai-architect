@@ -151,11 +151,14 @@ router.put('/:id/rate', (req: Request, res: Response) => {
 
 // Get context for generation (useful for frontend to pre-fetch relevant patterns)
 router.post('/context', (req: Request, res: Response) => {
-  const { nodeType, language, targetOS } = req.body;
+  const { nodeType, language, targetOS, searchText } = req.body;
   const context = learningEngine.getGenerationContext(
     nodeType || 'logic',
     language || 'javascript',
-    targetOS || 'linux'
+    targetOS || 'linux',
+    // The build goal: when given, patterns matching it outrank merely
+    // higher-scored ones. Optional — without it the ordering is unchanged.
+    searchText || undefined
   );
   res.json({ context, patternCount: knowledgeStore.count() });
 });

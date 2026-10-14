@@ -4,6 +4,7 @@ import { speak, warmupAudio } from '../utils/tts';
 import ManifestoEditor from './ManifestoEditor';
 import SoulSettings from './SoulSettings';
 import MergeProjectsDialog from './MergeProjectsDialog';
+import LLMSelector from './LLMSelector';
 import './ProjectManager.css';
 
 function formatDate(iso: string): string {
@@ -216,6 +217,7 @@ export default function ProjectManager() {
   const [ttsOpen, setTtsOpen] = useState(false);
   const [manifestoOpen, setManifestoOpen] = useState(false);
   const [soulOpen, setSoulOpen] = useState(false);
+  const [llmConnectOpen, setLlmConnectOpen] = useState(false);
   const [mergeOpen, setMergeOpen] = useState(false);
   const [fastPreview, setFastPreview] = useState(() => localStorage.getItem('vaia-fast-preview') === 'true');
   // Auto GUI Preview — when ON (default), the chat auto-opens the planned-interface
@@ -358,6 +360,10 @@ export default function ProjectManager() {
                   <span className="settings-menu-icon">🧠</span>
                   <span>Soul Personality</span>
                 </button>
+                <button className="settings-menu-item" onClick={() => { setSettingsOpen(false); setLlmConnectOpen(true); }}>
+                  <span className="settings-menu-icon">🔌</span>
+                  <span>LLM Connect</span>
+                </button>
                 <div className="settings-divider" />
                 <label className="settings-menu-item settings-toggle-row" onClick={(e) => {
                   e.preventDefault();
@@ -395,6 +401,22 @@ export default function ProjectManager() {
           {ttsOpen && <TtsSettingsPanel onClose={() => setTtsOpen(false)} />}
           {manifestoOpen && <ManifestoEditor onClose={() => setManifestoOpen(false)} />}
           {soulOpen && <SoulSettings onClose={() => setSoulOpen(false)} />}
+          {llmConnectOpen && (
+            <div className="settings-modal-overlay llm-connect-overlay" onClick={() => setLlmConnectOpen(false)}>
+              <div className="settings-modal llm-connect-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="settings-modal-header">
+                  <span>🔌 LLM Connect</span>
+                  <button className="settings-modal-close" onClick={() => setLlmConnectOpen(false)}>✕</button>
+                </div>
+                <div className="settings-modal-body llm-connect-body">
+                  <p className="llm-connect-intro">
+                    Connect a local LLM provider (Ollama, LM Studio, etc.) alongside VACA's trained model — the dspark ✓ badge shows the tuned model. Select a provider, then pick a model to route chat & code generation through it.
+                  </p>
+                  <LLMSelector />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         <input
           ref={fileInputRef}

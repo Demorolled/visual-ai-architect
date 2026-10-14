@@ -16,6 +16,7 @@
  */
 
 import * as fs from 'fs/promises';
+import { readFileSync } from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { AppTree, OSType, LinuxDistro, Node, Edge } from '../types.js';
@@ -487,6 +488,82 @@ export function declaresProgramEntry(code: string, language: string): boolean {
     default:
       return false;
   }
+}
+
+// ─── Runtime dependency manifest ────────────────────────────────────────────
+// The generated package.json used to hard-code `dependencies: {}` whatever the
+// code imported, which shipped broken. The writer is deliberately told to use
+// packages installed in THIS repo (isSafeNonRelativeImport) and the export dir
+// lives inside the repo, so tsc and the smoke gates resolved those imports up
+// the tree and passed — then `npm install && npm start` on a copy of the export
+// failed on the first third-party import. This derives the real manifest from
+// what the generated code imports, pinned to the version installed here, which
+// is exactly the set the phantom-package stripper already lets through.
+const NODE_BUILTINS = new Set([
+  'assert', 'async_hooks', 'buffer', 'child_process', 'cluster', 'console',
+  'constants', 'crypto', 'dgram', 'diagnostics_channel', 'dns', 'domain',
+  'events', 'fs', 'http', 'http2', 'https', 'inspector', 'module', 'net', 'os',
+  'path', 'perf_hooks', 'process', 'punycode', 'querystring', 'readline',
+  'repl', 'stream', 'string_decoder', 'sys', 'timers', 'tls', 'trace_events',
+  'tty', 'url', 'util', 'v8', 'vm', 'wasi', 'worker_threads', 'zlib',
+]);
+
+/**
+ * Repo root — module-anchored (backend/src/export → repo root) so it resolves
+ * the same whether the backend runs from src/ (tsx) or dist/ (node), unlike the
+ * cwd-anchored EXPORTS_DIR above.
+ */
+const REPO_ROOT = path.resolve(import.meta.dirname, '..', '..', '..');
+
+/**
+ * Bare specifier → npm package name, or null for relative paths, absolute
+ * paths, `node:`-prefixed builtins and bare builtin names.
+ */
+export function packageNameFromSpecifier(spec: string): string | null {
+  if (!spec || spec.startsWith('.') || spec.startsWith('/') || spec.startsWith('node:')) return null;
+  if (spec.startsWith('@')) {
+    const parts = spec.split('/');
+    return parts.length >= 2 && parts[1] ? `${parts[0]}/${parts[1]}` : null;
+  }
+  const name = spec.split('/')[0];
+  if (!name || NODE_BUILTINS.has(name)) return null;
+  return name;
+}
+
+/** Version of `pkg` as installed in this repo, or null when it is not installed. */
+function installedPackageVersion(pkg: string): string | null {
+  for (const base of [path.join(REPO_ROOT, 'node_modules'),
+                      path.join(REPO_ROOT, 'backend', 'node_modules')]) {
+    try {
+      const raw = readFileSync(path.join(base, pkg, 'package.json'), 'utf-8');
+      const version = JSON.parse(raw)?.version;
+      if (typeof version === 'string' && version) return version;
+    } catch { /* not installed under this root — try the next one */ }
+  }
+  return null;
+}
+
+/**
+ * Every third-party package the generated TS/JS files import, pinned to the
+ * version installed in this repo. Sorted so the manifest is stable from build
+ * to build — a package.json diff should mean the code changed, not the walk.
+ */
+export function collectRuntimeDependencies(files: GeneratedFile[]): Record<string, string> {
+  const found = new Map<string, string>();
+  for (const f of files) {
+    if (!f?.code) continue;
+    if (!/\.(?:ts|tsx|js|jsx|mjs|cjs)$/i.test(f.fileName || '')) continue;
+    for (const m of f.code.matchAll(/(?:from|import|require)\s*\(?\s*['"]([^'"]+)['"]/g)) {
+      const pkg = packageNameFromSpecifier(m[1]);
+      if (!pkg || found.has(pkg)) continue;
+      const version = installedPackageVersion(pkg);
+      // Skip packages that are not installed here — that is the phantom-module
+      // class the strip already removes, so pinning one would invent a runtime
+      // dependency the export never actually needs.
+      if (version) found.set(pkg, `^${version}`);
+    }
+  }
+  return Object.fromEntries([...found.entries()].sort(([a], [b]) => a.localeCompare(b)));
 }
 
 export class PerFileScaffolder {
@@ -1509,6 +1586,13 @@ export class PerFileScaffolder {
    * Build TypeScript project config (package.json + tsconfig.json).
    */
   private buildTsProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
+    // An export that ships test files must also ship a way to RUN them (see the
+    // `test` script below). ensureTestArtifact/ensureTestFiles inject tests
+    // deterministically, so this cannot rely on the model having planned them.
+    const hasTests = config.files.some((f) =>
+      /(^|\/)(__tests__|tests?)(\/|$)|\.(test|spec)\./i.test(f.fileName || ''));
+    const vitestVersion = hasTests ? installedPackageVersion('vitest') : null;
+
     const pkg: Record<string, any> = {
       name: this.sanitizeName(config.projectName),
       version: '1.0.0',
@@ -1520,13 +1604,20 @@ export class PerFileScaffolder {
         start: 'tsx index.ts',
         build: 'tsc',
         dev: 'tsx watch index.ts',
-        test: 'echo "No tests configured"',
+        // This used to be a hard-coded `echo "No tests configured"` even when
+        // the exporter had just injected a test file, so the shipped project's
+        // own `npm test` reported success without running anything. Run them
+        // when they exist; say so honestly when they do not.
+        test: hasTests ? 'vitest run' : 'echo "No tests configured"',
       },
-      dependencies: {},
+      dependencies: collectRuntimeDependencies(config.files),
       devDependencies: {
         typescript: '^5.4.0',
         tsx: '^4.7.0',
         '@types/node': '^20.0.0',
+        // Only pulled in when the export actually has tests to run — pinned to
+        // the version installed here so the manifest stays resolvable.
+        ...(vitestVersion ? { vitest: `^${vitestVersion}` } : {}),
       },
     };
 

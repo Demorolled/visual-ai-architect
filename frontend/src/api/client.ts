@@ -68,6 +68,37 @@ export const api = {
   // Plan Mode — capture ideas to a text file for later creation
   savePlan: (data: { projectName: string; ideas: string; guidance?: string; questions?: string }) =>
     axios.post(`${API_BASE}/plans`, data),
+  // Big Plan Mode — autosave the design as a folder (data/plans/<name>/):
+  // plan.md for humans, graph.json so the canvas can reload it.
+  savePlanGraph: (data: {
+    projectName: string;
+    goal?: string;
+    nodes: Array<{ id: string; type: string; label: string; description?: string; language?: string; isMaster?: boolean; qa?: Array<{ q: string; a: string; at: string }> }>;
+    edges: Array<{ source: string; target: string; label?: string }>;
+  }) => axios.post(`${API_BASE}/plans/graph`, data),
+  getPlanGraph: (name: string) => axios.get(`${API_BASE}/plans/graph/${encodeURIComponent(name)}`),
+  // Big Plan Mode "build": map the design onto real files and folders with no
+  // code generated. Deterministic backend work — no model call, no training rows.
+  mapPlan: (data: {
+    projectName?: string;
+    goal?: string;
+    nodes: Array<{ id: string; type: string; label: string; description?: string; language?: string; isMaster?: boolean; qa?: Array<{ q: string; a: string }> }>;
+    edges: Array<{ source: string; target: string; label?: string }>;
+  }) => axios.post(`${API_BASE}/plans/map`, data),
+  // Saved Big Plan Mode designs (data/plans/<name>/ folders) — the reopen list.
+  // Distinct from getPlans(), which lists the old single-file .txt notes that
+  // cannot be loaded back onto the canvas.
+  listPlanGraphs: () => axios.get(`${API_BASE}/plans/graphs`),
+  // Big Plan Mode co-worker — the design graph in, questions to ask out.
+  // Advisory only: the endpoint answers 200 with `questions: []` when the LLM
+  // is unavailable, so a failure here never breaks the canvas.
+  coworkPlan: (data: {
+    projectName?: string;
+    goal?: string;
+    nodes: Array<{ id: string; type: string; label: string; description?: string; language?: string; isMaster?: boolean; qa?: Array<{ q: string; a: string }> }>;
+    edges: Array<{ source: string; target: string; label?: string }>;
+    alreadyAsked?: string[];
+  }) => axios.post(`${API_BASE}/plans/cowork`, data),
   getPlans: () => axios.get(`${API_BASE}/plans`),
   getPlan: (name: string) => axios.get(`${API_BASE}/plans/${encodeURIComponent(name)}`),
 
@@ -149,14 +180,22 @@ export async function ensureServerProject(data: {
   targetOS: string;
   nodes: any[];
   edges: any[];
+  /**
+   * Tree Mode: the app trees on the canvas. The backend builds each tree as a
+   * separate app and derives the cross-app bridges from the tree membership, so
+   * without this the server copy is a single-app project and Tree Mode silently
+   * produces one flat app.
+   */
+  trees?: any[];
 }): Promise<string> {
   let id = data.projectId;
+  const payload = { nodes: data.nodes, edges: data.edges, ...(data.trees ? { trees: data.trees } : {}) };
 
   // Fast path: the stored id may still exist — push the graph to it. If the
   // registry was wiped by a restart this 404s and we recreate the project.
   if (id) {
     try {
-      await api.updateProject(id, { nodes: data.nodes, edges: data.edges });
+      await api.updateProject(id, payload);
       return id;
     } catch (err: any) {
       if (err?.response?.status !== 404) throw err;
@@ -166,6 +205,6 @@ export async function ensureServerProject(data: {
   const createRes = await api.createProject({ name: data.name, targetOS: data.targetOS });
   const freshId: string = createRes.data.id;
   localStorage.setItem('current-project-id', freshId);
-  await api.updateProject(freshId, { nodes: data.nodes, edges: data.edges });
+  await api.updateProject(freshId, payload);
   return freshId;
 }

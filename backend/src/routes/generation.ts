@@ -84,16 +84,38 @@ generationRoutes.post('/:projectId/files', async (req, res) => {
     // Skipped for fast preview builds (skipValidation=true) and can be disabled
     // per-request with { runtimeSmoke: false }. Non-fatal: a smoke failure is
     // reported in the response but never fails generation itself.
+    //
+    // Browser-only: a Go/CLI/Python project is NOT a browser app — the
+    // auto-generated preview wrapper exists for every project, so previously
+    // the smoke booted a Go CLI in Chromium, "passed" with zero clickables,
+    // and reported a false green. The smoke only runs when the project
+    // actually contains web-language files.
     let runtimeSmoke = null;
+    const hasWebLanguageFiles = result.files.some((f) =>
+      ['typescript', 'javascript', 'html'].includes((f.language || '').toLowerCase())
+    );
     if (!skipValidation && req.body.runtimeSmoke !== false) {
       const smokeStart = Date.now();
       try {
-        runtimeSmoke = await runRuntimeSmokeTest(
-          result.files.map((f) => ({ fileName: f.fileName, code: f.code })),
-          { timeoutMs: 45000 },
-        );
-        if (runtimeSmoke.available) {
-          console.log(`[generation] runtime smoke ${runtimeSmoke.success ? 'PASS' : 'FAIL'} (${Date.now() - smokeStart}ms) for project ${projectId}${runtimeSmoke.checks.length ? ' — ' + runtimeSmoke.checks.map(c => `${c.name}=${c.status}`).join(', ') : ''}`);
+        if (!hasWebLanguageFiles) {
+          runtimeSmoke = {
+            available: false,
+            reason: 'No web-language files (TypeScript/JavaScript/HTML) — this is a CLI/native project; browser smoke skipped',
+            success: false,
+            durationMs: 0,
+            entryFile: null,
+            checks: [],
+            consoleErrors: [],
+            interactions: { clickableFound: 0, clicked: 0, inputsFound: 0, typed: 0, domChangedAfterClick: 0 },
+          };
+        } else {
+          runtimeSmoke = await runRuntimeSmokeTest(
+            result.files.map((f) => ({ fileName: f.fileName, code: f.code })),
+            { timeoutMs: 45000 },
+          );
+          if (runtimeSmoke.available) {
+            console.log(`[generation] runtime smoke ${runtimeSmoke.success ? 'PASS' : 'FAIL'} (${Date.now() - smokeStart}ms) for project ${projectId}${runtimeSmoke.checks.length ? ' — ' + runtimeSmoke.checks.map(c => `${c.name}=${c.status}`).join(', ') : ''}`);
+          }
         }
       } catch (err) {
         runtimeSmoke = { available: false, reason: `smoke test threw: ${err instanceof Error ? err.message : String(err)}` };

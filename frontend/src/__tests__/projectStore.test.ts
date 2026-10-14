@@ -536,4 +536,238 @@ describe('projectStore', () => {
       expect(useProjectStore.getState().todoRequestToken).toBe(before + 1);
     });
   });
+
+  // ═══ Big Plan Mode: reload a saved design ═══════════════════════════════
+  //
+  // The design is autosaved to data/plans/<name>/graph.json and this is the way
+  // back. The round trip is lossy in exactly one dangerous direction: if a
+  // reload drops something, the NEXT autosave writes that loss to disk, so the
+  // answers the user typed are gone for good.
+
+  describe('loadPlanDesign', () => {
+    const SAVED = {
+      projectName: 'Note Taking App',
+      goal: 'A desktop note-taking app with encrypted storage',
+      nodes: [
+        {
+          id: 'node_1',
+          type: 'logic',
+          label: 'Notes Core',
+          description: 'holds notes, exposes CRUD',
+          language: 'typescript',
+          isMaster: true,
+          qa: [
+            {
+              q: 'What data does the Notes Core store besides the notes?',
+              a: 'Only notes and their tags.',
+              at: '2026-09-15T02:30:00.000Z',
+            },
+          ],
+        },
+        { id: 'node_3', type: 'database', label: 'Encrypted Store', language: 'rust' },
+      ],
+      edges: [{ source: 'node_3', target: 'node_1', label: 'persists notes' }],
+    };
+
+    it('restores the nodes and wiring onto the canvas', () => {
+      useProjectStore.getState().loadPlanDesign(SAVED);
+      const state = useProjectStore.getState();
+
+      expect(state.nodes.map((n) => n.id)).toEqual(['node_1', 'node_3']);
+      expect(state.edges).toHaveLength(1);
+      expect(state.edges[0].source).toBe('node_3');
+      expect(state.edges[0].target).toBe('node_1');
+      expect(state.edges[0].label).toBe('persists notes');
+
+      const core = state.nodes.find((n) => n.id === 'node_1')!;
+      expect(core.type).toBe('logic');
+      expect(core.data.label).toBe('Notes Core');
+      expect(core.data.description).toBe('holds notes, exposes CRUD');
+      expect(core.data.language).toBe('typescript');
+    });
+
+    it('restores the co-worker answers attached to their nodes', () => {
+      useProjectStore.getState().loadPlanDesign(SAVED);
+      const core = useProjectStore.getState().nodes.find((n) => n.id === 'node_1')!;
+
+      // Dropping these is the silent data-loss bug: the answers exist in
+      // graph.json, and the first autosave after a lossy reload would erase
+      // them from disk for good.
+      expect(core.data.planQa).toHaveLength(1);
+      expect(core.data.planQa![0].q).toContain('What data does the Notes Core store');
+      expect(core.data.planQa![0].a).toBe('Only notes and their tags.');
+
+      // A node that was never asked about stays clean.
+      const store = useProjectStore.getState().nodes.find((n) => n.id === 'node_3')!;
+      expect(store.data.planQa).toBeUndefined();
+    });
+
+    it('re-enters Plan Mode and restores the goal and seed', () => {
+      useProjectStore.getState().setPlanMode(false);
+      useProjectStore.getState().loadPlanDesign(SAVED);
+      const state = useProjectStore.getState();
+
+      expect(state.planMode).toBe(true);
+      expect(state.planSeedId).toBe('node_1');
+      expect(state.projectName).toBe('Note Taking App');
+      expect(state.userGoal).toBe('A desktop note-taking app with encrypted storage');
+    });
+
+    it('keeps the app\'s own master-node blueprint node', () => {
+      useProjectStore.getState().addNode(makeNode('master-node', 'master', 'App Blueprint'));
+      useProjectStore.getState().loadPlanDesign(SAVED);
+      expect(useProjectStore.getState().nodes.some((n) => n.id === 'master-node')).toBe(true);
+    });
+
+    it('lays the design out instead of stacking every node on one spot', () => {
+      useProjectStore.getState().loadPlanDesign(SAVED);
+      const [a, b] = useProjectStore.getState().nodes;
+      // graph.json stores meaning, not drag positions — so the reload must
+      // place them somewhere sensible (and not all at the same point).
+      expect(a.position).toBeTruthy();
+      expect(a.position).not.toEqual(b.position);
+    });
+
+    it('falls back for a node type or language it does not recognise', () => {
+      useProjectStore.getState().loadPlanDesign({
+        projectName: 'Odd',
+        goal: '',
+        nodes: [
+          { id: 'weird_1', type: 'not-a-real-type', label: 'Mystery', language: 'brainfuck' },
+        ],
+        edges: [],
+      });
+      const n = useProjectStore.getState().nodes[0];
+      expect(n.type).toBe('logic');
+      expect(n.data.type).toBe('logic');
+      expect(n.data.language).toBeUndefined();
+    });
+
+    it('bumps the node-id counter so a new node cannot collide with a loaded one', () => {
+      // Ids were minted in an earlier session; the counter starts at 0 again.
+      useProjectStore.getState().loadPlanDesign(SAVED);
+      const fresh = getNextNodeId();
+      expect(useProjectStore.getState().nodes.some((n) => n.id === fresh)).toBe(false);
+    });
+
+    it('is undoable', () => {
+      useProjectStore.getState().addNode(makeNode('node_99'));
+      useProjectStore.getState().loadPlanDesign(SAVED);
+      expect(useProjectStore.getState().canUndo).toBe(true);
+      useProjectStore.getState().undo();
+      expect(useProjectStore.getState().nodes.map((n) => n.id)).toEqual(['node_99']);
+    });
+  });
+
+  // ═══ Big Plan Mode: attaching answers to nodes ══════════════════════════
+
+  describe('planQuestions / answerPlanQuestion', () => {
+    function askNode(nodeId: string | null, nodeLabel: string | null, text: string) {
+      useProjectStore.getState().setPlanQuestions([
+        { id: 'q1', text, nodeId, nodeLabel, at: '2026-09-15T02:30:00.000Z' },
+      ]);
+    }
+
+    it('holds the open questions', () => {
+      askNode('node_1', 'Notes Core', 'What does this node own?');
+      expect(useProjectStore.getState().planQuestions).toHaveLength(1);
+      expect(useProjectStore.getState().planQuestions[0].text).toBe('What does this node own?');
+    });
+
+    it('attaches the answer to the node the question was about, and closes it', () => {
+      useProjectStore.getState().addNode(makeNode('node_1', 'logic', 'Notes Core'));
+      useProjectStore.getState().addNode(makeNode('node_2', 'ui', 'Editor View'));
+      askNode('node_2', 'Editor View', 'Does this render markdown itself?');
+
+      useProjectStore.getState().answerPlanQuestion('q1', '  Yes, it renders markdown.  ');
+
+      const state = useProjectStore.getState();
+      expect(state.planQuestions).toHaveLength(0);
+
+      const target = state.nodes.find((n) => n.id === 'node_2')!;
+      expect(target.data.planQa).toHaveLength(1);
+      expect(target.data.planQa![0].q).toBe('Does this render markdown itself?');
+      expect(target.data.planQa![0].a).toBe('Yes, it renders markdown.'); // trimmed
+
+      // The node the question was NOT about is untouched: answers are attached,
+      // not dumped on the first node or on the project.
+      const other = state.nodes.find((n) => n.id === 'node_1')!;
+      expect(other.data.planQa).toBeUndefined();
+    });
+
+    it('files a design-wide question on the seed node rather than losing it', () => {
+      useProjectStore.getState().addNode(makeNode('node_1', 'logic', 'Notes Core'));
+      useProjectStore.getState().setPlanSeedId('node_1');
+      askNode(null, null, 'Should this ship as a single window or multi-document?');
+
+      useProjectStore.getState().answerPlanQuestion('q1', 'Single window to start.');
+
+      const seed = useProjectStore.getState().nodes.find((n) => n.id === 'node_1')!;
+      expect(seed.data.planQa).toHaveLength(1);
+      expect(seed.data.planQa![0].a).toBe('Single window to start.');
+    });
+
+    it('ignores an empty answer instead of writing a blank one', () => {
+      useProjectStore.getState().addNode(makeNode('node_1', 'logic', 'Notes Core'));
+      askNode('node_1', 'Notes Core', 'Anything?');
+
+      useProjectStore.getState().answerPlanQuestion('q1', '   ');
+
+      const state = useProjectStore.getState();
+      expect(state.planQuestions).toHaveLength(1); // still open
+      expect(state.nodes[0].data.planQa).toBeUndefined();
+    });
+
+    it('appends to answers already on the node', () => {
+      const node = makeNode('node_1', 'logic', 'Notes Core');
+      node.data.planQa = [{ q: 'First?', a: 'One.', at: '2026-09-15T01:00:00.000Z' }];
+      useProjectStore.getState().addNode(node);
+      askNode('node_1', 'Notes Core', 'Second?');
+
+      useProjectStore.getState().answerPlanQuestion('q1', 'Two.');
+
+      expect(useProjectStore.getState().nodes[0].data.planQa).toHaveLength(2);
+      expect(useProjectStore.getState().nodes[0].data.planQa![1].a).toBe('Two.');
+    });
+
+    it('dismissPlanQuestion closes a question without attaching anything', () => {
+      useProjectStore.getState().addNode(makeNode('node_1', 'logic', 'Notes Core'));
+      askNode('node_1', 'Notes Core', 'Never mind?');
+
+      useProjectStore.getState().dismissPlanQuestion('q1');
+
+      const state = useProjectStore.getState();
+      expect(state.planQuestions).toHaveLength(0);
+      expect(state.nodes[0].data.planQa).toBeUndefined();
+    });
+
+    it('survives a reload of the design it was answered in', () => {
+      // The full loop: answer on the canvas → saved → reopened → still there.
+      useProjectStore.getState().loadPlanDesign({
+        projectName: 'Loop',
+        goal: 'g',
+        nodes: [{ id: 'node_1', type: 'logic', label: 'Notes Core', isMaster: true }],
+        edges: [],
+      });
+      useProjectStore.getState().setPlanQuestions([
+        { id: 'q1', text: 'Who owns the file?', nodeId: 'node_1', nodeLabel: 'Notes Core', at: 't' },
+      ]);
+      useProjectStore.getState().answerPlanQuestion('q1', 'The store does.');
+
+      const saved = useProjectStore.getState().nodes.map((n) => ({
+        id: n.id,
+        type: (n.data as any).type || n.type,
+        label: n.data.label,
+        qa: (n.data as any).planQa || [],
+        isMaster: true,
+      }));
+
+      useProjectStore.getState().clearProject();
+      useProjectStore.getState().loadPlanDesign({ projectName: 'Loop', goal: 'g', nodes: saved as any, edges: [] });
+
+      const back = useProjectStore.getState().nodes[0];
+      expect(back.data.planQa).toHaveLength(1);
+      expect(back.data.planQa![0].a).toBe('The store does.');
+    });
+  });
 });

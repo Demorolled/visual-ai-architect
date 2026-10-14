@@ -398,6 +398,61 @@ export function labelToFileName(label: string): string {
 }
 
 /**
+ * The PascalCase type name a node label implies (`budget-store` -> `BudgetStore`).
+ *
+ * Only a heuristic, and deliberately used as one: the point is to tell the
+ * model which CONCEPT a sibling already owns, not to predict its identifiers.
+ */
+export function nodeTypeStem(label: string): string {
+  const base = stripLabelExtension(label || '').name;
+  return base
+    .split(/[^A-Za-z0-9]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join('');
+}
+
+/**
+ * The graph-free TYPE OWNERSHIP block injected into every per-node prompt.
+ *
+ * A duplicate class across nodes is the #1 generation-quality build failure
+ * (measured: `TemperatureLog` declared by both `cli.swift` and `stats.swift`;
+ * `BudgetStore`/`BudgetEntry` declared twice in the C# budget app). It happens
+ * because each node is generated independently and, on a build with no wiring
+ * graph, NOTHING says which node owns the app's shared domain types. The
+ * blueprint path's `contractContext` covers this only when the ownership can be
+ * derived from a wiring edge (`blueprint/bible.ts`), and a canvas build has no
+ * edges at all — so this block states the rule directly: exactly one file owns
+ * each domain type, and a sibling's concept is never redeclared.
+ *
+ * Emitted for every project with at least two code nodes; a single-file app has
+ * nothing to collide with, so its prompt stays byte-identical.
+ */
+export function buildTypeOwnershipSection(
+  nodeLabel: string,
+  siblings: Array<{ label: string; description?: string }>,
+): string {
+  if (siblings.length === 0) return '';
+  const stem = nodeTypeStem(nodeLabel);
+  const lines: string[] = [];
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('TYPE OWNERSHIP (MANDATORY)');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('Every domain type in this app has EXACTLY ONE owner file. A class/struct/record/interface/enum declared in two files is a redeclaration error and fails the build.');
+  lines.push(`THIS FILE ("${nodeLabel}") owns the types that carry ITS OWN responsibility${stem ? ` — its own domain type is named like \`${stem}\`` : ''}. Declare those here, once, and export them.`);
+  lines.push('These sibling nodes own THEIR concepts — their types are NOT yours:');
+  for (const s of siblings.slice(0, 20)) {
+    const sibStem = nodeTypeStem(s.label);
+    const desc = String(s.description || '').replace(/\s+/g, ' ').trim().slice(0, 70);
+    lines.push(`  - ${s.label}${sibStem ? ` — owns types named like \`${sibStem}*\`` : ''}${desc ? ` (${desc})` : ''}`);
+  }
+  lines.push('BEFORE you declare any type: if the concept belongs to a sibling above (a store, a record, a stats/log type), use THAT sibling\'s exported type instead of writing your own — add an import/using only if this language needs one. NEVER declare a type whose definition already exists in a sibling file.');
+  lines.push('If no sibling owns the concept, declare it in exactly ONE file — this one — and export it so siblings reuse it.');
+  lines.push('Do NOT declare the program entry point (main/Main) — only one file in the app may define it.');
+  return `\n\n${lines.join('\n')}`;
+}
+
+/**
  * Sanitize a label into a valid export/function name (camelCase).
  */
 function labelToExportName(label: string): string {
@@ -3594,6 +3649,17 @@ Generate ONLY ${language} syntax — do NOT use ${extOverride} syntax.`
       ? `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMODULE CONTRACT (MANDATORY — REQUIRED EXPORTS)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${contractStub}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
       : '';
 
+    // ── Type ownership (graph-free prevention) ──
+    // The duplicate-class defect this guards against (one shared domain type
+    // declared by two nodes) is only half fixed by resolving it after the fact:
+    // stating the rule up front stops it being generated. Emitted whether or
+    // not a MODULE CONTRACT exists — the contract's own ownership rule needs a
+    // wiring edge, and a canvas build has none.
+    const ownershipSiblings = (project.nodes || [])
+      .filter((n: any) => n.type !== 'master' && (n.data?.label || n.id) !== nodeLabel)
+      .map((n: any) => ({ label: n.data?.label || n.id, description: String(n.data?.description || '') }));
+    const ownershipSection = buildTypeOwnershipSection(nodeLabel, ownershipSiblings);
+
     // ── Full-picture context (the whole scaffold, not just this node's deps) ──
     // Per-node prompts only showed the node's DIRECT dependencies, so the model
     // wrote each file without knowing the app it belongs to (the 14B's
@@ -3645,7 +3711,7 @@ ${node.data.description || 'No description provided'}
 NODE TYPE: ${node.type || 'logic'}
 PROJECT: ${project.name}
 TARGET OS: ${project.targetOS}
-${scaleSection}${blueprintSection}${contractSection}${pictureSection}
+${scaleSection}${blueprintSection}${contractSection}${ownershipSection}${pictureSection}
 ${depContext}${semanticSection}${crossTreeSection}
 ${guiContext}${extClarification}${languageHint}${clientOnlySection}${fixSection}
 

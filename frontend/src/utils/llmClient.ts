@@ -68,7 +68,7 @@ export async function callLlm(
 export async function callLlmChat(
   messages: LlmMessage[],
   system?: string,
-  options?: { maxTokens?: number; signal?: AbortSignal }
+  options?: { maxTokens?: number; signal?: AbortSignal; provider?: 'primary' | 'reasoning' }
 ): Promise<string> {
   // 2048 (not 1024): the tuned model answers build requests with blueprint
   // JSON plans that routinely exceed 1k tokens — at 1024 they got truncated
@@ -87,6 +87,7 @@ export async function callLlmChat(
         system: sys,
         maxTokens,
         timeZone: browserTimeZone(),
+        ...(options?.provider ? { provider: options.provider } : {}),
       }),
       signal: signal || AbortSignal.timeout(120000),
     });

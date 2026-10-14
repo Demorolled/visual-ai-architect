@@ -17,6 +17,8 @@ import {
   swiftNoArgFuncs,
   kotlinTopLevelFuncs,
   planModuleWiring,
+  collectRuntimeDependencies,
+  packageNameFromSpecifier,
 } from './perFileScaffolder.js';
 import type { GeneratedFile } from '../layers/fileGenerator.js';
 
@@ -931,5 +933,123 @@ describe('C#/Kotlin nodes that own the entry point replace the scaffold’s own'
     expect(fs.existsSync(path.join(res.outputPath, 'Main.kt'))).toBe(false);
     expect(fs.readFileSync(path.join(res.outputPath, 'Makefile'), 'utf-8'))
       .toContain('SRCS := $(wildcard *.kt)');
+  });
+});
+
+// ─── Runtime dependency manifest ───────────────────────────────────────────
+// Regression guard for the shipped `dependencies: {}`: the export's
+// package.json must declare what the generated code imports, pinned to the
+// version installed in this repo, so a COPY of the export installs and runs
+// somewhere else. In-repo the imports resolved up the tree, which is why the
+// empty manifest passed every gate until the export was moved.
+describe('collectRuntimeDependencies', () => {
+  const mkFile = (fileName: string, code: string): GeneratedFile => ({
+    fileName, language: 'typescript', code, nodeId: 'n1', nodeLabel: 'n1',
+    dependencies: [], exports: [], errors: [], validated: true,
+  });
+
+  /** Express as installed in this repo — so the assertion cannot go stale. */
+  const installedExpress = (): string => {
+    const candidates = [
+      path.resolve(process.cwd(), 'node_modules', 'express', 'package.json'),
+      path.resolve(process.cwd(), '..', 'node_modules', 'express', 'package.json'),
+    ];
+    for (const c of candidates) {
+      if (fs.existsSync(c)) return JSON.parse(fs.readFileSync(c, 'utf-8')).version;
+    }
+    throw new Error(`express not found in node_modules (looked at ${candidates.join(', ')})`);
+  };
+
+  it('declares third-party imports, skips relative/builtin/node: specifiers', () => {
+    const deps = collectRuntimeDependencies([mkFile('app.ts', [
+      "import express from 'express';",
+      "import { readFileSync } from 'node:fs';",
+      "import * as path from 'path';",
+      "import { helper } from './helper';",
+      "import type { X } from '../types';",
+      "const y = require('dotenv');",
+    ].join('\n'))]);
+    const keys = Object.keys(deps);
+    for (const yes of ['express', 'dotenv']) expect(keys).toContain(yes);
+    for (const no of ['fs', 'node:fs', 'path', './helper', '../types']) {
+      expect(keys).not.toContain(no);
+    }
+  });
+
+  it('pins each package to the version installed in this repo', () => {
+    const deps = collectRuntimeDependencies([
+      mkFile('app.ts', "import express from 'express';"),
+    ]);
+    expect(deps.express).toBe(`^${installedExpress()}`);
+  });
+
+  it('skips packages that are not installed here (the phantom-module class)', () => {
+    const deps = collectRuntimeDependencies([
+      mkFile('app.ts', "import { z } from 'totally-uninstalled-pkg-xyz';"),
+    ]);
+    expect(deps).toEqual({});
+  });
+
+  it('collapses deep and scoped specifiers to the package name', () => {
+    expect(packageNameFromSpecifier('lodash/fp/get')).toBe('lodash');
+    expect(packageNameFromSpecifier('@scope/pkg/sub/path')).toBe('@scope/pkg');
+    expect(packageNameFromSpecifier('@scope')).toBeNull();
+    expect(packageNameFromSpecifier('node:fs')).toBeNull();
+    expect(packageNameFromSpecifier('./x')).toBeNull();
+    expect(packageNameFromSpecifier('/abs/x')).toBeNull();
+    expect(packageNameFromSpecifier('events')).toBeNull();
+  });
+
+  it('is sorted and de-duplicated across files', () => {
+    const deps = collectRuntimeDependencies([
+      mkFile('a.ts', "import express from 'express';\nimport chalk from 'chalk';"),
+      mkFile('b.ts', "import express from 'express';"),
+    ]);
+    expect(Object.keys(deps)).toEqual([...Object.keys(deps)].sort());
+    expect(Object.keys(deps).filter((k) => k === 'express')).toHaveLength(1);
+  });
+
+  it('ignores non-JS/TS files', () => {
+    const deps = collectRuntimeDependencies([
+      mkFile('README.md', "import express from 'express';"),
+    ]);
+    expect(deps).toEqual({});
+  });
+});
+
+// ─── The exported project's own `npm test` ─────────────────────────────────
+// Regression guard for the hard-coded `echo "No tests configured"`: the export
+// shipped tests it could not run, and `npm test` reported success without
+// executing anything.
+describe('generated package.json test script', () => {
+  const nodeFile: GeneratedFile = {
+    fileName: 'index.ts', language: 'typescript', code: 'export const x = 1;\n',
+    nodeId: 'n1', nodeLabel: 'n1', dependencies: [], exports: [], errors: [], validated: true,
+  };
+  // Flat name: perFileScaffolder writes each node file directly into its node
+  // directory, so a nested `tests/...` name is not what this path produces.
+  const testFile: GeneratedFile = {
+    fileName: 'app.test.ts', language: 'typescript', code: 'export {};\n',
+    nodeId: 'n2', nodeLabel: 'n2', dependencies: [], exports: [], errors: [], validated: true,
+  };
+
+  const scaffoldPkg = async (files: GeneratedFile[], name: string) => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pkgtest-'));
+    const res = await scaffolder.scaffold({
+      projectName: name, targetOS: 'linux', files, nodes: [], edges: [], outputDir: dir,
+    });
+    return JSON.parse(fs.readFileSync(path.join(res.outputPath, 'package.json'), 'utf-8'));
+  };
+
+  it('runs vitest, and depends on it, when the export ships tests', async () => {
+    const pkg = await scaffoldPkg([nodeFile, testFile], 'export with tests');
+    expect(pkg.scripts.test).toBe('vitest run');
+    expect(pkg.devDependencies.vitest).toMatch(/^\^\d/);
+  });
+
+  it('claims nothing when the export has no tests', async () => {
+    const pkg = await scaffoldPkg([nodeFile], 'export without tests');
+    expect(pkg.scripts.test).toContain('No tests configured');
+    expect(pkg.devDependencies.vitest).toBeUndefined();
   });
 });

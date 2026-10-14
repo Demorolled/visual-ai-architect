@@ -5,6 +5,13 @@ import Canvas3D, { resetCameraView, panCamera, centerOnNodes } from './Canvas3D'
 import type { UIDragData } from './Canvas3D';
 import NodeDetailOverlay from './NodeDetailOverlay';
 import NodeCodeEditor from './NodeCodeEditor';
+import NodeSetupDialog, { NodeSetupResult } from './NodeSetupDialog';
+import ConnectNodesDialog from './ConnectNodesDialog';
+import PlanLibraryDialog from './PlanLibraryDialog';
+import PlanCoworkerPanel from './PlanCoworkerPanel';
+import PlanResumeBanner from './PlanResumeBanner';
+import { broadcastReasoningMessage } from '../utils/reasoningSync';
+import { api } from '../api/client';
 import { useProjectStore, getNextNodeId } from '../store/projectStore';
 import { autoLearn } from '../utils/autoLearn';
 import { userProfile } from '../utils/userProfile';
@@ -12,27 +19,80 @@ import './Canvas.css';
 
 const POST_GEN_STEPS: WizardStep[] = ['review', 'saving', 'complete'];
 
-const typeColors: Record<string, string> = {
-  master: '#f59e0b',
-  input: '#4ade80',
-  output: '#f87171',
-  logic: '#60a5fa',
-  api: '#a78bfa',
-  database: '#fbbf24',
-  ui: '#f472b6',
-  'ui-functions': '#f472b6',
-  'gui-layout': '#00d9ff',
-};
+// (The per-type colour map that used to live here moved into the setup window's
+// type badge; the inline prompt it styled is gone.)
 
 export default function Canvas() {
   const store = useProjectStore();
-  const { addNode, setSelectedNode, updateNodePosition, targetOS, wizardStep } = store;
+  const {
+    addNode, setSelectedNode, updateNodePosition, targetOS, wizardStep,
+    planMode, planSeedId, setPlanSeedId, setUserGoal,
+  } = store;
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [pendingNode, setPendingNode] = useState<{ node: { id: string; type: NodeType; x: number; y: number }; index: number } | null>(null);
   const [nodeName, setNodeName] = useState('');
   const [nodeDesc, setNodeDesc] = useState('');
   const { canUndo, canRedo, undo, redo } = useProjectStore();
+
+  // ── Plan-mode manual wiring ──
+  // Big Plan Mode's "wirring link": the user picks the two nodes themselves
+  // rather than relying on auto-detected connections.
+  const [wiringOpen, setWiringOpen] = useState(false);
+  // Reopening a saved design is part of the same plan surface, so the picker
+  // sits next to the wiring button rather than in a separate menu.
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  // Mapping the design to files/folders (no code). Kept as local UI state: the
+  // backend is the source of truth about whether a map exists (it refreshes it
+  // on every autosave once mapped).
+  const [mapping, setMapping] = useState(false);
+  const planCodeNodes = store.nodes.filter(n => n.type !== 'master');
+
+  const handleMapDesign = useCallback(async () => {
+    const st = useProjectStore.getState();
+    const design = st.nodes.filter(n => n.id !== 'master-node');
+    if (design.length === 0) return;
+    setMapping(true);
+    try {
+      const res = await api.mapPlan({
+        projectName: st.projectName,
+        goal: st.userGoal,
+        nodes: design.map(n => {
+          const d = n.data as any;
+          return {
+            id: n.id,
+            type: d?.type || n.type || 'logic',
+            label: d?.label || n.id,
+            description: d?.description || '',
+            language: d?.language,
+            isMaster: n.id === st.planSeedId,
+            qa: (d?.planQa || []).map((x: any) => ({ q: x.q, a: x.a })),
+          };
+        }),
+        edges: st.edges.map(e => ({ source: e.source, target: e.target, label: (e as any).label })),
+      });
+      const data = res.data || {};
+      const count = Array.isArray(data.files) ? data.files.length : 0;
+      const removed = Array.isArray(data.removed) ? data.removed.length : 0;
+      broadcastReasoningMessage({
+        role: 'ai',
+        text:
+          `🗺 Mapped the design to ${count} file${count === 1 ? '' : 's'} → data/plans/${data.dirName}/map/ ` +
+          `(wiring.md + map.json, no code generated)` +
+          (removed ? ` · dropped ${removed} file${removed === 1 ? '' : 's'} no longer in the design` : '') +
+          `. It now refreshes with every autosave.`,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err: any) {
+      broadcastReasoningMessage({
+        role: 'ai',
+        text: `⚠ Could not map the design: ${err?.response?.data?.error || err?.message || 'unknown error'}`,
+        timestamp: new Date().toISOString(),
+      });
+    } finally {
+      setMapping(false);
+    }
+  }, []);
 
   // ── Post-hoc rework state ──
   const [reworkNeeded, setReworkNeeded] = useState(false);
@@ -132,28 +192,40 @@ export default function Canvas() {
     }
   }, []);
 
-  const handleConfirmNode = useCallback(() => {
+  const handleConfirmNode = useCallback((result: NodeSetupResult) => {
     if (!pendingNode) return;
-    const name = nodeName.trim() || pendingNode.node.type;
+    const { type, language, name, purpose } = result;
+    // The first node placed while Plan Mode is on is the plan's seed: its
+    // purpose is the statement of intent, so it also becomes the goal the
+    // LLM co-pilot reasons from.
+    const isPlanSeed = planMode && !planSeedId;
     const newNode: Node = {
       id: getNextNodeId(),
-      type: pendingNode.node.type,
+      type,
       position: { x: pendingNode.node.x, y: pendingNode.node.y },
       data: {
         label: name,
-        description: nodeDesc,
-        type: pendingNode.node.type,
+        description: purpose,
+        type,
         status: 'pending' as NodeStatus,
-        language: (userProfile.get().preferences.preferredLanguages?.[0] || 'typescript') as CodeLanguage,
+        // Language comes from the setup window, NOT from
+        // `userProfile.preferences.preferredLanguages[0]`: the window is where
+        // the choice is actually made, and the profile only seeds it.
+        language,
+        ...(isPlanSeed && purpose ? { appGoal: purpose } : {}),
       },
     };
     addNode(newNode);
-    autoLearn.nodeCreated(name, pendingNode.node.type, 'typescript', nodeDesc);
+    autoLearn.nodeCreated(name, type, language, purpose);
+    if (isPlanSeed) {
+      setPlanSeedId(newNode.id);
+      if (purpose) setUserGoal(purpose);
+    }
     // Auto-open code editor for every newly placed node so the user can
     // read, write, or modify code immediately
     setCodeEditorNodeId(newNode.id);
     setPendingNode(null);
-  }, [pendingNode, nodeName, nodeDesc, addNode, setCodeEditorNodeId]);
+  }, [pendingNode, planMode, planSeedId, setPlanSeedId, setUserGoal, addNode, setCodeEditorNodeId]);
 
   const handleCancelNode = useCallback(() => {
     setPendingNode(null);
@@ -385,47 +457,73 @@ export default function Canvas() {
         </div>
       )}
 
-      {/* ── Pending Node Name Dialog ── */}
-      {pendingNode && (
-        <div className="node-name-overlay" onClick={handleCancelNode}>
-          <div className="node-name-dialog" onClick={(e) => e.stopPropagation()}>
-            <div className="node-name-header">
-              <span
-                className="node-name-type-badge"
-                style={{ background: typeColors[pendingNode.node.type] || '#666' }}
-              >
-                {pendingNode.node.type}
-              </span>
-              <span className="node-name-title">New Node</span>
-            </div>
-            <label className="node-name-field">
-              <span>Name</span>
-              <input
-                value={nodeName}
-                onChange={(e) => setNodeName(e.target.value)}
-                placeholder={`New ${pendingNode.node.type} node`}
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleConfirmNode();
-                  if (e.key === 'Escape') handleCancelNode();
-                }}
-              />
-            </label>
-            <label className="node-name-field">
-              <span>Description</span>
-              <textarea
-                value={nodeDesc}
-                onChange={(e) => setNodeDesc(e.target.value)}
-                placeholder="Describe what this node should do..."
-                rows={3}
-              />
-            </label>
-            <div className="node-name-actions">
-              <button className="nn-btn nn-cancel" onClick={handleCancelNode}>Cancel</button>
-              <button className="nn-btn nn-confirm" onClick={handleConfirmNode}>Add Node</button>
-            </div>
-          </div>
+      {/* ── Big Plan Mode: manual wiring link ── */}
+      {planMode && (
+        <div className="plan-wire-bar">
+          <span className="plan-wire-hint">
+            🧭 Design only — nothing is generated while you plan.
+          </span>
+          <button
+            className="plan-wire-btn"
+            onClick={() => setWiringOpen(true)}
+            disabled={planCodeNodes.length < 2}
+            title={
+              planCodeNodes.length < 2
+                ? 'Add a second node first — a link needs two nodes'
+                : 'Pick two nodes and describe how they connect'
+            }
+          >
+            🔗 Wire two nodes
+          </button>
+          <button
+            className="plan-wire-btn plan-wire-btn-secondary"
+            onClick={handleMapDesign}
+            disabled={mapping || planCodeNodes.length === 0}
+            title={
+              planCodeNodes.length === 0
+                ? 'Place the master node first — there is nothing to map yet'
+                : 'Map the design onto real files and folders — one per node, wired as a build would wire them. No code is generated.'
+            }
+          >
+            {mapping ? 'Mapping…' : '🗺 Map design to files'}
+          </button>
+          <button
+            className="plan-wire-btn plan-wire-btn-secondary"
+            onClick={() => setLibraryOpen(true)}
+            title="Reopen a design autosaved to data/plans and keep working on it"
+          >
+            📂 Open plan
+          </button>
         </div>
+      )}
+
+      {wiringOpen && (
+        <ConnectNodesDialog mode="plan" onClose={() => setWiringOpen(false)} />
+      )}
+
+      {libraryOpen && <PlanLibraryDialog onClose={() => setLibraryOpen(false)} />}
+
+      {/* ── Big Plan Mode: the co-worker's questions, answered against the
+             node each one is about ── */}
+      <PlanCoworkerPanel />
+
+      {/* ── An empty canvas that has a saved design on disk: offer to resume ── */}
+      <PlanResumeBanner />
+
+      {/* ── Node setup window: type + language + name + purpose ── */}
+      {pendingNode && (
+        <NodeSetupDialog
+          initialType={pendingNode.node.type}
+          mode={planMode ? 'plan' : 'build'}
+          isSeed={planMode && !planSeedId}
+          initialName={nodeName}
+          initialPurpose={nodeDesc}
+          defaultLanguage={
+            (userProfile.get().preferences.preferredLanguages?.[0] || 'typescript') as CodeLanguage
+          }
+          onConfirm={handleConfirmNode}
+          onCancel={handleCancelNode}
+        />
       )}
 
       {/* ── Node Code Editor ── */}

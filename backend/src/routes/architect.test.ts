@@ -6,6 +6,8 @@ import {
   buildFlowEdges,
   enforceEdgeDensity,
   validateArchitectRequest,
+  generateFallbackArchitecture,
+  generateWebFallbackArchitecture,
   ArchitectNode,
   ArchitectEdge,
 } from './architect.js';
@@ -50,7 +52,9 @@ describe('getArchitectPrompt', () => {
 
   it('returns a string containing the architect system prompt', () => {
     const prompt = getArchitectPrompt('Build a todo app', 'Manage tasks', 'linux');
-    expect(prompt).toContain('expert software architect');
+    // VACA owns the scaffold; this prompt only expresses a plan in VACA's
+    // format when VACA has no scaffold to hand over.
+    expect(prompt).toContain('scaffold assistant inside VACA');
     expect(prompt).toContain('nodes');
     expect(prompt).toContain('edges');
   });
@@ -368,6 +372,122 @@ describe('enforceEdgeDensity', () => {
       expect(partial.some(n => n.label === e.target)).toBe(true);
     }
   });
+
+  it('matches roles by node TYPE when labels are non-conventional (data-store.ts is the database layer)', () => {
+    const nodes: ArchitectNode[] = [
+      { label: 'main.ts', description: 'entry', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'data-store.ts', description: 'persistence', type: 'database', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'business.ts', description: 'logic', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'routes.ts', description: 'api', type: 'api', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'screen.ts', description: 'ui', type: 'ui', language: 'typescript', position: { x: 0, y: 0 } },
+    ];
+    const result = enforceEdgeDensity(nodes, []);
+    const keys = result.map(e => `${e.source}->${e.target}`);
+    expect(keys).toContain('data-store.ts->business.ts');
+    expect(keys).toContain('business.ts->routes.ts');
+    expect(keys).toContain('routes.ts->main.ts');
+  });
+
+  it('wires CLIENT-SIDE (UI-only) graphs so browser apps get dependencies (the 0-edge pomodoro failure class)', () => {
+    const nodes: ArchitectNode[] = [
+      { label: 'main.ts', description: 'Entry: boot the app', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'app.ts', description: 'Core timer logic', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'types.ts', description: 'Shared types', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'ui.ts', description: 'Renders the UI', type: 'ui', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'renderer.ts', description: 'DOM updates', type: 'ui', language: 'typescript', position: { x: 0, y: 0 } },
+    ];
+    const result = enforceEdgeDensity(nodes, []); // 0/5 density
+    const keys = result.map(e => `${e.source}->${e.target}`);
+    // main imports the app logic and the UI; ui imports app + types; app imports types
+    expect(keys).toContain('app.ts->main.ts');
+    expect(keys).toContain('ui.ts->main.ts');
+    expect(keys).toContain('types.ts->app.ts');
+    expect(keys).toContain('types.ts->ui.ts');
+  });
+
+  it('client-side enforcer finds the entry via type fallback even with non-conventional labels (screen.ts is the UI, app-shell.ts the entry)', () => {
+    const nodes: ArchitectNode[] = [
+      { label: 'app-shell.ts', description: 'entry', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'timer.ts', description: 'logic', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'screen.ts', description: 'ui', type: 'ui', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'utils.ts', description: 'helpers', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+    ];
+    const result = enforceEdgeDensity(nodes, []);
+    const keys = result.map(e => `${e.source}->${e.target}`);
+    // 'app' role type-fallback lands on timer.ts (logic, not entry-like)
+    expect(keys).toContain('timer.ts->app-shell.ts');
+    // 'ui' role type-fallback lands on screen.ts and connects it to the entry
+    expect(keys).toContain('screen.ts->app-shell.ts');
+  });
+
+  it('keeps the SERVER chain for layered graphs (client-side detection requires ui nodes and NO api/database)', () => {
+    const nodes: ArchitectNode[] = [
+      { label: 'main.ts', description: 'entry', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'service.ts', description: 'logic', type: 'logic', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'repository.ts', description: 'data', type: 'database', language: 'typescript', position: { x: 0, y: 0 } },
+      { label: 'handlers.ts', description: 'api', type: 'api', language: 'typescript', position: { x: 0, y: 0 } },
+    ];
+    const result = enforceEdgeDensity(nodes, []);
+    const keys = result.map(e => `${e.source}->${e.target}`);
+    expect(keys).toContain('repository.ts->service.ts');
+    expect(keys).toContain('service.ts->handlers.ts');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 4b2. VACA Brain Doctrine presence
+// ═══════════════════════════════════════════════════════════════════════════
+
+describe('VACA Brain Doctrine injection', () => {
+  it('is present in the architect system prompt', () => {
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('VACA BRAIN DOCTRINE');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('NEVER ship a stub');
+  });
+
+  it('is present in the compiled architect prompt for a real request', () => {
+    const prompt = getArchitectPrompt('a pomodoro timer web app', 'client-side', 'web');
+    expect(prompt).toContain('VACA BRAIN DOCTRINE');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 4b. Fallback architecture (domain-aware)
+// ═══════════════════════════════════════════════════════════════════════════
+
+describe('generateFallbackArchitecture', () => {
+  it('never plans a WEB goal as a Go server stack (the countdown-timer→main.go bug)', () => {
+    const result = generateFallbackArchitecture('a simple countdown timer web app', 'browser based', 'linux');
+    expect(result.nodes.length).toBeGreaterThan(0);
+    expect(result.nodes.every(n => n.language === 'typescript' || n.language === 'html' || n.language === 'css')).toBe(true);
+    expect(result.nodes.some(n => n.label.endsWith('.go'))).toBe(false);
+    expect(result.nodes.some(n => n.type === 'database')).toBe(false);
+    expect(result.nodes.some(n => n.type === 'api')).toBe(false);
+  });
+
+  it('plans a CLI tool as TypeScript, not Go', () => {
+    const result = generateFallbackArchitecture('a command line todo list manager', 'CLI', 'linux');
+    expect(result.nodes.some(n => n.language === 'go')).toBe(false);
+  });
+
+  it('keeps the native language for non-web linux goals', () => {
+    const result = generateFallbackArchitecture('a background service daemon', 'runs on a server', 'linux');
+    expect(result.nodes.length).toBeGreaterThan(0);
+    expect(result.nodes[0].language).toBe('go');
+  });
+});
+
+describe('generateWebFallbackArchitecture', () => {
+  it('produces a coherent browser file set with a real dependency chain', () => {
+    const result = generateWebFallbackArchitecture('a todo app');
+    const labels = result.nodes.map(n => n.label);
+    expect(labels).toContain('main.ts');
+    expect(labels).toContain('ui.ts');
+    expect(labels).toContain('index.html');
+    expect(labels).toContain('styles.css');
+    const sources = result.edges.map(e => e.source);
+    expect(sources).toContain('main.ts');
+    expect(result.nodes.every(n => n.language === 'typescript' || n.language === 'html' || n.language === 'css')).toBe(true);
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -498,12 +618,13 @@ describe('GET /api/architect/prompt', () => {
     expect(result.prompt).toBe(ARCHITECT_SYSTEM_PROMPT);
   });
 
-  it('prompt describes an expert software architect', () => {
-    expect(ARCHITECT_SYSTEM_PROMPT).toContain('expert software architect');
+  it('prompt positions the model as VACA\'s scaffold assistant, not the architect', () => {
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('scaffold assistant inside VACA');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('VACA itself owns the app\'s architecture');
   });
 
-  it('prompt mentions node architecture generation', () => {
-    expect(ARCHITECT_SYSTEM_PROMPT).toContain('Design COMPLETE applications');
+  it('prompt tells the model to follow VACA\'s scaffold rather than invent one', () => {
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('never replace it with your own design');
   });
 
   it('prompt lists all available node types', () => {
@@ -535,9 +656,11 @@ describe('GET /api/architect/prompt', () => {
   });
 
   it('prompt includes guidelines for node count based on complexity', () => {
-    expect(ARCHITECT_SYSTEM_PROMPT).toContain('8+ nodes');
-    expect(ARCHITECT_SYSTEM_PROMPT).toContain('12+ nodes');
-    expect(ARCHITECT_SYSTEM_PROMPT).toContain('18+ nodes');
-    expect(ARCHITECT_SYSTEM_PROMPT).toContain('25+ nodes');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('3+ nodes');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('6+ nodes');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('10+ nodes');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('16+ nodes');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('24+ nodes');
+    expect(ARCHITECT_SYSTEM_PROMPT).toContain('40+ nodes');
   });
 });

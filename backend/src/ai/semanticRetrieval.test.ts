@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
 import { embed, cosineSimilarity, semanticRetrieve, getSheetEmbeddings, EMBED_DIM } from './semanticRetrieval.js';
 
 describe('embed', () => {
@@ -27,7 +29,15 @@ describe('embed', () => {
 describe('getSheetEmbeddings', () => {
   it('embeds the library sheets (index excluded by design) at the expected dim', () => {
     const sheets = getSheetEmbeddings();
-    expect(sheets.length).toBe(43); // 44 files minus the meta index (always-included default; +1 = component manifest, +1 = three.js recipes)
+    // Durable expected count: computed from the LIVE library dir exactly the
+    // way loadSheets() does (all *.md minus the meta reference index), so
+    // adding/removing a sheet can never rot this test again (43 was hardcoded
+    // and went stale when the 44th/45th sheets were added).
+    const libDir = path.resolve(import.meta.dirname, '..', '..', '..', 'data', 'library');
+    const expected = fs.readdirSync(libDir)
+      .filter(f => f.endsWith('.md') && f !== '00-reference-index.md')
+      .length;
+    expect(sheets.length).toBe(expected);
     expect(sheets.every(s => s.vector.length === EMBED_DIM)).toBe(true);
     expect(sheets.every(s => !s.id.includes('00-reference-index'))).toBe(true);
   });

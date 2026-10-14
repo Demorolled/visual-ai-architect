@@ -463,8 +463,85 @@ input:focus, textarea:focus, select:focus {
     font-size: 10px;
   }
 
+  .node-seed-item .node-item-desc {
+    font-size: 10px;
+  }
+
   .placed-node-type {
     font-size: 8px;
     min-width: 28px;
   }
+}
+
+/* ── Plan Mode ─────────────────────────────────────────────────────────────
+   Plan Mode starts from a single seed node; the palette shows this card until
+   that node exists. It is the only draggable item in the list at that point, so
+   it is styled to read as a call to action rather than another type choice. */
+.node-seed-item {
+  border: 1px dashed var(--color-border);
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.12), transparent);
+  cursor: grab;
+}
+
+.node-seed-item .node-item-label {
+  font-weight: 600;
+}
+
+.node-seed-item .node-item-icon {
+  color: #60a5fa;
+}
+
+/* The seed node is marked in the On-Canvas list so it stays identifiable after
+   more nodes are added around it. */
+.placed-node-item.plan-seed {
+  border-left: 2px solid #60a5fa;
+}
+
+/* ── Big Plan Mode: manual wiring bar ── */
+/* Sits beside the rework bar's position, but on the opposite side, so the two
+   floating bars can never overlap. */
+.plan-wire-bar {
+  position: absolute;
+  bottom: 80px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.plan-wire-hint {
+  font-size: 11px;
+  color: #93c5fd;
+  max-width: 260px;
+}
+
+.plan-wire-btn {
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #60a5fa;
+  color: #0f0f1a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.plan-wire-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Reopening a saved design is a different kind of act than wiring (it replaces
+   the canvas), so it gets the quieter treatment of the two buttons. */
+.plan-wire-btn-secondary {
+  background: transparent;
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.5);
 }

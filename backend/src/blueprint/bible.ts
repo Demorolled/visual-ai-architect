@@ -60,6 +60,21 @@ export interface BlueprintBuildOptions {
   targetOS?: OSType;
   language?: string;
   scale?: AppScale;
+  /**
+   * Compact design-research context (web/GitHub/open-source references found
+   * for the goal). When present it is appended to the master node's
+   * blueprintContext, so FileGenerator fuses it into EVERY module prompt —
+   * the "search the web for the design" step actually feeding the build.
+   */
+  researchContext?: string;
+  /**
+   * Compact VACA-internal context (knowledge-store patterns + matching wiki
+   * sections for the goal). When present it is appended to the master node's
+   * blueprintContext alongside researchContext, so internal knowledge also
+   * reaches every module prompt — "consult your wiki/patterns" feeding the
+   * build, not just chat.
+   */
+  internalKnowledgeContext?: string;
 }
 
 // ─── Loading (cached, TTL) ────────────────────────────────────────────────
@@ -67,6 +82,38 @@ export interface BlueprintBuildOptions {
 let cachedBlueprints: Blueprint[] | null = null;
 let cachedAt = 0;
 const CACHE_TTL_MS = 30_000;
+
+/**
+ * Find the source file that defines `appType`, so a review-promoted scaffold
+ * variant can overwrite the LIVE blueprint in place (with a caller-side backup).
+ * Curated top-level blueprints win over generated/ copies of the same app_type.
+ * Returns an absolute path, or null when no file defines it.
+ */
+export function findBlueprintFile(appType: string): string | null {
+  if (!fs.existsSync(BLUEPRINTS_DIR)) return null;
+  let entries: string[] = [];
+  try {
+    entries = fs.readdirSync(BLUEPRINTS_DIR, { recursive: true }) as string[];
+  } catch {
+    return null;
+  }
+  const matches = entries
+    .filter((e) => typeof e === 'string' && e.endsWith('.json'))
+    .filter((e) => {
+      try {
+        return JSON.parse(fs.readFileSync(path.join(BLUEPRINTS_DIR, e), 'utf-8')).app_type === appType;
+      } catch {
+        return false;
+      }
+    })
+    .sort((a, b) => {
+      // Prefer top-level (fewer path separators), then alphabetical.
+      const sa = a.split(/[\\/]/).length;
+      const sb = b.split(/[\\/]/).length;
+      return sa - sb || a.localeCompare(b);
+    });
+  return matches.length ? path.join(BLUEPRINTS_DIR, matches[0]) : null;
+}
 
 /** Load every bible JSON file. Never throws — empty array when missing. */
 export function loadBlueprints(): Blueprint[] {
@@ -203,7 +250,7 @@ interface GenreFamily {
 const GENRE_FAMILIES: GenreFamily[] = [
   {
     test: /\b(space\s*shooter|shooter|asteroids?|space\s*invaders?|raider|galaga|galaxian|shmup|arcade|top.?down\s*shooter|space\s*ship)\b/i,
-    types: ['space_shooter', 'asteroids', 'asteroids_2', 'space_invaders', 'space_invaders_2'],
+    types: ['void_raider', 'space_shooter', 'asteroids', 'asteroids_2', 'space_invaders', 'space_invaders_2'],
   },
 ];
 
@@ -401,6 +448,101 @@ export function sanitizeWiring(wiring: BlueprintWiring[], appType: string): Blue
   return out;
 }
 
+// ─── Per-module contract stubs (deterministic from the wiring graph) ───────
+// The #1 measured failure mode across the 40-build ladder is "single-file-mode
+// leakage": a module references undeclared globals (isPlaying, seekBar,
+// currentTime) or invents sibling methods, because nothing in its prompt says
+// WHO imports it or that state must flow through parameters/returns. These
+// helpers derive, purely from the wiring graph, the required-exports contract
+// for ONE module and render it as a prompt block.
+//
+// Edge semantics (VACA): edge A → B : data means B depends on A — B imports A
+// and calls A's exports with `data`. So for module M:
+//   - importers(M)  = destinations of edges where M is the SOURCE (they
+//                     import FROM M and call M's exports)
+//   - dependencies(M) = sources of edges where M is the DESTINATION (M
+//                     imports from them)
+
+export interface ModuleContractEntry {
+  module: string;
+  data: string;
+}
+
+export interface ModuleContract {
+  moduleName: string;
+  /** Sibling modules that import FROM this module and call its exports. */
+  importers: ModuleContractEntry[];
+  /** Sibling modules this module imports FROM (call only their exports). */
+  dependencies: ModuleContractEntry[];
+}
+
+/** Derive one module's required-exports contract from the (sanitized) wiring. */
+export function deriveModuleContracts(
+  wiring: BlueprintWiring[],
+  moduleName: string
+): ModuleContract {
+  const importers = (wiring || [])
+    .filter(w => w.source_module === moduleName)
+    .map(w => ({ module: w.destination_module, data: w.data_passed || '' }));
+  const dependencies = (wiring || [])
+    .filter(w => w.destination_module === moduleName)
+    .map(w => ({ module: w.source_module, data: w.data_passed || '' }));
+  return { moduleName, importers, dependencies };
+}
+
+/**
+ * Render a module's contract as a compact, deterministic prompt block that
+ * states WHO imports this module (its required exports) and WHO it imports
+ * from (its only legal call targets), plus the anti-single-file-mode rules.
+ */
+export function buildContractStub(contract: ModuleContract): string {
+  const lines: string[] = [];
+  lines.push(`MODULE CONTRACT for "${contract.moduleName}" (deterministic from the wiring graph — MANDATORY):`);
+  if (contract.importers.length > 0) {
+    lines.push(
+      `  Modules that IMPORT FROM YOU and call your exports: ${contract.importers
+        .map(i => i.module + (i.data ? ` (${i.data})` : ''))
+        .join(', ')}`
+    );
+    lines.push(
+      '  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.'
+    );
+  } else {
+    lines.push('  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).');
+  }
+  if (contract.dependencies.length > 0) {
+    lines.push(
+      `  Modules YOU import from (call ONLY their declared exports): ${contract.dependencies
+        .map(d => d.module + (d.data ? ` (${d.data})` : ''))
+        .join(', ')}`
+    );
+    // Shared-type ownership for CONSUMERS: the data contract passed to this
+    // module (e.g. `data`, `state_and_events`) is defined by the DEPENDENCY
+    // module that owns it. Never redeclare a type your dependency exports.
+    lines.push(
+      '  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.'
+    );
+  }
+  if (contract.importers.length > 0) {
+    // Shared-type ownership for OWNERS: every data contract this module passes
+    // to an importer (e.g. `data`, `results`) is owned HERE — this module must
+    // DEFINE the type/interface and export it, or importers will reference an
+    // undeclared type (the todo_list `Task` failure: referenced by 2 files,
+    // declared by none).
+    lines.push(
+      `  → SHARED-TYPE OWNERSHIP: you own the data types you pass to ${contract.importers.map(i => i.module).join(', ')} — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.`
+    );
+  }
+  lines.push(
+    '  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. ' +
+    '(2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. ' +
+    '(3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). ' +
+    '(4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. ' +
+    '(5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.'
+  );
+  return lines.join('\n');
+}
+
 /**
  * Build the fused "blueprint constraints" section (the doc's Step 4 prompt
  * template) that is stored on the master node and injected into every
@@ -447,7 +589,13 @@ export function blueprintToProject(
   // Sanitize the wiring FIRST so node descriptions, the fused prompt text and
   // the edges all agree on the corrected data contracts.
   const wiring = sanitizeWiring(blueprint.wiring_graph, blueprint.app_type);
-  const blueprintContext = buildBlueprintContext(blueprint, language, wiring);
+  let blueprintContext = buildBlueprintContext(blueprint, language, wiring);
+  if (opts.researchContext) {
+    blueprintContext += `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDESIGN RESEARCH (live web search — use as reference for the design)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${opts.researchContext}`;
+  }
+  if (opts.internalKnowledgeContext) {
+    blueprintContext += `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nVACA INTERNAL KNOWLEDGE (patterns + wiki — consult before implementing)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${opts.internalKnowledgeContext}`;
+  }
 
   const nodes: DbNode[] = [];
   const edges: Edge[] = [];
@@ -475,7 +623,10 @@ export function blueprintToProject(
     },
   });
 
-  // One node per checklist module, laid out on a grid.
+  // One node per checklist module, laid out on a grid. Each node carries its
+  // own derived contract stub (required exports + legal imports) so the model
+  // never generates a module blind to who depends on it — the direct fix for
+  // the ladder's #1 failure mode (single-file-mode leakage).
   blueprint.architecture_checklist.forEach((moduleName, i) => {
     const id = `mod_${i}`;
     nodes.push({
@@ -487,6 +638,7 @@ export function blueprintToProject(
         description: moduleDescription(moduleName, blueprint, wiring),
         status: 'pending',
         language,
+        contractContext: buildContractStub(deriveModuleContracts(wiring, moduleName)),
       },
     });
   });

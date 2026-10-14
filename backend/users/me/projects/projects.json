@@ -1,93 +1,267 @@
 [
   {
-    "id": "proj_1786204322878_4ubi8ro",
-    "name": "stand alone tic tac toe game — ",
+    "id": "proj_1787074010537",
+    "name": "3d chess game",
     "targetOS": "linux",
     "nodes": [
       {
-        "id": "master-node",
+        "id": "master",
         "type": "master",
         "position": {
-          "x": 250,
-          "y": 50
+          "x": 0,
+          "y": 0
         },
         "data": {
-          "label": "App Blueprint",
-          "appGoal": "",
-          "appPurpose": "",
-          "selectedOS": "linux",
-          "status": "pending",
-          "scale": "large"
-        }
-      },
-      {
-        "id": "node_0",
-        "type": "logic",
-        "position": {
-          "x": 150,
-          "y": 280
-        },
-        "data": {
-          "label": "game",
-          "description": "Tic Tac Toe game loop: handles game state, turn order, input validation, move validation, and UI rendering",
-          "type": "logic",
+          "label": "chess_game_2 blueprint",
+          "description": "3d chess game",
           "status": "pending",
           "language": "typescript",
-          "appGoal": "stand alone tic tac toe game — ",
-          "appPurpose": ""
+          "appGoal": "3d chess game",
+          "appPurpose": "Chess Game — Play vs AI. Difficulty",
+          "selectedOS": "linux",
+          "scale": "medium",
+          "blueprintContext": "APP TYPE: chess_game_2\nAPP DESCRIPTION: Chess Game — Play vs AI. Difficulty\nTARGET STACK: frontend=React, backend=Node.js Express, database=SQLite\nSOURCE LANGUAGE: typescript\n\nARCHITECTURE CHECKLIST (the whole app is exactly these modules, each implemented in its own file):\n  - ui_screens\n  - core_engine\n  - input_handler\n  - data_store\n  - game_engine\n\nWIRING GRAPH (data contracts between sibling modules — use these names verbatim so files connect):\n  - core_engine → ui_screens : requests\n  - core_engine → input_handler : results\n  - input_handler → data_store : state_and_events\n  - data_store → game_engine : data\n\nRULE: You are generating ONE module of this app. Implement exactly the module named in THIS FILE'S MODULE below.\nDo NOT implement other checklist modules — they are separate files. Do NOT invent new modules.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDESIGN RESEARCH (live web search — use as reference for the design)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📋 Reference designs found from the web, GitHub, and open source alternatives:\n  • Best Open Source Chess Games 2026 - SourceForge\n    Many open source chess programs are available online, through either dedicated websites or app stores for popular platforms like iOS, Android, and Windows 10. Once you have downloaded the program, it&\n  • 3d-chess · GitHub Topics · GitHub\n    A simple (and not complete) 3D chess game using JavaScript and Three.js\n  • ⭐537 juliangarnier/3D-Hartwig-chess-set: 3D chess game done in HTML/CSS/JS\n  • ⭐507 pxvr-official/1: 無許諾配信 企業理念剽窃 動物の森収益化 大神ミオ権利者削除 戌神権利侵害発言 常闇トワ炎上 夜空メルストーカー被害 建築王サポーター放置 赤十字マーク 魔乃アロエ卒業 一つの中國支持声明 大空昴3Dライブ 無限延期清掃員職業差別 日清コラボ楽曲 musedash非公開 rog案件取り消し 壁画ライ\n  • godot (gaming): Your open-source game engine\n  • gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nVACA INTERNAL KNOWLEDGE (patterns + wiki — consult before implementing)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📗 MATCHING WIKI SECTIONS (modelVeronice.txt — platform knowledge, history, lessons):\n  • Section 10: TRAINING SYSTEM\n    10.1 LLM TRAINING APP (llm-training-app/) — LEGACY (superseded by 10.2 gui_trainer/)\n──────────────────────────────────────────────────────────────────────────────────\nFrontend:     HTML + CSS + JS (custom UI, no framework)\nBackend:      Python FastAPI\nEngine:       Custom engine.py + mindspace_api.\n  • Section 35: SESSION UPDATE — July 26, 2026: BATCH 3 FIXES — 5 REMAINING ISSUES RESOLVED\n    35.1 OVERVIEW\n──────────────\nAll 5 remaining open issues from section 30.6 were fixed:\n  1. chess-engine.html — Move history + undo + lastMove highlights + localStorage\n  2. paint-studio.html — Race condition in restoreFromData() → sequential loading\n  3. terminal-os.html — innerHTML += → createElem"
         }
       },
       {
-        "id": "node_1",
-        "type": "input",
+        "id": "mod_0",
+        "type": "ui",
         "position": {
-          "x": 370,
-          "y": 280
+          "x": 60,
+          "y": 120
         },
         "data": {
-          "label": "index",
-          "description": "Single self-contained GUI page (HTML + CSS + JS inline, no build step) that renders the complete app interface and wires it to the logic. This is what makes the app viewable in the browser preview — build the full UI here. STRICT RULES: (1) do NOT reference external files — no <script src=\"...\">, no <link href=\"...\">, no CSS or JS files; the preview iframe cannot load external files, so inline ALL CSS in a <style> tag and ALL JavaScript in a <script> tag directly in this file; (2) plain browser JavaScript only — no React, no TypeScript, no imports, no JSX, no build step; (3) include working inline code that actually renders the interface so the page is never blank.",
-          "type": "input",
-          "status": "pending",
-          "language": "html",
-          "appGoal": "stand alone tic tac toe game — ",
-          "appPurpose": ""
+          "label": "ui_screens",
+          "description": "Module \"ui_screens\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"ui_screens\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): core_engine (requests)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { CoreEngine } from '../core_engine/core_engine.ts';\n\nexport class UI {\n    private container: HTMLElement;\n    private coreEngine: CoreEngine;\n\n    constructor(container: HTMLElement) {\n        this.container = container;\n        this.coreEngine = new CoreEngine();\n    }\n\n    public render(): void {\n        this.container.innerHTML = `\n            <div class=\"row\" style=\"display:flex;gap:10px;align-items:center\">\n                <button id=\"newGameBtn\" class=\"btn\" onclick=\"newGame()\">🔄 New Game</button>\n                <button id=\"undoBtn\" class=\"btn\" onclick=\"undo()\">↩ Undo</button>\n                <label for=\"aiLevelSlider\">AI Level</label>\n                <input id=\"aiLevelSlider\" type=\"range\" min=\"1\" max=\"3\" value=\"2\" oninput=\"updateAILevel(this.value)\">\n            </div>\n            <div class=\"col\" style=\"display:flex;flex-direction:column;gap:10px\">\n                <label id=\"player1Status\" style=\"color:#fff\">Player 1 (White): Ready</label>\n                <label id=\"player2Status\" style=\"color:#fff\">Player 2 (Black): Ready</label>\n                <div id=\"boardDisplay\" style=\"width:400px;height:400px;background:#181818;border:1px solid #333;border-radius:8px\"></div>\n            </div>\n        `;\n\n        const newGameBtn = document.getElementById('newGameBtn') as HTMLButtonElement;\n        const undoBtn = document.getElementById('undoBtn') as HTMLButtonElement;\n        const aiLevelSlider = document.getElementById('aiLevelSlider') as HTMLInputElement;\n        const player1Status = document.getElementById('player1Status') as HTMLLabelElement;\n        const player2Status = document.getElementById('player2Status') as HTMLLabelElement;\n        const boardDisplay = document.getElementById('boardDisplay') as HTMLDivElement;\n\n        const updateAILevel = (value: string) => {\n            const level = parseInt(value, 10);\n            // Update AI difficulty level\n        };\n\n        const newGame = () => {\n            this.coreEngine.processMove('new_game');\n            player1Status.textContent = 'Player 1 (White): Ready';\n            player2Status.textContent = 'Player 2 (Black): Ready';\n            // Render new game board\n        };\n\n        const undo = () => {\n            this.coreEngine.processMove('undo');\n            // Undo last move\n        };\n\n        // Render initial board\n    }\n}"
+        }
+      },
+      {
+        "id": "mod_1",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "label": "core_engine",
+          "description": "Module \"core_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests); core_engine → input_handler (results).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"core_engine\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: ui_screens (requests), input_handler (results)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to ui_screens, input_handler — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { InputHandler } from '../input_handler/input_handler.ts';\nimport { GameEngine } from '../game_engine/game_engine.ts';\n\nexport class CoreEngine {\n    private inputHandler: InputHandler;\n    private gameEngine: GameEngine;\n\n    constructor() {\n        this.inputHandler = new InputHandler();\n        this.gameEngine = new GameEngine();\n    }\n\n    public processMove(move: string): string {\n        try {\n            const result = this.gameEngine.applyMove(move);\n            return result;\n        } catch (error) {\n            return `Error processing move: ${error.message}`;\n        }\n    }\n\n    public getGameState(): string {\n        try {\n            return this.gameEngine.getGameState();\n        } catch (error) {\n            return `Error getting game state: ${error.message}`;\n        }\n    }\n}"
+        }
+      },
+      {
+        "id": "mod_2",
+        "type": "input",
+        "position": {
+          "x": 700,
+          "y": 120
+        },
+        "data": {
+          "label": "input_handler",
+          "description": "Module \"input_handler\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → input_handler (results); input_handler → data_store (state_and_events).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"input_handler\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: data_store (state_and_events)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): core_engine (results)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to data_store — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { CoreEngine } from '../core-engine/core-engine.ts';\n\nexport class InputHandler {\n  private coreEngine: CoreEngine;\n\n  constructor() {\n    this.coreEngine = new CoreEngine();\n  }\n\n  public handleInput(input: string): string {\n    try {\n      const result = this.coreEngine.processMove(input);\n      return result;\n    } catch (error) {\n      return `Error processing input: ${error.message}`;\n    }\n  }\n\n  public getGameState(): string {\n    try {\n      return this.coreEngine.getGameState();\n    } catch (error) {\n      return `Error getting game state: ${error.message}`;\n    }\n  }\n}"
+        }
+      },
+      {
+        "id": "mod_3",
+        "type": "database",
+        "position": {
+          "x": 60,
+          "y": 340
+        },
+        "data": {
+          "label": "data_store",
+          "description": "Module \"data_store\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: input_handler → data_store (state_and_events); data_store → game_engine (data).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"data_store\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: game_engine (data)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): input_handler (state_and_events)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to game_engine — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { InputHandler } from '../input-handler/input-handler.ts';\n\nexport class DataStore {\n  private inputHandler: InputHandler;\n\n  constructor() {\n    this.inputHandler = new InputHandler();\n  }\n\n  public processData(input: string): string {\n    try {\n      const result = this.inputHandler.handleInput(input);\n      return result;\n    } catch (error) {\n      return `Error processing data: ${error.message}`;\n    }\n  }\n\n  public getGameState(): string {\n    try {\n      return this.inputHandler.getGameState();\n    } catch (error) {\n      return `Error getting game state: ${error.message}`;\n    }\n  }\n}"
+        }
+      },
+      {
+        "id": "mod_4",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 340
+        },
+        "data": {
+          "label": "game_engine",
+          "description": "Module \"game_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: data_store → game_engine (data).",
+          "status": "valid",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"game_engine\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): data_store (data)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux",
+          "generatedCode": "import { DataStore } from '../data-store/data-store.ts';\n\nexport class GameEngine {\n  private dataStore: DataStore;\n\n  constructor() {\n    this.dataStore = new DataStore();\n  }\n\n  public processInput(input: string): string {\n    try {\n      return this.dataStore.processData(input);\n    } catch (error) {\n      return `Error processing input: ${error.message}`;\n    }\n  }\n\n  public getGameState(): string {\n    try {\n      return this.dataStore.getGameState();\n    } catch (error) {\n      return `Error getting game state: ${error.message}`;\n    }\n  }\n}"
         }
       }
     ],
     "edges": [
       {
-        "id": "edge_node_1",
-        "source": "node_0",
-        "target": "node_1"
+        "id": "edge_0",
+        "source": "mod_1",
+        "target": "mod_0"
+      },
+      {
+        "id": "edge_1",
+        "source": "mod_1",
+        "target": "mod_2"
+      },
+      {
+        "id": "edge_2",
+        "source": "mod_2",
+        "target": "mod_3"
+      },
+      {
+        "id": "edge_3",
+        "source": "mod_3",
+        "target": "mod_4"
       }
     ],
-    "savedAt": "2026-08-08T15:52:02.878Z",
-    "version": 1
+    "savedAt": "2026-08-18T17:29:11.520Z",
+    "version": 2
   },
   {
-    "id": "proj_1786652759623_z3civfq",
-    "name": "stand alone tic tac toe game —",
+    "id": "proj_1787075039289",
+    "name": "3d chess game",
     "targetOS": "linux",
     "nodes": [
       {
-        "id": "master-node",
+        "id": "master",
         "type": "master",
         "position": {
-          "x": 250,
-          "y": 50
+          "x": 0,
+          "y": 0
         },
         "data": {
-          "label": "App Blueprint",
-          "appGoal": "",
-          "appPurpose": "",
+          "label": "chess_game_2 blueprint",
+          "description": "3d chess game",
+          "status": "pending",
+          "language": "typescript",
+          "appGoal": "3d chess game",
+          "appPurpose": "Chess Game — Play vs AI. Difficulty",
           "selectedOS": "linux",
-          "status": "pending"
+          "scale": "medium",
+          "blueprintContext": "APP TYPE: chess_game_2\nAPP DESCRIPTION: Chess Game — Play vs AI. Difficulty\nTARGET STACK: frontend=React, backend=Node.js Express, database=SQLite\nSOURCE LANGUAGE: typescript\n\nARCHITECTURE CHECKLIST (the whole app is exactly these modules, each implemented in its own file):\n  - ui_screens\n  - core_engine\n  - input_handler\n  - data_store\n  - game_engine\n\nWIRING GRAPH (data contracts between sibling modules — use these names verbatim so files connect):\n  - core_engine → ui_screens : requests\n  - core_engine → input_handler : results\n  - input_handler → data_store : state_and_events\n  - data_store → game_engine : data\n\nRULE: You are generating ONE module of this app. Implement exactly the module named in THIS FILE'S MODULE below.\nDo NOT implement other checklist modules — they are separate files. Do NOT invent new modules.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nDESIGN RESEARCH (live web search — use as reference for the design)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📋 Reference designs found from the web, GitHub, and open source alternatives:\n  • Best Open Source Chess Games 2026 - SourceForge\n    Many open source chess programs are available online, through either dedicated websites or app stores for popular platforms like iOS, Android, and Windows 10. Once you have downloaded the program, it&\n  • 3d-chess · GitHub Topics · GitHub\n    A simple (and not complete) 3D chess game using JavaScript and Three.js\n  • ⭐537 juliangarnier/3D-Hartwig-chess-set: 3D chess game done in HTML/CSS/JS\n  • ⭐507 pxvr-official/1: 無許諾配信 企業理念剽窃 動物の森収益化 大神ミオ権利者削除 戌神権利侵害発言 常闇トワ炎上 夜空メルストーカー被害 建築王サポーター放置 赤十字マーク 魔乃アロエ卒業 一つの中國支持声明 大空昴3Dライブ 無限延期清掃員職業差別 日清コラボ楽曲 musedash非公開 rog案件取り消し 壁画ライ\n  • godot (gaming): Your open-source game engine\n  • gdevelop (gaming): Free and easy game maker\n\nUse these as inspiration for designing the app architecture.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nVACA INTERNAL KNOWLEDGE (patterns + wiki — consult before implementing)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📗 MATCHING WIKI SECTIONS (modelVeronice.txt — platform knowledge, history, lessons):\n  • Section 10: TRAINING SYSTEM\n    10.1 LLM TRAINING APP (llm-training-app/) — LEGACY (superseded by 10.2 gui_trainer/)\n──────────────────────────────────────────────────────────────────────────────────\nFrontend:     HTML + CSS + JS (custom UI, no framework)\nBackend:      Python FastAPI\nEngine:       Custom engine.py + mindspace_api.\n  • Section 35: SESSION UPDATE — July 26, 2026: BATCH 3 FIXES — 5 REMAINING ISSUES RESOLVED\n    35.1 OVERVIEW\n──────────────\nAll 5 remaining open issues from section 30.6 were fixed:\n  1. chess-engine.html — Move history + undo + lastMove highlights + localStorage\n  2. paint-studio.html — Race condition in restoreFromData() → sequential loading\n  3. terminal-os.html — innerHTML += → createElem"
+        }
+      },
+      {
+        "id": "mod_0",
+        "type": "ui",
+        "position": {
+          "x": 60,
+          "y": 120
+        },
+        "data": {
+          "label": "ui_screens",
+          "description": "Module \"ui_screens\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"ui_screens\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): core_engine (requests)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_1",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "label": "core_engine",
+          "description": "Module \"core_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → ui_screens (requests); core_engine → input_handler (results).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"core_engine\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: ui_screens (requests), input_handler (results)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to ui_screens, input_handler — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_2",
+        "type": "input",
+        "position": {
+          "x": 700,
+          "y": 120
+        },
+        "data": {
+          "label": "input_handler",
+          "description": "Module \"input_handler\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: core_engine → input_handler (results); input_handler → data_store (state_and_events).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"input_handler\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: data_store (state_and_events)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): core_engine (results)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to data_store — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_3",
+        "type": "database",
+        "position": {
+          "x": 60,
+          "y": 340
+        },
+        "data": {
+          "label": "data_store",
+          "description": "Module \"data_store\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: input_handler → data_store (state_and_events); data_store → game_engine (data).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"data_store\" (deterministic from the wiring graph — MANDATORY):\n  Modules that IMPORT FROM YOU and call your exports: game_engine (data)\n  → You MUST export the functions/classes these modules call. All state flows INTO you through function parameters and OUT through return values.\n  Modules YOU import from (call ONLY their declared exports): input_handler (state_and_events)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  → SHARED-TYPE OWNERSHIP: you own the data types you pass to game_engine — define each such type/interface in THIS file and export it. Never reference a type you have not defined here or imported from a listed dependency.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
+        }
+      },
+      {
+        "id": "mod_4",
+        "type": "logic",
+        "position": {
+          "x": 380,
+          "y": 340
+        },
+        "data": {
+          "label": "game_engine",
+          "description": "Module \"game_engine\" of a chess_game_2 app. Implement this module's responsibility end-to-end — the rest of the app's modules are separate files. Data contracts: data_store → game_engine (data).",
+          "status": "pending",
+          "language": "typescript",
+          "contractContext": "MODULE CONTRACT for \"game_engine\" (deterministic from the wiring graph — MANDATORY):\n  No module imports from you — you are an entry/leaf. Still export a clean API (other files may be added later).\n  Modules YOU import from (call ONLY their declared exports): data_store (data)\n  → The data types of those contracts are OWNED by the modules listed above — use THEIR exported types, never redefine them.\n  RULES: (1) NEVER reference a variable/function/DOM element you have not declared or imported — no implicit globals, ever. (2) ALL state must be function parameters and return values — never module-scope mutable globals shared across files. (3) A non-UI module must NEVER touch the DOM (no document/window/getElementById/querySelector). (4) Importers use your exports BY NAME — choose clear, domain-meaningful export names and keep the SAME names other files reference. (5) A type referenced in a signature but defined nowhere is a compile error (TS2304) — if you reference a domain type, you either define it HERE (when you own the contract) or import it from its owner.",
+          "selectedOS": "linux"
         }
       }
     ],
-    "edges": [],
-    "savedAt": "2026-08-13T20:25:59.623Z",
+    "edges": [
+      {
+        "id": "edge_0",
+        "source": "mod_1",
+        "target": "mod_0"
+      },
+      {
+        "id": "edge_1",
+        "source": "mod_1",
+        "target": "mod_2"
+      },
+      {
+        "id": "edge_2",
+        "source": "mod_2",
+        "target": "mod_3"
+      },
+      {
+        "id": "edge_3",
+        "source": "mod_3",
+        "target": "mod_4"
+      }
+    ],
+    "savedAt": "2026-08-18T17:43:59.289Z",
     "version": 1
   }
 ]

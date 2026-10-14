@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const LLM_CONFIG_PATH = join(__dirname, '..', '..', 'llm-config.json');
 
 const DEFAULT_VISION_MODEL = 'vaca-vision-r3';
-const DEFAULT_VISION_BASE_URL = 'http://127.0.0.1:11434/v1';
+const DEFAULT_VISION_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://192.168.1.234:11434/v1';
 const DEFAULT_VISION_API_KEY = 'ollama';
 
 export interface DescribeImageResult {

@@ -17,8 +17,11 @@ import { detectSessionHistoryIntent } from '../utils/sessionHistory';
 import { detectWikiIntent } from '../utils/wikiIntent';
 import { detectTodoIntent } from '../utils/todoIntent';
 import { detectBuildIntent as detectBuildIntentFromText } from '../utils/buildIntent';
+import { detectExportIntent, suggestOutputDir } from '../utils/exportIntent';
+import { exportBuild, openExportedFolder } from '../utils/exportBuild';
 import VeronicaPrism from './VeronicaPrism';
 import MessageReactions from './MessageReactions';
+import SecondaryLlmChat from './SecondaryLlmChat';
 import './TerminalSection.css';
 
 /**
@@ -74,6 +77,22 @@ When the user asks to see the todo list / your todo list / the deep-scan tasks (
 • Mention it in ONE short sentence in your reply, e.g. "I've opened the todo list — 32 items open, including X P0 items."
 • NEVER claim the GUI preview / planned-interface mockup opened for a todo-list question. That preview is only for app build/preview requests. Stay truthful.
 • If the user asks to WRITE to the todo list ("add X to the todo list", "mark 2.1 done"), that is an update request — the window does NOT open; handle it conversationally.`;
+
+/**
+ * Injected into the full chat system prompt so the LLM never answers a
+ * build-to-disk / export request with the canned "click ⚡ Build This Now"
+ * line. The frontend normally drives that whole flow itself and short-circuits
+ * the model entirely (see maybeBuildAndExport); this rule covers the messages
+ * that still reach the model — e.g. a question about exporting, or an export
+ * ask with nothing built yet.
+ */
+const EXPORT_RULE = `
+[BUILD & EXPORT TO DISK — PLATFORM CAPABILITY — mention this naturally]
+When the user asks you to build an app AND write it out to their machine (export / compile it to work on Ubuntu, Windows or macOS / put it in a folder on the desktop / "save it to ~/Desktop/x"):
+• The platform runs that whole flow itself: the build generates the code, then the export writes the project out to disk and opens the folder. No button click is needed.
+• Say so in ONE short sentence, e.g. "Building it now — I'll write the project out and open the folder when it's done."
+• NEVER answer an export request with "click ⚡ Build This Now" or "click Export" — that is the OLD behaviour and it is wrong for this request.
+• If nothing has been generated yet and the user is only asking HOW exporting works, explain it briefly instead of claiming anything was built.`;
 
 const NEUTRAL_EMOTION: EmotionResult = {
   probabilities: {
@@ -220,6 +239,79 @@ function maybeAutoPreview(userText: string): void {
   }, 700);
 }
 
+/**
+ * One chat message can ask for the WHOLE thing — build the app AND write it out
+ * to disk ("take the design on the canvas, compile it to work on Ubuntu and
+ * export it out to desktop separate folder, named tic tac toe").
+ *
+ * This drives that end-to-end and returns the reply to show, or null when the
+ * message is not an export request. Two paths:
+ *   • A build was also asked for → open the build dialog pre-filled and
+ *     auto-started WITH the export request attached, so the build's own
+ *     completion triggers the export.
+ *   • The app is already generated and only the export was asked for → export
+ *     the code the user already has; never rebuild it.
+ *
+ * Either way nothing is left waiting on a ⚡ Build This Now / Export click.
+ */
+function maybeBuildAndExport(userText: string): string | null {
+  const exportIntent = detectExportIntent(userText);
+  if (!exportIntent) return null;
+
+  const st = useProjectStore.getState();
+  const buildIntent = detectBuildIntent(userText);
+  const hasCode = st.nodes.some(n => n.data?.generatedCode);
+
+  const folderName = exportIntent.folderName || st.projectName || st.userGoal || 'app';
+  const outputDir = suggestOutputDir(exportIntent);
+  const where = outputDir
+    ? `${outputDir}/${folderName.trim().replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`
+    : 'the default exports folder';
+
+  // Already generated, and the user only asked for it on disk — export what
+  // exists rather than rebuilding it (a rebuild would produce different code).
+  if (!buildIntent && hasCode) {
+    window.setTimeout(async () => {
+      const cur = useProjectStore.getState();
+      const res = await exportBuild({
+        projectId: cur.projectId,
+        appName: folderName,
+        targetOS: cur.targetOS,
+        outputDir,
+        nodes: cur.nodes,
+        edges: cur.edges,
+      });
+      if (res.success && res.outputPath) {
+        const opened = await openExportedFolder(res.outputPath);
+        broadcastReasoningMessage({
+          role: 'ai',
+          text: `📦 Exported to \`${res.outputPath}\` (${(res.files || []).length} files)${res.warning ? `\n⚠️ ${res.warning}` : ''}${opened ? '\n📂 Opened the folder.' : ''}`,
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        broadcastReasoningMessage({
+          role: 'ai',
+          text: `❌ Export failed: ${res.error || 'unknown error'}`,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }, 300);
+    return `📦 Exporting your existing build to \`${where}\`…`;
+  }
+
+  const goal = buildIntent?.goal || st.userGoal || st.projectName || '';
+  if (!goal.trim()) return null;
+
+  window.setTimeout(() => {
+    useProjectStore.getState().requestBlueprintBuild(goal, buildIntent?.purpose || '', {
+      outputDir,
+      folderName,
+    });
+  }, 400);
+
+  return `🏗️ On it — building **${goal}** and exporting it to \`${where}\`.\n\nI'll write the project out and open the folder when the build finishes.`;
+}
+
 const REASONING_STORAGE_KEY = 'reasoning-messages';
 const REASONING_SCALE_KEY = 'reasoning-build-scale';
 
@@ -323,6 +415,14 @@ const ReasoningPanel: React.FC = () => {
   const llmConnectionStatus = useLlmStore(s => s.connectionStatus);
   const llmLatency = useLlmStore(s => s.latency);
   const llmTestConnection = useLlmStore(s => s.testConnection);
+
+  // ── Dual chat ──
+  // When a reasoning role is assigned in Settings → LLM Connect, a 2nd LLM is
+  // connected. The chat window splits vertically: this (left) pane stays with
+  // the primary VACA model (we force provider 'primary' so the reasoning-role
+  // override never steals the replies), and the right pane is the 2nd LLM.
+  const reasoningRole = useLlmStore(s => s.roleAssignments?.reasoning);
+  const dualMode = !!reasoningRole;
 
   useEffect(() => {
     if (llmConnectionStatus === 'connected') {
@@ -908,7 +1008,7 @@ const ReasoningPanel: React.FC = () => {
             `  ${i + 1}. ${f.path} (${f.language}) — ${f.summary}`
           ).join('\n');
           const system = `You are helping the user build: "${pending.request}".\n\nPlanned files:\n${planFiles}\n\nWe asked the user these questions (they have NOT answered yet):\n${pending.questions.map((q: any, i: number) => `  ${i + 1}. ${q.question || q}`).join('\n')}\n\nThe user just asked a follow-up question instead of answering. Answer it helpfully and concisely (2-4 sentences), referencing the plan where relevant. Do NOT write any code yet — the plan is still awaiting their answers.`;
-          const reply = await callLlmChat([{ role: 'user', content: userText }], system, { maxTokens: 300 });
+          const reply = await callLlmChat([{ role: 'user', content: userText }], system, { maxTokens: 300, ...(dualMode ? { provider: 'primary' } : {}) });
           return { reply, isAction: false };
         } catch {
           return { reply: 'That looks like a question — go ahead and answer my earlier questions (or tell me to change the plan) and I will write the code.', isAction: true };
@@ -947,6 +1047,15 @@ const ReasoningPanel: React.FC = () => {
     maybeShowSessionHistory(userText);
     maybeShowWiki(userText);
     maybeShowTodo(userText);
+
+    // ── Build + export in one ask: run the whole build → export → open-folder
+    //    flow. MUST run before the auto-preview and the plain build paths, so
+    //    an export request is never answered with the canned "click ⚡ Build
+    //    This Now" line. ──
+    const exportReply = maybeBuildAndExport(userText);
+    if (exportReply) {
+      return { reply: exportReply, isAction: true };
+    }
 
     // ── Auto GUI preview: sensing a build request (or an explicit "show me a
     //    preview") opens the planned-interface mockup automatically when
@@ -1003,7 +1112,7 @@ const ReasoningPanel: React.FC = () => {
         const isShortQuery = userText.trim().length < 20;
         const system = isShortQuery
           ? `CRITICAL RULES (YOU MUST FOLLOW ALL):\n1. Respond in at most 1-2 sentences.\n2. For greetings like 'hi', 'sup', 'hello', 'hey', just say a brief greeting back.\n3. Do NOT generate articles, facts, dates, Wikipedia-style content, or any memorized text.\n4. Do NOT output a date like "Monday, January 1, 2000" or any date format.\n5. Do NOT start with a date or a Wikipedia-style introduction.\n6. Keep it short, conversational, and relevant to what was just said.\n7. If you are unsure how to respond, just say a simple greeting back.\n\nREMEMBER: You are a coding assistant bot, not a textbook. Do not output training data.`
-          : `${personalityPrompt}${modelFacts}${systemContext}${visionContext}${PREVIEW_MENTION_RULE}${SESSION_HISTORY_RULE}${WIKI_RULE}${TODO_RULE}`;
+          : `${personalityPrompt}${modelFacts}${systemContext}${visionContext}${PREVIEW_MENTION_RULE}${EXPORT_RULE}${SESSION_HISTORY_RULE}${WIKI_RULE}${TODO_RULE}`;
         const maxTk = isShortQuery ? 40 : 1024;
 
         // ── Build conversation messages as a proper message array ──
@@ -1077,8 +1186,9 @@ const ReasoningPanel: React.FC = () => {
         // Build enhanced system prompt 
         const enhancedSystem = system + systemPromptSuffix;
 
-        // Use new callLlmChat which sends messages with proper roles
-        const reply = await callLlmChat(llmMessages, enhancedSystem, { maxTokens: maxTk });
+        // Use new callLlmChat which sends messages with proper roles. In dual
+        // mode this left pane is pinned to the primary VACA model.
+        const reply = await callLlmChat(llmMessages, enhancedSystem, { maxTokens: maxTk, ...(dualMode ? { provider: 'primary' } : {}) });
         setConnected(true);
 
         return { reply, isAction: false };
@@ -1420,7 +1530,7 @@ const ReasoningPanel: React.FC = () => {
               <span className="thinking-dot" />
               <span className="thinking-label">{isProcessing ? 'Thinking' : 'Idle'}</span>
             </span>
-            <span className="terminal-title" style={{ color: '#4a9eff' }}>LLM 1 — Reasoning & Design</span>
+            <span className="terminal-title" style={{ color: '#4a9eff' }}>{dualMode ? 'LLM 1 — VACA (primary)' : 'LLM 1 — Reasoning & Design'}</span>
           </div>
           <div className="terminal-header-right">
             <button className="roadmap-reattach-btn" onClick={() => setReasoningDetached(false)}>
@@ -1444,7 +1554,7 @@ const ReasoningPanel: React.FC = () => {
             <span className="thinking-dot" />
             <span className="thinking-label">{isProcessing ? 'Thinking' : 'Idle'}</span>
           </span>
-          <span className="terminal-title" style={{ color: '#4a9eff' }}>LLM 1 — Reasoning & Design</span>
+          <span className="terminal-title" style={{ color: '#4a9eff' }}>{dualMode ? 'LLM 1 — VACA (primary)' : 'LLM 1 — Reasoning & Design'}</span>
         </div>
         <div className="terminal-header-right">
           <span
@@ -1533,6 +1643,8 @@ const ReasoningPanel: React.FC = () => {
           {toast.message}
         </div>
       )}
+      <div className="dual-chat">
+        <div className="dual-pane dual-pane-primary">
       <div className="terminal-messages">
         {speechUnsupported && (
           <div className="assistant-indicator" style={{ color: '#f87171' }}>
@@ -1889,6 +2001,13 @@ const ReasoningPanel: React.FC = () => {
         <button className="terminal-send-btn" onClick={handleSend} disabled={!input.trim() || isProcessing}>
           {isProcessing ? '...' : 'Send'}
         </button>
+      </div>
+        </div>
+        {dualMode && (
+          <div className="dual-pane dual-pane-secondary">
+            <SecondaryLlmChat />
+          </div>
+        )}
       </div>
     </div>
   );
