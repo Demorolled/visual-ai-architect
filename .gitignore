@@ -73,3 +73,17 @@ backend/.session_cache/
 training/unlearn/adapters-smoke/
 backend/--help
 backend/-h
+
+# ────────────────────────────────────────────────────────────────────────────
+# Per-machine config and RUNTIME STATE — never sync these.
+#
+# They legitimately differ per box (model inventory, live PIDs, experiment
+# state), and syncing one box's copy over the other's BREAKS it: llm-config.json
+# pinned to a model the other box does not have made every build fail with
+# `404 model 'vaca-r20-q4:latest' not found`. Cost a full reconciliation cycle
+# of hand-resolution. Keep them local; each box owns its own.
+# ────────────────────────────────────────────────────────────────────────────
+backend/llm-config.json
+scripts/dspark.pid
+scripts/.terminal-speak-seen.json
+data/micro-experiment-state.json
