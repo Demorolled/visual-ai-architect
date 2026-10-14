@@ -83,7 +83,16 @@ backend/-h
 # `404 model 'vaca-r20-q4:latest' not found`. Cost a full reconciliation cycle
 # of hand-resolution. Keep them local; each box owns its own.
 # ────────────────────────────────────────────────────────────────────────────
-backend/llm-config.json
-scripts/dspark.pid
+# Live PID files. A synced stale PID names a process the other box does not
+# have — `kill $(cat x.pid)` hits whatever PID it collided with instead.
+*.pid
+# Every llm-config variant: the file itself, its dated .bak snapshots, and the
+# copies living in subfolders. Each describes ONE box's model inventory.
+# (packaging/electron/llm-config.*.json is a SHIP-TIME template rewritten at
+# launch, so it stays tracked.)
+backend/llm-config.json*
+**/llm-config.json
+# State the services write themselves as they run.
 scripts/.terminal-speak-seen.json
 data/micro-experiment-state.json
+backend/knowledge/auto-learn/auto-learn-state.json
