@@ -51,6 +51,16 @@ cp -r "$ROOT/frontend/dist"         "$PAYLOAD/frontend/dist"
 for d in knowledge projects apps bible-reference scripts; do
   if [ -e "$ROOT/$d" ]; then cp -r "$ROOT/$d" "$PAYLOAD/$d"; fi
 done
+
+# `scripts/` is copied wholesale, and on a working checkout that also means this
+# machine's LIVE STATE: the PID files of the running services plus ~25 logs (one
+# of them 235 KB). Shipping them put one box's PIDs inside the app bundle, and
+# from there a tracked `payload/scripts/dspark.pid` into the release repo, where
+# every rebuild committed a new number. A stale PID is not inert — the repo's own
+# .gitignore explains why: `kill $(cat x.pid)` hits whatever process happens to
+# hold that number on the box that reads it. They are runner state, not code, and
+# the start scripts recreate them; never ship them.
+rm -f "$PAYLOAD"/scripts/*.pid "$PAYLOAD"/scripts/*.log "$PAYLOAD"/scripts/*-state.json
 for f in modelVeronice.txt tts-config.json config.yaml; do
   if [ -e "$ROOT/$f" ]; then cp "$ROOT/$f" "$PAYLOAD/$f"; fi
 done
