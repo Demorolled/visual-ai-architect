@@ -1,5 +1,68 @@
 import { describe, it, expect } from 'vitest';
-import { postProcessTsJsCode, buildImportStatement, verifyGeneratedCodeContracts, findLocalDeclaredNames, nodeTypeStem, buildTypeOwnershipSection } from '../layers/fileGenerator.js';
+import { postProcessTsJsCode, buildImportStatement, verifyGeneratedCodeContracts, findLocalDeclaredNames, nodeTypeStem, buildTypeOwnershipSection, resolveFileName, reconcileLabelExtension } from '../layers/fileGenerator.js';
+
+/**
+ * The plan stage labels nodes from the OS map (`linux → go`), so a Rust plan
+ * arrived with Go labels — "ui.go", "main.go", "service.go" — while the
+ * resolved paths were `.rs`. The resolved LANGUAGE is the single source of
+ * truth for the extension: a stale label must never name the file, or Rust
+ * source is written to a `.go` file and every extension-keyed consumer
+ * (`languageFromPath`, the non-TS gate's toolchain choice) picks Go.
+ */
+describe('resolveFileName — the resolved language wins over a stale label', () => {
+  it('renames a Go-labelled Rust node to .rs (the measured regression)', () => {
+    expect(resolveFileName('ui.go', 'rust').fileName).toBe('ui.rs');
+    expect(resolveFileName('main.go', 'rust').fileName).toBe('main.rs');
+    expect(resolveFileName('config.go', 'rust').fileName).toBe('config.rs');
+    expect(resolveFileName('types.go', 'rust').fileName).toBe('types.rs');
+    expect(resolveFileName('service.go', 'rust').fileName).toBe('service.rs');
+    expect(resolveFileName('tests.go', 'rust').fileName).toBe('tests.rs');
+  });
+
+  it('reports the extension it actually used', () => {
+    expect(resolveFileName('ui.go', 'rust').ext).toBe('rs');
+  });
+
+  it('leaves a label that already agrees with the language alone', () => {
+    expect(resolveFileName('ui.rs', 'rust').fileName).toBe('ui.rs');
+    expect(resolveFileName('auth.ts', 'typescript').fileName).toBe('auth.ts');
+  });
+
+  it('honours the label extension only when the node declares no language', () => {
+    expect(resolveFileName('server.py', undefined).fileName).toBe('server.py');
+    expect(resolveFileName('server.py', '').fileName).toBe('server.py');
+  });
+
+  it('falls back to .ts when neither language nor label extension is known', () => {
+    expect(resolveFileName('hasher', undefined).fileName).toBe('hasher.ts');
+    expect(resolveFileName('', undefined).fileName).toBe('untitled.ts');
+  });
+
+  it('never yields a .go filename for a non-Go language', () => {
+    for (const lang of ['rust', 'python', 'swift', 'kotlin', 'c', 'cpp', 'java', 'ruby']) {
+      expect(resolveFileName('main.go', lang).ext).not.toBe('go');
+      expect(resolveFileName('main.go', lang).fileName).not.toMatch(/\.go$/);
+    }
+  });
+});
+
+describe('reconcileLabelExtension — corrects the label shown to the user', () => {
+  it('swaps only the extension, preserving the rest of the label verbatim', () => {
+    expect(reconcileLabelExtension('ui.go', 'rust')).toBe('ui.rs');
+    expect(reconcileLabelExtension('MyComponent.go', 'rust')).toBe('MyComponent.rs');
+  });
+
+  it('is a no-op when the label already matches the language', () => {
+    expect(reconcileLabelExtension('ui.rs', 'rust')).toBe('ui.rs');
+    expect(reconcileLabelExtension('types.go', 'go')).toBe('types.go');
+  });
+
+  it('is a no-op when there is no language or no known label extension', () => {
+    expect(reconcileLabelExtension('ui.go', undefined)).toBe('ui.go');
+    expect(reconcileLabelExtension('ui.go', '')).toBe('ui.go');
+    expect(reconcileLabelExtension('hasher', 'rust')).toBe('hasher');
+  });
+});
 
 describe('postProcessTsJsCode (hardened import stripper)', () => {
   it('strips a standard leading import', () => {

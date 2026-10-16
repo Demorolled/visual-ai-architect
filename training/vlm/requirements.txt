@@ -1,0 +1,21 @@
+# VLM fine-tune stack for training/vlm/ (Qwen2.5-VL-7B QLoRA).
+#
+# Qwen2.5-VL needs a recent transformers (>=4.49) for the vision tower, and
+# unsloth/trl for the 4-bit LoRA path. install_into_app.py is not needed here —
+# this stack is only for training + export, not the desktop app.
+#
+#   pip install -r training/vlm/requirements.txt
+
+torch>=2.4.0
+transformers>=4.49.0
+trl>=0.12.0
+datasets>=2.14.0
+accelerate>=0.34.0
+peft>=0.13.0
+safetensors>=0.4.0
+Pillow>=10.0.0
+# kernels<=0.14.0 and huggingface-hub<1.0 pins mirror llm-training-app/requirements.txt
+kernels<=0.14.0
+huggingface-hub>=0.34.0,<1.0
+# unsloth last: it pins its own torch/trl builds.
+unsloth

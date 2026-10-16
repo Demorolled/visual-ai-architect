@@ -7,6 +7,8 @@ import path from 'path'
 import { scanDirectoryTree, readDirectoryFiles, processFiles, processFilesWithTools } from '../services/veronicaFileService.js'
 import { getIO } from '../socket/socketManager.js'
 import { PLAN_NODE_TYPES } from '../types.js'
+import { deepScanWithRea, type DeepScanOutcome } from '../reverse/deepScan.js'
+import { stageDroppedFiles, describeStagedSkips, type DroppedFileInput } from '../reverse/dropTarget.js'
 
 export const scannerRoutes = Router()
 
@@ -564,6 +566,116 @@ scannerRoutes.post('/deep', async (req, res) => {
     const message = err instanceof Error ? err.message : String(err)
     console.error('[scanner] Scan error:', message)
     res.status(500).json({ error: 'Deep scan failed.', details: message })
+  }
+})
+
+/**
+ * The name of the thing that was dropped, for a staged scan: the top-level folder
+ * every dropped file came from (`myapp/src/index.js` → `myapp`), or the file name
+ * when nothing was nested. Returns undefined when the paths disagree, so the scan
+ * falls back to its own identity rather than inventing one.
+ */
+function droppedRootName(files: DroppedFileInput[]): string | undefined {
+  const segments = (p: string) => p.replace(/\\/g, '/').split('/').filter(Boolean)
+  // A dropped folder names itself in the first path segment (`myapp/src/a.js`).
+  for (const f of files) {
+    const parts = segments(f.path)
+    if (parts.length > 1) return parts[0]
+  }
+  // Loose files: the file name is all there is.
+  const first = files.map((f) => segments(f.path).pop()).find(Boolean)
+  return first ? first.replace(/\.[^.]+$/, '') : undefined
+}
+
+// ─── Deep scan (REA): scan whatever was dropped, measured not invented ──────
+//
+// Two ways in, because a drop can arrive two ways:
+//   - `path`  — the artifact's REAL path (Electron hands it over). This is the
+//               only way a dropped APK/EXE/DLL can be scanned at all: those bytes
+//               never reach the browser, so REA must read them from disk.
+//   - `files` — the text a browser drop could read, staged into a temp directory.
+//
+// REA's own verdict and remediation are passed through instead of being replaced
+// by a generic failure, and a scan that cannot run STOPS with an install hint
+// rather than falling back to an LLM guess about an artifact we could not read.
+
+scannerRoutes.post('/deep-scan', async (req, res) => {
+  const body = (req.body ?? {}) as { path?: unknown; files?: unknown; name?: unknown }
+  const displayName = typeof body.name === 'string' && body.name.trim() ? body.name.trim() : undefined
+
+  const finish = (outcome: DeepScanOutcome, extra: Record<string, unknown>) => {
+    if (outcome.error) console.warn('[scanner] REA deep scan:', outcome.error)
+    res.json({
+      success: !outcome.error && !!outcome.architecture,
+      source: 'rea',
+      architecture: outcome.architecture,
+      evidence: outcome.evidence,
+      plan: outcome.plan,
+      error: outcome.error,
+      hint: outcome.hint,
+      ...extra,
+    })
+  }
+
+  try {
+    // 1. A real path — REA reads the artifact itself and nothing is copied.
+    if (typeof body.path === 'string' && body.path.trim()) {
+      const target = body.path.trim()
+      if (!path.isAbsolute(target)) {
+        res.status(400).json({ success: false, error: `Deep scan needs the artifact's real, absolute path (got "${target}").` })
+        return
+      }
+      finish(await deepScanWithRea(target, { displayName }), { mode: 'path' })
+      return
+    }
+
+    // 2. A staged copy of the dropped text.
+    if (!Array.isArray(body.files) || body.files.length === 0) {
+      res.status(400).json({ success: false, error: 'Drop a folder or a file (or pass its real path) to scan.' })
+      return
+    }
+
+    const incoming: DroppedFileInput[] = body.files
+      .filter((f): f is DroppedFileInput => !!f && typeof (f as DroppedFileInput).path === 'string')
+      .map((f) => ({ path: f.path, content: typeof f.content === 'string' ? f.content : '' }))
+    if (incoming.length === 0) {
+      res.status(400).json({ success: false, error: 'The dropped items had no readable paths.' })
+      return
+    }
+
+    const staged = await stageDroppedFiles(incoming)
+    try {
+      // A staged target lives in a temp directory, so the artifact's own name is
+      // gone (and `subject.name` would be `vaca-deep-scan-XXXX`). Name it after
+      // what was dropped instead: the folder the files came from.
+      const stagedDisplayName = displayName ?? droppedRootName(incoming)
+      const extra = {
+        mode: 'staged',
+        stagedFiles: staged.written,
+        stagedBytes: staged.bytes,
+        skippedFiles: staged.skipped.length,
+        skipped: describeStagedSkips(staged.skipped),
+      }
+      if (staged.written === 0) {
+        res.json({
+          success: false,
+          source: 'rea',
+          architecture: null,
+          error: 'Nothing could be staged — a browser drop only carries text, and every dropped file was unreadable or refused.',
+          hint: 'Drop the artifact in the desktop app so it can pass its real path, or drop a source folder.',
+          ...extra,
+        })
+        return
+      }
+      console.log(`[scanner] Staged ${staged.written} dropped file(s) for REA (${staged.skipped.length} skipped)`)
+      finish(await deepScanWithRea(staged.dir, { displayName: stagedDisplayName }), extra)
+    } finally {
+      await staged.cleanup()
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[scanner] Deep scan error:', message)
+    res.status(500).json({ success: false, error: 'Deep scan failed.', details: message })
   }
 })
 

@@ -31,7 +31,11 @@ ROOT = Path(__file__).resolve().parent.parent
 EXPORTS = ROOT / "backend" / "exports"
 TSC = ROOT / "node_modules" / ".bin" / "tsc"
 SIDECAR = "_training.json"
-DRAFTS = "_first-drafts"
+# The pipeline writes the first-draft snapshot into a DOT-prefixed directory so
+# that a plain `tsc -p .` over a delivered project cannot compile it (a draft is
+# usually broken — that is the point of the pair). `_first-drafts` is the old
+# name and is still read so exports captured before the rename keep working.
+DRAFTS_NAMES = (".first-drafts", "_first-drafts")
 OUT = ROOT / "training" / "dataset" / "orpo-pairs.jsonl"
 
 STUB_RE = re.compile(
@@ -81,8 +85,8 @@ def main():
 
     for d in sorted(EXPORTS.iterdir()):
         sidecar_path = d / SIDECAR
-        drafts = d / DRAFTS
-        if not d.is_dir() or not sidecar_path.exists() or not drafts.is_dir():
+        drafts = next((d / n for n in DRAFTS_NAMES if (d / n).is_dir()), None)
+        if not d.is_dir() or not sidecar_path.exists() or drafts is None:
             continue
         n_exports += 1
         try:

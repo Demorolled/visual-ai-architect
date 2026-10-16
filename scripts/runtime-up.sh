@@ -75,10 +75,22 @@ ensure_ollama() {
     return 0
   fi
   say "Starting Ollama..."
+  local kv="${OLLAMA_KV_CACHE_TYPE:-q8_0}"
   if command -v systemctl >/dev/null 2>&1 && systemctl is-active ollama >/dev/null 2>&1; then
     sudo systemctl start ollama 2>/dev/null || true
+    # `systemctl start` takes its environment from the UNIT, not from this
+    # shell, so the prefix below cannot reach a systemd-managed daemon. Say so
+    # rather than let the launch look configured when it is not.
+    warn "started via systemd — the unit decides the KV cache type, not this shell"
+    warn "if 'ollama ps' shows the model partly on the CPU: scripts/ollama-kv-cache.sh"
   fi
-  setsid -f ollama serve >"$ROOT/scripts/ollama.log" 2>&1 </dev/null || nohup ollama serve >"$ROOT/scripts/ollama.log" 2>&1 &
+  # OLLAMA_KV_CACHE_TYPE is read by `ollama serve` when it STARTS and there is no
+  # API to change it on a running daemon, so it can only be baked into a launch —
+  # which is exactly what this branch is. Measured at num_ctx=16384 on a 12 GB
+  # card: f16 costs 3072 MiB of KV (12 GB resident, 23% on CPU), q8_0 costs
+  # 1632 MiB (10 GB resident, 12% on CPU). Override with OLLAMA_KV_CACHE_TYPE=f16.
+  OLLAMA_KV_CACHE_TYPE="$kv" setsid -f ollama serve >"$ROOT/scripts/ollama.log" 2>&1 </dev/null \
+    || OLLAMA_KV_CACHE_TYPE="$kv" nohup ollama serve >"$ROOT/scripts/ollama.log" 2>&1 &
   for i in $(seq 1 20); do
     is_up "http://127.0.0.1:${OLLAMA_PORT}/api/tags" && { ok "Ollama up (~${i}s)"; return 0; }
     sleep 1

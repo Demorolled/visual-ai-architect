@@ -837,3 +837,370 @@ at any depth**, so it swallowed `backend/src/sandbox/` — real source, not scra
 Fix: deleted the `sandbox/` line and staged the 17 files (`git add backend/src/sandbox/`).
 Verified: no `sandbox` rule remains, `git check-ignore` no longer matches the source, and
 `git ls-files backend/src/sandbox/` now reports 17.
+
+---
+
+## The Go module name is resolved once, and the chat export writes its own go.mod
+
+All three defects below were reproduced on ONE delivered artifact —
+`backend/exports/a-multi-file-go-cli-that-converts-a-csv--1792128408934/`, which held
+`main.go` + `reader_input.go` + `output_formatter.go` and nothing else. `go build` on it:
+6 errors, 3 files, 2 causes.
+
+**1. One module name for the writer, the prompts, the gate and the rewriters.**
+`sanitizeGoModuleName` had nine call sites fed by two different inputs — six from `request`
+and two from `project.name` — plus a byte-identical private clone in `perFileScaffolder`
+(`this.sanitizeName`). Those strings are not equal for a real project, so the gate staged
+`module <request-slug>` while the writer emitted `<project-name-slug>/<dir>` imports, and
+`go build` rejected every sibling import. New `resolveGoModuleName(projectName, request)` in
+`sandbox/nonTsCompileGate.ts` is the ONE source of truth (project name wins; request is the
+chat path's fallback, since the chat path names nothing else). `runProjectGates` and
+`runNonTsGatesWithRepair` take the name as an explicit option and hand the SAME value to the
+staging go.mod, the sanitizer's import rewriter, the shipped-layout fold
+(`foldGoPackagePerDirectory`) and the repair prompt. Canvas passes
+`resolveGoModuleName(project.name)` — the value the scaffolder's own go.mod uses — and chat
+passes `resolveGoModuleName(null, request)`.
+
+**2. The chat export ships go.mod + start.sh.**
+`PerFileScaffolder.scaffold()` is the canvas path; the chat path writes its own files and
+never ran it, so a Go export had no `go.mod` at all and `go build` failed with
+`go.mod file not found` before it could report a single real error.
+`PerFileScaffolder.goProjectFiles(projectName)` exposes the scaffolder's own builder (no
+second copy of the startup script to drift) and `codePlanner.ensureExportProjectFiles` writes
+it beside `ensureExportManifest` — never overwriting a go.mod the model wrote itself,
+chmod +x on `start.sh`, and nothing at all for a non-Go export.
+
+**3. Missing and unused Go imports are repaired deterministically.**
+`fixGoImports(content, errors)` resolves both halves from the compiler's own output: it drops
+every spec named `"<path>" imported [as <alias>] and not used`, and adds the import for an
+`undefined: <name>` that is used as a qualifier. The name→path mapping is the part no
+reasoning recovers (`undefined: csv` needs `encoding/csv`); names with more than one sensible
+home (`rand`, `template`) are deliberately absent rather than guessed. It adds only when the
+name is used as `name.` and is not already imported, so it can never create the
+`"x" imported and not used` state the same pass removes.
+Related: `fixUnusedGoVariables` now blanks an unused `range` header variable
+(`for i, record :=` → `for _, record :=`) — a statement cannot be inserted inside a for
+header, so that defect had NO deterministic cure and survived every repair round.
+The two fixers run **variable-first**: the variable fixer locates its target by the line
+number in the compiler message, the import fixer never looks a line up — running the import
+fixer first shifted the range header onto a later line and the wrong line was edited. (Caught
+by the end-to-end replay, not by unit tests.)
+
+**Verified end-to-end on the real artifact** (go1.27.1), replaying the pipeline's own order
+(sanitize → fold → gate → fixers → re-gate):
+- before: 6 errors across 3 files. After: `go build ./...` **exit 0**, `go vet ./...`
+  **exit 0**, with **0 LLM repair rounds** spent.
+- the built binary runs: `./a-multi-file-go-cli-… in.csv` prints
+  `[{},{"age":"36","name":"ada"}]`, exit 0. (The leading `{}` is the model's own row/header
+  logic — a correctness defect, not a compile one; it still ships.)
+- the export now holds `go.mod`
+  (`module a-multi-file-go-cli-that-converts-a-csv-file-to-json`) and an executable `start.sh`.
+
+Tests: **+20** (nonTsRepair 15 — including the gate-uses-the-name-it-is-given pair that fails
+with the old request-derived name; perFileScaffolder 2; codePlanner 3). Suite: **77 files /
+1768 passed / 1 skipped**, `tsc` clean.
+
+Still open (not touched here): `microExperimenterService.ts` still derives its gate's module
+name on its own (`sanitizeGoModuleName("${lang} micro app")`) and passes no `goModuleName`
+to any writer prompt, so the micro-experimenter path can still gate a module the code does
+not import.
+
+---
+
+## The AI code reviewer is back on the generation route — gate-scoped (2026-10-16)
+
+`POST /api/generate/:projectId/files` used to run `codeReviewer.reviewAll` over EVERY generated
+file; it was switched off with the comment *"redundant and slow with the local 7B model"* and
+replaced by `const codeReview = null`. It runs again, narrowed to where the cost buys something
+(`backend/src/review/gateScopedReview.ts`, new):
+
+- **Non-TS builds only.** A TS/JS build keeps the static CodeScanner (Step 1) and tsc alone;
+  `isNonTsGateBuild` ignores the `hardcoded-secret` / `duplicate-definitions` pseudo rows that
+  share the `languageGates` array — a secret lint result is not a language build.
+- **Gate-flagged files only.** `collectGateFlaggedFiles` attributes the gate's own error lines
+  back to the files they name, so the reviewer reads the two files `go build` rejected instead of
+  all forty. A non-TS build whose gates passed reviews nothing, and spends no model call.
+- **Review only, no auto-fix.** The bounded gate repair loop has already rewritten what it could
+  prove; regenerating behind it would undo that. Auto-fix stays on demand
+  (`POST /api/review/and-fix`) — see the blind spot measured below.
+- Opt out per request with `{ codeReview: false }`, or globally with `VACA_SKIP_CODE_REVIEW=1`.
+- The response adds `codeReviewScope: { skipped, reviewedFiles, flaggedFiles }` (so "reviewed and
+  found nothing" is distinguishable from "never reviewed"), and `summary.reviewIssues` /
+  `reviewCritical` / `reviewHigh` plus `timingMs.codeReview` carry real numbers again.
+
+Attribution reuses the repair loop's OWN matcher (`groupGateErrorsByFile`) — one derivation of
+"which file is this error about" — behind a precision filter: a line counts only when the path it
+names is followed by `:12:3`, `:12`, `(12,3)` or `: `. Without it the matcher's normalized pass
+attributes a Go package banner (`# pkg/converter`) to the shallowest `converter.go`, and an LLM
+would review a file the compiler never complained about. A failing gate whose output names no
+file at all (a `go.mod` module-path error, a project-level "no entry point") flags every file of
+that language rather than silently nothing. `FileGenerationResult.gateFlaggedFiles` is computed
+in `fileGenerator` because only it knows `scaffoldRelPath`; the route never re-derives the export
+layout.
+
+Tests: **+26** — `gateScopedReview.test.ts` (17: attribution, longest-path, banner filter, dotnet
+`(5,9)` form, language fallback, nodeId mapping, clean/TS/kill-switch paths) and
+`generation.reviewScope.test.ts` (4, real express + real route + real scoping, only the
+reviewer's `reviewAll` mocked).
+
+### Measured: `fixFromReview` end to end (`CodeReviewer.fixLoopSandbox.test.ts`, 4 tests)
+
+The path is intact: valid Go is accepted with **0** model calls, a broken file converges on one
+good fix, non-convergence is reported as `success: false` after 3 attempts. **One blind spot,
+measured:** the loop validates through `runSandbox`, a SINGLE-FILE check that stages the file into
+`go mod init sandbox` — so a CORRECT file importing a sibling package cannot pass, ever. The loop
+burns all 3 model calls and returns a false "unfixable" (the file itself comes back unmodified).
+That is why the generation route's review is review-only; the test records the behaviour so
+the day the sandbox learns to stage the project, it flips.
+
+### Measured: CodeScanner vs the AI reviewer, same real files
+
+On the shipped Go CSV→JSON export (3 files, 4+ real defects: a bogus `csvutil "bufio"` alias used
+as `csv`, a missing `strings` import in two files, an unused range variable, and the header logic
+that emits a leading `{}`):
+
+| | CodeScanner (deterministic, every build) | AI reviewer (qwen2.5-coder:14b, live) |
+|---|---|---|
+| findings | **0** of **0** — every file `{critical:0,high:0,medium:0,low:0}`, complexity `Simple`/0 | 4 findings across 2 files |
+| true positives | — | missing `strings` import (real compile error); `_ = "marker"` placeholder/dead line; the hardcoded header check (the class behind the leading `{}`) |
+| false positives | — | "missing a closing parenthesis"; "no error handling for missing input files" (it does check `os.Args` and returns errors) |
+| missed | everything | the actual `csv` undefined/alias error — which the compile gate already reports |
+| cost | ~0ms | 26–53s for 3 files (3 PLAN + 3 REVIEW + 1 DEDUP call) |
+
+CodeScanner's 14 rules are all JS/TS-shaped (`eval(`, `innerHTML =`, SQL string concatenation,
+`exec(`, hardcoded secrets, `http://`, `new Function(`, `.cookie =`, `localStorage.`,
+`Math.random()`, `debugger`, `console.log(`, `process.env.`, `child_process.`), so it is blind to
+every non-JS/TS language and to every class that is not one of those signatures: logic and
+API-misuse errors, placeholder bodies, wrong-module imports. That gap is what the gate and the
+reviewer cover — the gate decides correctness, the reviewer adds judgment, and neither replaces
+the other. The reviewer alone is **not** a correctness check: it missed the headline compile
+error and produced 2 false findings on 3 small files.
+
+### Fixed: the reviewer's summary could under-report a critical it had found
+
+`buildResult` counted severities from the DEDUPLICATED flat list while `perFile` kept every
+finding — and DEDUP_TASK's `keep` set is the model's own answer, so a `critical` merged into a
+lower-severity representative vanished from the summary. Observed live: a file scored `fail` on a
+critical while `summary.criticalCount` read **0**. Counts now come from the per-file findings
+(`comments` stays the deduplicated list), so `summary.reviewCritical` — the number the generation
+route now reports — can never under-report what the review displays.
+
+Suite: **81 files / 1794 passed / 1 skipped**, `tsc` clean.
+
+Still open: the reviewer inherits `AITranslator`'s connect/read timeouts, so a hung local model
+hangs the generation request (the same exposure `/api/review` always had) — a review timeout of
+its own is not wired. The chat/canvas review scope ends at the gate: a file the gate passes but
+that is behaviourally wrong is still only caught by the smoke gates, never by the reviewer.
+
+Corrected while checking the reviewer's language coverage — `errorCorrection.runErrorCorrection`
+now stops on a SKIPPED sandbox result (`backend/src/sandbox/errorCorrection.ts`). A language with
+no checker (csharp, kotlin — `windows → csharp` and `android → kotlin` reach it by default via
+`SandboxRunner.osToLanguage`) comes back `{ skipped: true, errors: [] }`, i.e. "not validated",
+and the loop read that as a failure with an empty error list: it pushed `'Unknown validation
+error'` at the model, the reply was re-detected as TypeScript (`detectLanguage`'s default), and the
+next round ran tsc against C# source. Measured live on a `.cs` file **before**: 3 model calls, an
+`npx --package typescript` install inside the loop, `success: false`, file unchanged. **After**: 0
+model calls, 0 attempts, language preserved as `csharp`, file unchanged, 1ms. This is the same
+TS-fallback defect `dockerRunner.runLocally` already refuses to commit; it survived inside the fix
+loop. Tests: `backend/src/sandbox/errorCorrection.test.ts` (3, new).
+
+**And the other half of it — a MISSING toolchain was reported as a failed check**
+(`backend/src/sandbox/dockerRunner.ts`). `runLocally` picked the language's checker out of
+`LOCAL_TOOL_CHECK` and ran it without probing it first, so on a box with no `rustc` the shell's
+`rustc: not found` came back as `success: false` with that shell text standing in for a compiler
+diagnostic. Valid Rust read as broken, and the fix loop burned its whole attempt budget "repairing"
+correct code. `runLocally` now probes the entry's own `check` (`rustc --version`) and reports
+`skipped: true` with a reason when it fails — the same honesty the `!tool` branch already had.
+Probes are cached **positive-only**, so the slow `npx --package typescript tsc --version` probe
+runs once per process while a toolchain installed mid-session is still picked up.
+Measured live on this box (no rustc): **before** 3 model calls + a fabricated `rustc: not found`
+"error"; **after** 0 model calls, 0 attempts, 3ms, file unchanged, language preserved.
+The probe gets the SAME timeout the real check would get: a tighter private cap would report a
+slow-but-working toolchain as absent, i.e. "not validated" for a file the sandbox could have
+checked (`npx --package typescript tsc --version` is the slow one). A timeout is reported as
+"did not answer its probe within Nms", distinct from "not installed".
+Tests: `dockerRunner.test.ts` +3 — the honest-skip branch asserts only where the tool is genuinely
+absent, the working-toolchain branch only where it exists, and one pins the probe to the caller's
+timeout (1ms budget → skipped with the timed-out wording and no diagnostics; 30s budget → the same
+file is really checked).
+
+Related, same principle: the fix loop no longer re-detects the language of a reply when the caller
+**declared** one (`errorCorrection.ts`). `detectLanguage` defaults to 'typescript', so a `.cs`
+reply relabelled the loop's validation target mid-flight and the next round judged C# source with
+tsc. An explicit declaration is now authoritative; re-detection still applies when none was given.
+Suite: **82 files / 1801 passed / 2 skipped**, `tsc` clean.
+
+Still open: `csharp` and `kotlin` have no `LOCAL_TOOL_CHECK` entry, so the fix loop cannot verify
+them (the whole-project GATE can — `dotnet build` / `kotlinc` in `nonTsCompileGate.ts`). Adding
+them is now safe-by-construction (a missing SDK degrades to "not validated", never a false
+failure); the remaining risk is a wrong command on a box that HAS the toolchain, and neither SDK
+is installed on this machine, so the commands could not be verified here.
+
+## Deep Scan now measures the artifact instead of guessing at it (2026-10-16)
+
+Drop anything into the app, hit **Option 2: Deep Scan Architecture**, and the canvas gets a node
+tree built from REA's own evidence graph — modules as directories (each carrying its files), a node
+per file, the measured file-to-file imports, and an external-connection node per real dependency.
+
+**Two ways in, because a drop arrives two ways.** Electron's `webUtils.getPathForFile` (bridged
+through `preload.js`; Electron 32 removed `File.path`) gives the artifact's real path, so REA reads
+the file itself and nothing is copied — the only way a dropped `.apk`/`.exe`/`.dll` can be scanned,
+since those bytes never travel through a browser drop. Without a path the dropped text is staged
+into a temp dir (`stageDroppedFiles`, reusing `sanitizeRelPath` so `../../etc/passwd` can't escape)
+and *that* is scanned. A `[binary file: …]` placeholder is never written: REA must not "analyze" a
+text file standing in for a binary, so those are counted and reported to the user instead.
+
+**What REA's envelope actually contains** (measured on `rea-agents@6.5.0`, not assumed from docs):
+`graph.nodes[]` is not a file list. `javascript-asset`/`artifact`/`source-map`/`package`/`unknown`
+carry a path; `source-module` (a source-map *original*) carries it on `identity.original_source`;
+`javascript-module` is *semantic* — `module_path` + `semantic_role` describes a file that already
+exists, and `specifier`/`declared_specifier` + `resolution_status` is a **reference** (`react`,
+`./TaskList`). Mapping those as files is what put a phantom `react` file in the project root.
+`imports` edges are the real module graph; `contains`/`maps_to`/`loads` are hierarchy and `exposes`
+links a file to its own export. Dependencies therefore come from references — `react` 49×,
+`vitest` 18×, `reactflow` 6× on this repo's own `frontend/src` — not from scanning for the string
+`node_modules`. Edges are emitted **between files** (`src/App.tsx imports ./TaskList`), because at
+directory granularity a flat source tree collapses to "src imports src" and the connection vanishes.
+
+**The canvas cap would have eaten most of them.** The canvas draws a node for every module but only
+for the first 8 files of each, folding the rest into a "+N more files" node — so a connection whose
+file has no node of its own is attached to the module that owns it (`resolveScanConnections`, new
+`frontend/src/utils/scanGraph.ts`) instead of being dropped. Measured on this repo's own
+`frontend/src` (140 files, 9 modules, 190 measured imports, 46 file nodes): **170 connections draw
+with that fallback, 23 without it** — 147 measured imports would have silently disappeared. The 20
+that still do not draw are imports between two files that both folded into the same module, where
+the only available line would be a self-loop; they remain in the preview's connection list, so
+nothing is hidden — the canvas is simply less dense than the list.
+
+**Three bugs the live probe caught that the unit tests had not:**
+
+1. `--filter-output` was unknown to this integration, so `rea analyze frontend/src` emitted a
+   **112 MB** envelope (106 MB of it `normalized_result.semantic_graph`, which no mapping rule
+   touches). The 24 MB stdout cap silently cut it off, which surfaced to the user as
+   *"rea output was not JSON"*. `DEEP_SCAN_FILTER_OUTPUT` now asks for the graph keys **and** the
+   failure keys together: 112 MB → 5.8 MB, same 1 123 nodes / 1 470 edges. The filter applies to
+   refusals too, so asking only for graph keys reduced a refusal to `{}` — it would have turned
+   "Ghidra is not installed" into "no files to map".
+2. A failure envelope does **not** always carry `error`: the missing-engine shape is
+   `{code, category, message, retryable, remediation, details}`. Keying on `error` read it as a
+   successful scan of an empty artifact. `isReaFailure` now identifies a refusal by shape, and
+   leaves a success envelope (which always has `normalized_result` + `operation`) alone.
+3. Truncation is now reported as truncation, never as broken JSON.
+
+**When REA cannot do it, it says so.** A refusal keeps REA's own verdict and remediation, and the
+install hint comes from REA rather than a table maintained here: the refusal's `remediation` first,
+then the `doctor` check for the provider that refused (`jadx` for a `.apk`), then missing analysis
+engines. A dropped ELF on this box reports *"analysed … detected elf but reported no application
+files to map"* plus Hopper/Ghidra/IDA guidance — an LLM architecture invented for a binary we could
+not read is exactly what this integration exists to remove, so there is no fallback to one.
+
+Files: `backend/src/reverse/reaCli.ts`, `deepScan.ts`, `dropTarget.ts` (new) +
+`deepScan.test.ts` / `reaCli.test.ts` / `dropTarget.test.ts` (new, incl. a fixture captured from a
+real run), `backend/src/routes/scanner.ts` (`POST /api/scan/deep-scan`) +
+`scannerDeepScan.test.ts` (new), `frontend/src/components/FileDropHandler.tsx` + `.css` (REA call,
+real-path capture, file-level edge resolution, evidence/limits in the preview),
+`packaging/electron/preload.js`, `backend/package.json` (`rea-agents@6.5.0`, exact-pinned).
+Suite: **86 files / 1874 passed / 2 skipped**, `tsc` clean; frontend **315 passed**, `tsc` + vite
+build clean. Live-verified end to end: `frontend/src` → 9 modules / 190 imports / 9 dependencies.
+
+Still open: the Electron drop path (`webUtils.getPathForFile`) could not be exercised headlessly —
+the browser-drop fallback is what the automated tests cover. Deeper analysis of native binaries
+needs engines this box does not have (Ghidra/Hopper/IDA), and REA's graph does not inventory CSS or
+image assets, so ~34 relative `.css` imports on this repo legitimately cannot be drawn; they are
+counted in the preview rather than invented.
+
+### Test round: a Java project dropped through the running app (2026-10-16)
+
+Ran the requested end-to-end test — build a Java tic tac toe game, put it on the Desktop, open the
+app, drop it in, judge the copy. It failed twice before it worked, and both failures were real.
+
+**The test artifact**: `~/Desktop/tic tac toe` — 7 Java classes (`Board`, `Player`, `AiPlayer`,
+`ConsoleUI`, `Game`, `SelfTest`, `Main`, package `com.tictactoe`), `README.md`, `run.sh`, plus the
+compiled `out/`. Verified before the scan: `--self-test` 9/9 pass, `--demo` plays 9 moves to a draw,
+piped interactive input rejects `bad` and `9 9` and still finishes.
+
+**Failure 1 — `analyze` cannot read a Java tree.** REA's `analyze` is a *JavaScript application*
+analyzer. Pointed at the Java folder it returned a clean envelope with `relevant_files: 0` and one
+unlabelled `artifact` node, so Deep Scan said "nothing to place on the canvas" — for a folder holding
+17 files. REA's reader for a plain source tree is `import-reference-source`, so `planReaScan` now
+sniffs the directory (any `package.json` or JS/TS file ⇒ `analyze`, otherwise the importer) and
+`deepScanWithRea` maps the other contract, a `HistoricalSourceGraph` (`entries[]` with
+`kind`/`language`/`classifications`, `languages[]`, `relationships: []`), into the same canvas shape.
+
+**Failure 2 — the output filter erased that contract.** `--filter-output` is keyed per contract, and
+the source graph shares no key names with the analysis envelope, so the filter reduced REA's answer to
+`{}` and the app reported "no application files to map" *again* — live, through the running app, about
+a scan whose CLI output was perfect. The unit test passed because it parsed the unfiltered file; only
+the real drop caught it. `DEEP_SCAN_FILTER_OUTPUT` now names both contracts' keys, and a new live test
+(`keeps a filter from erasing a source-tree import`) runs the importer through the same filter.
+
+**The copy, judged.** Dropped into the running app at `:3101` (port 3001 on this box belongs to an
+unrelated python service), `success: true` in 0.67s: 3 modules / 17 files — **every file present,
+none invented, none missing** (checked file-by-file against the disk), grouped as `root`
+(README + run.sh), `out/com/tictactoe` (8 `.class`, typed `output`) and
+`src/main/java/com/tictactoe` (7 `.java`, typed `input`), each module 1:1 with a real directory.
+Faithful where it matters — the Java package survives intact (the JS mapper's two-segment collapse
+would have called it `src/main`), and the language is `Java`, not the `typescript` a JS-shaped
+default would have claimed.
+
+Not the same, and the difference is the interesting part: a reference import **hashes files instead
+of parsing them** (`content_state: "hashed"`, `inventory_state: "partial"`), so the copy carries
+**no dependencies** — 0 edges for 7 classes that call each other through `Main → Game → Board/Player/
+AiPlayer/ConsoleUI`. VACA adds what the folder does not literally contain (module types, entry-point
+inference, stack chips) and says so in six notes, including its own limits. Structure 17/17;
+semantics 0 imports recovered. A Java-aware parser (or a REA provider for JVM source) is what would
+close that gap.
+
+Also fixed while chasing it: `ConsoleUI.java` was making its whole package type as `ui` (the short
+heuristic tokens now use word boundaries), and a source-tree import no longer offers Ghidra/Hopper
+install advice it has no use for.
+Suite: **86 files / 1893 passed / 2 skipped**, `tsc` clean.
+
+### Test round: the desktop app was shipping a stale payload, and a folder drop's path was fragile (2026-10-16)
+
+Following a report that a dropped Java folder was scanned as "a staged copy of 9 dropped file(s)",
+with 8 files left out as "not readable as text".
+
+**The report was the browser, not the app.** That message is what VACA says when a drop carries no
+real path: the text of the 9 readable files is staged into a temp dir and REA scans that, because a
+browser drop never carries bytes — which is why all 8 `.class` files were out of scope. It was I who
+opened `http://127.0.0.1:3101` in Chrome for the earlier test; Chrome has no `window.veronica`, so
+`realPathForItem` returned '' for every item and the app took its documented fallback. The app's own
+bridge resolves properly — verified in the running app by handing the renderer a real disk-backed
+File through a `webkitdirectory` input: `Main.java` resolved to
+`/home/homellmlab/Desktop/tic tac toe/src/main/java/com/tictactoe/Main.java`, while a synthetic File
+resolved to `''`, exactly as `preload.js` documents.
+
+**But the app had a real bug, and a worse one.** The Electron app does not run the repo's backend: it
+runs a payload staged into `~/.config/Veronica/runtime` (`app.getPath('userData')` — note
+`productName`, so `~/.config/veronica` is a different, empty directory). That payload was staged at
+00:47, before this session's work, and contained **no `import-reference-source` and no
+`HistoricalSourceGraph`**: the desktop app the user actually launches could not scan a Java tree at
+all. Re-staged from current source (`npm run build` both workspaces, then
+`packaging/electron/stage-payload.sh`); the app now reports `payload staged … stamp 385d0ae496`.
+Nothing in the app or its smoke test would have caught this — `smoke-test.sh` asserts `/health` and
+`/`, not that the payload is current.
+
+**And a fragile link, now hardened.** Recovering a drop's path rested on one call,
+`DataTransferItem.getAsFile()`. That is the documented route but not always a working one — a dropped
+FOLDER, and items some drag libraries synthesise, can yield a File that resolves to no path even
+though the drag carried a usable one in `dataTransfer.files`. The cost of missing it is a silently
+degraded copy: no path means the text-only staged fallback, so every binary in the folder is left
+behind. `frontend/src/utils/dropPaths.ts` now tries the item route first and consults the file list
+whenever it came up short — merging rather than replacing, so an unresolved file still counts and a
+two-file drop can never masquerade as one target. 12 tests in
+`frontend/src/__tests__/dropPaths.test.ts` cover the folder case, the partial-resolution case,
+throwing items and resolvers, and the no-bridge browser case.
+
+**Verified in the app itself**: its own backend, freshly staged, answers
+`POST /api/scan/deep-scan {path: "…/tic tac toe"}` with `success: true`, `mode: "path"`,
+`projectType: "java"`, `frameworks: ["Java","Shell"]`, 3 modules and **17/17 files** in 0.69s.
+
+**Not verified, and worth saying plainly**: the drag GESTURE itself. This box has no `xdotool`,
+`wmctrl` or X automation, `document.hasFocus()` is false (headless VNC, no window manager), and CDP's
+`Input.dispatchDragEvent` never produces a `drop` in Electron 44 — it collapses to `dragleave` — while
+`DOM.setFileInputFiles` refuses directory paths. So "a hand-dropped folder arrives as a File the
+bridge can resolve" is the one link that only a real drop (a human, or a focused desktop with
+`xdotool`) can confirm. The hardening above removes the dependence on the fragile half of it.
+
+Suite: backend 86 files / 1893 passed / 2 skipped; frontend 20 files / 338 passed; `tsc` clean both.

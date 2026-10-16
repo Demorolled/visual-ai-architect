@@ -30,11 +30,11 @@ import { broadcastGenerationProgress } from '../socket/socketManager.js';
 // importers (tests, routes) keep working unchanged.
 import { isGuiRequest, ensureGuiEntryFile, ensureDeploymentArtifacts, ensureDockerfileArtifact, ensureTestFiles, ensureTestArtifact, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, type PlannedFile, type FileUse } from '../ai/guiShared.js';
 import { languageGuidanceBlock } from '../ai/languageGuidance.js';
-import { sanitizeGoModuleName } from '../sandbox/nonTsCompileGate.js';
+import { resolveGoModuleName } from '../sandbox/nonTsCompileGate.js';
 import { repairAndParseJSON } from './architect.js';
 export { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports } from '../ai/guiShared.js';
 export type { PlannedFile, FileUse } from '../ai/guiShared.js';
-import { buildExportManifest, mergeExportManifest } from '../export/perFileScaffolder.js';
+import { buildExportManifest, mergeExportManifest, PerFileScaffolder } from '../export/perFileScaffolder.js';
 import fs from 'fs';
 import os from 'os';
 import pathModule from 'path';
@@ -103,8 +103,27 @@ const translator = new AITranslator();
 // A runaway LLM generation must never hang the route handler. These are passed
 // to translator.reason(), which aborts the in-flight HTTP request via
 // AbortSignal.timeout (also freeing the model slot) and surfaces a clean error.
-const PLAN_TIMEOUT_MS = 360_000;   // plan reasoning is small (≤4k tokens) — 6 min cap; the live R20 14B measures ~33 tok/s idle / ~8-16 under voice contention, so 4k tokens needs up to ~8 min worst-case but typically 1-2 min
-const WRITE_TIMEOUT_MS = 1_500_000; // per-call cap — the one-shot budget is 8192 tokens, and the live R20 14B measures ~33 tok/s idle / ~8-16 tok/s under voice contention, so a full-budget generation takes ~4-17 min (a 900s cap 504'd builds mid-generation — the budget and the timeout must stay consistent); per-file calls are far smaller
+/** A positive integer from the environment (ms), or `dflt` when unset/invalid. */
+function envMs(name: string, dflt: number): number {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? n : dflt;
+}
+
+// Both caps are much larger than before AND env-overridable. The old numbers
+// were sized for ~33 tok/s; the model actually in service measured 20–100×
+// slower than the config the recorded baseline used (those rows finished in
+// 12–71s where this stack needed >1500s), so the old 1500s cap 504'd EVERY
+// request of a matrix re-run while holding the GPU for the whole window. A
+// budget smaller than a real generation is indistinguishable from a broken
+// build, so a slow box must be able to raise the ceiling without a code change:
+//   VACA_PLAN_TIMEOUT_MS (default 30 min) · VACA_WRITE_TIMEOUT_MS (default 90 min)
+const PLAN_TIMEOUT_MS = envMs('VACA_PLAN_TIMEOUT_MS', 1_800_000);
+const WRITE_TIMEOUT_MS = envMs('VACA_WRITE_TIMEOUT_MS', 5_400_000);
+
+// The caps this process is ACTUALLY enforcing, exported so the health endpoint
+// can report them: a batch run must be able to record the budget it measured
+// against (a row is not comparable to another row if the timeouts differ).
+export const EFFECTIVE_TIMEOUTS = { planMs: PLAN_TIMEOUT_MS, writeMs: WRITE_TIMEOUT_MS };
 
 // ─── Export-dir helpers ────────────────────────────────────────
 
@@ -174,6 +193,54 @@ function ensureExportManifest(
     console.log(`[codePlanner] export manifest: type=${String(manifest.type)} deps=[${deps.join(', ') || 'none'}]${existing ? ' (merged over the model-authored package.json)' : ''}`);
   } catch (err) {
     console.warn('[codePlanner] export manifest write failed (non-fatal):', err);
+  }
+}
+
+/**
+ * Ship the language-specific project files a non-Node export needs to BUILD.
+ *
+ * The canvas path has always written these (PerFileScaffolder.scaffold), but
+ * the chat path wrote Go SOURCE only: a delivered Go app had no go.mod at all,
+ * so `go build` failed with `go.mod file not found` before it could report a
+ * single real compile error, and there was no start.sh to run it with.
+ * Measured live: `exports/a-multi-file-go-cli-that-converts-a-csv--…/` held
+ * main.go + reader_input.go + output_formatter.go and nothing else.
+ *
+ * The module name comes from `resolveGoModuleName` — the SAME function the
+ * repair prompt, the import rewriters and the compile gate use — so the module
+ * this go.mod declares is the one the code's `<module>/<dir>` imports name.
+ *
+ * Best-effort by construction: an artifact must never fail a generation, and a
+ * file the model wrote itself is never overwritten.
+ */
+export function ensureExportProjectFiles(
+  exportDir: string,
+  files: Array<{ path: string; content: string }>,
+  projectName: string,
+): void {
+  try {
+    if (!exportDir || !fs.existsSync(exportDir)) return;
+    // Only Go for now: it is the language that CANNOT build a multi-file
+    // project without a module file (a `package main` tree of sibling files
+    // needs go.mod to resolve `<module>/<dir>` imports at all).
+    const goSources = files.filter((f) => /\.go$/i.test(f.path || '') && (f.content || '').trim().length > 0);
+    if (!goSources.length) return;
+    const projectFiles = new PerFileScaffolder().goProjectFiles(projectName);
+    const created: string[] = [];
+    for (const [fileName, content] of Object.entries(projectFiles)) {
+      const full = pathModule.join(exportDir, fileName);
+      if (fs.existsSync(full)) continue; // never clobber one the model wrote
+      fs.writeFileSync(full, content, 'utf-8');
+      if (fileName === 'start.sh') {
+        try { fs.chmodSync(full, 0o755); } catch { /* best-effort exec bit */ }
+      }
+      created.push(fileName);
+    }
+    if (created.length) {
+      console.log(`[codePlanner] Go export files: ${created.join(', ')} written (module ${resolveGoModuleName(projectName)})`);
+    }
+  } catch (err) {
+    console.warn('[codePlanner] export project-file write failed (non-fatal):', err);
   }
 }
 
@@ -704,7 +771,9 @@ async function generateBridgeFileForPlan(
     targetNodes,
   });
   try {
-    const raw = await translator.reason(prompt, BRIDGE_SYSTEM_PROMPT, { maxTokens: 2048, timeoutMs: Math.min(timeoutMs, 180_000) });
+    // Clamped, but well above the old 180s: a bridge file is a small call, yet
+    // the model in service can still need minutes for 2048 tokens under load.
+    const raw = await translator.reason(prompt, BRIDGE_SYSTEM_PROMPT, { maxTokens: 2048, timeoutMs: Math.min(timeoutMs, 900_000) });
     const code = parseBridgeResponse(raw);
     if (!code || code.trim().length < 20) return null;
     return { path: `bridge/${bridgeFileName(bridge as any, language)}`, content: code };
@@ -1815,7 +1884,7 @@ export function applyDeterministicNameDriftFix(
 }
 
 /**
- * Snapshot each file's FIRST-DRAFT content into `<exportDir>/_first-drafts/`
+ * Snapshot each file's FIRST-DRAFT content into `<exportDir>/.first-drafts/`
  * (idempotent: never overwrites an existing snapshot, so later repair-round
  * mutations can't clobber it). This is the "rejected" side of an ORPO
  * preference pair: the draft as the model FIRST wrote it (usually broken —
@@ -1823,11 +1892,24 @@ export function applyDeterministicNameDriftFix(
  * Every converged write therefore yields a genuine (chosen, rejected) pair
  * from the model's OWN work — the self-improvement loop made trainable.
  * Only .ts/.tsx files are snapshotted (the only ones the tsc gate can judge);
- * the `_first-drafts/` dir is never listed in the sidecar's `files`, so the
- * capture gate and tsc runs (which take explicit file lists) never see them.
+ * the dir is never listed in the sidecar's `files`, so the capture gate and tsc
+ * runs (which take explicit file lists) never see them.
+ *
+ * The directory name MUST start with a dot. It used to be `_first-drafts`, and
+ * a broken draft is exactly what it is — so any build of the delivered project
+ * that resolves its own file set (`tsc -p .`) compiled the draft and failed.
+ * Measured live: a generated Express server whose tsconfig carried no
+ * `files`/`include` shipped `_first-drafts/server.ts` containing `{ ;`, and
+ * plain `tsc` at the project root reported `_first-drafts/server.ts(16,78):
+ * error TS1005: '}' expected` while the shipped `server.ts` was clean — the
+ * export was unusable as delivered. `tsc` skips dot-directories (verified: with
+ * a dot-directory the same project compiles clean, INCLUDING when the tsconfig
+ * names an explicit include glob for its own extensions), as do the usual JS
+ * build tools, so a dot-directory keeps the audit trail without joining the
+ * user's build.
  */
 export function snapshotFirstDrafts(exportDir: string, files: Array<{ path: string; content: string }>): void {
-  const draftsRoot = safeJoin(exportDir, '_first-drafts');
+  const draftsRoot = safeJoin(exportDir, '.first-drafts');
   for (const f of files) {
     if (!/\.(ts|tsx)$/i.test(f.path)) continue;
     const dest = safeJoin(draftsRoot, f.path);
@@ -2662,7 +2744,7 @@ async function runPlannerBuildGates(
   // Shared with the canvas path (sandbox/nonTsRepair.ts): whole-project non-TS
   // compile gates + the file-level stub gate + the contract-aware implementation
   // gate. Thin logging wrapper so the chat path's log lines stay stable.
-  const { languageGates, stubFailures } = await runProjectGates(request, files, contractFiles);
+  const { languageGates, stubFailures } = await runProjectGates(request, files, contractFiles, false, resolveGoModuleName(null, request));
   if (languageGates.length) {
     console.log(`[codePlanner] non-TS compile gates: ${languageGates.map((g) => `${g.language}=${g.clean ? 'PASS' : 'FAIL'}`).join(', ')}`);
   }
@@ -2726,7 +2808,7 @@ async function finalizeGeneratedFiles(
       });
       const contractBlock = buildPerFileContractBlock(f, contractFiles);
       const isHtmlFile = f.language?.toLowerCase() === 'html' || /\.html?$/i.test(f.path);
-      const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n${languageGuidanceBlock(f.language, { goModuleName: sanitizeGoModuleName(request) })}\nImport from the other planned files ONLY the members declared in this file's contract above. NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES above.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+      const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n${languageGuidanceBlock(f.language, { goModuleName: resolveGoModuleName(null, request) })}\nImport from the other planned files ONLY the members declared in this file's contract above. NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES above.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
       const raw = await translator.reason(prompt, getFileWritePromptWithContext(f, request), { maxTokens: 4096, timeoutMs });
       let content = cleanLLMResponse(raw);
       const wrapped = extractJSON<{ content?: string }>(content);
@@ -3305,6 +3387,11 @@ async function finalizeGeneratedFiles(
   const nonTsGate = await runNonTsGatesWithRepair({
     request,
     files: working,
+    // The ONE Go module name for this build (see resolveGoModuleName) — the
+    // chat path names its export dir from the request, so the request is the
+    // project's identity here, and passing it explicitly keeps the gate, the
+    // prompts, the import rewriters and the written go.mod on one string.
+    goModuleName: resolveGoModuleName(null, request),
     contractFiles,
     exportDir,
     timeoutMs,
@@ -3375,6 +3462,11 @@ async function finalizeGeneratedFiles(
   const postSmokeGate = await runNonTsGatesWithRepair({
     request,
     files: working,
+    // The ONE Go module name for this build (see resolveGoModuleName) — the
+    // chat path names its export dir from the request, so the request is the
+    // project's identity here, and passing it explicitly keeps the gate, the
+    // prompts, the import rewriters and the written go.mod on one string.
+    goModuleName: resolveGoModuleName(null, request),
     contractFiles,
     exportDir,
     timeoutMs,
@@ -4651,7 +4743,7 @@ export async function generatePlanFiles(
     // Match html files by language OR path (case-insensitive) so GUI entries
     // always get the widget templates — consistent with the chunked path.
     const isHtmlFile = f.language?.toLowerCase() === 'html' || /\.html?$/i.test(f.path);
-    const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n${languageGuidanceBlock(f.language, { goModuleName: sanitizeGoModuleName(request) })}\nImport from the other planned files ONLY the members declared in this file's contract above (from the exporting files' "exports"). NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES — use native <video>/<audio> for media, never a <div> placeholder.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
+    const prompt = `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n${contractBlock}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n${isHtmlFile ? `\n${GUI_WIDGET_SECTION}\n${APP_QUALITY_RULES}` : ''}\n\n━━━ TASK ━━━\nWrite the COMPLETE, production-quality content for the file: ${f.path}\nLanguage: ${f.language}\nPurpose: ${f.summary}\n${languageGuidanceBlock(f.language, { goModuleName: resolveGoModuleName(null, request) })}\nImport from the other planned files ONLY the members declared in this file's contract above (from the exporting files' "exports"). NEVER reference an undeclared member.${isHtmlFile ? ' For GUI files, copy the WIDGET TEMPLATES above verbatim AND follow the APP QUALITY RULES — use native <video>/<audio> for media, never a <div> placeholder.' : ''} Return ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
     const raw = await translator.reason(prompt, getFileWritePromptWithContext(f, request), { maxTokens: 4096, timeoutMs });
     let content = cleanLLMResponse(raw);
     const wrapped = extractJSON<{ content?: string }>(content);
@@ -4710,7 +4802,7 @@ async function generateChunkedFiles(
   try {
     const briefPrompt =
       `User request: ${request}\n\n${intentSection}\n\n━━━ PROJECT PLAN ━━━\n${fileList}\n\n━━━ CONTRACTS ━━━\n${contractsSection}\n\n━━━ USER ANSWERS ━━━\n${answersText}\n\nTASK: Produce a compact DESIGN BRIEF for this build (max ~700 chars): the key architecture decisions, what each file must accomplish, and the integration rules every chunk writer must honor. Return ONLY the brief text — no preamble, no JSON.`;
-    const brief = await askConductor(briefPrompt, { stage: 'kickoff', context: contractsSection, maxTokens: 700, timeoutMs: Math.min(timeoutMs, 90_000) });
+    const brief = await askConductor(briefPrompt, { stage: 'kickoff', context: contractsSection, maxTokens: 700, timeoutMs: Math.min(timeoutMs, 600_000) });
     if (brief && brief.trim()) {
       designBrief = brief.trim().slice(0, 1400);
       console.warn(`[codePlanner] conductor design brief (${designBrief.length} chars) — chunks will build to it`);
@@ -5023,7 +5115,7 @@ async function generateChunkedFiles(
         const reviewContext = buildWrittenFilesBlock(conductorChunkFiles);
         const reviewPrompt =
           `Chunk ${chunkNo}/${total} of a build just finished. The design brief was:\n${designBrief || '(none — the conductor produced no brief)'}\n\nThis chunk's files (FULL SOURCE):\n${reviewContext}\n\nTASK: Review this chunk against the design intent. Reply with ONLY valid JSON: {\"verdict\": \"ok\" | \"fix\", \"findings\": [string], \"note\": string}. When verdict is \"fix\", findings must be CONCRETE and actionable (exact file paths, names, signatures, shapes, integration risks) — the specialist writer will act on them. When \"ok\", findings may be empty or advisory.`;
-        const reviewRaw = await askConductor(reviewPrompt, { stage: 'review', context: reviewContext, maxTokens: 800, timeoutMs: Math.min(timeoutMs, 90_000) });
+        const reviewRaw = await askConductor(reviewPrompt, { stage: 'review', context: reviewContext, maxTokens: 800, timeoutMs: Math.min(timeoutMs, 600_000) });
         const review = extractJSON<{ verdict?: string; findings?: string[]; note?: string }>(cleanLLMResponse(reviewRaw));
         const findings = Array.isArray(review?.findings)
           ? review.findings.filter((f: unknown): f is string => typeof f === 'string' && !!f.trim()).map((f: string) => f.trim().slice(0, 500))
@@ -5095,6 +5187,8 @@ async function generateChunkedFiles(
   const nonTsGate = await runNonTsGatesWithRepair({
     request,
     files,
+    // Same ONE module name as the finalize path (see resolveGoModuleName).
+    goModuleName: resolveGoModuleName(null, request),
     contractFiles,
     exportDir,
     timeoutMs,
@@ -5166,6 +5260,8 @@ async function generateChunkedFiles(
   const postSmokeGate = await runNonTsGatesWithRepair({
     request,
     files,
+    // Same ONE module name as the finalize path (see resolveGoModuleName).
+    goModuleName: resolveGoModuleName(null, request),
     contractFiles,
     exportDir,
     timeoutMs,
@@ -5189,7 +5285,7 @@ async function generateChunkedFiles(
       const wholeBlock = buildWrittenFilesBlock(files);
       const integrationPrompt =
         `The band finished the whole build (${files.length} file(s), ${total} chunk(s)). Design brief:\n${designBrief || '(none)'}\n\nConductor findings from earlier chunk reviews:\n${conductorFindings.length ? conductorFindings.map(f => `Chunk ${f.chunkNo}: ${f.findings.join('; ')}`).join('\n') : '(none)'}\n\n━━━ ALL FILES (FULL SOURCE) ━━━\n${wholeBlock}\n\nTASK: Do the final integration review. Reply with ONLY valid JSON: {\"verdict\": \"ok\" | \"fix\", \"findings\": [string], \"note\": string}. List concrete cross-file issues (wiring, contract mismatches, missing glue, consistency) and what the team should do about them.`;
-      const integrationRaw = await askConductor(integrationPrompt, { stage: 'integration', context: wholeBlock, maxTokens: 900, timeoutMs: Math.min(timeoutMs, 90_000) });
+      const integrationRaw = await askConductor(integrationPrompt, { stage: 'integration', context: wholeBlock, maxTokens: 900, timeoutMs: Math.min(timeoutMs, 600_000) });
       const parsed = extractJSON<{ verdict?: string; findings?: string[]; note?: string }>(cleanLLMResponse(integrationRaw));
       const findings = Array.isArray(parsed?.findings)
         ? parsed.findings.filter((f: unknown): f is string => typeof f === 'string' && !!f.trim()).map((f: string) => f.trim().slice(0, 500))
@@ -5456,6 +5552,32 @@ function repairPlanJSON(text: string): CodePlan | null {
   return null;
 }
 
+/**
+ * The retry instruction sent back when a plan reply did not parse.
+ *
+ * Chosen by the SHAPE of what came back, because the two shapes need opposite
+ * advice — the retry only lands when it names the actual failure:
+ *   • a reply containing `{` was JSON-shaped and got cut off / malformed
+ *   • a reply with NO `{` is prose: the model answered the prompt's "ask any
+ *     clarifying questions" with chat instead of the schema. Measured live in
+ *     the batch matrix, a Go "largest files" plan came back as "To help you
+ *     better, I'll first need to clarify a few details…" and the request failed
+ *     without ever asking for a plan. Telling a prose reply "your JSON was
+ *     truncated" just produces more prose.
+ *
+ * `includes('{')` rather than `startsWith('{')`: the plan prompt asks for fenced
+ * JSON, so a truncated reply commonly begins with ```json — the reason the
+ * start-of-string test was wrong at two of the three call sites.
+ *
+ * Shared by all three plan paths so they cannot drift apart again; the bug this
+ * fixes was two of the three gating their retry on the reply's shape.
+ */
+export function planRetryNote(reply: string): string {
+  return (reply || '').includes('{')
+    ? 'Your previous plan JSON was truncated before it finished. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no commentary. Keep it SHORT: at most 6 files, and at most one short clarifying question.'
+    : 'You replied in prose instead of a plan. Do NOT ask the user anything in prose and do not explain yourself — reply with ONLY the plan JSON object (no markdown fence, no commentary), and put any clarifying question in the "questions" array. Keep it SHORT: at most 6 files, and at most one short question.';
+}
+
 export async function planProject(
   request: string,
   scale?: AppScale | string
@@ -5477,11 +5599,8 @@ export async function planProject(
     //     reads as an invitation to chat)
     // Naming the actual failure in the retry is what makes the second attempt
     // land; a prose reply told "your JSON was truncated" just tries again in prose.
-    const lookedLikeJson = first.trim().startsWith('{');
     const retry = await translator.reason(
-      `${planPrompt}\n\n${lookedLikeJson
-        ? 'Your previous plan JSON was malformed or truncated. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no code fences, no commentary.'
-        : 'You replied with prose. Return ONLY the plan JSON object described in the system prompt — valid JSON, no markdown, no code fences, no commentary.'}`,
+      `${planPrompt}\n\n${planRetryNote(first)}`,
       planSystemPrompt,
       { maxTokens: 4096, timeoutMs: PLAN_TIMEOUT_MS },
     );
@@ -5545,14 +5664,24 @@ codePlannerRoutes.post('/plan-code', async (req: Request, res: Response) => {
 
     // Parse JSON from response
     let parsed = extractJSON<CodePlan>(cleaned);
-    // Truncation repair: a plan JSON cut at max_tokens used to degrade to a
-    // reasoning-only fallback. If the reply is JSON-shaped but unparseable,
-    // re-ask ONCE for the complete document at a larger budget.
-    if (!parsed && cleaned.trim().startsWith('{')) {
+    // One retry, ALWAYS — matching planProject. The failure has two shapes and
+    // only the JSON-shaped one used to be retried:
+    //   • JSON-shaped but malformed/truncated (the common small-model case)
+    //   • plain PROSE answering the prompt's "ask any clarifying questions"
+    //     instead of the schema — a reply with no leading `{` skipped the retry
+    //     entirely and degraded to the reasoning-only fallback.
+    // The guard also used `startsWith('{')`, which misses the FENCED form the
+    // plan prompt itself asks for (````json`) — the reason this same guard was
+    // widened at the other plan site. `includes('{')` covers both.
+    // The retry names the actual failure: a prose reply told "your JSON was
+    // truncated" just tries again in prose. It also gets REAL headroom (8192,
+    // as the old comment claimed but the code did not do) — re-asking at the
+    // same 4096 that just truncated is what makes a truncation retry useless.
+    if (!parsed) {
       const retryRaw = await translator.reason(
-        `${fullPrompt}\n\nYour previous plan JSON was truncated before it finished. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no commentary.`,
+        `${fullPrompt}\n\n${planRetryNote(cleaned)}`,
         planSystemPrompt,
-        { maxTokens: 4096, timeoutMs: PLAN_TIMEOUT_MS },
+        { maxTokens: 8192, timeoutMs: PLAN_TIMEOUT_MS },
       );
       const retryCleaned = cleanLLMResponse(retryRaw);
       const retried = extractJSON<CodePlan>(retryCleaned);
@@ -5593,7 +5722,13 @@ codePlannerRoutes.post('/plan-code', async (req: Request, res: Response) => {
     // aborted.'). Anchored phrase match so a genuine upstream 'connect ETIMEDOUT' is not
     // misclassified as our own safety timeout.
     const errMsg = String((error as any)?.message || '');
-    const timedOut = /abort|timeout/i.test(`${(error as any)?.name || ''} ${(error as any)?.cause?.name || ''}`) || /^Request was aborted\.?$/i.test(errMsg);
+    const timedOut = /abort|timeout/i.test(`${(error as any)?.name || ''} ${(error as any)?.cause?.name || ''}`) || /^Request was aborted\.?$/i.test(errMsg)
+      // The OpenAI SDK's own per-attempt timeout throws APIConnectionTimeoutError,
+      // whose message is exactly "Request timed out." — and which assigns NO `name`,
+      // so the name check above cannot see it. Without this the SDK's timeout
+      // escaped as a generic 500 with `timeout:false`: VACA reported its own slow
+      // build as an unexplained error instead of an honest timeout verdict.
+      || /^Request timed out\.?$/i.test(errMsg);
     if (timedOut) {
       console.error(`[codePlanner/plan] Timed out after ${PLAN_TIMEOUT_MS / 1000}s:`, msg);
       return res.status(504).json({ error: `Planning timed out after ${PLAN_TIMEOUT_MS / 1000}s — try a shorter request`, timeout: true });
@@ -5654,6 +5789,8 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
     // Ship a dependency manifest with every Node/TS export so the app can
     // resolve its own imports outside this repo (see ensureExportManifest).
     ensureExportManifest(exportDir, gen.files, request);
+    // …and the build files a non-Node export needs (Go: go.mod + start.sh).
+    ensureExportProjectFiles(exportDir, gen.files, request);
 
     const successCount = written.filter(w => w.status === 'written').length;
     const remainingTsc = gen.tscErrors ?? 0;
@@ -5753,7 +5890,13 @@ codePlannerRoutes.post('/write-code', async (req: Request, res: Response) => {
     // aborted.'). Anchored phrase match so a genuine upstream 'connect ETIMEDOUT' is not
     // misclassified as our own safety timeout.
     const errMsg = String((error as any)?.message || '');
-    const timedOut = /abort|timeout/i.test(`${(error as any)?.name || ''} ${(error as any)?.cause?.name || ''}`) || /^Request was aborted\.?$/i.test(errMsg);
+    const timedOut = /abort|timeout/i.test(`${(error as any)?.name || ''} ${(error as any)?.cause?.name || ''}`) || /^Request was aborted\.?$/i.test(errMsg)
+      // The OpenAI SDK's own per-attempt timeout throws APIConnectionTimeoutError,
+      // whose message is exactly "Request timed out." — and which assigns NO `name`,
+      // so the name check above cannot see it. Without this the SDK's timeout
+      // escaped as a generic 500 with `timeout:false`: VACA reported its own slow
+      // build as an unexplained error instead of an honest timeout verdict.
+      || /^Request timed out\.?$/i.test(errMsg);
     if (timedOut) {
       console.error(`[codePlanner/write] Timed out after ${WRITE_TIMEOUT_MS / 1000}s:`, msg);
       emitCodegenProgress({ phase: 'done', percent: 100, message: '❌ Code generation timed out' });
@@ -5802,18 +5945,25 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
     const planResponse = await translator.reason(planPrompt, planSystemPrompt, { maxTokens: 4096, timeoutMs: PLAN_TIMEOUT_MS });
     let planCleaned = cleanLLMResponse(planResponse);
     let parsedPlan = extractJSON<CodePlan>(planCleaned);
-    // Truncation repair: re-ask once for the COMPLETE plan JSON at a larger
-    // budget when the first reply was cut off mid-JSON.
+    // Retry repair: re-ask once for the COMPLETE plan JSON at a larger budget
+    // when the first reply did not parse.
     // The guard must NOT require the reply to START with `{`: the plan prompt
     // asks for fenced JSON, so the most common truncated shape begins with
-    // ```json — the fence made this retry unreachable. Measured live: a Go plan
-    // came back as a fenced, unterminated JSON object and the request failed
-    // with "Could not create a structured plan" without ever asking the model
-    // for a complete plan. `extractJSON` already tries a brace-balancing repair
-    // first, so reaching here means that failed too.
-    if (!parsedPlan && planCleaned.includes('{')) {
+    // ```json — the fence made this retry unreachable.
+    //
+    // It must not require a `{` ANYWHERE either, which it previously did. That
+    // skipped the retry for the other common shape — a reply in PROSE. Measured
+    // live in the batch matrix, a Go "largest files" plan came back as
+    //   "To help you better, I'll first need to clarify a few details…
+    //    Options: Terminal (CLI), Web app"
+    // : the model asked the user a question instead of emitting a plan, so there
+    // was no brace anywhere and the request failed immediately without ever
+    // asking the model for the plan it was supposed to produce. The retry
+    // message is chosen by shape, because "you were truncated" is actively
+    // wrong advice for a reply that was never JSON.
+    if (!parsedPlan) {
       const retryRaw = await translator.reason(
-        `${planPrompt}\n\nYour previous plan JSON was truncated before it finished. Return the COMPLETE plan JSON object — every field closed, valid JSON, no markdown, no commentary. Keep it SHORT: at most 6 files, and at most one short clarifying question.`,
+        `${planPrompt}\n\n${planRetryNote(planCleaned)}`,
         planSystemPrompt,
         { maxTokens: 8192, timeoutMs: PLAN_TIMEOUT_MS },
       );
@@ -5883,6 +6033,8 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
     // Ship a dependency manifest with every Node/TS export so the app can
     // resolve its own imports outside this repo (see ensureExportManifest).
     ensureExportManifest(exportDir, gen.files, request);
+    // …and the build files a non-Node export needs (Go: go.mod + start.sh).
+    ensureExportProjectFiles(exportDir, gen.files, request);
 
     const successCount = written.filter(w => w.status === 'written').length;
     const remainingTsc = gen.tscErrors ?? 0;
@@ -5972,7 +6124,13 @@ codePlannerRoutes.post('/interactive', async (req: Request, res: Response) => {
     // aborted.'). Anchored phrase match so a genuine upstream 'connect ETIMEDOUT' is not
     // misclassified as our own safety timeout.
     const errMsg = String((error as any)?.message || '');
-    const timedOut = /abort|timeout/i.test(`${(error as any)?.name || ''} ${(error as any)?.cause?.name || ''}`) || /^Request was aborted\.?$/i.test(errMsg);
+    const timedOut = /abort|timeout/i.test(`${(error as any)?.name || ''} ${(error as any)?.cause?.name || ''}`) || /^Request was aborted\.?$/i.test(errMsg)
+      // The OpenAI SDK's own per-attempt timeout throws APIConnectionTimeoutError,
+      // whose message is exactly "Request timed out." — and which assigns NO `name`,
+      // so the name check above cannot see it. Without this the SDK's timeout
+      // escaped as a generic 500 with `timeout:false`: VACA reported its own slow
+      // build as an unexplained error instead of an honest timeout verdict.
+      || /^Request timed out\.?$/i.test(errMsg);
     if (timedOut) {
       console.error(`[codePlanner/interactive] Timed out after ${WRITE_TIMEOUT_MS / 1000}s:`, msg);
       emitCodegenProgress({ phase: 'done', percent: 100, message: '❌ Code generation timed out' });
@@ -6040,14 +6198,107 @@ export function repairLLMJson(text: string): string {
   return out;
 }
 
-function extractJSON<T>(text: string): T | null {
+/**
+ * Strip `//` line comments and slash-star block comments from an LLM reply.
+ *
+ * WHY: the plan prompt shows the model a JSON schema with its comments intact,
+ * and small models copy them straight into the output. Measured live in the
+ * batch matrices, three of the ten plan-stage failures carried the prompt's own
+ * comments inside the JSON, e.g.
+ *
+ *   "language": "c",
+ *   // ... other fields omitted for brevity (see the file contract schema above)
+ *
+ * and one reply pasted a whole commented example block containing `"key"`,
+ * `"question"` and `"options"` members. Those comments hold quotes AND braces
+ * of their own, which desynchronises repairLLMJson's string tracking and the
+ * brace-depth scan below — so this has to run BEFORE any structural repair.
+ *
+ * String-aware by construction: a `//` inside a string value (a URL, a code
+ * sample being emitted as JSON) is data, never a comment, and survives intact.
+ * Valid JSON cannot contain comments at all, so this is a no-op on valid input.
+ */
+export function stripJsonComments(text: string): string {
+  let out = '';
+  let inStr = false, esc = false;
+  let i = 0;
+  while (i < text.length) {
+    const ch = text[i];
+    if (inStr) {
+      out += ch;
+      if (esc) esc = false;
+      else if (ch === '\\') esc = true;
+      else if (ch === '"') inStr = false;
+      i++;
+      continue;
+    }
+    if (ch === '"') { inStr = true; out += ch; i++; continue; }
+    if (ch === '/' && text[i + 1] === '/') {
+      // Line comment: drop the text, keep ONE newline so tokens either side of
+      // it stay separated (`"a": 1// x\n,"b": 2` must not become `1,"b"`).
+      while (i < text.length && text[i] !== '\n') i++;
+      out += '\n';
+      if (i < text.length) i++;          // consume the newline we just emitted
+      continue;
+    }
+    if (ch === '/' && text[i + 1] === '*') {
+      i += 2;
+      while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
+      i += 2;                            // past the closing star-slash
+      continue;
+    }
+    out += ch;
+    i++;
+  }
+  return out;
+}
+
+/**
+ * Drop commas that sit immediately before a closing `}` or `]`.
+ *
+ * Comments are the usual source: deleting `"language": "c", // ...` leaves the
+ * original comma dangling in front of the closer, which JSON.parse still
+ * rejects — so stripping comments without this just moves the failure. Safe on
+ * valid JSON, where a comma before a closer is never legal.
+ */
+export function stripTrailingCommas(text: string): string {
+  let out = '';
+  let inStr = false, esc = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      out += ch;
+      if (esc) esc = false;
+      else if (ch === '\\') esc = true;
+      else if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') { inStr = true; out += ch; continue; }
+    if (ch === ',') {
+      let j = i + 1;
+      while (j < text.length && /\s/.test(text[j])) j++;
+      if (j < text.length && (text[j] === '}' || text[j] === ']')) continue;
+    }
+    out += ch;
+  }
+  return out;
+}
+
+export function extractJSON<T>(text: string): T | null {
   if (!text) return null;
   const clean = text.replace(/^\uFEFF/, '').trim();
+  // De-comment before any structural scan (see stripJsonComments).
+  const decommented = stripTrailingCommas(stripJsonComments(clean));
   const tryParse = (s: string): T | null => {
     try { return JSON.parse(s) as T; } catch {}
-    // Raw-newline / truncation repair, then re-parse (only when it changed).
-    const repaired = repairLLMJson(s);
-    if (repaired !== s) {
+    // Comments / trailing commas first (both no-ops on valid JSON), THEN
+    // raw-newline / truncation repair, then re-parse when something changed.
+    const stripped = stripTrailingCommas(stripJsonComments(s));
+    if (stripped !== s) {
+      try { return JSON.parse(stripped) as T; } catch {}
+    }
+    const repaired = repairLLMJson(stripped);
+    if (repaired !== stripped) {
       try { return JSON.parse(repaired) as T; } catch {}
     }
     return null;
@@ -6058,18 +6309,18 @@ function extractJSON<T>(text: string): T | null {
   if (direct) return direct;
 
   // 2) Code fences (json or any language)
-  for (const f of [...clean.matchAll(/```(?:\w+)?\s*\n?([\s\S]*?)```/g)]) {
+  for (const f of [...decommented.matchAll(/```(?:\w+)?\s*\n?([\s\S]*?)```/g)]) {
     const p = tryParse(f[1].trim());
     if (p) return p;
   }
 
   // 3) Balanced-brace scan from the first '{' — recovers prose-wrapped and
   //    truncated-but-balanced JSON (the most common small-model failure).
-  const start = clean.indexOf('{');
+  const start = decommented.indexOf('{');
   if (start !== -1) {
     let depth = 0, inStr = false, esc = false;
-    for (let i = start; i < clean.length; i++) {
-      const ch = clean[i];
+    for (let i = start; i < decommented.length; i++) {
+      const ch = decommented[i];
       if (inStr) {
         if (esc) esc = false;
         else if (ch === '\\') esc = true;
@@ -6081,13 +6332,13 @@ function extractJSON<T>(text: string): T | null {
       else if (ch === '}') {
         depth--;
         if (depth === 0) {
-          const p = tryParse(clean.slice(start, i + 1));
+          const p = tryParse(decommented.slice(start, i + 1));
           if (p) return p;
         }
       }
     }
     // 4) Last resort: tail from the first '{' to the end
-    const tail = tryParse(clean.slice(start));
+    const tail = tryParse(decommented.slice(start));
     if (tail) return tail;
   }
   return null;

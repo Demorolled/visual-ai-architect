@@ -1,0 +1,27 @@
+# Modelfile-vaca-vision — serve VACA's fine-tuned Qwen2.5-VL through Ollama.
+#
+#   ollama create vaca-vision-r3 -f models/Modelfile-vaca-vision
+#
+# This is the name backend/src/ai/vision.ts already expects
+# (DEFAULT_VISION_MODEL = 'vaca-vision-r3'), so creating it here makes the
+# app's vision path work with no code change.
+#
+# NOTE: a vision import needs TWO GGUF files — the language model AND its
+# mmproj (vision projector). Ollama's two-FROM import works for some
+# architectures and fails to load for others. If `ollama create` errors,
+# serve with llama-server instead (robust, and also an OpenAI-compatible /v1):
+#
+#   llama-server -m model-Q4_K_M.gguf --mmproj mmproj-model-f16.gguf \
+#                --host 0.0.0.0 --port 8000
+#
+# then point vision.ts at http://<host>:8000/v1 with the same model name.
+#
+# Replace the two FROM paths with the real files produced by
+# training/vlm/export_vlm_gguf.py (see training/vlm/README.md).
+
+FROM ./model-Q4_K_M.gguf
+FROM ./mmproj-model-f16.gguf
+
+PARAMETER num_ctx 16384
+PARAMETER temperature 0.7
+PARAMETER top_p 0.8

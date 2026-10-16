@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as zlib from 'zlib';
-import { jarManifestInfo, runNonTsProjectGates, resolveGateLanguage, fileDeclaresEntryPoint, goStagePath, planGoStaging, goLocalImportPaths, goFilePackage, goDeclaresMainFunc } from './nonTsCompileGate.js';
+import { jarManifestInfo, runNonTsProjectGates, resolveGateLanguage, fileDeclaresEntryPoint, goStagePath, planGoStaging, foldGoPackagePerDirectory, goLocalImportPaths, goFilePackage, goDeclaresMainFunc } from './nonTsCompileGate.js';
 
 const has = (bin: string, args: string[] = ['--version']): boolean => {
   try { execFileSync(bin, args, { stdio: 'ignore' }); return true; } catch { return false; }
@@ -555,6 +555,111 @@ describe('planGoStaging — auto-resolve Go imports against the real layout', ()
     expect(go, 'a go gate entry must exist').toBeTruthy();
     expect(go?.errors ?? []).toEqual([]);
     expect(go?.clean).toBe(true);
+  });
+});
+
+describe('foldGoPackagePerDirectory — the gate verdict must hold for the files that SHIP', () => {
+  // Measured live end-to-end on the agent box: a generated file-preview CLI
+  // shipped `main.go` (`package main`, with `func main`) beside `reader.go`
+  // (`package app`) at the project ROOT, with nothing importing `package app`.
+  // `go build ./...` on the delivered export failed with
+  // "found packages main (main.go) and app (reader.go)" — while the language
+  // gate reported the build CLEAN, because `planGoStaging` had folded the two
+  // into one package in a temp dir the user never receives.
+  const MOD = 'file-preview';
+  const mainGo = 'package main\n\nimport "fmt"\n\nfunc main() { fmt.Println(readLines()) }\n';
+  const readerGo = 'package app\n\nfunc readLines() string { return "hi" }\n';
+
+  it('folds an orphan non-main file into its directory\'s main package', () => {
+    const changed = foldGoPackagePerDirectory([
+      { path: 'main.go', content: mainGo, language: 'go' },
+      { path: 'reader.go', content: readerGo, language: 'go' },
+    ], MOD);
+    expect(changed.map((c) => c.path)).toEqual(['reader.go']);
+    expect(goFilePackage(changed[0].content)).toBe('main');
+  });
+
+  it('does not fold a package name an importer actually addresses', () => {
+    // `package app` is load-bearing here: renaming it to main would break the
+    // import, so the staging planner must move the file instead of this fold.
+    const changed = foldGoPackagePerDirectory([
+      { path: 'main.go', content: `package main\n\nimport "${MOD}/app"\n\nfunc main() { app.Helper() }\n`, language: 'go' },
+      { path: 'app/reader.go', content: 'package app\n\nfunc Helper() {}\n', language: 'go' },
+    ], MOD);
+    expect(changed).toEqual([]);
+  });
+
+  it('leaves a lone file, and a directory with no main package, untouched', () => {
+    expect(foldGoPackagePerDirectory([{ path: 'reader.go', content: readerGo, language: 'go' }], MOD)).toEqual([]);
+    expect(foldGoPackagePerDirectory([
+      { path: 'app/a.go', content: 'package app\n\nfunc A() {}\n', language: 'go' },
+      { path: 'app/b.go', content: 'package app\n\nfunc B() {}\n', language: 'go' },
+    ], MOD)).toEqual([]);
+  });
+
+  // A second, independent false-pass found on the same export: `go build -o
+  // <dir>/ ./...` only LINKS main packages, so a compile error inside a non-main
+  // package never surfaces. Measured: a valid `main.go` beside an `app/reader.go`
+  // importing "fmt" it never used gave `-o` exit 0 (gate: CLEAN) while
+  // `go vet ./...` exited 1 with `"fmt" imported and not used`. The gate now runs
+  // both, so a library-package error can no longer ride along as clean.
+  it.skipIf(!hasGo)('reports a compile error inside a NON-main package as not clean', async () => {
+    const gates = await runNonTsProjectGates([
+      { relPath: 'main.go', code: 'package main\n\nimport "fmt"\n\nfunc main() { fmt.Println("hi") }\n', language: 'go' },
+      {
+        relPath: 'app/reader.go',
+        code: 'package app\n\nimport (\n\t"fmt"\n\t"os"\n)\n\nfunc Read(p string) ([]byte, error) { return os.ReadFile(p) }\n',
+        language: 'go',
+      },
+    ], MOD);
+    const go = gates.find((g) => g.language === 'go');
+    expect(go, 'a go gate entry must exist').toBeTruthy();
+    expect(go?.clean).toBe(false);
+    expect((go?.errors || []).join('\n')).toContain('imported and not used');
+  });
+
+  it.skipIf(!hasGo)('still passes a valid project whose main package sits in a subdirectory', async () => {
+    // The `-o` build was introduced because plain `go build ./...` collides with
+    // a `package main` staged in `src/`; the added vet pass must not re-break it.
+    const gates = await runNonTsProjectGates([
+      { relPath: 'cmd/cli/main.go', code: 'package main\n\nimport "fmt"\n\nfunc main() { fmt.Println(helper()) }\n', language: 'go' },
+      { relPath: 'cmd/cli/helper.go', code: 'package main\n\nfunc helper() string { return "hi" }\n', language: 'go' },
+    ], MOD);
+    const go = gates.find((g) => g.language === 'go');
+    expect(go?.errors ?? []).toEqual([]);
+    expect(go?.clean).toBe(true);
+  });
+
+  // The whole point: after folding, the DELIVERED tree compiles with a plain
+  // `go build ./...` — not just the gate's private staging copy.
+  it.skipIf(!hasGo)('makes the shipped tree build with a plain `go build ./...`', () => {
+    const docs = [
+      { path: 'main.go', content: mainGo, language: 'go' },
+      { path: 'reader.go', content: readerGo, language: 'go' },
+    ];
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-gofold-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'go.mod'), `module ${MOD}\n\ngo 1.21\n`);
+      const folded = foldGoPackagePerDirectory(docs, MOD);
+      const byPath = new Map(folded.map((c) => [c.path, c.content]));
+      for (const d of docs) fs.writeFileSync(path.join(dir, d.path), byPath.get(d.path) ?? d.content);
+
+      // Control: the UNFOLDED tree is what used to ship, and it does not build.
+      const raw = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-goraw-'));
+      try {
+        fs.mkdirSync(path.join(raw, '.bin'), { recursive: true });
+        fs.writeFileSync(path.join(raw, 'go.mod'), `module ${MOD}\n\ngo 1.21\n`);
+        for (const d of docs) fs.writeFileSync(path.join(raw, d.path), d.content);
+        expect(() => execFileSync('go', ['build', '-o', `${raw}/.bin/`, './...'], { cwd: raw, stdio: 'pipe' })).toThrow();
+      } finally {
+        fs.rmSync(raw, { recursive: true, force: true });
+      }
+
+      fs.mkdirSync(path.join(dir, '.bin'), { recursive: true });
+      execFileSync('go', ['build', '-o', `${dir}/.bin/`, './...'], { cwd: dir, stdio: 'pipe' });
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 

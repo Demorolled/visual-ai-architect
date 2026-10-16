@@ -21,17 +21,65 @@ set -euo pipefail
 CHECK_ONLY=0
 [ "${1:-}" = "--check" ] && CHECK_ONLY=1
 
-have() { command -v "$1" >/dev/null 2>&1; }
 say()  { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 ok()   { printf '\033[1;32m  ✓\033[0m %s\n' "$*"; }
 miss() { printf '\033[1;33m  •\033[0m %s\n' "$*"; }
+note() { printf '\033[2;36m      %s\033[0m\n' "$*"; }
+
+# ── Toolchain resolution ──────────────────────────────────────────────────
+# Mirrors backend/src/sandbox/nonTsCompileGate.ts (EXTRA_BIN_DIRS). The compile
+# gate searches PATH *plus* these well-known install dirs, because installers
+# like rustup (-> ~/.cargo/bin) and dotnet-install (-> ~/.dotnet) drop binaries
+# where a NON-LOGIN shell never puts them on PATH. Checking PATH alone here
+# reported rustc/dotnet as MISSING while the gate verified Rust/C# builds with
+# them perfectly well — inviting a pointless reinstall and, worse, making the
+# preflight disagree with the thing it is supposed to describe.
+GATE_BIN_DIRS=(
+  "$HOME/.cargo/bin"
+  "$HOME/.dotnet"
+  "$HOME/.local/share/swiftly/bin"
+  "$HOME/.local/bin"
+  /usr/local/bin
+  /snap/bin
+)
+
+# Print the absolute path of an executable: PATH first, then GATE_BIN_DIRS.
+resolve_bin() {
+  local bin="$1" dir
+  if command -v "$bin" >/dev/null 2>&1; then command -v "$bin"; return 0; fi
+  for dir in "${GATE_BIN_DIRS[@]}"; do
+    if [ -x "$dir/$bin" ]; then printf '%s\n' "$dir/$bin"; return 0; fi
+  done
+  return 1
+}
+
+have() { resolve_bin "$1" >/dev/null 2>&1; }
+
+# Is $1 a directory on PATH? (Used only to explain WHERE a binary was found.)
+on_path() { case ":$PATH:" in *":$1:"*) return 0 ;; *) return 1 ;; esac; }
+
+# The version flag each tool actually documents. Probing `go`/`kotlinc` with
+# `--version` printed a flag error next to a ✓, which reads like a failure on a
+# line whose whole job is to say the toolchain is fine.
+version_arg() {
+  case "$1" in
+    go)      printf 'version\n' ;;
+    kotlinc) printf -- '-version\n' ;;
+    *)       printf -- '--version\n' ;;
+  esac
+}
 
 # ── Report ────────────────────────────────────────────────────────────────
 report() {
-  say "Toolchain status"
-  local bin
+  say "Toolchain status (PATH + the well-known dirs the compile gate searches)"
+  local bin path
   for bin in gcc g++ rustc go javac dotnet python3 php ruby node kotlinc swiftc; do
-    if have "$bin"; then ok "$bin $("$bin" --version 2>&1 | head -1)"; else miss "$bin MISSING"; fi
+    if path="$(resolve_bin "$bin")"; then
+      ok "$bin $("$path" "$(version_arg "$bin")" 2>&1 | head -1)"
+      on_path "$(dirname "$path")" || note "$path (off PATH — the gate still finds it)"
+    else
+      miss "$bin MISSING"
+    fi
   done
 }
 report

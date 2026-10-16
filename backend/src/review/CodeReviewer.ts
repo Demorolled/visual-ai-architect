@@ -46,9 +46,16 @@ export interface ReviewComment {
 }
 
 export interface CodeReviewResult {
-  /** All review comments across all files */
+  /** The review comments across all files, after cross-file dedup. */
   comments: ReviewComment[];
-  /** Summary stats */
+  /**
+   * Summary stats over EVERY finding in `perFile` — deliberately not over
+   * `comments`. Dedup is model-driven (`keep` indices) and can merge a critical
+   * into a lower-severity representative; counting the deduped list made
+   * `criticalCount` 0 while `perFile` still showed the critical and scored the
+   * file 'fail' (measured live). Severity counts must never under-report what
+   * the review itself displays.
+   */
   summary: {
     filesReviewed: number;
     totalComments: number;
@@ -1046,15 +1053,18 @@ export class CodeReviewer {
     comments: ReviewComment[],
     perFile: PerFileReview[],
   ): CodeReviewResult {
-    const criticalCount = comments.filter(c => c.severity === 'critical').length;
-    const highCount = comments.filter(c => c.severity === 'high').length;
-    const mediumCount = comments.filter(c => c.severity === 'medium').length;
-    const lowCount = comments.filter(c => c.severity === 'low').length;
-    const infoCount = comments.filter(c => c.severity === 'info').length;
+    // Counted from the per-file findings, not from the deduplicated flat list —
+    // see the `summary` doc on CodeReviewResult.
+    const counted = perFile.length > 0 ? perFile.flatMap((pf) => pf.comments) : comments;
+    const criticalCount = counted.filter(c => c.severity === 'critical').length;
+    const highCount = counted.filter(c => c.severity === 'high').length;
+    const mediumCount = counted.filter(c => c.severity === 'medium').length;
+    const lowCount = counted.filter(c => c.severity === 'low').length;
+    const infoCount = counted.filter(c => c.severity === 'info').length;
 
     return {
       comments,
-      summary: { filesReviewed: totalFiles, totalComments: comments.length, criticalCount, highCount, mediumCount, lowCount, infoCount },
+      summary: { filesReviewed: totalFiles, totalComments: counted.length, criticalCount, highCount, mediumCount, lowCount, infoCount },
       perFile,
       success: true,
       tokenBudget: {

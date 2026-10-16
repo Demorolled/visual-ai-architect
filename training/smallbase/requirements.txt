@@ -1,0 +1,20 @@
+# Continue-pretraining a downloaded small base model (training/smallbase/).
+# These are the *generic* trainer deps — no unsloth, because this path uses
+# plain transformers + peft. The R-series QLoRA pipeline keeps its own set in
+# training/cloud/README.md (unsloth/trl).
+#
+# Install into a venv, not the system python:
+#   python3 -m venv .venv-smallbase && . .venv-smallbase/bin/activate
+#   pip install -r training/smallbase/requirements.txt
+#
+# CUDA note: match the torch build to your driver. For CUDA 12.x:
+#   pip install --index-url https://download.pytorch.org/whl/cu121 torch
+torch>=2.1.0
+transformers>=4.44.0
+peft>=0.11.0
+datasets>=2.18.0
+accelerate>=0.30.0
+bitsandbytes>=0.43.0        # only needed for --load-in-4bit (QLoRA)
+safetensors>=0.4.0
+huggingface-hub>=0.23.0,<1.0  # peft requires <1.0 (same pin as llm-training-app)
+sentencepiece>=0.1.99         # tokenizers for the Llama/gpt2-style bases

@@ -107,3 +107,12 @@ backend/knowledge/rnn-model.json
 # 444869 bytes) and tracking it only guarantees conflict churn on every sync.
 # Each box keeps its own copy on disk.
 training/dataset/verified-generations.jsonl
+
+# ────────────────────────────────────────────────────────────────────────────
+# Generated scan output. Every Deep Scan and every build drops a directory here
+# (69MB / ~700 dirs on this box), and each of those directories carries its own
+# .gitignore, so git offers the folder but nothing in it worth keeping. It is a
+# record of what this box was asked to build, not source: it regenerates itself
+# whenever the app runs, and committing it adds ~700 files of noise per push.
+# ────────────────────────────────────────────────────────────────────────────
+backend/exports/

@@ -1,0 +1,313 @@
+{
+ "_fixture": {
+  "derived_from": "rea-agents 6.5.0",
+  "command": "node node_modules/rea-agents/scripts/rea.mjs import-reference-source <java-project-dir> --format json",
+  "target": "a Java console tic tac toe project (src/main/java/... plus a compiled out/ directory)",
+  "projection": "Verbatim except opaque digests: entry sha256 values are truncated to 12 hex characters and root_sha256 likewise (they are content identities, not join keys)."
+ },
+ "schema": "HistoricalSourceGraph",
+ "authority": "historical-reference",
+ "root_alias": "$REFERENCE_ROOT",
+ "root_sha256": "6f8212a7110c",
+ "inventory_state": "partial",
+ "entries": [
+  {
+   "path": "README.md",
+   "classifications": [
+    "documentation"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Markdown",
+   "sha256": "38bcb5a89b30",
+   "size": 1455,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "out/com",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "out/com/tictactoe",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "out/com/tictactoe/AiPlayer.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "2edcbd20c962",
+   "size": 1195,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out/com/tictactoe/Board.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "b60da2e3f388",
+   "size": 2258,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out/com/tictactoe/ConsoleUI.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "da62a61747fe",
+   "size": 2790,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out/com/tictactoe/Game$Result.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "7374a6c5cc3e",
+   "size": 1428,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out/com/tictactoe/Game.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "da5e62d1b095",
+   "size": 1742,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out/com/tictactoe/Main.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "c5b5003cae75",
+   "size": 1537,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out/com/tictactoe/Player.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "56848a07faf3",
+   "size": 1384,
+   "content_state": "hashed"
+  },
+  {
+   "path": "out/com/tictactoe/SelfTest.class",
+   "classifications": [
+    "generated"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": null,
+   "sha256": "72e559d3e279",
+   "size": 3870,
+   "content_state": "hashed"
+  },
+  {
+   "path": "run.sh",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Shell",
+   "sha256": "25515befd7b2",
+   "size": 429,
+   "content_state": "hashed"
+  },
+  {
+   "path": "src",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "src/main",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "src/main/java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "src/main/java/com",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "src/main/java/com/tictactoe",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "directory",
+   "tree_state": "enumerated"
+  },
+  {
+   "path": "src/main/java/com/tictactoe/AiPlayer.java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Java",
+   "sha256": "fbaad3c0e6c4",
+   "size": 2101,
+   "content_state": "hashed"
+  },
+  {
+   "path": "src/main/java/com/tictactoe/Board.java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Java",
+   "sha256": "63934ccf3626",
+   "size": 3371,
+   "content_state": "hashed"
+  },
+  {
+   "path": "src/main/java/com/tictactoe/ConsoleUI.java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Java",
+   "sha256": "3612f438fc88",
+   "size": 2709,
+   "content_state": "hashed"
+  },
+  {
+   "path": "src/main/java/com/tictactoe/Game.java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Java",
+   "sha256": "9dcf4c61a3bf",
+   "size": 1902,
+   "content_state": "hashed"
+  },
+  {
+   "path": "src/main/java/com/tictactoe/Main.java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Java",
+   "sha256": "937338968694",
+   "size": 872,
+   "content_state": "hashed"
+  },
+  {
+   "path": "src/main/java/com/tictactoe/Player.java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Java",
+   "sha256": "69a525ec561a",
+   "size": 553,
+   "content_state": "hashed"
+  },
+  {
+   "path": "src/main/java/com/tictactoe/SelfTest.java",
+   "classifications": [
+    "source"
+   ],
+   "limitations": [],
+   "kind": "file",
+   "language": "Java",
+   "sha256": "16954784d2ae",
+   "size": 4069,
+   "content_state": "hashed"
+  }
+ ],
+ "relationships": [],
+ "parse_failures": [],
+ "exclusions": [],
+ "languages": [
+  "Java",
+  "Markdown",
+  "Shell"
+ ],
+ "manifests": [],
+ "vcs": {
+  "kind": "none",
+  "head": null,
+  "dirty": null
+ },
+ "provenance": {
+  "importer": "rea-agents",
+  "importer_version": "6.5.0",
+  "caller": "rea-cli"
+ },
+ "limitations": [
+  "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+ ]
+}

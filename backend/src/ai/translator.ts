@@ -12,10 +12,37 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // instead of hanging the caller forever. Callers can pass an explicit
 // timeoutMs to override; these defaults apply when they don't. The primary
 // 7B path generates up to 4096 tokens (~100s at ~40 tok/s) plus possible
-// queueing behind another in-flight request, so 300s is a generous ceiling;
-// the fast coder tiers are small/fast, so they get 120s.
-const DEFAULT_PRIMARY_TIMEOUT_MS = 300_000;
+// queueing behind another in-flight request, so 300s is a generous ceiling.
+// The fast coder tiers are small/fast, so they get 120s.
+//
+// The primary ceiling is env-overridable (`VACA_PRIMARY_TIMEOUT_MS`) and its
+// default is raised well above the original 300s: the sizing above assumed
+// ~40 tok/s, and the model actually in service has measured an order of
+// magnitude slower under load — a ceiling below a real generation converts a
+// slow build into a false failure.
+const DEFAULT_PRIMARY_TIMEOUT_MS = Number(process.env.VACA_PRIMARY_TIMEOUT_MS) > 0
+  ? Number(process.env.VACA_PRIMARY_TIMEOUT_MS)
+  : 900_000;
 const DEFAULT_FAST_CODER_TIMEOUT_MS = 120_000;
+
+/**
+ * Build the request OPTIONS for one LLM call that may take `budgetMs` to finish.
+ *
+ * Two independent limits guard a wedged endpoint, and they must agree:
+ *   · `signal`  — our own AbortSignal, which cancels the call outright.
+ *   · `timeout` — the OpenAI SDK's per-attempt limit. Left unset it silently
+ *                 defaults to OpenAI.DEFAULT_TIMEOUT = 600s (10 min), which is
+ *                 SMALLER than the budgets the codegen callers pass (plan 30
+ *                 min, write 90 min). The SDK then gave up first and threw
+ *                 APIConnectionTimeoutError ("Request timed out.") while VACA
+ *                 was still working — so widening the callers' budgets alone
+ *                 could never extend a slow build, which is exactly what a
+ *                 scoped re-run measured as a "missing" toolchain verdict.
+ * Passing the budget to both keeps the caller's deadline the one that applies.
+ */
+function llmRequestOptions(budgetMs: number): { signal: AbortSignal; timeout: number } {
+  return { signal: AbortSignal.timeout(budgetMs), timeout: budgetMs };
+}
 
 // ── Config loading ──
 
@@ -74,6 +101,10 @@ let GGUF_MODEL = llmConfig.model;
 let client = new OpenAI({
   apiKey: llmConfig.apiKey,
   baseURL: llmConfig.baseUrl,
+  // Match the SDK's default cap to our safety ceiling (see llmRequestOptions):
+  // a client left at the SDK default (600s) contradicts the 30/90-minute budgets
+  // the routes pass, and the SDK would win the race.
+  timeout: DEFAULT_PRIMARY_TIMEOUT_MS,
 });
 
 // ── Experimenter-only model override ───────────────────────────────────────
@@ -107,7 +138,7 @@ function fallbackToOllama(): void {
   _fellBackFromDspark = true;
   llmConfig = fallback;
   GGUF_MODEL = fallback.model;
-  client = new OpenAI({ apiKey: fallback.apiKey, baseURL: fallback.baseUrl });
+  client = new OpenAI({ apiKey: fallback.apiKey, baseURL: fallback.baseUrl, timeout: DEFAULT_PRIMARY_TIMEOUT_MS });
 }
 
 // Set when we fell back from DSpark → Ollama, so the reconnect poller below can
@@ -170,7 +201,7 @@ function startDsparkReconnectPolling(): void {
       console.log(`[translator] DSpark server healthy (${dspark.baseUrl}) — switching back from Ollama`);
       llmConfig = dspark;
       GGUF_MODEL = dspark.model;
-      client = new OpenAI({ apiKey: dspark.apiKey, baseURL: dspark.baseUrl });
+      client = new OpenAI({ apiKey: dspark.apiKey, baseURL: dspark.baseUrl, timeout: DEFAULT_PRIMARY_TIMEOUT_MS });
       installFallbackWrapper(client);
       _fellBackFromDspark = false;
     } catch {
@@ -237,7 +268,7 @@ export function getRoleTarget(role: LlmRole): RoleTarget | null {
         if (!/\/v1$/.test(baseUrl)) baseUrl += '/v1';
         const apiKey = (resolved as any).apiKey || 'not-needed';
         target = {
-          client: new OpenAI({ apiKey, baseURL: baseUrl }),
+          client: new OpenAI({ apiKey, baseURL: baseUrl, timeout: DEFAULT_PRIMARY_TIMEOUT_MS }),
           model: (resolved as any).model,
           nCtx: (resolved as any).nCtx || 8192,
           apiKey,
@@ -382,7 +413,7 @@ export async function askConductor(
           { role: 'user', content: prompt },
         ],
       },
-      { signal: AbortSignal.timeout(opts?.timeoutMs ?? 150_000) }
+      { signal: AbortSignal.timeout(opts?.timeoutMs ?? 600_000) }
     );
     const msg = response.choices[0]?.message;
     return (msg?.content || (msg as any)?.reasoning || '').trim();
@@ -427,7 +458,7 @@ export async function askOtherLlm(
     },
     // Same abort-signal discipline as the other calls: a runaway generation is
     // cancelled instead of hanging the caller forever.
-    { signal: AbortSignal.timeout(opts?.timeoutMs ?? DEFAULT_PRIMARY_TIMEOUT_MS) }
+    llmRequestOptions(opts?.timeoutMs ?? DEFAULT_PRIMARY_TIMEOUT_MS)
   );
   const msg = response.choices[0]?.message;
   return msg?.content || (msg as any)?.reasoning || '';
@@ -675,7 +706,7 @@ Honest boundaries: the platform performs actions for you — it writes memory an
     // when the role is configured that client/model wins over the primary.
     const roleTarget = role ? getRoleTarget(role) : null;
     const useExp = _expOverride;
-    const effClient = roleTarget?.client || (useExp ? new OpenAI({ apiKey: 'ollama', baseURL: useExp.baseUrl || undefined }) : client);
+    const effClient = roleTarget?.client || (useExp ? new OpenAI({ apiKey: 'ollama', baseURL: useExp.baseUrl || undefined, timeout: DEFAULT_PRIMARY_TIMEOUT_MS }) : client);
     const effModel = roleTarget?.model || (useExp ? useExp.model : GGUF_MODEL);
     const effNctx = roleTarget?.nCtx || (useExp ? 32768 : (llmConfig.nCtx || 8192));
     // A user-connected role LLM reads the band chart (LLM_ORIENTATION.md) first
@@ -701,12 +732,14 @@ Honest boundaries: the platform performs actions for you — it writes memory an
           { role: 'user', content: user },
         ],
       },
-      // Pass the abort signal as a request OPTION (not body) so a runaway
-      // generation is actually cancelled instead of hanging the route forever.
-      // A default timeout applies when the caller didn't specify one — the
-      // fallback wrapper rethrows abort/timeout errors (no Ollama fallback),
-      // so a wedged endpoint surfaces as a clean error instead of a hang.
-      { signal: AbortSignal.timeout(timeoutMs ?? DEFAULT_PRIMARY_TIMEOUT_MS) }
+      // Pass the abort signal AND the matching SDK timeout as request OPTIONS
+      // (not body) so a runaway generation is actually cancelled instead of
+      // hanging the route forever — and so the SDK's own 600s default cannot cut
+      // a legitimate long build short. A default applies when the caller didn't
+      // specify one — the fallback wrapper rethrows abort/timeout errors (no
+      // Ollama fallback), so a wedged endpoint surfaces as a clean error rather
+      // than a hang.
+      llmRequestOptions(timeoutMs ?? DEFAULT_PRIMARY_TIMEOUT_MS)
     );
 
     const msg = response.choices[0]?.message;

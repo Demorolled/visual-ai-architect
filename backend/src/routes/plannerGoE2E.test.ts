@@ -105,9 +105,17 @@ describe('planner write path — Go build end-to-end', () => {
       // A valid Go program must not be flagged as a stub body.
       expect(res!.stubFailures ?? []).toEqual([]);
 
-      // Proof the toolchain was really invoked (`go build ./...`), not skipped.
+      // Proof the toolchain was really invoked, not skipped. The gate runs
+      // `go build -o <bindir>/ ./...` and then `go vet ./...`: the binaries go
+      // to a dot-directory (ignored by `./...`, so a `package main` staged in a
+      // subdirectory cannot collide with the build output), and `vet` is the
+      // second pass because the `-o` build only LINKS main packages — a compile
+      // error inside a non-main package would otherwise ride along as clean (see
+      // nonTsCompileGate.ts). Match that shape rather than one exact command
+      // line, and require BOTH passes to have run.
       const invoked = fs.readFileSync(marker, 'utf-8');
-      expect(invoked).toContain('build ./...');
+      expect(invoked).toMatch(/^build\b[^\n]*\.\/\.\.\.\s*$/m);
+      expect(invoked, 'go vet second pass did not run').toMatch(/^vet\b[^\n]*\.\/\.\.\.\s*$/m);
     } finally {
       fs.rmSync(fakeBinDir, { recursive: true, force: true });
     }

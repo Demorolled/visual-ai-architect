@@ -4,6 +4,8 @@ import { useProjectStore, getNextNodeId } from '../store/projectStore';
 import type { Node, Edge } from 'reactflow';
 import type { NodeType, NodeData } from '../types';
 import { detectFolderRoot, buildFolderManifest } from '../utils/folderManifest';
+import { resolveScanConnections } from '../utils/scanGraph';
+import { dropRealPaths } from '../utils/dropPaths';
 import './FileDropHandler.css';
 
 // ─── Types for Veronica scan & repair ─────────────────────────────
@@ -36,6 +38,35 @@ interface DroppedFile {
   content: string;
 }
 
+/** The Electron preload bridge (packaging/electron/preload.js). */
+interface VeronicaBridge {
+  getPathForFile?: (file: File) => string;
+}
+
+/**
+ * The real on-disk location of a dropped file, when the app can tell us.
+ *
+ * In Electron the drop carries a path and Deep Scan hands it to REA, which reads
+ * the artifact itself — the only way a dropped binary can be scanned, since its
+ * bytes never travel through a browser drop. In a plain browser this returns ''
+ * and the scan falls back to a staged copy of the dropped text.
+ *
+ * Which FILES to ask about, and in what order, is `dropRealPaths`' job — asking
+ * an item alone can miss a dropped folder.
+ *
+ * Must be called synchronously while the drop event is still being handled: a
+ * DataTransferItem is only readable then.
+ */
+function realPathForFile(file: File | null | undefined): string {
+  const bridge = (window as unknown as { veronica?: VeronicaBridge }).veronica;
+  if (!file || !bridge?.getPathForFile) return '';
+  try {
+    return bridge.getPathForFile(file) || '';
+  } catch {
+    return '';
+  }
+}
+
 interface ScanArchitecture {
   projectName: string;
   projectType: string;
@@ -61,6 +92,8 @@ interface ScanArchitecture {
   }>;
   /** Distinct top-level folder roots (>1 = multiple apps dropped together). */
   apps?: string[];
+  /** Evidence provenance + the scan engine's own stated limits (measured scans). */
+  notes?: string[];
 }
 
 interface ScanConnection {
@@ -120,17 +153,21 @@ async function readEntry(
   return [];
 }
 
-async function readFiles(items: DataTransferItemList): Promise<DroppedFile[]> {
+async function readFiles(dt: DataTransfer): Promise<{ files: DroppedFile[]; realPaths: string[] }> {
   const entries: FileSystemEntry[] = [];
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item.kind === 'file') {
-      const entry = item.webkitGetAsEntry();
-      if (entry) entries.push(entry);
-    }
+  // This whole pass runs before the first `await`, while the DataTransfer is
+  // still valid — the entries AND the real paths have to be taken here. The
+  // paths go through dropRealPaths, which also covers a dropped folder that
+  // `item.getAsFile()` alone would leave unresolved (see utils/dropPaths).
+  const realPaths = dropRealPaths(dt.items, dt.files, realPathForFile);
+  for (let i = 0; i < dt.items.length; i++) {
+    const item = dt.items[i];
+    if (item.kind !== 'file') continue;
+    const entry = item.webkitGetAsEntry();
+    if (entry) entries.push(entry);
   }
   const results = await Promise.all(entries.map((e) => readEntry(e)));
-  return results.flat();
+  return { files: results.flat(), realPaths };
 }
 
 const FILE_NODE_TYPES: NodeType[] = ['logic', 'input', 'output', 'api', 'database', 'ui'];
@@ -139,10 +176,28 @@ const FILE_NODE_TYPES: NodeType[] = ['logic', 'input', 'output', 'api', 'databas
 
 type ScanState = 'idle' | 'scanning' | 'preview' | 'done' | 'error';
 
+interface ScanEvidence {
+  evidenceId: string | null;
+  providerId: string | null;
+  providerVersion: string | null;
+  operation: string | null;
+  durationMs: number;
+}
+
 interface ScanResult {
   architecture: ScanArchitecture;
-  source: 'llm' | 'rule-based';
+  source: 'llm' | 'rule-based' | 'rea';
   llmError?: string;
+  /** Measured-scan provenance (REA). */
+  evidence?: ScanEvidence;
+  /** 'path' = REA read the artifact itself; 'staged' = a copy of the dropped text. */
+  mode?: 'path' | 'staged';
+  stagedFiles?: number;
+  skippedFiles?: number;
+  /** What the staged copy had to leave out, and why. */
+  skipped?: string[];
+  /** Which REA command answered for this target. */
+  plan?: { command: string; reason: string };
 }
 
 // ─── Deep-scan → canvas graph helpers ───────────────────────────────
@@ -199,6 +254,8 @@ const FileDropHandler: React.FC = () => {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [scanError, setScanError] = useState('');
   const [scanProgress, setScanProgress] = useState('');
+  // Real on-disk path of what was dropped, when the app can provide it (Electron).
+  const [dropTarget, setDropTarget] = useState('');
 
   // Veronica scan & repair state
   const [veronicaState, setVeronicaState] = useState<'idle' | 'processing' | 'done' | 'error'>('idle');
@@ -260,9 +317,13 @@ const FileDropHandler: React.FC = () => {
       setDescribeProgress('');
 
       try {
-        const dropped = await readFiles(e.dataTransfer.items);
+        const { files: dropped, realPaths } = await readFiles(e.dataTransfer);
         if (dropped.length === 0) return;
 
+        // REA scans ONE target, so a single drop (a folder, an artifact) uses its
+        // real path and nothing is copied; a multi-item drop falls back to a
+        // staged copy of everything that was dropped.
+        setDropTarget(realPaths.length === 1 ? realPaths[0] : '');
         setFiles(dropped);
 
         const firstFilename = dropped[0].path.split('/').pop() || dropped[0].path;
@@ -455,39 +516,56 @@ ${manifest}`;
     }
   }, [files]);
 
-  // ── Deep scan (new: creates full architecture) ──────────────────
-
+  // ── Deep scan: REA measures whatever was dropped, then the canvas gets it ──
+  //
+  // The artifact's real path is sent when the app has one, so REA reads the file
+  // itself (a dropped .apk/.exe/.dll only exists on disk). Otherwise the dropped
+  // text is staged server-side into a temp directory and THAT is scanned.
   const handleDeepScan = useCallback(async () => {
     setScanState('scanning');
-    setScanProgress(`Scanning ${files.length} files...`);
+    setScanError('');
     setShowClearConfirm(false);
+    setScanProgress(dropTarget
+      ? `Scanning ${dropTarget.split(/[\\/]/).pop() || dropTarget} with REA...`
+      : `Staging ${files.length} file(s), then scanning with REA...`);
 
     try {
-      const res = await axios.post('/api/scan/deep', {
-        files: files.map(f => ({ path: f.path, content: f.content })),
-      }, { timeout: 300000 });
+      const res = await axios.post('/api/scan/deep-scan',
+        dropTarget
+          ? { path: dropTarget }
+          : { files: files.map(f => ({ path: f.path, content: f.content })) },
+        { timeout: 600000 },
+      );
 
       const data = res.data;
 
       if (!data.success) {
-        throw new Error(data.error || 'Scan failed');
+        // REA reports what is missing and how to fix it; show that, not a generic failure.
+        throw new Error([data.error, data.hint].filter(Boolean).join('\n') || 'Deep scan failed');
       }
 
       const architecture = data.architecture as ScanArchitecture;
-      const source = data.source as 'llm' | 'rule-based';
-
       if (!architecture || !architecture.nodes || architecture.nodes.length === 0) {
         throw new Error('No architecture nodes returned from scan');
       }
 
-      setScanResult({ architecture, source, llmError: data.llmError });
+      setScanResult({
+        architecture,
+        source: 'rea',
+        evidence: data.evidence,
+        mode: data.mode,
+        stagedFiles: data.stagedFiles,
+        skippedFiles: data.skippedFiles,
+        skipped: data.skipped,
+        plan: data.plan,
+      });
       setScanState('preview');
       setScanProgress(`Found ${architecture.nodes.length} nodes and ${architecture.edges.length} connections`);
     } catch (err: any) {
       setScanState('error');
       setScanError(err?.response?.data?.details || err?.response?.data?.error || err.message || 'Deep scan failed');
     }
-  }, [files]);
+  }, [files, dropTarget]);
 
   // ── Build the full node graph from a scan result: module nodes (carrying
   //    their files), per-file nodes, external connection nodes (packages,
@@ -500,7 +578,11 @@ ${manifest}`;
     const fileNodeIdForPath: Record<string, string> = {};
     const flowNodes: Node[] = [];
     const flowEdges: Edge[] = [];
-    const modulePurpose = `Deep scan of ${arch.nodes.length} modules. ${src === 'rule-based' ? 'Rule-based analysis' : 'AI-powered architecture analysis'}.`;
+    const modulePurpose = `Deep scan of ${arch.nodes.length} modules. ${
+      src === 'rule-based' ? 'Rule-based analysis'
+      : src === 'rea' ? 'Measured from the artifact itself (REA)'
+      : 'AI-powered architecture analysis'
+    }.`;
 
     // ── Master node (empty-canvas apply only) ──
     if (opts?.includeMaster) {
@@ -598,20 +680,26 @@ ${manifest}`;
       }
     });
 
-    // ── Module-to-module edges (with the import description as the label) ──
-    arch.edges
-      .filter(e => idMap[e.source] && idMap[e.target])
-      .forEach((e, i) => {
-        const desc = e.description || '';
-        flowEdges.push({
-          id: `edge_scan_${i}_${Date.now()}`,
-          source: idMap[e.source],
-          target: idMap[e.target],
-          type: 'default' as const,
-          label: desc.length > 48 ? `${desc.slice(0, 48)}…` : desc || undefined,
-          data: { description: desc },
-        });
+    // ── Scanned connections, with the import description as the label. A
+    //    connection can name two modules (the LLM scan) or two files
+    //    (`src/App.tsx imports ./TaskList`, what REA measures); a file that
+    //    folded into its module's "+N more" still gets its connection drawn at
+    //    the module level, so a measured import is never dropped just because
+    //    the canvas did not give that file a node of its own. ──
+    resolveScanConnections(arch.edges || [], {
+      moduleLabels: idMap,
+      fileNodes: fileNodeIdForPath,
+      moduleOfFile: moduleIdForFile,
+    }).forEach((e, i) => {
+      flowEdges.push({
+        id: `edge_scan_${i}_${Date.now()}`,
+        source: e.source,
+        target: e.target,
+        type: 'default' as const,
+        label: e.description.length > 48 ? `${e.description.slice(0, 48)}…` : e.description || undefined,
+        data: { description: e.description },
       });
+    });
 
     // ── External connection nodes: packages 📦, services 🌐, sibling apps 🔗
     //    ("how the app connects to OTHER apps") — wired from the files/modules
@@ -835,8 +923,11 @@ ${manifest}`;
                 <div className="filedrop-opt-group">
                   <h3>Option 2: Deep Scan Architecture</h3>
                   <p className="filedrop-opt-desc">
-                    Analyze the full project structure, identify all modules and connections,
-                    and create a complete node architecture on the canvas.
+                    Measure the real structure with REA — modules, files, imports and external
+                    dependencies — then create the complete node architecture on the canvas.
+                    {dropTarget
+                      ? ' The dropped item’s own path is used, so nothing is copied.'
+                      : ' Without a real path, a staged copy of the dropped files is scanned.'}
                   </p>
                   <div className="filedrop-deepscan-actions">
                     <button
@@ -1052,8 +1143,8 @@ ${manifest}`;
                 <p className="filedrop-scan-title">Deep Scanning Project...</p>
                 <p className="filedrop-scan-sub">{scanProgress}</p>
                 <p className="filedrop-scan-hint">
-                  Analyzing file structure, imports, and dependencies
-                  to build the complete architecture.
+                  REA is measuring the artifact's own structure — files, imports and
+                  dependencies — so every node on the canvas comes from evidence.
                 </p>
               </div>
             )}
@@ -1065,7 +1156,7 @@ ${manifest}`;
                   <h3>
                     ✅ Architecture Analysis Complete
                     <span className={`filedrop-source-badge ${scanResult.source}`}>
-                      {scanResult.source === 'llm' ? 'AI' : 'Rule-based'}
+                      {scanResult.source === 'rea' ? 'REA · Measured' : scanResult.source === 'llm' ? 'AI' : 'Rule-based'}
                     </span>
                   </h3>
                   <p className="filedrop-preview-project">
@@ -1176,6 +1267,31 @@ ${manifest}`;
                   <p className="filedrop-preview-notice">
                     ⚡ Rule-based analysis used{scanResult.llmError ? ` (LLM: ${scanResult.llmError})` : ' (LLM unavailable)'}
                   </p>
+                )}
+
+                {scanResult.mode === 'staged' && (
+                  <p className="filedrop-preview-notice">
+                    📦 Scanned a staged copy of {scanResult.stagedFiles ?? 0} dropped file(s) — no real path was
+                    available, so bytes that never crossed the drop were not part of this scan.
+                    {scanResult.skippedFiles ? ` ${scanResult.skippedFiles} file(s) were left out:` : ''}
+                    {(scanResult.skipped || []).map((s, i) => (
+                      <span key={i} className="filedrop-preview-note">· {s}</span>
+                    ))}
+                  </p>
+                )}
+
+                {(scanResult.architecture.notes || []).length > 0 && (
+                  <div className="filedrop-preview-notes">
+                    <p className="filedrop-preview-section-title">Evidence &amp; limits:</p>
+                    {scanResult.architecture.notes!.slice(0, 10).map((note, i) => (
+                      <p key={i} className="filedrop-preview-note">{note}</p>
+                    ))}
+                    {scanResult.architecture.notes!.length > 10 && (
+                      <p className="filedrop-preview-note">
+                        …and {scanResult.architecture.notes!.length - 10} more note(s)
+                      </p>
+                    )}
+                  </div>
                 )}
 
                 {showClearConfirm && (

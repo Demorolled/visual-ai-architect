@@ -95,6 +95,33 @@ export async function runErrorCorrection(req: FixRequest): Promise<FixLoopResult
     // Validate current code
     lastResult = await runSandbox(currentCode, currentLanguage);
 
+    // A SKIPPED result means NO checker exists for this language: the file was
+    // not validated, and it is not broken. Carrying on fabricates an error out of
+    // an empty diagnostic list ("Unknown validation error"), and the first model
+    // reply is then re-detected as TypeScript — `detectLanguage` defaults to
+    // 'typescript' — so the NEXT round runs tsc against C#/Kotlin source and
+    // hands the model TS1434 diagnostics for a language it was never asked
+    // about. Measured live on a .cs file: 3 model calls, an
+    // `npx --package typescript` install inside the loop, and success:false with
+    // the file untouched. This is the same TS-fallback defect `runLocally`
+    // already refuses to commit (dockerRunner: a language with no entry is NOT
+    // checked and says so) — it survived here because the loop read `skipped`
+    // as "failed with no errors".
+    // Reached by `windows → csharp` and `android → kotlin` (SandboxRunner
+    // .osToLanguage), i.e. two of the five OS targets, not just odd nodes.
+    if (lastResult.skipped) {
+      console.warn(
+        `[errorCorrection] ${currentLanguage}: ${lastResult.reason || 'no checker for this language'} — fix loop skipped (nothing was validated, so there is nothing to fix)`,
+      );
+      return {
+        success: false,
+        finalCode: currentCode,
+        language: currentLanguage,
+        attempts,
+        totalTimeMs: Date.now() - startTime,
+      };
+    }
+
     if (lastResult.success) {
       // Code is valid — done!
       return {
@@ -124,9 +151,16 @@ export async function runErrorCorrection(req: FixRequest): Promise<FixLoopResult
         currentCode = cleaned;
       }
 
-      // Update language if it changed
-      const detectedLang = detectLanguage(cleaned);
-      if (detectedLang) currentLanguage = detectedLang;
+      // Follow the reply's language ONLY when the caller declared none. A
+      // declared language is authoritative: re-detecting is what silently moved
+      // the loop's validation target (a `.cs` reply read as 'typescript' by
+      // `detectLanguage`'s default, so the next round judged C# source with tsc).
+      // The sandbox refuses to judge a language it cannot read; the loop must not
+      // hand it one either.
+      if (!req.language) {
+        const detectedLang = detectLanguage(cleaned);
+        if (detectedLang) currentLanguage = detectedLang;
+      }
 
       attempts.push({
         attempt,

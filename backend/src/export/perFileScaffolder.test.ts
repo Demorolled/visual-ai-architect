@@ -1201,3 +1201,44 @@ describe('generated package.json test script', () => {
     expect(pkg.devDependencies.vitest).toBeUndefined();
   });
 });
+
+// The Go module name is a project-wide invariant: the compile gate stages its
+// go.mod with it, the generated code imports `<name>/<dir>`, and the export's
+// own go.mod must declare it. These tests pin the ONE resolver and the ONE
+// builder both write paths go through (measured live: a chat export shipped Go
+// SOURCE ONLY, so `go build` failed with `go.mod file not found` before it could
+// report a single real compile error).
+describe('goProjectFiles — the Go project files every write path ships', () => {
+  const name = 'a multi-file Go CLI that converts a CSV file to JSON';
+
+  it('declares the ONE shared module name and ships a runnable start.sh', () => {
+    const project = scaffolder.goProjectFiles(name);
+    expect(Object.keys(project).sort()).toEqual(['go.mod', 'start.sh']);
+    expect(project['go.mod']).toBe('module a-multi-file-go-cli-that-converts-a-csv-file-to-json\n\ngo 1.22\n');
+    expect(project['start.sh']).toContain('#!/usr/bin/env bash');
+    expect(project['start.sh']).toContain('go build');
+  });
+
+  it('writes byte-identical files to the canvas scaffolder\'s own output', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-go-agree-'));
+    try {
+      const res = await scaffolder.scaffold({
+        projectName: name,
+        targetOS: 'linux',
+        files: [{
+          fileName: 'main.go', language: 'go', code: 'package main\n\nfunc main() {}\n',
+          nodeId: 'n1', nodeLabel: 'main.go', dependencies: [], exports: [], errors: [], validated: true,
+        }],
+        nodes: [], edges: [], outputDir: dir,
+      });
+      const goModPath = path.join(res.outputPath, 'go.mod');
+      expect(fs.existsSync(goModPath), 'the canvas scaffold wrote no go.mod').toBe(true);
+      expect(fs.readFileSync(goModPath, 'utf-8')).toBe(scaffolder.goProjectFiles(name)['go.mod']);
+      const startPath = path.join(res.outputPath, 'start.sh');
+      expect(fs.existsSync(startPath)).toBe(true);
+      expect(fs.statSync(startPath).mode & 0o111).toBeGreaterThan(0);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});

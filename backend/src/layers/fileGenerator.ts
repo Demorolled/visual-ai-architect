@@ -56,8 +56,9 @@ import {
   type BridgeModule,
 } from '../utils/treeScope.js';
 import { SandboxRunner } from '../sandbox/runner.js';
-import { sanitizeGoModuleName } from '../sandbox/nonTsCompileGate.js';
+import { sanitizeGoModuleName, resolveGoModuleName } from '../sandbox/nonTsCompileGate.js';
 import { runNonTsGatesWithRepair, pathFromGateFailure } from '../sandbox/nonTsRepair.js';
+import { collectGateFlaggedFiles, type GateFlaggedFile } from '../review/gateScopedReview.js';
 import { runTscGate, deriveBuildVerdict, type TscEntry, type TscStatus, type SmokeVerdict } from '../sandbox/buildVerification.js';
 // The shared behavioral smoke gate — the same probes + bounded repair loop the
 // chat path (routes/codePlanner.ts) runs. Extracted to sandbox/ so BOTH
@@ -266,6 +267,10 @@ export interface FileGenerationResult {
   contractViolations: number;
   /** Per-language whole-project compile gate verdicts (non-TS languages). */
   languageGates: Array<{ language: string; clean: boolean; errors: string[] }>;
+  /** The gate failures attributed to the FILES they name — the scope for the
+   *  post-generation AI review (see `review/gateScopedReview.ts`). Empty when
+   *  no gate ran, or when every gate passed. */
+  gateFlaggedFiles: GateFlaggedFile[];
   /** Behavioral render-smoke verdict from the canvas path (null when the gate
    *  was skipped — fast preview builds — or before the file set was staged). */
   renderSmoke?: SmokeVerdict | null;
@@ -395,6 +400,45 @@ export function labelToFileName(label: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
     .substring(0, 60) || 'untitled';
+}
+
+/**
+ * The filename a node's label + resolved language produce.
+ *
+ * THE RESOLVED LANGUAGE IS AUTHORITATIVE. The label's embedded extension is
+ * consulted only when the node declares no language at all.
+ *
+ * Why: the plan stage labelled nodes from the OS map (linux -> go), so a Rust
+ * plan arrived with labels like "ui.go"/"main.go"/"service.go". Every
+ * consumer that trusted the label then named Rust files `.go`, and any
+ * extension-keyed consumer (`languageFromPath`, the non-TS gate's toolchain
+ * choice) handed Rust source to the Go toolchain. `ai/languageInference.ts`
+ * fixed the language half of this; this is the filename half.
+ */
+export function resolveFileName(label: string, language?: string): { fileName: string; ext: string } {
+  const { extOverride } = stripLabelExtension(label || '');
+  const declared = (language || '').trim();
+  const ext = declared
+    ? getFileExtension(declared)
+    : (extOverride || getFileExtension('typescript'));
+  return { fileName: `${labelToFileName(label)}.${ext}`, ext };
+}
+
+/**
+ * A node label with its extension reconciled to the node's resolved language
+ * (`ui.go` + rust -> `ui.rs`).
+ *
+ * Returns the label unchanged when the two already agree, when the label
+ * carries no known extension, or when no language is declared. Casing and the
+ * rest of the label are preserved verbatim — the label is shown to the user in
+ * the graph, so only the extension is corrected.
+ */
+export function reconcileLabelExtension(label: string, language?: string): string {
+  const declared = (language || '').trim();
+  if (!declared) return label;
+  const { name, extOverride } = stripLabelExtension(label || '');
+  if (!extOverride || extensionMatchesLanguage(extOverride, declared)) return label;
+  return `${name}.${getFileExtension(declared)}`;
 }
 
 /**
@@ -1862,6 +1906,13 @@ export class FileGenerator {
   async generateFiles(project: Project, skipValidation?: boolean, onProgress?: GenerationProgressCallback): Promise<FileGenerationResult> {
     const nonMasterNodes = project.nodes.filter(n => n.type !== 'master');
     const masterNode = project.nodes.find(n => n.type === 'master');
+    // ONE Go module name for this build: the same value the auto-generated
+    // import statements below are written with, the compile gate stages its
+    // go.mod with, and the export scaffolder names its go.mod after. The gate
+    // used to derive its own from the master node's appGoal while the import
+    // writer used the project name — two different strings for one project, so
+    // `go build` rejected every sibling import of an otherwise correct app.
+    const goModuleName = resolveGoModuleName(project.name);
 
     if (nonMasterNodes.length === 0) {
       return {
@@ -1874,6 +1925,7 @@ export class FileGenerator {
         tsCompileClean: true, // no files at all → vacuously clean
         contractViolations: 0,
         languageGates: [],
+        gateFlaggedFiles: [],
       };
     }
 
@@ -1986,8 +2038,7 @@ export class FileGenerator {
             const depExports = fileExports.get(depLabel);
             if (depExports) {
               const depFile = labelToFileName(depLabel);
-              // Pass the project name as the Go module name for correct import paths
-              importSection += buildImportStatement(depFile, depExports, language, sanitizeGoModuleName(project.name)) + '\n';
+              importSection += buildImportStatement(depFile, depExports, language, goModuleName) + '\n';
               resolvedDeps.push(depLabel);
             }
           }
@@ -2059,7 +2110,7 @@ export class FileGenerator {
                 for (const n of names) seenNames.add(n);
                 if (names.length === 0 && !depExports.defaultName) continue;
                 const filtered: FileExportInfo = { ...depExports, names };
-                filteredSection += buildImportStatement(labelToFileName(depLabel), filtered, language, sanitizeGoModuleName(project.name)) + '\n';
+                filteredSection += buildImportStatement(labelToFileName(depLabel), filtered, language, goModuleName) + '\n';
                 filteredDeps.push(depLabel);
               }
               importSection = filteredSection;
@@ -2128,6 +2179,13 @@ export class FileGenerator {
               language,
               code: fullCode,
               nodeId: node.id,
+              // NOT reconciled: this label is a KEY, not just a display string.
+              // `fileExports`, `depSourceCache`, `contractsChanged` and
+              // `regenerated` all index on it and are read back with the plan's
+              // raw dependency labels, so rewriting the extension here would
+              // make every `fileExports.get(depLabel)` / `depSourceCache.get()`
+              // miss. The already-correct `fileName` above (`ui.rs`) is what the
+              // UI shows; the label stays as the plan declared it.
               nodeLabel,
               treeId: treeScope.treeIdByNode.get(node.id),
               ...(layout.separateApps
@@ -2269,14 +2327,24 @@ export class FileGenerator {
     //    The deterministic sanitizer (bare Java imports, truncation) is inside. ──
     let languageGates: Array<{ language: string; clean: boolean; errors: string[] }> = [];
     let stubFailures: string[] = [];
+    // Stage through scaffoldRelPath — the SAME layout tsc and the export use.
+    // Passing the bare fileName put every node in ONE directory, so a Go/Java/
+    // C# build with more than one package failed the gate with "found packages
+    // X and Y in <dir>" no matter how correct the code was. Built through ONE
+    // lambda so the gate, the post-smoke re-verify and the review scope cannot
+    // disagree about which path a file is staged at.
+    const stagedForGate = () => generatedFiles
+      .filter((f) => f.nodeLabel !== 'App Preview (Auto-generated)' && !f.nodeLabel.includes('Auto-generated'))
+      .map((f) => ({
+        path: this.scaffoldRelPath(f),
+        content: f.code,
+        fileName: f.fileName,
+        nodeId: f.nodeId,
+        nodeLabel: f.nodeLabel,
+        language: f.language,
+      }));
     if (!skipValidation) {
-      // Stage through scaffoldRelPath — the SAME layout tsc and the export use.
-      // Passing the bare fileName put every node in ONE directory, so a Go/Java/
-      // C# build with more than one package failed the gate with "found packages
-      // X and Y in <dir>" no matter how correct the code was.
-      const gateSources = generatedFiles
-        .filter((f) => f.nodeLabel !== 'App Preview (Auto-generated)' && !f.nodeLabel.includes('Auto-generated'))
-        .map((f) => ({ path: this.scaffoldRelPath(f), content: f.code }));
+      const gateSources = stagedForGate();
       const gateContracts = gateSources.map((s) => {
         const g = generatedFiles.find((f) => this.scaffoldRelPath(f) === s.path)!;
         return { path: s.path, summary: (g as any).description || '', language: g.language, exports: g.exports };
@@ -2285,6 +2353,7 @@ export class FileGenerator {
       try {
         const res = await runNonTsGatesWithRepair({
           request: masterNode?.data?.appGoal || project.name || 'the requested app',
+          goModuleName,
           files: gateSources,
           contractFiles: gateContracts,
           exportDir: gateTmp,
@@ -2310,7 +2379,7 @@ export class FileGenerator {
           const g = generatedFiles.find((f) => this.scaffoldRelPath(f) === s.path);
           if (g && g.code !== s.content) {
             g.code = s.content;
-            console.log(`[fileGenerator] non-TS gate repaired "${g.nodeLabel}" (${s.path})`);
+            console.log(`[fileGenerator] non-TS gate repaired ${s.path} (label "${g.nodeLabel}")`);
           }
         }
       } catch (err) {
@@ -2388,9 +2457,7 @@ export class FileGenerator {
     // canvas build reports a clean language gate for code that does not compile.
     // Repair is DISABLED — verdict refresh only. Skipped for fast preview builds.
     if (!skipValidation && languageGates.length > 0) {
-      const reSources = generatedFiles
-        .filter((f) => f.nodeLabel !== 'App Preview (Auto-generated)' && !f.nodeLabel.includes('Auto-generated'))
-        .map((f) => ({ path: this.scaffoldRelPath(f), content: f.code }));
+      const reSources = stagedForGate();
       const reContracts = reSources.map((s) => {
         const g = generatedFiles.find((f) => this.scaffoldRelPath(f) === s.path)!;
         return { path: s.path, summary: (g as any).description || '', language: g.language, exports: g.exports };
@@ -2399,6 +2466,7 @@ export class FileGenerator {
       try {
         const res = await runNonTsGatesWithRepair({
           request: masterNode?.data?.appGoal || project.name || 'the requested app',
+          goModuleName,
           files: reSources,
           contractFiles: reContracts,
           exportDir: reTmp,
@@ -2417,6 +2485,16 @@ export class FileGenerator {
         try { fs.rmSync(reTmp, { recursive: true, force: true }); } catch { /* noop */ }
       }
     }
+
+    // ── Which files the gates flagged, in file terms ──
+    // The review scope (routes/generation.ts): a non-TS build reviews ONLY the
+    // files its compile/stub gate flagged. Reuses the repair loop's own error →
+    // file attribution, so the file handed to the reviewer is the file the
+    // repair loop would have repaired.
+    const gateFlaggedFiles: GateFlaggedFile[] =
+      !skipValidation && (languageGates.some((g) => !g.clean) || stubFailures.length > 0)
+        ? collectGateFlaggedFiles(stagedForGate(), languageGates, stubFailures)
+        : [];
 
     const hasTsJs = generatedFiles.some((f) => f.language === 'typescript' || f.language === 'javascript');
     // Map the canvas compile state onto the SHARED verdict vocabulary, then read
@@ -2499,6 +2577,7 @@ export class FileGenerator {
       tsCompileClean,
       contractViolations: contractViolationCount,
       languageGates,
+      gateFlaggedFiles,
       // The behavioral smoke verdicts (canvas path), so callers can see WHY a
       // build was or wasn't trusted instead of only the fused tsCompileClean.
       renderSmoke,
@@ -3584,6 +3663,14 @@ NOTE: The label "${nodeLabel}" has a .${extOverride} extension, but the selected
 The file will be saved as a .${ext} file containing ${language} code.
 Generate ONLY ${language} syntax — do NOT use ${extOverride} syntax.`
       : '';
+    // NOTE: `nodeLabel` is deliberately NOT reconciled here. It doubles as a KEY
+    // into the project graph — `(n.data?.label || n.id) !== nodeLabel` excludes
+    // self from the sibling lists, `src === nodeLabel` skips this node's own
+    // edges, and `depSourceCache` is keyed by it. Rewriting it to the resolved
+    // extension leaves the plan's spelling in those comparisons, so self stops
+    // matching, the node's own edges read as dependencies, and it is offered up
+    // as one of its own type-ownership siblings. The DISPLAYED label is
+    // reconciled where the GeneratedFile is built instead.
 
     // Determine language-specific hints for the AI prompt
     let languageHint = '';

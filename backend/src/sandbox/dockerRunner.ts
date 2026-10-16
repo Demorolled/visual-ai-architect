@@ -212,6 +212,10 @@ const TSC_ARGS = [
  * result in runLocally) instead of being judged by a compiler that cannot read
  * it. The whole-project language gate (sandbox/nonTsCompileGate) decides those
  * builds.
+ *
+ * An entry here is a claim about how to CHECK a language, not that the toolchain
+ * is present: `runLocally` probes the entry's own `check` before running it, so a
+ * missing compiler is reported as "not validated" rather than as a failure.
  */
 interface LocalTool {
   /** Probe that proves the toolchain is installed (see checkSandboxAvailability). */
@@ -292,6 +296,42 @@ const LOCAL_TOOL_CHECK: Record<string, LocalTool> = {
   },
 };
 
+/**
+ * Languages whose toolchain probe has ALREADY succeeded, cached for the process
+ * life. Positive-only on purpose: an installed toolchain cannot un-install
+ * mid-session, so re-probing wastes the slowest probe in the table
+ * (`npx --package typescript tsc --version`, which on a cold npx cache has to
+ * FETCH typescript) on every file — while a FAILED probe is retried, so a
+ * toolchain installed mid-session is picked up without a restart.
+ */
+const toolchainUp = new Map<string, boolean>();
+
+/**
+ * Does this tool's own probe actually run? (`go version`, `rustc --version`, …)
+ *
+ * The probe gets the SAME timeout the real check would get. A tighter cap would
+ * report a slow-but-working toolchain as absent, i.e. "not validated" for a file
+ * the sandbox could have checked — and an absent binary fails instantly anyway
+ * (shell exit 127), so the generous budget only ever applies to a toolchain that
+ * IS there and IS slow, which is exactly when it must not be called missing.
+ * A timeout is reported as such rather than as "not installed": they are
+ * different facts and the reason string reaches the caller.
+ */
+function probeToolchain(
+  language: string,
+  tool: LocalTool,
+  timeoutMs: number,
+): { ok: boolean; timedOut: boolean } {
+  if (toolchainUp.get(language) === true) return { ok: true, timedOut: false };
+  try {
+    execSync(tool.check, { stdio: 'ignore', timeout: timeoutMs });
+    toolchainUp.set(language, true);
+    return { ok: true, timedOut: false };
+  } catch (err: any) {
+    return { ok: false, timedOut: err?.signal === 'SIGTERM' || err?.killed === true };
+  }
+}
+
 async function runLocally(code: string, language: string, timeout: number, fromMethod: string = 'local'): Promise<SandboxResult> {
   const tempDir = generateTempDir();
   const fallbackReason = fromMethod === 'docker' ? 'Docker' : 'Local';
@@ -308,6 +348,27 @@ async function runLocally(code: string, language: string, timeout: number, fromM
       exitCode: 0,
       skipped: true,
       reason: `${fallbackReason} sandbox has no checker for '${language}' — this file was not validated.`,
+    };
+  }
+
+  // A checker with no TOOLCHAIN is the same situation, and used to be reported
+  // as the opposite: `execSync` threw `rustc: not found`, which came back as
+  // `success: false` carrying a shell error as if it were a compiler
+  // diagnostic. Valid Rust was then "broken", so the fix loop spent its whole
+  // attempt budget asking the model to repair code that was already correct
+  // (measured on a box without rustc). A verdict requires a compiler that ran:
+  // absent toolchain = not validated, exactly like `!tool` above.
+  const probe = probeToolchain(language, tool, timeout);
+  if (!probe.ok) {
+    return {
+      success: false,
+      output: '',
+      errors: [],
+      exitCode: 0,
+      skipped: true,
+      reason: probe.timedOut
+        ? `${fallbackReason} sandbox: the '${language}' toolchain did not answer its probe (\`${tool.check}\`) within ${timeout}ms — this file was not validated.`
+        : `${fallbackReason} sandbox has no working '${language}' toolchain (probe: \`${tool.check}\`) — this file was not validated.`,
     };
   }
 

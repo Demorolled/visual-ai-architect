@@ -119,6 +119,27 @@ export function sanitizeGoModuleName(name: string): string {
   return (name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled';
 }
 
+/**
+ * THE Go module name for a project — the single source of truth.
+ *
+ * Every producer and consumer of a Go import path must agree on this string:
+ * the compile gate writes `module <name>` into its staging `go.mod`, the code
+ * writer emits `<name>/<dir>` import statements, the repair prompts tell the
+ * model to use `<name>/<dir>`, and the export's own `go.mod` declares it. When
+ * any two of those derive the name from a DIFFERENT input, the generated code
+ * is internally inconsistent and `go build` rejects every sibling import with
+ * `package <name2>/<dir> is not in std` (measured live: the canvas path's gate
+ * keyed off the master node's appGoal while the writer keyed off the project
+ * name, so the two never matched for a real project).
+ *
+ * `projectName` wins when present because that is what the export's `go.mod`
+ * and directory are named after; `request` is the fallback for the chat path,
+ * which has no project object and names its export dir from the request.
+ */
+export function resolveGoModuleName(projectName?: string | null, request?: string | null): string {
+  return sanitizeGoModuleName((projectName || '').trim() || (request || '').trim());
+}
+
 /** True only when every gate that ran is clean. Empty = vacuously clean. */
 export function allLanguageGatesClean(gates: LanguageGate[]): boolean {
   return gates.every((g) => g.clean);
@@ -706,6 +727,87 @@ export interface GoStagedFile {
   code: string;
 }
 
+/** The directory a project-relative Go path lives in ('' for the root). */
+export function goDirName(relPath: string): string {
+  const norm = (relPath || 'main.go').replace(/\\/g, '/').replace(/^\.\//, '').replace(/^\/+/, '');
+  return norm.split('/').slice(0, -1).join('/');
+}
+
+/**
+ * Every directory the project's OWN imports name — `<module>/dir` or `./dir`.
+ * Shared by the staging planner and the shipped-file fold below so both agree
+ * on which directories are addressed by an import path (and therefore which
+ * package names are load-bearing).
+ */
+export function goImportedDirs(files: StagedSourceFile[], moduleName: string): Set<string> {
+  const wanted = new Set<string>();
+  for (const f of files) {
+    const fromDir = goDirName(f.relPath);
+    for (const spec of goLocalImportPaths(f.code, moduleName)) {
+      let dir = '';
+      if (spec.startsWith('./') || spec.startsWith('../')) {
+        dir = path.posix.normalize(path.posix.join(fromDir, spec)).replace(/^\.\//, '');
+      } else if (moduleName && spec.startsWith(`${moduleName}/`)) {
+        dir = spec.slice(moduleName.length + 1);
+      }
+      dir = dir.replace(/\/+$/, '');
+      if (dir && dir !== '.') wanted.add(dir);
+    }
+  }
+  return wanted;
+}
+
+/**
+ * Enforce Go's ONE-PACKAGE-PER-DIRECTORY rule on the files that actually SHIP.
+ *
+ * `planGoStaging` (above) repairs the layout for the compile gate — but it does
+ * so in a temp dir, so the repaired layout was never written anywhere. Measured
+ * live: a generated file-preview CLI shipped `main.go` (`package main`, with
+ * `func main`) beside `reader.go` (`package app`) at the ROOT, with nothing
+ * importing `package app`. `go build ./...` on the export failed with
+ * `found packages main (main.go) and app (reader.go)`, while the gate reported
+ * the build CLEAN — it had folded the two into one package in its staging dir.
+ * The verdict described a tree the user never received.
+ *
+ * This applies the gate's own fold rule to the real files: a non-`main` file
+ * sharing a directory with a `package main` file becomes `package main`, UNLESS
+ * that directory is addressed by one of the project's own import paths (a
+ * package `main` cannot be imported, so a load-bearing name must be left to the
+ * staging planner to relocate instead of renamed here).
+ *
+ * Returns only the files whose content changed, so the caller writes exactly
+ * those and can report the count.
+ */
+export function foldGoPackagePerDirectory(
+  files: Array<{ path: string; content: string; language?: string }>,
+  moduleName: string,
+): Array<{ path: string; content: string }> {
+  const staged: StagedSourceFile[] = files.map((f) => ({ relPath: f.path, code: f.content, language: f.language }));
+  const goFiles = staged.filter((f) => resolveGateLanguage(f.language, f.relPath) === 'go');
+  // A single file cannot collide with itself.
+  if (goFiles.length < 2) return [];
+
+  const wanted = goImportedDirs(goFiles, moduleName);
+  const mainDirs = new Set<string>();
+  for (const f of goFiles) {
+    if (goFilePackage(f.code) === 'main' || goDeclaresMainFunc(f.code)) mainDirs.add(goDirName(f.relPath));
+  }
+  if (!mainDirs.size) return [];
+
+  const changed: Array<{ path: string; content: string }> = [];
+  for (const f of goFiles) {
+    const pkg = goFilePackage(f.code);
+    if (!pkg || pkg === 'main') continue;          // already main (or unparsable — leave it)
+    if (goDeclaresMainFunc(f.code)) continue;      // its own entry point; the planner owns this case
+    const dir = goDirName(f.relPath);
+    if (!mainDirs.has(dir)) continue;              // no package main in this directory
+    if (wanted.has(dir)) continue;                 // some import path names this dir — name is load-bearing
+    const patched = f.code.replace(/^([ \t]*)package[ \t]+\w+/m, '$1package main');
+    if (patched !== f.code) changed.push({ path: f.relPath, content: patched });
+  }
+  return changed;
+}
+
 /**
  * Plan the whole-project Go staging layout so every LOCAL import resolves.
  *
@@ -727,6 +829,11 @@ export interface GoStagedFile {
  *
  * The gate then tries this layout FIRST and falls back to the naive
  * `goStagePath` layout if it still does not compile — whichever closes wins.
+ *
+ * This repairs the layout for the GATE only — it stages into a temp dir. The
+ * one-package-per-directory half of the repair is applied to the files that
+ * actually ship by `foldGoPackagePerDirectory`; a layout this planner can only
+ * satisfy by MOVING a file is a case the shipped tree still needs handling for.
  */
 export function planGoStaging(files: StagedSourceFile[], moduleName: string): GoStagedFile[] {
   const norm = (p: string) => (p || 'main.go').replace(/\\/g, '/').replace(/^\.\//, '').replace(/^\/+/, '');
@@ -736,20 +843,7 @@ export function planGoStaging(files: StagedSourceFile[], moduleName: string): Go
   const lastSeg = (d: string) => d.split('/').filter(Boolean).pop() || '';
 
   // 1. Every directory the project's own imports name.
-  const wanted = new Set<string>();
-  for (const f of files) {
-    const fromDir = dirName(f.relPath);
-    for (const spec of goLocalImportPaths(f.code, moduleName)) {
-      let dir = '';
-      if (spec.startsWith('./') || spec.startsWith('../')) {
-        dir = path.posix.normalize(path.posix.join(fromDir, spec)).replace(/^\.\//, '');
-      } else if (moduleName && spec.startsWith(`${moduleName}/`)) {
-        dir = spec.slice(moduleName.length + 1);
-      }
-      dir = dir.replace(/\/+$/, '');
-      if (dir && dir !== '.') wanted.add(dir);
-    }
-  }
+  const wanted = goImportedDirs(files, moduleName);
 
   // 2. Directories that hold a `package main` file. Go allows exactly ONE
   // package per directory, so a non-main file staged into one of these is a
@@ -903,7 +997,22 @@ export async function runNonTsProjectGates(
       fs.writeFileSync(path.join(dir, 'go.mod'), `module ${moduleName}\n\ngo 1.21\n`);
       for (const f of layout) stageFile(dir, f.relPath, f.code);
       fs.mkdirSync(binDir, { recursive: true });
-      return runTool(toolchainBin('go'), ['build', '-o', `${binDir}/`, './...'], { cwd: dir, timeout: 90000, });
+      const built = await runTool(toolchainBin('go'), ['build', '-o', `${binDir}/`, './...'], { cwd: dir, timeout: 90000, });
+      if (!built.ok) return built;
+      // `go build -o <dir>/ ./...` only LINKS the main packages, so a compile
+      // error inside a non-main package is skipped entirely as long as one main
+      // package links. Measured on the real export that motivated this pass:
+      // `app/reader.go` importing "fmt"/"strconv" it never used — the `-o` build
+      // exited 0 (clean verdict, broken app), while `go build ./...` and
+      // `go vet ./...` both reported `"fmt" imported and not used`.
+      //
+      // `go vet` is the second pass because it type-checks EVERY requested
+      // package and writes no build output — so it cannot collide with a
+      // `package main` staged in a subdirectory the way plain `go build ./...`
+      // does (`go: build output "src" already exists and is a directory`). It is
+      // also what the Docker runner uses as its Go check, so the two paths agree.
+      const vetted = await runTool(toolchainBin('go'), ['vet', './...'], { cwd: dir, timeout: 90000, });
+      return vetted.ok ? built : vetted;
     };
     try {
       let r = await attempt(resolved);

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>Scan an item</title>
+<style>
+  :root { color-scheme: dark; --bg:#0b0d10; --card:#14181d; --line:#252c34;
+          --fg:#e8eaed; --dim:#9aa4b1; --accent:#5aa9ff; --ok:#4ade80; --bad:#f87171; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); padding:16px 14px 40px;
+         font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+         max-width:640px; margin-inline:auto; }
+  h1 { font-size:20px; margin:6px 0 2px; }
+  .sub { color:var(--dim); font-size:13px; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px;
+          padding:14px; margin-bottom:14px; }
+  label { display:block; font-size:13px; color:var(--dim); margin:0 0 6px; }
+  input[type=file] { width:100%; font-size:14px; padding:10px 0; color:var(--fg); }
+  input[type=number], input[type=text] { width:100%; background:#0e1216; color:var(--fg);
+          border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-size:16px; }
+  .row { display:flex; gap:10px; }
+  .row > div { flex:1; }
+  .chk { display:flex; align-items:center; gap:9px; margin-top:12px; font-size:14px; color:var(--fg); }
+  .chk input { width:20px; height:20px; }
+  button { width:100%; padding:15px; font-size:17px; font-weight:600; border-radius:12px;
+           border:1px solid var(--line); background:#1d242c; color:var(--fg); margin-top:14px; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#04121f; }
+  button:disabled { opacity:.5; }
+  #bar { height:6px; background:#0e1216; border-radius:6px; overflow:hidden; margin-top:12px; display:none; }
+  #bar > i { display:block; height:100%; width:0; background:var(--accent); transition:width .15s; }
+  .scan { border-top:1px solid var(--line); padding:12px 0; display:flex; gap:10px; align-items:center; }
+  .scan:first-child { border-top:0; }
+  .scan .meta { flex:1; min-width:0; }
+  .scan .nm { font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .scan .st { font-size:12px; color:var(--dim); }
+  .pill { font-size:11px; padding:3px 8px; border-radius:20px; border:1px solid var(--line); color:var(--dim); }
+  .pill.done { color:var(--ok); border-color:#2c4a37; }
+  .pill.failed { color:var(--bad); border-color:#4a2c2c; }
+  .pill.running, .pill.queued { color:var(--accent); border-color:#26405c; }
+  a.go { color:var(--accent); text-decoration:none; font-size:13px; font-weight:600; }
+  .err { color:var(--bad); font-size:13px; margin-top:10px; white-space:pre-wrap; word-break:break-word; }
+  details { margin-top:12px; }
+  summary { color:var(--dim); font-size:13px; cursor:pointer; }
+  .hint { font-size:12px; color:var(--dim); margin-top:8px; }
+  .spin { display:inline-block; animation:r 1s linear infinite; }
+  @keyframes r { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<h1>Scan an item</h1>
+<div class="sub">Record one full turn on your turntable, then send the clip. Everything runs on the agent box.</div>
+
+<div class="card">
+  <label for="video">Video from your phone</label>
+  <input id="video" type="file" accept="video/*">
+  <div class="hint" id="pick">No file chosen</div>
+
+  <div class="row" style="margin-top:14px">
+    <div>
+      <label for="frames">Frames</label>
+      <input id="frames" type="number" value="120" min="20" max="600">
+    </div>
+    <div>
+      <label for="turns">Full turns in clip</label>
+      <input id="turns" type="number" value="1" min="0.25" max="6" step="0.25">
+    </div>
+  </div>
+
+  <details>
+    <summary>Advanced</summary>
+    <div class="row" style="margin-top:12px">
+      <div>
+        <label for="iterations">Train iterations</label>
+        <input id="iterations" type="number" value="15000" min="1000" max="60000" step="1000">
+      </div>
+      <div>
+        <label for="elevation">Camera height (°)</label>
+        <input id="elevation" type="number" value="12" min="-60" max="80" step="1">
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <div>
+        <label for="fov">Phone FOV (°)</label>
+        <input id="fov" type="number" value="60" min="20" max="120" step="1">
+      </div>
+      <div>
+        <label for="start">Start angle (°)</label>
+        <input id="start" type="number" value="0" min="0" max="359" step="1">
+      </div>
+    </div>
+    <div class="chk"><input id="clockwise" type="checkbox"><label for="clockwise" style="margin:0">Platform turns clockwise</label></div>
+    <div class="hint">Frames ≈ smoothness. 120 over one turn is ~3° apart — plenty.</div>
+  </details>
+
+  <button id="send" class="primary">Send &amp; reconstruct</button>
+  <div id="bar"><i></i></div>
+  <div id="msg" class="hint"></div>
+</div>
+
+<div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <label style="margin:0">Scans</label>
+    <button id="refresh" style="width:auto;padding:6px 12px;font-size:13px;margin:0">Refresh</button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const stat = new Map();
+
+$("video").onchange = () => {
+  const f = $("video").files[0];
+  $("pick").textContent = f ? `${f.name} · ${(f.size/1e6).toFixed(1)} MB` : "No file chosen";
+};
+
+$("send").onclick = () => {
+  const f = $("video").files[0];
+  if (!f) { $("msg").textContent = "Choose a video first."; return; }
+
+  const fd = new FormData();
+  fd.append("video", f);
+  fd.append("frames", $("frames").value);
+  fd.append("turns", $("turns").value);
+  fd.append("iterations", $("iterations").value);
+  fd.append("elevation_deg", $("elevation").value);
+  fd.append("fov_deg", $("fov").value);
+  fd.append("start_deg", $("start").value);
+  fd.append("clockwise", $("clockwise").checked);
+  fd.append("name", f.name);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/scans");
+  $("send").disabled = true;
+  $("bar").style.display = "block";
+  $("bar").firstElementChild.style.width = "0%";
+  $("msg").textContent = "Uploading…";
+
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) {
+      const p = Math.round(100*e.loaded/e.total);
+      $("bar").firstElementChild.style.width = p + "%";
+      // Guard against a stalled upload looking finished.
+      $("msg").textContent = p < 100
+        ? `Uploading… ${p}% (${(e.loaded/1e6).toFixed(0)} of ${(e.total/1e6).toFixed(0)} MB)`
+        : "Upload complete — handing to the GPU…";
+    }
+  };
+  xhr.onload = () => {
+    $("send").disabled = false;
+    if (xhr.status >= 200 && xhr.status < 300) {
+      $("bar").firstElementChild.style.width = "100%";
+      $("msg").textContent = "Queued. You can close this page — it keeps running.";
+      $("video").value = ""; $("pick").textContent = "No file chosen";
+      setTimeout(() => { $("bar").style.display = "none"; }, 900);
+      poll();
+    } else {
+      let d = xhr.responseText;
+      try { d = JSON.parse(xhr.responseText).detail; } catch (e) {}
+      $("msg").innerHTML = `<span class="err">Upload failed (${xhr.status}): ${d}</span>`;
+    }
+  };
+  xhr.onerror = () => {
+    $("send").disabled = false;
+    $("msg").innerHTML = '<span class="err">Network error — are you on the same Wi‑Fi?</span>';
+  };
+  xhr.send(fd);
+};
+
+const fmt = s => {
+  if (s == null) return "";
+  if (s.status === "done") {
+    const mb = s.result ? (s.result.ply_bytes/1e6).toFixed(1) : "?";
+    return `${mb} MB · ${s.result ? s.result.seconds : "?"}s`;
+  }
+  return s.step || "";
+};
+
+function render(scans) {
+  if (!scans.length) { $("list").innerHTML = '<div class="hint">No scans yet.</div>'; return; }
+  $("list").innerHTML = scans.map(s => {
+    const live = s.status === "running";
+    return `<div class="scan">
+      <div class="meta">
+        <div class="nm">${escapeHtml(s.name || s.id)}</div>
+        <div class="st">${live ? '<span class="spin">◌</span> ' : ""}${escapeHtml(fmt(s))}</div>
+      </div>
+      <span class="pill ${s.status}">${s.status}</span>
+      ${s.status === "done"
+        ? `<a class="go" href="/viewer/${s.id}">View</a>`
+        : s.status === "failed"
+          ? `<a class="go" href="#" data-err="${s.id}">Why?</a>`
+          : ""}
+    </div>`;
+  }).join("");
+}
+
+document.addEventListener("click", e => {
+  const id = e.target?.dataset?.err;
+  if (!id) return;
+  e.preventDefault();
+  fetch(`/api/scans/${id}`).then(r => r.json()).then(s => {
+    alert((s.error || "no detail") + "\n\n" + (s.log_tail || []).slice(-12).join("\n"));
+  });
+});
+
+const escapeHtml = s => String(s).replace(/[&<>"']/g,
+  c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+let timer = null;
+async function poll() {
+  try {
+    const r = await fetch("/api/scans");
+    const d = await r.json();
+    render(d.scans || []);
+    const busy = (d.scans || []).some(s => s.status === "running" || s.status === "queued");
+    // Poll fast while something is in flight, slow when idle.
+    clearTimeout(timer);
+    timer = setTimeout(poll, busy ? 3000 : 20000);
+  } catch (e) {
+    clearTimeout(timer);
+    timer = setTimeout(poll, 8000);
+  }
+}
+$("refresh").onclick = poll;
+poll();
+</script>
+</body>
+</html>

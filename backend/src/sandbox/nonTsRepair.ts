@@ -16,7 +16,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { resolveGateLanguage, sanitizeGoModuleName, runNonTsProjectGates, fileDeclaresEntryPoint, type LanguageGate } from './nonTsCompileGate.js';
+import { resolveGateLanguage, resolveGoModuleName, runNonTsProjectGates, fileDeclaresEntryPoint, foldGoPackagePerDirectory, type LanguageGate } from './nonTsCompileGate.js';
 import { runStubGate } from './buildVerification.js';
 import { memberImplementationState } from '../knowledge/qualityGate.js';
 import { resolveCrossFileDuplicates } from './duplicateDeclarations.js';
@@ -155,11 +155,55 @@ const GO_KEYWORDS = new Set([
   'map', 'package', 'range', 'return', 'select', 'struct', 'switch', 'type', 'var',
 ]);
 
+/**
+ * Rewrite Go import specs that can never resolve.
+ *
+ * A spec whose TAIL names a package directory that EXISTS in the project, but
+ * whose path does not start with the module name the staged `go.mod` declares,
+ * is always the model inventing one. Measured live: the generated Go CSW-JSON
+ * CLI imported `github.com/user/csv-json-converter/pkg/csv` while the gate's
+ * `go.mod` declared `module a-multi-file-go-cli-that-converts-a-csv-file-to-json`
+ * -> `go build` failed with `no required module provides package ...` and
+ * neither LLM repair round ever touched the import.
+ *
+ * Deliberately narrow, so a correct import is never rewritten:
+ *   · only inside an `import` block — a spec-shaped STRING literal elsewhere
+ *     (a filename, an error message) is left alone;
+ *   · only multi-segment specs — one segment (`fmt`, `os`) is a stdlib path;
+ *   · only when the tail matches an existing project directory, LONGEST match
+ *     wins, so `.../pkg/csv` can never collapse to `<mod>/csv`;
+ *   · never when the spec already starts with the module name.
+ */
+function rewriteGoModuleImports(code: string, mod: string, dirs?: Iterable<string>): string {
+  const list = dirs ? [...dirs].filter(Boolean).sort((a, b) => b.length - a.length) : [];
+  if (!list.length) return code;
+  const fixSpec = (spec: string): string => {
+    if (!spec || spec === mod || spec.startsWith(`${mod}/`)) return spec;
+    if (spec.startsWith('./') || spec.startsWith('../')) return spec;
+    if (!spec.includes('/')) return spec;
+    for (const d of list) {
+      if (spec === d || spec.endsWith(`/${d}`)) return `${mod}/${d}`;
+    }
+    return spec;
+  };
+  const fixBlock = (body: string) =>
+    body.replace(/(["`])([^"`\s]+)\1/g, (_m, quote: string, spec: string) => `${quote}${fixSpec(spec)}${quote}`);
+  return code
+    .replace(/(\bimport\s*\()([\s\S]*?)(\))/g, (_m, open: string, body: string, close: string) => open + fixBlock(body) + close)
+    .replace(/(\bimport\s+)(["`])([^"`\s]+)\2/g, (_m, pre: string, quote: string, spec: string) => `${pre}${quote}${fixSpec(spec)}${quote}`);
+}
+
 export function sanitizeNonTsSource(
   content: string,
   language: string,
   relPath?: string,
-  opts?: { goModuleName?: string },
+  opts?: {
+    goModuleName?: string;
+    /** Package directories present in the project (posix-relative). Used to
+     *  recognise an import path the model invented for a package it DID write
+     *  — see rewriteGoModuleImports. */
+    goPackageDirs?: Iterable<string>;
+  },
 ): string | null {
   let out = content;
   if (language === 'java') {
@@ -213,6 +257,9 @@ export function sanitizeNonTsSource(
       const cleaned = rel.replace(/^(\.\.?\/)+/, '').replace(/\/+$/, '').replace(/\/+/g, '/');
       return cleaned ? `${quote}${mod}/${cleaned}${quote}` : `${quote}${mod}${quote}`;
     });
+    // The same defect in its non-relative form: the model names a real project
+    // package but prefixes it with a module path that does not exist.
+    out = rewriteGoModuleImports(out, mod, opts.goPackageDirs);
   }
   if (BRACE_LANGS.has(language)) {
     const bal = braceBalance(out);
@@ -240,6 +287,36 @@ export function sanitizeNonTsSource(
  * bracket, a `for ... {`) is left to the model — inserting a statement inside it
  * would be a syntax error worse than the one being fixed.
  */
+/**
+ * Blank out an unused variable in a `range` header.
+ *
+ * The compiler's `declared and not used` fix is normally an inserted `_ = name`,
+ * but inside a `for ... range` header no statement can be inserted — the header
+ * must be edited instead. Blanking the name is exactly behaviour-preserving
+ * (`for _, record := range rows` does everything `for i, record := range rows`
+ * did, minus the counter), and it is the ONLY deterministic cure for a `range`
+ * INDEX the body never reads.
+ *
+ * Measured live: `output_formatter.go:18:7: declared and not used: i` for
+ * `for i, record := range records[1:]` — a hard error that survived the whole
+ * repair loop and made the delivered Go CLI unbuildable.
+ *
+ * Returns the rewritten line, or null when the line is not a range header
+ * declaring that name.
+ */
+function blankRangeHeaderName(line: string, name: string): string | null {
+  const m = /^([ \t]*)for[ \t]+([A-Za-z_]\w*(?:[ \t]*,[ \t]*[A-Za-z_]\w*)?)[ \t]*:?=[ \t]*range\b/.exec(line);
+  if (!m) return null;
+  const names = m[2].split(',').map((s) => s.trim());
+  if (!names.includes(name)) return null;
+  const replaced = names.map((n) => (n === name ? '_' : n));
+  // `for _, _ := range` is legal but pointless — drop the clause entirely.
+  if (replaced.every((n) => n === '_')) {
+    return line.replace(/^([ \t]*)for[ \t]+[A-Za-z_]\w*(?:[ \t]*,[ \t]*[A-Za-z_]\w*)?[ \t]*:?=[ \t]*range/, '$1for range');
+  }
+  return line.replace(m[2], replaced.join(', '));
+}
+
 export function fixUnusedGoVariables(content: string, errors: string[]): string | null {
   const lines = content.split('\n');
   const hits: Array<{ line: number; name: string }> = [];
@@ -262,6 +339,19 @@ export function fixUnusedGoVariables(content: string, errors: string[]): string 
     if (line === undefined) continue;
     const trimmed = line.trim();
     if (!trimmed.includes(h.name)) continue;
+    // A `range` header is the one place the cure is not an inserted statement.
+    // Only touched when the name occurs NOWHERE ELSE in the file: the compiler
+    // would not call a used variable unused, and blanking one would silently
+    // drop real work (that guard also keeps this off a variable the body reads).
+    const occurrences = (content.match(new RegExp(`\\b${h.name}\\b`, 'g')) || []).length;
+    if (occurrences <= 1) {
+      const blanked = blankRangeHeaderName(line, h.name);
+      if (blanked !== null && blanked !== line) {
+        lines[h.line - 1] = blanked;
+        changed = true;
+        continue;
+      }
+    }
     if (!/:=|\bvar\b/.test(trimmed)) continue;
     if ('([{,+-*/=&|.'.includes(trimmed.slice(-1))) continue;
     if (!balanced(trimmed)) continue;
@@ -270,6 +360,156 @@ export function fixUnusedGoVariables(content: string, errors: string[]): string 
     changed = true;
   }
   return changed ? lines.join('\n') : null;
+}
+
+/**
+ * Go stdlib packages whose PACKAGE NAME is not their final import-path
+ * segment. `csv.NewReader` needs `"encoding/csv"`; nothing in the file names
+ * that path, so the model must know the mapping — and it does not.
+ *
+ * Only names with ONE sensible home are listed. A name that could resolve to
+ * two stdlib packages (`rand` → math/rand or crypto/rand, `template` →
+ * text/template or html/template) is deliberately ABSENT: guessing would swap
+ * one compile error for another, and the explicit repair round handles it.
+ */
+const GO_STDLIB_BY_NAME: Record<string, string> = {
+  ascii85: 'encoding/ascii85', base32: 'encoding/base32', base64: 'encoding/base64',
+  binary: 'encoding/binary', csv: 'encoding/csv', gob: 'encoding/gob',
+  hex: 'encoding/hex', json: 'encoding/json', pem: 'encoding/pem', xml: 'encoding/xml',
+  fs: 'io/fs', ioutil: 'io/ioutil',
+  http: 'net/http', httptest: 'net/http/httptest', mail: 'net/mail', smtp: 'net/smtp',
+  url: 'net/url',
+  driver: 'database/sql/driver', sql: 'database/sql',
+  big: 'math/big', cmplx: 'math/cmplx',
+  scanner: 'text/scanner', tabwriter: 'text/tabwriter',
+  utf16: 'unicode/utf16', utf8: 'unicode/utf8',
+  atomic: 'sync/atomic',
+  aes: 'crypto/aes', cipher: 'crypto/cipher', hmac: 'crypto/hmac', md5: 'crypto/md5',
+  rsa: 'crypto/rsa', sha1: 'crypto/sha1', sha256: 'crypto/sha256', sha512: 'crypto/sha512',
+  tls: 'crypto/tls', x509: 'crypto/x509',
+  exec: 'os/exec', signal: 'os/signal', user: 'os/user',
+  flate: 'compress/flate', gzip: 'compress/gzip', zlib: 'compress/zlib',
+  tar: 'archive/tar', zip: 'archive/zip',
+  heap: 'container/heap', list: 'container/list', ring: 'container/ring',
+  slog: 'log/slog', template: 'text/template',
+};
+
+/** Stdlib packages whose package name IS the final import-path segment. */
+const GO_STDLIB_PLAIN = new Set([
+  'bufio', 'bytes', 'context', 'embed', 'errors', 'flag', 'fmt', 'io', 'log', 'math',
+  'os', 'path', 'filepath', 'reflect', 'regexp', 'runtime', 'sort', 'strconv',
+  'strings', 'sync', 'time', 'unicode', 'unsafe',
+]);
+
+/** The import path for a bare stdlib package NAME, or null when not knowable. */
+function goStdlibPathFor(name: string): string | null {
+  return GO_STDLIB_BY_NAME[name] || (GO_STDLIB_PLAIN.has(name) ? name : null);
+}
+
+/**
+ * Go's missing/unused-import errors, fixed deterministically from the compiler's
+ * own output.
+ *
+ * Both halves of this class are hard build failures the model produces
+ * constantly, and neither is inferable from the code by the model's own
+ * reasoning at repair time (it already tried):
+ *
+ *   - `"bufio" imported as csvutil and not used` — the spec must simply go.
+ *   - `undefined: csv` where the file calls `csv.NewReader` — the `"encoding/
+ *     csv"` import was never written, and the path is not a function of the
+ *     name (it is `encoding/csv`, not `csv`).
+ *
+ * Measured live on one delivered Go CLI (`exports/a-multi-file-go-cli-that-
+ * converts-a-csv--…`): `main.go` had `csvutil "bufio"` unused AND `undefined:
+ * csv`; `reader_input.go` had `"os" imported and not used` AND `undefined:
+ * strings`; `output_formatter.go` had `undefined: strings`. Three files, five
+ * errors, one cause: nothing ever repaired a Go import.
+ *
+ * Deliberately convergent — an add is only made when the name is ACTUALLY used
+ * as a qualifier (`name.`) and is not already imported, so the fixer can never
+ * add an import the next round would remove as unused (the add/remove cycle
+ * that would make two fixers fight each other).
+ */
+export function fixGoImports(
+  content: string,
+  errors: string[],
+  opts?: {
+    goModuleName?: string;
+    /** Project package directories (posix-relative) — lets a missing import of
+     *  the project's OWN package be resolved to `<module>/<dir>`. */
+    goPackageDirs?: Iterable<string>;
+  },
+): string | null {
+  const unused = new Set<string>();
+  const undefinedNames = new Set<string>();
+  for (const e of errors || []) {
+    const line = e || '';
+    const u = /:\d+:\d+:\s*"([^"]+)"\s+imported(?:\s+as\s+\w+)?\s+and not used/.exec(line);
+    if (u) { unused.add(u[1]); continue; }
+    const d = /:\d+:\d+:\s*undefined:\s*([A-Za-z_]\w*)/.exec(line);
+    if (d) undefinedNames.add(d[1]);
+  }
+  if (!unused.size && !undefinedNames.size) return null;
+
+  let out = content;
+
+  // ── 1. Drop every spec the compiler named as unused ──────────────────────
+  if (unused.size) {
+    // Block form: rewrite the body, and remove the whole declaration when the
+    // last spec in it is gone (an empty `import ()` is itself a syntax error).
+    out = out.replace(
+      /^([ \t]*)import[ \t]*\([ \t]*\r?\n([\s\S]*?)^([ \t]*\))/gm,
+      (_m, open: string, body: string, close: string) => {
+        const kept = body.split('\n').filter((l) => {
+          const spec = /^\s*(?:[A-Za-z_.]\w*\s+|\.\s+|_\s+)?"([^"]+)"/.exec(l);
+          return !(spec && unused.has(spec[1]));
+        });
+        return kept.join('\n').trim().length ? `${open}import (\n${kept.join('\n')}\n${close}` : '';
+      },
+    );
+    // Single-line form: `import "path"` / `import alias "path"`.
+    out = out.replace(
+      /^[ \t]*import[ \t]+(?:[A-Za-z_.]\w*[ \t]+|\.\s+|_\s+)?"([^"]+)"[ \t]*\r?\n/gm,
+      (m: string, p: string) => (unused.has(p) ? '' : m),
+    );
+  }
+
+  // ── 2. Add the import for every undefined name that IS a package qualifier ─
+  const toAdd: string[] = [];
+  for (const name of undefinedNames) {
+    if (!new RegExp(`\\b${name}\\s*\\.`).test(out)) continue;      // used as `name.X`
+    if (new RegExp(`"(?:[^"]*/)?${name}"`).test(out)) continue;    // already imported
+    let importPath = goStdlibPathFor(name);
+    if (!importPath && opts?.goPackageDirs && opts.goModuleName) {
+      for (const d of opts.goPackageDirs) {
+        if (d === name || d.endsWith(`/${name}`)) { importPath = `${opts.goModuleName}/${d}`; break; }
+      }
+    }
+    if (importPath) toAdd.push(importPath);
+  }
+  if (toAdd.length) {
+    const sorted = [...new Set(toAdd)].sort();
+    const blockRe = /^([ \t]*)import[ \t]*\([ \t]*\r?\n([\s\S]*?)^([ \t]*\))/m;
+    if (blockRe.test(out)) {
+      out = out.replace(blockRe, (_m, open: string, body: string, close: string) =>
+        `${open}import (\n${body.replace(/\s*$/, '')}\n${sorted.map((p) => `\t"${p}"`).join('\n')}\n${close}`);
+    } else if (/^[ \t]*import[ \t]+\S/m.test(out)) {
+      const lines = out.split('\n');
+      let last = -1;
+      for (let i = 0; i < lines.length; i++) if (/^[ \t]*import[ \t]+\S/.test(lines[i])) last = i;
+      const indent = last >= 0 ? (/^[ \t]*/.exec(lines[last])?.[0] ?? '') : '';
+      for (const p of sorted) lines.splice(++last, 0, `${indent}import "${p}"`);
+      out = lines.join('\n');
+    } else {
+      // No imports at all — a block after the mandatory package clause.
+      out = out.replace(
+        /^(package[ \t]+\w+[ \t]*\r?\n)/m,
+        `$1\nimport (\n${sorted.map((p) => `\t"${p}"`).join('\n')}\n)\n`,
+      );
+    }
+  }
+
+  return out === content ? null : out;
 }
 
 // ─── Contract-aware implementation gate ──────────────────────────────────
@@ -424,6 +664,13 @@ export async function runProjectGates(
   contractFiles: PlannedFile[],
   /** The caller gates node files only and a scaffolder writes the entry (canvas path). */
   scaffoldSuppliesEntry = false,
+  /**
+   * The project's ONE Go module name (see resolveGoModuleName). A caller that
+   * also writes Go imports must pass the SAME value the writer used, so the
+   * gate can never judge a module name the delivered code does not use.
+   * Defaults to the historical `sanitizeGoModuleName(request)`.
+   */
+  goModuleName?: string,
 ): Promise<ProjectGateResult> {
   const langByPath = new Map<string, string>();
   for (const f of contractFiles) langByPath.set(normalizeContractPath(f.path), (f.language || '').toLowerCase());
@@ -439,7 +686,7 @@ export async function runProjectGates(
     // directory` while the header was sitting in the export the whole time.
     .filter((f) => f.language || /\.h$/i.test(f.relPath));
   const languageGates = nonTs.length
-    ? await runNonTsProjectGates(nonTs, sanitizeGoModuleName(request), { scaffoldSuppliesEntry })
+    ? await runNonTsProjectGates(nonTs, goModuleName || resolveGoModuleName(null, request), { scaffoldSuppliesEntry })
     : [];
   const stubFailures = [...new Set([
     ...runStubGate(files),
@@ -487,7 +734,7 @@ export function buildNonTsRepairPrompt(
   request: string,
   file: PlannedFile,
   currentContent: string,
-  opts: { compilerErrors?: string[]; stubNotes?: string[] },
+  opts: { compilerErrors?: string[]; stubNotes?: string[]; goModuleName?: string },
   siblings: Array<{ path: string; content: string; language?: string }>,
 ): string {
   const lang = (file.language || '').trim();
@@ -511,7 +758,7 @@ export function buildNonTsRepairPrompt(
   // Kotlin repair added a SECOND `fun factorial(n: Int): Long` in another file,
   // failing with `conflicting overloads`; Go repairs invented
   // `github.com/yourusername/...` import paths).
-  const guidance = languageGuidanceBlock(lang, { goModuleName: sanitizeGoModuleName(request) });
+  const guidance = languageGuidanceBlock(lang, { goModuleName: opts.goModuleName || resolveGoModuleName(null, request) });
   return `User request: ${request}\n\nThe file ${file.path}${lang ? ` (${lang})` : ''} is incomplete or does not compile.\n\n${reasons.join('\n\n')}\n\n━━━ CURRENT CONTENT ━━━\n${currentContent.substring(0, 6000)}\n\n━━━ SIBLING FILES (their REAL code — match these signatures EXACTLY) ━━━\n${siblingBlock || '  (none)'}\n${guidance}\n━━━ TASK ━━━\nFix the problems above and return the COMPLETE corrected file for ${file.path}.\n- EVERY method/function you keep MUST have a REAL implementation. NEVER leave a \`// TODO\`/\`FIXME\`, an empty body, or a placeholder \`return false/0/null;\`. A method that only returns a constant without doing its job is NOT finished — implement the actual logic (this game/app must work when run).\n- The sibling code above is AUTHORITATIVE: call only members that exist there, with the EXACT names, parameter types/count, and return types shown. If a call does not match a sibling's real signature, change YOUR call to match it (do not redefine the sibling).\n- Use ${lang || 'this language'}'s NATIVE module semantics. NEVER add JavaScript/TypeScript syntax such as \`import { X } from './y';\`.\n- When the sibling files are in the SAME package / module / directory, reference them DIRECTLY — do NOT add an import statement for them (a same-package import is a compile error in some languages, e.g. Java's default package refuses \`import Foo;\`).\n- Do not change filenames or restructure unrelated code. Keep all existing working behaviour.${entryBullet}\nReturn ONLY the file's raw code — no markdown fences, no JSON wrapper, no commentary.`;
 }
 
@@ -529,6 +776,14 @@ export interface NonTsRepairOptions {
   canRepair: () => boolean;
   /** Called once per repair round consumed. */
   consumeRepair: () => void;
+  /**
+   * The project's ONE Go module name (see resolveGoModuleName). Pass the value
+   * the WRITER used for its import statements (canvas: the project name,
+   * falling back to the master node's appGoal; chat: the request). When this is
+   * omitted the historical `sanitizeGoModuleName(request)` is used, which is
+   * what every caller did before this option existed.
+   */
+  goModuleName?: string;
   /** LLM rewrite call — REQUIRED and injected. Returns raw model output. */
   repairCall: (prompt: string) => Promise<string>;
   /**
@@ -559,6 +814,21 @@ export interface NonTsRepairResult {
  */
 export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise<NonTsRepairResult> {
   const { request, files, contractFiles, exportDir, timeoutMs, canRepair, consumeRepair, repairCall } = opts;
+  // Resolved ONCE for this run, then handed to every consumer below (the gate's
+  // staging go.mod, the repair prompt, the sanitizer's import rewriters and the
+  // shipped-layout fold), so they cannot disagree with each other or with the
+  // module name the writer baked into the files' import statements.
+  const goModuleName = opts.goModuleName || resolveGoModuleName(null, request);
+  // The package directories that exist in the generated tree. An import path the
+  // model invented is recognised by its TAIL matching one of these. Hoisted out
+  // of sanitizeAll so the deterministic import fixer in the repair loop below
+  // resolves a missing project package the same way the import rewriter does.
+  // Paths never change during a run (only content), so computing it once is exact.
+  const goPackageDirs = new Set<string>();
+  for (const p of files.map((f) => f.path)) {
+    const dir = p.replace(/\\/g, '/').replace(/^\.\//, '').split('/').slice(0, -1).join('/');
+    if (dir) goPackageDirs.add(dir);
+  }
   const scaffoldSuppliesEntry = opts.scaffoldSuppliesEntry === true;
   const log = opts.log ?? ((msg: string, level: 'info' | 'warn' = 'info') => (level === 'warn' ? console.warn(msg) : console.log(msg)));
   const emit = opts.onProgress ?? (() => { /* no sink */ });
@@ -572,7 +842,10 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
     for (const f of files) {
       const lang = resolveGateLanguage(langOf(f.path), f.path);
       if (!lang) continue;
-      const fixed = sanitizeNonTsSource(f.content, lang, f.path, { goModuleName: sanitizeGoModuleName(request) });
+      const fixed = sanitizeNonTsSource(f.content, lang, f.path, {
+        goModuleName,
+        goPackageDirs,
+      });
       if (fixed && fixed !== f.content) {
         f.content = fixed;
         try { fs.writeFileSync(safeJoin(exportDir, f.path), fixed, 'utf-8'); } catch { /* noop */ }
@@ -581,6 +854,38 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
     }
     if (n) log(`[nonTsRepair] sanitize: ${n} file(s) fixed (bare imports / truncation)`, 'warn');
     return n;
+  };
+
+  /**
+   * Project-level Go pass: enforce ONE PACKAGE PER DIRECTORY on the files that
+   * ship, mirroring the fold the compile gate performs on its staging copy.
+   *
+   * Without it the gate could report the Go build CLEAN while the export did not
+   * build at all: a generated file-preview CLI shipped `main.go` (`package main
+   * ` with `func main`) next to `reader.go` (`package app`) at the project root
+   * with nothing importing `package app`, so `go build ./...` on the delivered
+   * tree failed with `found packages main (main.go) and app (reader.go)` — the
+   * gate had folded them into one package in its temp dir and judged THAT.
+   *
+   * Deterministic and free: no LLM round is spent, and the written files are the
+   * ones that were gated, so a clean verdict is true of the delivered artifact.
+   */
+  const normalizeGoLayoutAll = (): number => {
+    const changed = foldGoPackagePerDirectory(files, goModuleName);
+    for (const c of changed) {
+      const f = files.find((w) => normalizeContractPath(w.path) === normalizeContractPath(c.path));
+      if (!f) continue;
+      f.content = c.content;
+      try { fs.writeFileSync(safeJoin(exportDir, f.path), c.content, 'utf-8'); } catch { /* noop */ }
+    }
+    if (changed.length) {
+      log(
+        `[nonTsRepair] go layout: folded ${changed.length} file(s) into their directory's package `
+        + `(${changed.map((c) => c.path).join(', ')}) so the export builds as gated`,
+        'warn',
+      );
+    }
+    return changed.length;
   };
 
   /**
@@ -616,14 +921,15 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
     failures.length > 0 ? [...gates, { language: 'duplicate-definitions', clean: false, errors: failures }] : gates;
 
   const sanitizedPre = sanitizeAll();
+  normalizeGoLayoutAll();
   const duplicateFailuresPre = dedupeAll();
-  let { languageGates, stubFailures } = await runProjectGates(request, files, contractFiles, scaffoldSuppliesEntry);
+  let { languageGates, stubFailures } = await runProjectGates(request, files, contractFiles, scaffoldSuppliesEntry, goModuleName);
   languageGates = withDuplicateFailures(languageGates, duplicateFailuresPre);
   if (sanitizedPre) {
     log(`[nonTsRepair] gates after sanitize: ${languageGates.map((g) => `${g.language}=${g.clean ? 'PASS' : 'FAIL'}`).join(', ') || '(none)'}`);
   }
   let rounds = 0;
-  /** Files already given the deterministic unused-variable pass (see below). */
+  /** Files already given the deterministic Go fixers (imports + unused local). */
   const unusedTried = new Set<string>();
   while (
     (languageGates.some((g) => !g.clean) || stubFailures.length > 0) &&
@@ -644,15 +950,27 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
       const cf = files.find((w) => normalizeContractPath(w.path) === normalizeContractPath(filePath));
       if (!cf || resolveGateLanguage(langOf(cf.path), cf.path) !== 'go') continue;
       unusedTried.add(filePath);
-      const fixed = fixUnusedGoVariables(cf.content, errs);
-      if (!fixed) continue;
+      // Both deterministic Go repair classes, in one pass. ORDER MATTERS: the
+      // variable fixer locates its target by the LINE NUMBER in the compiler's
+      // message, so it must run on the exact content those errors describe;
+      // the import fixer only matches import specs and `undefined: name` and
+      // never looks a line up, so it is safe to run second — and it MUST, since
+      // adding an import shifts every later line by one. (Measured while
+      // verifying the CSV→JSON export: running the import fixer first moved the
+      // range header onto another line, the variable fixer then edited the wrong
+      // one, and `declared and not used: i` survived the pass.)
+      const before = cf.content;
+      const varFixed = fixUnusedGoVariables(cf.content, errs);
+      const importFixed = fixGoImports(varFixed ?? cf.content, errs, { goModuleName, goPackageDirs });
+      const fixed = importFixed ?? varFixed;
+      if (!fixed || fixed === before) continue;
       cf.content = fixed;
       try { fs.writeFileSync(safeJoin(exportDir, cf.path), fixed, 'utf-8'); } catch { /* noop */ }
-      log(`[nonTsRepair] unused Go variable: patched ${cf.path} deterministically (no repair round)`, 'warn');
+      log(`[nonTsRepair] Go imports/vars: patched ${cf.path} deterministically (no repair round)`, 'warn');
       unusedFixed = true;
     }
     if (unusedFixed) {
-      const regated = await runProjectGates(request, files, contractFiles, scaffoldSuppliesEntry);
+      const regated = await runProjectGates(request, files, contractFiles, scaffoldSuppliesEntry, goModuleName);
       languageGates = withDuplicateFailures(regated.languageGates, duplicateFailuresPre);
       stubFailures = regated.stubFailures;
       continue;
@@ -693,7 +1011,7 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
           language: contractFiles.find((t) => normalizeContractPath(t.path) === normalizeContractPath(w.path))?.language,
         }));
       consumeRepair();
-      const prompt = buildNonTsRepairPrompt(request, planned as PlannedFile, cf.content, { compilerErrors: compiled, stubNotes: stub }, siblingFiles);
+      const prompt = buildNonTsRepairPrompt(request, planned as PlannedFile, cf.content, { compilerErrors: compiled, stubNotes: stub, goModuleName }, siblingFiles);
       const content = await repairCall(prompt);
       if (content && content !== cf.content) {
         cf.content = content;
@@ -702,8 +1020,9 @@ export async function runNonTsGatesWithRepair(opts: NonTsRepairOptions): Promise
       }
     }
     sanitizeAll();
+    normalizeGoLayoutAll();
     const duplicateFailures = dedupeAll();
-    const regate = await runProjectGates(request, files, contractFiles, scaffoldSuppliesEntry);
+    const regate = await runProjectGates(request, files, contractFiles, scaffoldSuppliesEntry, goModuleName);
     languageGates = withDuplicateFailures(regate.languageGates, duplicateFailures);
     stubFailures = regate.stubFailures;
     if (!changed) break;

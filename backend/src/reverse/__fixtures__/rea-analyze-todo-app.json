@@ -1,0 +1,2391 @@
+{
+ "_fixture": {
+  "derived_from": "rea-agents 6.5.0",
+  "command": "node node_modules/rea-agents/scripts/rea.mjs analyze <todo-app-dir> --format json > envelope.json",
+  "target": "an exported Electron + Create-React-App todo app (electron entry declared, CRA build present, source maps present)",
+  "projection": "Node ids are opaque 128-hex hashes in the real envelope and are used here only as join keys, so they are shortened to n<index> (edges remapped to match). identity is trimmed to strategy/stability/namespace/original_source; each node keeps its first two observations with evidence trimmed to authority/state/confidence; javascript-module and source-module properties are projected to the mapping-relevant keys (semantic payloads such as static_return_shapes dropped). Edges keep source/target/relation/ original_source; their evidence and edge_id are dropped. Node kinds, labels, file paths, specifiers, resolution statuses, confidences and the graph topology are verbatim."
+ },
+ "evidence_id": "ev_e884c8307024e1dbb00365e6bd17d2bf31ae2ff5545fb128b62d392ac9376f9f",
+ "subject": {
+  "name": "todo-app",
+  "digest": {
+   "sha256": "7623d452cc87ca01d5da99fac9f2e2b6a10329e684a7efb41b0ded7d570858ff"
+  },
+  "local_path": "/home/homellmlab/Desktop/visual-ai-architect/todo-app",
+  "format": "directory",
+  "architecture": null
+ },
+ "provider": {
+  "id": "rea-javascript-application",
+  "name": "REA JavaScript application analyzer",
+  "version": "1"
+ },
+ "operation": "analyze_javascript_application",
+ "parameters": {
+  "format": "auto",
+  "integrity_policy": "fail"
+ },
+ "normalized_result": {
+  "input_path": "/home/homellmlab/Desktop/visual-ai-architect/todo-app",
+  "format": "directory",
+  "graph": {
+   "schema": "JavaScriptApplicationGraph",
+   "nodes": [
+    {
+     "node_id": "n0",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/object-assign/index.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/object-assign/index.js",
+       "properties": {
+        "source_index": 2,
+        "declaration_index": 2,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n1",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "module-export"
+     },
+     "observations": [
+      {
+       "label": "src/TaskInput.tsx:default:return-shapes",
+       "properties": {
+        "semantic_role": "export-return-shapes",
+        "module_path": "src/TaskInput.tsx",
+        "exported_name": "default"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "high"
+       }
+      },
+      {
+       "label": "src/TaskInput.tsx:default",
+       "properties": {
+        "semantic_role": "export-binding",
+        "module_path": "src/TaskInput.tsx",
+        "exported_name": "default",
+        "relationship_kind": "export",
+        "declared_specifier": null
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n2",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "specifier": "react",
+        "resolution_status": "external",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n3",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "specifier": "react",
+        "resolution_status": "external",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n4",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "module-export"
+     },
+     "observations": [
+      {
+       "label": "src/TaskList.tsx:default",
+       "properties": {
+        "semantic_role": "export-binding",
+        "module_path": "src/TaskList.tsx",
+        "exported_name": "default",
+        "relationship_kind": "export",
+        "declared_specifier": null
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      },
+      {
+       "label": "src/TaskList.tsx:default:return-shapes",
+       "properties": {
+        "semantic_role": "export-return-shapes",
+        "module_path": "src/TaskList.tsx",
+        "exported_name": "default"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "high"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n5",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "src/App.tsx",
+       "properties": {
+        "path": "src/App.tsx",
+        "bytes": 390,
+        "inventory_artifact_id": "art_81e679d253c338311e0e6933c9fda7759eae578804f16ef238d20cbdd9294693",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "complete",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n6",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "./TaskList",
+       "properties": {
+        "specifier": "./TaskList",
+        "resolution_status": "not-found",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n7",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "./App",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "not-found",
+        "declared_specifier": "./App"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n8",
+     "kind": "package",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "package-json"
+     },
+     "observations": [
+      {
+       "label": "todo-app",
+       "properties": {
+        "path": "package.json",
+        "name": "todo-app",
+        "version": "1.0.0",
+        "main": "index.tsx",
+        "renderer": null,
+        "parse_status": "included"
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n9",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/main.954af1a8.chunk.js",
+       "properties": {
+        "path": "build/static/js/main.954af1a8.chunk.js",
+        "bytes": 875,
+        "inventory_artifact_id": "art_6ffc67b55e87625002d552b895d2bf499f372fd7e012a97d9c7d43dd5166e96d",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "complete",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n10",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "TaskInput.tsx"
+     },
+     "observations": [
+      {
+       "label": "TaskInput.tsx",
+       "properties": {
+        "source_index": 1,
+        "declaration_index": 1,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n11",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/scheduler/index.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/scheduler/index.js",
+       "properties": {
+        "source_index": 6,
+        "declaration_index": 6,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n12",
+     "kind": "unknown",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "static-parse-scope"
+     },
+     "observations": [
+      {
+       "label": "public/manifest.json parse scope",
+       "properties": {
+        "path": "public/manifest.json",
+        "operation": "parse-json-module",
+        "limitation": "JSON module is not valid JSON."
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "unavailable",
+        "confidence": "unknown"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n13",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "App.tsx"
+     },
+     "observations": [
+      {
+       "label": "App.tsx",
+       "properties": {
+        "source_index": 2,
+        "declaration_index": 2,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n14",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "react-dom",
+       "properties": {
+        "specifier": "react-dom",
+        "resolution_status": "external",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n15",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "src/index.tsx",
+       "properties": {
+        "path": "src/index.tsx",
+        "bytes": 146,
+        "inventory_artifact_id": "art_56543a89db5f238b22410219e2349d7ddf17eac83eafdfed932addc9f1c6f28c",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "complete",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n16",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "build/index.html",
+       "properties": {
+        "path": "build/index.html",
+        "bytes": 1848,
+        "inventory_artifact_id": "art_767a87ee7d3c8485d524cb66779092365141ff6e2dc4ab07211ab6c7ac0b4547",
+        "unpacked": false,
+        "file_kind": "html",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n17",
+     "kind": "source-map",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/runtime-main.2d604973.js.map",
+       "properties": {
+        "path": "build/static/js/runtime-main.2d604973.js.map",
+        "bytes": 8342,
+        "inventory_artifact_id": "art_a9124916b5f4dbe849e3e9c03f0c3ee078357d1776c360f2b2c96f549afd36bd",
+        "unpacked": false,
+        "file_kind": "source-map",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      },
+      {
+       "label": "source map reference",
+       "properties": {
+        "declared_url": "runtime-main.2d604973.js.map",
+        "declared_url_sha256": "b0668f4c9972d808f4fdaed009a7f51312c726e40a1869fe3799c3e531029b2a",
+        "resolved_path": "build/static/js/runtime-main.2d604973.js.map",
+        "resolution_status": "resolved",
+        "available": true
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "medium"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n18",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "source-module"
+     },
+     "observations": [
+      {
+       "label": "src/react-app-env.d.ts",
+       "properties": {
+        "semantic_role": "source-module"
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n19",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "TaskList.tsx"
+     },
+     "observations": [
+      {
+       "label": "TaskList.tsx",
+       "properties": {
+        "source_index": 0,
+        "declaration_index": 0,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n20",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/react/cjs/react.production.min.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/react/cjs/react.production.min.js",
+       "properties": {
+        "source_index": 4,
+        "declaration_index": 4,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n21",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/2.896b9ea4.chunk.js",
+       "properties": {
+        "path": "build/static/js/2.896b9ea4.chunk.js",
+        "bytes": 131012,
+        "inventory_artifact_id": "art_9a5c190ebd5ba862638f77d6f9ba3b7b09eb5aeb1a760f027cee4631383ccd65",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "partial",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n22",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "react-dom",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "external",
+        "declared_specifier": "react-dom"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n23",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/runtime-main.2d604973.js",
+       "properties": {
+        "path": "build/static/js/runtime-main.2d604973.js",
+        "bytes": 1563,
+        "inventory_artifact_id": "art_59aed221f563f53a20a9c2e545e59ed472e098bf62398d66a057ceb83713119b",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "partial",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n24",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "external",
+        "declared_specifier": "react"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      },
+      {
+       "label": "react",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "external",
+        "declared_specifier": "react"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n25",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "index.tsx"
+     },
+     "observations": [
+      {
+       "label": "index.tsx",
+       "properties": {
+        "source_index": 3,
+        "declaration_index": 3,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n26",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "source-module"
+     },
+     "observations": [
+      {
+       "label": "src/TaskList.tsx",
+       "properties": {
+        "semantic_role": "source-module"
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n27",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "public/index.html",
+       "properties": {
+        "path": "public/index.html",
+        "bytes": 251,
+        "inventory_artifact_id": "art_a54a00a1d644a305b74056761b0a1e6c934cfca60a37cfece94bfb8b79bb77b8",
+        "unpacked": false,
+        "file_kind": "html",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n28",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "./App",
+       "properties": {
+        "specifier": "./App",
+        "resolution_status": "not-found",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n29",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "specifier": "react",
+        "resolution_status": "external",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n30",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "source-module"
+     },
+     "observations": [
+      {
+       "label": "src/App.tsx",
+       "properties": {
+        "semantic_role": "source-module"
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n31",
+     "kind": "electron-main",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "electron-role"
+     },
+     "observations": [
+      {
+       "label": "index.tsx",
+       "properties": {
+        "declared_path": "index.tsx",
+        "resolution_context": "package-entrypoint",
+        "resolved_path": null,
+        "resolution_status": "not-found",
+        "limitations": [
+         "No extension, directory package, or index candidate exists in the inventoried artifact container."
+        ],
+        "mechanism": "package.json:main"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "high"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n32",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../webpack/bootstrap"
+     },
+     "observations": [
+      {
+       "label": "../webpack/bootstrap",
+       "properties": {
+        "source_index": 0,
+        "declaration_index": 0,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n33",
+     "kind": "unknown",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "static-parse-scope"
+     },
+     "observations": [
+      {
+       "label": "build/manifest.json parse scope",
+       "properties": {
+        "path": "build/manifest.json",
+        "operation": "parse-json-module",
+        "limitation": "JSON module is not valid JSON."
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "unavailable",
+        "confidence": "unknown"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n34",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/scheduler/cjs/scheduler.production.min.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/scheduler/cjs/scheduler.production.min.js",
+       "properties": {
+        "source_index": 7,
+        "declaration_index": 7,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n35",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "public/manifest.json",
+       "properties": {
+        "path": "public/manifest.json",
+        "bytes": 303,
+        "inventory_artifact_id": "art_68fd78aea30bb3f84dd5f096483926982779974887365dfb1f68fe9c33fb7bb5",
+        "unpacked": false,
+        "file_kind": "json",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": "invalid",
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      },
+      {
+       "label": "build/manifest.json",
+       "properties": {
+        "path": "build/manifest.json",
+        "bytes": 303,
+        "inventory_artifact_id": "art_68fd78aea30bb3f84dd5f096483926982779974887365dfb1f68fe9c33fb7bb5",
+        "unpacked": false,
+        "file_kind": "json",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": "invalid",
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n36",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "external",
+        "declared_specifier": "react"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n37",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/react/cjs/react-jsx-runtime.production.min.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/react/cjs/react-jsx-runtime.production.min.js",
+       "properties": {
+        "source_index": 8,
+        "declaration_index": 8,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n38",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "./TaskList",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "not-found",
+        "declared_specifier": "./TaskList"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n39",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/react/jsx-runtime.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/react/jsx-runtime.js",
+       "properties": {
+        "source_index": 0,
+        "declaration_index": 0,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n40",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "tsconfig.json",
+       "properties": {
+        "path": "tsconfig.json",
+        "bytes": 520,
+        "inventory_artifact_id": "art_97d362476c432cb6f9c59bebbec053bd8645c4deb264f2605146936a951dabe0",
+        "unpacked": false,
+        "file_kind": "json",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": "included",
+        "json_top_level_keys": [
+         "compilerOptions",
+         "include"
+        ],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n41",
+     "kind": "source-map",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/main.954af1a8.chunk.js.map",
+       "properties": {
+        "path": "build/static/js/main.954af1a8.chunk.js.map",
+        "bytes": 2536,
+        "inventory_artifact_id": "art_d16c07786f7d931dea40feefedd9dca5c719feb7ecb0662651dfd16f3a07213a",
+        "unpacked": false,
+        "file_kind": "source-map",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      },
+      {
+       "label": "source map reference",
+       "properties": {
+        "declared_url": "main.954af1a8.chunk.js.map",
+        "declared_url_sha256": "b00b6749da73fbbc1380e28e8ac350b632412d111a6d44e616963f09d34908f7",
+        "resolved_path": "build/static/js/main.954af1a8.chunk.js.map",
+        "resolution_status": "resolved",
+        "available": true
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "medium"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n42",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "artifact root",
+       "properties": {
+        "format": "directory",
+        "bytes": 0,
+        "inventory_manifest_id": "agm_c6b23f95fe7bae5354a899513f0830bb1de4f03a372eecde38788825b17c9f30",
+        "inventory_graph_sha256": "5bee5a2ced3908ca8ddc8bfbfa6c4c1f7df2532598cd82f952cd83011ac073f3",
+        "inventory_artifact_id": "art_a0009aac831e097984ce9875e3b202250b93405b22acda59ebb019552574fd73"
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n43",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "external",
+        "declared_specifier": "react"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n44",
+     "kind": "unknown",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "static-parse-scope"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/2.896b9ea4.chunk.js parse scope",
+       "properties": {
+        "path": "build/static/js/2.896b9ea4.chunk.js",
+        "operation": "analyze-javascript-source",
+        "limitation": "build/static/js/2.896b9ea4.chunk.js: Resource constraint during analyze_javascript_application: Owned JavaScript worker exhausted its heap while analyzing build/static/js/2.896b9ea4.chunk.js during semantic",
+        "analysis_failure": {
+         "code": "resource_constraint",
+         "category": "resource_constraint",
+         "message": "Owned JavaScript worker exhausted its heap while analyzing build/static/js/2.896b9ea4.chunk.js during semantic",
+         "retryable": false,
+         "remediation": {
+          "action": "Review the reported worker memory limits and available host memory. Retry with sufficient memory or a smaller artifact; REA retains tighter inherited limits."
+         },
+         "details": {
+          "operation": "analyze_javascript_application",
+          "resource": "memory",
+          "reason": "Owned JavaScript worker exhausted its heap while analyzing build/static/js/2.896b9ea4.chunk.js during semantic",
+          "reported_limits": {
+           "worker_old_space_mb": 1024,
+           "worker_heap_limit_bytes": 1098907648,
+           "worker_timeout_ms": 300000
+          },
+          "captured_output": {
+           "stdout": "",
+           "stderr": "\n<--- Last few GCs --->\n\n[237797:0x2a2f8000]     8879 ms: Mark-Compact 996.9 (1028.8) -> 993.3 (1029.3) MB, pooled: 1 MB, 583.02 / 0.00 ms  (average mu = 0.165, current mu = 0.028) allocation failure; scavenge might not succeed\n[237797:0x2a2f8000]     9473 ms: Mark-Compact 997.6 (1029.3) -> 994.6 (1030.6) MB, pooled: 0 MB, 587.72 / 0.00 ms  (average mu = 0.097, current mu = 0.010) allocation failure; scavenge might not succeed\n\nFATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory\n----- Native stack trace -----\n\n 1: 0x74eae8 node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 2: 0xc42680  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 3: 0xc4276f  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 4: 0xee5fc5  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 5: 0xee5ff2  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 6: 0xee62ea  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 7: 0xef6fea  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 8: 0xefb390  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n 9: 0x198d931  [/home/homellmlab/.nvm/versions/node/v24.18.0/bin/node]\n",
+           "truncated": false,
+           "stderr_bytes": 1257,
+           "exit_code": null,
+           "signal": "SIGABRT"
+          }
+         }
+        }
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "unavailable",
+        "confidence": "unknown"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n45",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "source-module"
+     },
+     "observations": [
+      {
+       "label": "src/TaskInput.tsx",
+       "properties": {
+        "semantic_role": "source-module"
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n46",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "build/asset-manifest.json",
+       "properties": {
+        "path": "build/asset-manifest.json",
+        "bytes": 683,
+        "inventory_artifact_id": "art_d4cdfd35996454ce2a291a1d57b96d3cd0d4e0992eaf8e8eb9dd61b80793ee65",
+        "unpacked": false,
+        "file_kind": "json",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": "included",
+        "json_top_level_keys": [
+         "entrypoints",
+         "files"
+        ],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n47",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "src/TaskInput.tsx",
+       "properties": {
+        "path": "src/TaskInput.tsx",
+        "bytes": 611,
+        "inventory_artifact_id": "art_3aa08bfff6512c16c7ffa12e1a2baa9444865a213a90e358bb5a9b664c07a8f8",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "complete",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n48",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "module-export"
+     },
+     "observations": [
+      {
+       "label": "src/App.tsx:default",
+       "properties": {
+        "semantic_role": "export-binding",
+        "module_path": "src/App.tsx",
+        "exported_name": "default",
+        "relationship_kind": "export",
+        "declared_specifier": null
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      },
+      {
+       "label": "src/App.tsx:default:return-shapes",
+       "properties": {
+        "semantic_role": "export-return-shapes",
+        "module_path": "src/App.tsx",
+        "exported_name": "default"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "high"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n49",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "package.json",
+       "properties": {
+        "path": "package.json",
+        "bytes": 360,
+        "inventory_artifact_id": "art_5d632f41577c2ec42f20deeec7fc74b35f700a805706a7b839b8fe004a583061",
+        "unpacked": false,
+        "file_kind": "package-json",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n50",
+     "kind": "unknown",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "static-parse-scope"
+     },
+     "observations": [
+      {
+       "label": "build/index.html parse scope",
+       "properties": {
+        "inline_script_count": 1,
+        "inline_scripts": [
+         {
+          "script_type": "classic",
+          "location": {
+           "start": {
+            "line": 1,
+            "column": 201
+           },
+           "end": {
+            "line": 1,
+            "column": 1711
+           }
+          }
+         }
+        ],
+        "path": "build/index.html",
+        "operation": "parse-html-inline-scripts",
+        "limitation": "build/index.html has 1 inline JavaScript body starting at line 1 that was not analyzed; endpoints, storage, imports and other facts in it are absent from the evidence."
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "unavailable",
+        "confidence": "unknown"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n51",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "source-module"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/main.954af1a8.chunk.js",
+       "properties": {
+        "semantic_role": "source-module"
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n52",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "specifier": "react",
+        "resolution_status": "external",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n53",
+     "kind": "source-map",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "source map reference",
+       "properties": {
+        "declared_url": "2.896b9ea4.chunk.js.map",
+        "declared_url_sha256": "c5f389d01b1183fc2f5778ada98a3dc345f747ed4c9afb1642b8a0d45bc888b3",
+        "resolved_path": "build/static/js/2.896b9ea4.chunk.js.map",
+        "resolution_status": "resolved",
+        "available": true
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "medium"
+       }
+      },
+      {
+       "label": "build/static/js/2.896b9ea4.chunk.js.map",
+       "properties": {
+        "path": "build/static/js/2.896b9ea4.chunk.js.map",
+        "bytes": 326285,
+        "inventory_artifact_id": "art_bb8cc6b90cd77618f899e659e2b94f234e86a089913798e346a8d7ce50bd539d",
+        "unpacked": false,
+        "file_kind": "source-map",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n54",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "src/TaskList.tsx",
+       "properties": {
+        "path": "src/TaskList.tsx",
+        "bytes": 225,
+        "inventory_artifact_id": "art_e400d14f5cb3121af687b31a5f68668af97f444ec4b15cdad34121e833a2f6c0",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "complete",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n55",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-reference"
+     },
+     "observations": [
+      {
+       "label": "./TaskInput",
+       "properties": {
+        "specifier": "./TaskInput",
+        "resolution_status": "not-found",
+        "reference_kind": "static-import"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n56",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/react-dom/index.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/react-dom/index.js",
+       "properties": {
+        "source_index": 3,
+        "declaration_index": 3,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n57",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "source-module"
+     },
+     "observations": [
+      {
+       "label": "src/index.tsx",
+       "properties": {
+        "semantic_role": "source-module"
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n58",
+     "kind": "artifact",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "package-lock.json",
+       "properties": {
+        "path": "package-lock.json",
+        "bytes": 871874,
+        "inventory_artifact_id": "art_6d217627049d47e86aaddfa207e0968c0bca64e20d7cf1fa9859c9370d86646b",
+        "unpacked": false,
+        "file_kind": "json",
+        "text_status": "included",
+        "parse_status": null,
+        "json_parse_status": "included",
+        "json_top_level_keys": [
+         "lockfileVersion",
+         "name",
+         "packages",
+         "requires",
+         "version"
+        ],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n59",
+     "kind": "javascript-asset",
+     "identity": {
+      "strategy": "content-digest",
+      "stability": "global-exact"
+     },
+     "observations": [
+      {
+       "label": "src/react-app-env.d.ts",
+       "properties": {
+        "path": "src/react-app-env.d.ts",
+        "bytes": 40,
+        "inventory_artifact_id": "art_ed6137db20a913808041b89c69d5000393235f81ad55db3d3abad2b1001339d6",
+        "unpacked": false,
+        "file_kind": "javascript",
+        "text_status": "included",
+        "parse_status": "complete",
+        "json_parse_status": null,
+        "json_top_level_keys": [],
+        "omitted_json_top_level_keys": 0,
+        "vendor_markers": []
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n60",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/react/index.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/react/index.js",
+       "properties": {
+        "source_index": 1,
+        "declaration_index": 1,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n61",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "./TaskInput",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "not-found",
+        "declared_specifier": "./TaskInput"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n62",
+     "kind": "electron-renderer",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "electron-role"
+     },
+     "observations": [
+      {
+       "label": "/static/js/2.896b9ea4.chunk.js",
+       "properties": {
+        "mechanism": "html-script-reference",
+        "script_path": "/static/js/2.896b9ea4.chunk.js",
+        "base_href": null,
+        "declared_path": "/static/js/2.896b9ea4.chunk.js",
+        "resolution_context": "html-reference",
+        "limitations": [
+         "The exact HTML resource static/js/2.896b9ea4.chunk.js was not found among the selected application files."
+        ],
+        "resolved_path": null,
+        "resolution_status": "not-found"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "high"
+       }
+      },
+      {
+       "label": "build/index.html",
+       "properties": {
+        "declared_path": "build/index.html",
+        "resolution_context": "html-reference",
+        "resolved_path": "build/index.html",
+        "resolution_status": "resolved",
+        "limitations": [],
+        "mechanism": "html-script-entrypoint"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "high"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n63",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "unresolved-semantic-module"
+     },
+     "observations": [
+      {
+       "label": "react",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "external",
+        "declared_specifier": "react"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      },
+      {
+       "label": "react",
+       "properties": {
+        "semantic_role": "module-reference",
+        "resolution_status": "external",
+        "declared_specifier": "react"
+       },
+       "evidence": {
+        "authority": "static-relationship-inference",
+        "state": "inferred",
+        "confidence": "low"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n64",
+     "kind": "source-module",
+     "identity": {
+      "strategy": "source-map-original",
+      "stability": "source-map-exact",
+      "original_source": "../node_modules/react-dom/cjs/react-dom.production.min.js"
+     },
+     "observations": [
+      {
+       "label": "../node_modules/react-dom/cjs/react-dom.production.min.js",
+       "properties": {
+        "source_index": 5,
+        "declaration_index": 5,
+        "source_name_available": true,
+        "content_available": true
+       },
+       "evidence": {
+        "authority": "artifact-bytes",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    },
+    {
+     "node_id": "n65",
+     "kind": "javascript-module",
+     "identity": {
+      "strategy": "artifact-local-key",
+      "stability": "artifact-version",
+      "namespace": "source-module"
+     },
+     "observations": [
+      {
+       "label": "build/static/js/runtime-main.2d604973.js",
+       "properties": {
+        "semantic_role": "source-module"
+       },
+       "evidence": {
+        "authority": "ast-static-analysis",
+        "state": "observed",
+        "confidence": "exact"
+       }
+      }
+     ]
+    }
+   ],
+   "edges": [
+    {
+     "source_node_id": "n41",
+     "target_node_id": "n19",
+     "relation": "contains",
+     "original_source": "TaskList.tsx"
+    },
+    {
+     "source_node_id": "n23",
+     "target_node_id": "n65",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n24",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n41",
+     "target_node_id": "n25",
+     "relation": "contains",
+     "original_source": "index.tsx"
+    },
+    {
+     "source_node_id": "n21",
+     "target_node_id": "n44",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n58",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n45",
+     "target_node_id": "n2",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n21",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n54",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n57",
+     "target_node_id": "n22",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n9",
+     "target_node_id": "n41",
+     "relation": "maps_to"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n41",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n54",
+     "target_node_id": "n26",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n57",
+     "target_node_id": "n43",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n55",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n35",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n57",
+     "target_node_id": "n28",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n26",
+     "target_node_id": "n36",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n35",
+     "target_node_id": "n12",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n26",
+     "target_node_id": "n4",
+     "relation": "exposes"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n39",
+     "relation": "contains",
+     "original_source": "../node_modules/react/jsx-runtime.js"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n23",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n35",
+     "target_node_id": "n33",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n59",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n15",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n6",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n23",
+     "target_node_id": "n17",
+     "relation": "maps_to"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n38",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n45",
+     "target_node_id": "n63",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n11",
+     "relation": "contains",
+     "original_source": "../node_modules/scheduler/index.js"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n0",
+     "relation": "contains",
+     "original_source": "../node_modules/object-assign/index.js"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n47",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n46",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n41",
+     "target_node_id": "n13",
+     "relation": "contains",
+     "original_source": "App.tsx"
+    },
+    {
+     "source_node_id": "n57",
+     "target_node_id": "n7",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n48",
+     "relation": "exposes"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n16",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n8",
+     "target_node_id": "n42",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n62",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n34",
+     "relation": "contains",
+     "original_source": "../node_modules/scheduler/cjs/scheduler.production.min.js"
+    },
+    {
+     "source_node_id": "n41",
+     "target_node_id": "n10",
+     "relation": "contains",
+     "original_source": "TaskInput.tsx"
+    },
+    {
+     "source_node_id": "n47",
+     "target_node_id": "n45",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n59",
+     "target_node_id": "n18",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n62",
+     "target_node_id": "n16",
+     "relation": "maps_to"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n60",
+     "relation": "contains",
+     "original_source": "../node_modules/react/index.js"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n27",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n20",
+     "relation": "contains",
+     "original_source": "../node_modules/react/cjs/react.production.min.js"
+    },
+    {
+     "source_node_id": "n45",
+     "target_node_id": "n1",
+     "relation": "exposes"
+    },
+    {
+     "source_node_id": "n57",
+     "target_node_id": "n52",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n5",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n8",
+     "target_node_id": "n31",
+     "relation": "loads"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n17",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n16",
+     "target_node_id": "n50",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n9",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n57",
+     "target_node_id": "n14",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n15",
+     "target_node_id": "n57",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n56",
+     "relation": "contains",
+     "original_source": "../node_modules/react-dom/index.js"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n61",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n26",
+     "target_node_id": "n3",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n49",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n35",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n9",
+     "target_node_id": "n51",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n45",
+     "target_node_id": "n63",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n64",
+     "relation": "contains",
+     "original_source": "../node_modules/react-dom/cjs/react-dom.production.min.js"
+    },
+    {
+     "source_node_id": "n21",
+     "target_node_id": "n53",
+     "relation": "maps_to"
+    },
+    {
+     "source_node_id": "n53",
+     "target_node_id": "n37",
+     "relation": "contains",
+     "original_source": "../node_modules/react/cjs/react-jsx-runtime.production.min.js"
+    },
+    {
+     "source_node_id": "n17",
+     "target_node_id": "n32",
+     "relation": "contains",
+     "original_source": "../webpack/bootstrap"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n40",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n29",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n5",
+     "target_node_id": "n30",
+     "relation": "contains"
+    },
+    {
+     "source_node_id": "n30",
+     "target_node_id": "n24",
+     "relation": "imports"
+    },
+    {
+     "source_node_id": "n42",
+     "target_node_id": "n53",
+     "relation": "contains"
+    }
+   ]
+  },
+  "summary": {
+   "browser_windows": 0,
+   "explicit_web_preferences": 0,
+   "preload_entrypoints": 0,
+   "context_bridge_apis": 0,
+   "exposed_api_members": 0,
+   "ipc": {
+    "operations": 0,
+    "literal_channels": 0,
+    "dynamic_channel_operations": 0,
+    "renderer_transmissions": 0,
+    "renderer_listeners": 0,
+    "main_handlers": 0,
+    "paired_renderer_transmissions": 0,
+    "ambiguous_renderer_transmissions": 0,
+    "unpaired_literal_renderer_transmissions": 0
+   },
+   "sender_validation_observations": 0,
+   "utility_processes": 0,
+   "resolved_utility_entrypoints": 0,
+   "native_addon_bindings": 0,
+   "resolved_native_addon_bindings": 0
+  },
+  "statistics": {
+   "relevant_files": 19,
+   "nested_asar_containers": 0,
+   "text_bytes_read": 1348167,
+   "invalid_utf8_files": 0,
+   "parsed_javascript_files": 8,
+   "visited_ast_nodes": 44237,
+   "findings": 27,
+   "modules": 0,
+   "parse_failures": 2
+  },
+  "limitations": [
+   "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+   "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+   "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+   "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+   "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+   "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+   "build/index.html has 1 inline JavaScript body starting at line 1 that was not analyzed; endpoints, storage, imports and other facts in it are absent from the evidence.",
+   "build/static/js/2.896b9ea4.chunk.js: Resource constraint during analyze_javascript_application: Owned JavaScript worker exhausted its heap while analyzing build/static/js/2.896b9ea4.chunk.js during semantic"
+  ]
+ }
+}

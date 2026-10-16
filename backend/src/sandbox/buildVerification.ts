@@ -38,7 +38,7 @@ import { isStubBody } from '../knowledge/qualityGate.js';
 import type { LanguageGate } from './nonTsCompileGate.js';
 
 export type { LanguageGate } from './nonTsCompileGate.js';
-export { runNonTsProjectGates, sanitizeGoModuleName, resolveGateLanguage, GATE_LANGUAGES } from './nonTsCompileGate.js';
+export { runNonTsProjectGates, sanitizeGoModuleName, resolveGateLanguage, foldGoPackagePerDirectory, GATE_LANGUAGES } from './nonTsCompileGate.js';
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const TSC_BIN = path.join(PROJECT_ROOT, 'node_modules', 'typescript', 'bin', 'tsc');

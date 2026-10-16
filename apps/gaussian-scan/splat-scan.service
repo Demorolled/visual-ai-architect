@@ -1,0 +1,38 @@
+[Unit]
+Description=gaussian-scan (phone video -> 3D Gaussian splat)
+Documentation=file://@HOME@/splat/README.md
+# The worker shells out to ns-train / ns-export and ffmpeg; a fast reboot into a
+# half-initialised network would just make uploads fail, so wait for the network.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER@
+WorkingDirectory=@HOME@/splat/app
+
+Environment=SPLAT_DATA=@HOME@/splat/scans
+Environment=SPLAT_GPUS=@GPUS@
+# Keep the worker off the display/studio GPUs' memory-fragile state: nothing to
+# share, one process per card.
+Environment=CUDA_DEVICE_ORDER=PCI_BUS_ID
+
+ExecStart=@HOME@/splat/.venv/bin/uvicorn server:app --host 0.0.0.0 --port @PORT@
+
+# A scan is long (minutes) and in-flight work is state on disk; restarting the
+# web layer must not orphan a running ns-train.
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+Restart=on-failure
+RestartSec=5
+
+# Modest hardening: protect the OS, not the user's tree. ProtectHome is left off
+# deliberately — torch and nerfstudio write caches under ~/.cache and ~/.config,
+# and making home read-only breaks training in ways that only show at runtime.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

@@ -33,6 +33,7 @@ import {
   type ExportLayoutPlan,
   type ResolvedTrees,
 } from '../utils/treeScope.js';
+import { resolveGoModuleName } from '../sandbox/nonTsCompileGate.js';
 
 export interface PerFileScaffoldConfig {
   projectName: string;
@@ -1813,10 +1814,30 @@ export class PerFileScaffolder {
   }
 
   /**
+   * The Go project's config files (go.mod + start.sh) for a project name.
+   *
+   * Public entry point for the OTHER write path: the chat export (routes/
+   * codePlanner.ts) writes its own files and never runs `scaffold()`, so it
+   * shipped bare Go source with no go.mod at all (measured live:
+   * `exports/a-multi-file-go-cli-…/` held main.go + reader_input.go +
+   * output_formatter.go and nothing else, and `go build` failed with `go.mod
+   * file not found` before it could report a single real error). Routing it
+   * through the canvas scaffolder's own builder keeps the two paths identical
+   * instead of growing a second copy of the startup script that can drift.
+   */
+  goProjectFiles(projectName: string): Record<string, string> {
+    return this.buildGoProjectConfig({ projectName } as PerFileScaffoldConfig);
+  }
+
+  /**
    * Build Go project config (go.mod + start.sh).
    */
   private buildGoProjectConfig(config: PerFileScaffoldConfig): Record<string, string> {
-    const moduleName = this.sanitizeName(config.projectName);
+    // resolveGoModuleName — the SAME function the compile gate and the import
+    // writer call — replaces this file's own sanitizeName. The two were
+    // byte-identical clones, which is exactly the kind of copy that silently
+    // diverges and hands the gate a go.mod the delivered imports do not match.
+    const moduleName = resolveGoModuleName(config.projectName);
     const goMod = `module ${moduleName}\n\ngo 1.22\n`;
 
     // Generate a startup script that builds and runs the Go app

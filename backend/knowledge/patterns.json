@@ -1712,5 +1712,221 @@
     "id": "pat_1791484257526_iiyly8",
     "usageCount": 0,
     "createdAt": "2026-10-08T18:30:57.526Z"
+  },
+  {
+    "category": "code_pattern",
+    "title": "main - logic pattern",
+    "code": "import Foundation\n\nclass TempConverter {\n    func convertCelsiusToFahrenheit(celsius: Double) -> Double? {\n        return (celsius * 9.0/5.0) + 32.0\n    }\n}",
+    "description": "A logic node implementation for a Swift command-line program main.swift that converts a Celsius temperature given on the command line to Fahrenheit. One file only.. Language: swift, OS: linux",
+    "tags": [
+      "logic",
+      "swift",
+      "linux",
+      "main"
+    ],
+    "projectId": "write_1791951838696",
+    "targetOS": "linux",
+    "nodeType": "logic",
+    "language": "swift",
+    "success": true,
+    "qualityScore": 7,
+    "id": "pat_1791951838697_dq408r",
+    "usageCount": 0,
+    "createdAt": "2026-10-14T04:23:58.697Z",
+    "lastUsed": "2026-10-14T04:23:58.697Z"
+  },
+  {
+    "category": "architecture",
+    "lastUsed": "2026-10-14T04:23:58.730Z",
+    "title": "a Swift command-line program main.swift that converts a Celsius temperature given on the command line to Fahrenheit. One file only. - Full architecture",
+    "code": "import Foundation\n\nclass TempConverter {\n    func convertCelsiusToFahrenheit(celsius: Double) -> Double? {\n        return (celsius * 9.0/5.0) + 32.0\n    }\n}\n\nlet converter = TempConverter()\nif CommandLine.arguments.count != 2 {\n    print(\"Usage: \\(CommandLine.arguments[0]) <temperature>\")\n    exit(1)\n}\nlet tempStr = CommandLine.arguments[1]\nguard let celsiusTemp = Double(tempStr), let fahrenheitTemp = converter.convertCelsiusToFahrenheit(celsius:celsiusTemp) else {\n    print(\"Invalid temperature value\")\n    exit(1)\n}\nprint(fahrenheitTemp)",
+    "description": "Complete project architecture for a Swift command-line program main.swift that converts a Celsius temperature given on the command line to Fahrenheit. One file only. with 1 nodes targeting linux",
+    "tags": [
+      "architecture",
+      "linux",
+      "logic"
+    ],
+    "projectId": "write_1791951838696",
+    "targetOS": "linux",
+    "nodeType": "master",
+    "language": "mixed",
+    "success": true,
+    "qualityScore": 5,
+    "id": "pat_1791951838730_j1f57b",
+    "usageCount": 0,
+    "createdAt": "2026-10-14T04:23:58.730Z"
+  },
+  {
+    "category": "code_pattern",
+    "title": "main - logic pattern",
+    "code": "use std::env;\n\nfn main() {\n    let args: Vec<String> = env::args().collect();\n    if args.len() < 2 {\n        eprintln!(\"Usage: {} <file>\", args[0]);\n        return;\n    }\n    let filename = &args[1];\n}",
+    "description": "A logic node implementation for a Rust command-line program that counts the lines in a text file given as the first argument. Files: main.rs (entry, reads std::env::args) and a Cargo.toml.. Language: rust, OS: linux",
+    "tags": [
+      "logic",
+      "rust",
+      "linux",
+      "main"
+    ],
+    "projectId": "write_1791951874019",
+    "targetOS": "linux",
+    "nodeType": "logic",
+    "language": "rust",
+    "success": true,
+    "qualityScore": 7,
+    "id": "pat_1791951874019_j3lopz",
+    "usageCount": 0,
+    "createdAt": "2026-10-14T04:24:34.019Z",
+    "lastUsed": "2026-10-14T04:24:34.019Z"
+  },
+  {
+    "category": "code_pattern",
+    "title": "Cargo - logic pattern",
+    "code": "[package]\nname = \"line_counter\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[dependencies]",
+    "description": "A logic node implementation for a Rust command-line program that counts the lines in a text file given as the first argument. Files: main.rs (entry, reads std::env::args) and a Cargo.toml.. Language: typescript, OS: linux",
+    "tags": [
+      "logic",
+      "typescript",
+      "linux",
+      "cargo"
+    ],
+    "projectId": "write_1791951874019",
+    "targetOS": "linux",
+    "nodeType": "logic",
+    "language": "typescript",
+    "success": true,
+    "qualityScore": 5,
+    "id": "pat_1791951874021_h8jb0h",
+    "usageCount": 0,
+    "createdAt": "2026-10-14T04:24:34.021Z",
+    "lastUsed": "2026-10-14T04:24:34.021Z"
+  },
+  {
+    "category": "architecture",
+    "lastUsed": "2026-10-14T04:24:34.021Z",
+    "title": "a Rust command-line program that counts the lines in a text file given as the first argument. Files: main.rs (entry, reads std::env::args) and a Cargo.toml. - Full architecture",
+    "code": "use std::env;\n\nfn main() {\n    let args: Vec<String> = env::args().collect();\n    if args.len() < 2 {\n        eprintln!(\"Usage: {} <file>\", args[0]);\n        return;\n    }\n    let filename = &args[1];\n}\n\n\n[package]\nname = \"line_counter\"\nversion = \"0.1.0\"\nedition = \"2021\"\n\n[dependencies]",
+    "description": "Complete project architecture for a Rust command-line program that counts the lines in a text file given as the first argument. Files: main.rs (entry, reads std::env::args) and a Cargo.toml. with 2 nodes targeting linux",
+    "tags": [
+      "architecture",
+      "linux",
+      "logic"
+    ],
+    "projectId": "write_1791951874019",
+    "targetOS": "linux",
+    "nodeType": "master",
+    "language": "mixed",
+    "success": true,
+    "qualityScore": 5,
+    "id": "pat_1791951874021_88fxoa",
+    "usageCount": 0,
+    "createdAt": "2026-10-14T04:24:34.021Z"
+  },
+  {
+    "category": "code_pattern",
+    "title": "main - logic pattern",
+    "code": "use std::collections::HashMap;\n\n/// Counts the number of occurrences of each character in a string.\nfn count_characters(input: &str) -> HashMap<char, usize> {\n    let mut counts = HashMap::new();\n    for c in input.chars() {\n        *counts.entry(c).or_insert(0) += 1;\n    }\n    counts\n}",
+    "description": "A logic node implementation for a Rust CLI tool that counts the characters in a string. Language: rust, OS: linux",
+    "tags": [
+      "logic",
+      "rust",
+      "linux",
+      "main"
+    ],
+    "projectId": "write_1792124236987",
+    "targetOS": "linux",
+    "nodeType": "logic",
+    "language": "rust",
+    "success": true,
+    "qualityScore": 7.5,
+    "id": "pat_1792124236988_f7wzpb",
+    "usageCount": 0,
+    "createdAt": "2026-10-16T04:17:16.988Z",
+    "lastUsed": "2026-10-16T04:17:16.988Z"
+  },
+  {
+    "category": "code_pattern",
+    "title": "main - logic pattern",
+    "code": "use std::collections::HashMap;\nuse std::io::{self, Write}",
+    "description": "A logic node implementation for a Rust CLI tool that counts the characters in a string. Language: rust, OS: linux",
+    "tags": [
+      "logic",
+      "rust",
+      "linux",
+      "main"
+    ],
+    "projectId": "write_1792124236987",
+    "targetOS": "linux",
+    "nodeType": "logic",
+    "language": "rust",
+    "success": true,
+    "qualityScore": 6,
+    "id": "pat_1792124236992_qyodht",
+    "usageCount": 0,
+    "createdAt": "2026-10-16T04:17:16.992Z",
+    "lastUsed": "2026-10-16T04:17:16.992Z"
+  },
+  {
+    "category": "architecture",
+    "lastUsed": "2026-10-16T04:17:16.994Z",
+    "title": "a Rust CLI tool that counts the characters in a string - Full architecture",
+    "code": "use std::collections::HashMap;\n\n/// Counts the number of occurrences of each character in a string.\nfn count_characters(input: &str) -> HashMap<char, usize> {\n    let mut counts = HashMap::new();\n    for c in input.chars() {\n        *counts.entry(c).or_insert(0) += 1;\n    }\n    counts\n}\n\n/// Parses the command-line arguments and processes the query.\nfnc main(args: Vec<String>) -> String {\n    let mut is_help = false;\n    let mut skip_first_arg_check = false;\n\n    if args.len() < 2 { // First arg is always executable name, so at least two expected unless --help is passed\n        is_help = args.windows(1).any(|w| w[0] == \"--help\") || args.iter().filter(|&&a| a.starts_with('\\\"help\\\"')).count() > 0;\n    }\n\n    if is_help {\n        return String::from(\"Usage: character-count <STRING>\")\n    }\n\n    let mut input_string = \"\".to_owned(); // Default empty string for now, this will be overwritten later as we check arguments\n\n    for arg in &args {\n      // Skip the first argument (executable name) but track flags\n      if arg == \"--\" {\n          skip_first_arg_check = true;\n          continue; // Ignore everything from the -- onwards\n        }\n\n        if !skip_first_arg_check {\n            input_string.push_str(arg);\n        } else if is_help && args.iter().any(|&a| a.starts_with(\"--help\") || a.starts_with(\"\\\"help\\\"\")) {\n            skip_first_arg_check = true;\n          }\n        \n    // Now we have the parsed argument values, and is_help holds whether to display the help message or not\n    let mut count_map = HashMap::<char, usize>::new();\n    if input_string.is_empty() && is_help { \n      return String::from(\"No command line parameters given, please see --help for usage information.\")\n    }\n    \n    // Perform computation here based on your language's idiomatic style and data types\n    Ok(response)\n}\n}\n\n\nuse std::collections::HashMap;\nuse std::io::{self, Write};\n\nfn main() {\n    let mut count_map = HashMap::<char, usize>::new();\n\n    println!(\"Enter a string to count chara",
+    "description": "Complete project architecture for a Rust CLI tool that counts the characters in a string with 2 nodes targeting linux",
+    "tags": [
+      "architecture",
+      "linux",
+      "logic"
+    ],
+    "projectId": "write_1792124236987",
+    "targetOS": "linux",
+    "nodeType": "master",
+    "language": "mixed",
+    "success": true,
+    "qualityScore": 5,
+    "id": "pat_1792124236994_jmv5ii",
+    "usageCount": 0,
+    "createdAt": "2026-10-16T04:17:16.994Z"
+  },
+  {
+    "category": "code_pattern",
+    "title": "Program - logic pattern",
+    "code": "using System;\n\nnamespace DecimalBinaryConverter\n{\n    internal class Program\n    {\n        static void Main(string[] args)\n        {\n            if (args.Length == 0)\n            {\n                Console.WriteLine(\"Please provide a decimal number as an argument.\");\n                return;\n            }\n\n            try\n            {\n                int decimalNumber = Convert.ToInt32(args[0]);\n                string binaryRepresentation = DecimalToBinary(decimalNumber);\n                Console.WriteLine($\"Decimal: {decimalNumber} ===> Binary: {binaryRepresentation}\");\n            }\n            catch (FormatException)\n            {\n                Console.WriteLine(\"Invalid input. Please enter a valid integer.\");\n            }\n        }\n\n        static string DecimalToBinary(int decimalNumber)\n        {\n            if (decimalNumber == 0) return \"0\";\n\n            string binary = \"\";\n            while (decimalNumber > 0)\n            {\n                int remainder = decimalNumber % 2;\n                binary = remainder + binary;\n                decimalNumber /= 2;\n            }\n\n            return binary;\n        }\n    }\n}",
+    "description": "A logic node implementation for a C# CLI tool that converts a decimal number to binary. Language: csharp, OS: linux",
+    "tags": [
+      "logic",
+      "csharp",
+      "linux",
+      "program"
+    ],
+    "projectId": "write_1792124616460",
+    "targetOS": "linux",
+    "nodeType": "logic",
+    "language": "csharp",
+    "success": true,
+    "qualityScore": 8,
+    "id": "pat_1792124616460_vxbs3n",
+    "usageCount": 0,
+    "createdAt": "2026-10-16T04:23:36.460Z",
+    "lastUsed": "2026-10-16T04:23:36.460Z"
+  },
+  {
+    "category": "architecture",
+    "lastUsed": "2026-10-16T04:23:36.461Z",
+    "title": "a C# CLI tool that converts a decimal number to binary - Full architecture",
+    "code": "using System;\n\nnamespace DecimalBinaryConverter\n{\n    internal class Program\n    {\n        static void Main(string[] args)\n        {\n            if (args.Length == 0)\n            {\n                Console.WriteLine(\"Please provide a decimal number as an argument.\");\n                return;\n            }\n\n            try\n            {\n                int decimalNumber = Convert.ToInt32(args[0]);\n                string binaryRepresentation = DecimalToBinary(decimalNumber);\n                Console.WriteLine($\"Decimal: {decimalNumber} ===> Binary: {binaryRepresentation}\");\n            }\n            catch (FormatException)\n            {\n                Console.WriteLine(\"Invalid input. Please enter a valid integer.\");\n            }\n        }\n\n        static string DecimalToBinary(int decimalNumber)\n        {\n            if (decimalNumber == 0) return \"0\";\n\n            string binary = \"\";\n            while (decimalNumber > 0)\n            {\n                int remainder = decimalNumber % 2;\n                binary = remainder + binary;\n                decimalNumber /= 2;\n            }\n\n            return binary;\n        }\n    }\n}",
+    "description": "Complete project architecture for a C# CLI tool that converts a decimal number to binary with 1 nodes targeting linux",
+    "tags": [
+      "architecture",
+      "linux",
+      "logic"
+    ],
+    "projectId": "write_1792124616460",
+    "targetOS": "linux",
+    "nodeType": "master",
+    "language": "mixed",
+    "success": true,
+    "qualityScore": 5,
+    "id": "pat_1792124616461_bk1rnh",
+    "usageCount": 0,
+    "createdAt": "2026-10-16T04:23:36.461Z"
   }
 ]

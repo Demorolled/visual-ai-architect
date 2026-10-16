@@ -3,7 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { learningEngine } from '../knowledge/learningEngine.js';
-import { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports, verifyGeneratedContracts, findMissingPlannedFiles, buildMissingImportRepairPrompt, buildRegenerateWithErrorsPrompt, runTscCheck, normalizeTscError, isSafeNonRelativeImport, stripPhantomPackageImports, tscErrorCode, isMechanicalTscClass, applyDeterministicMissingReturnFix, applyDeterministicVoidReturnFix, selectWholeProjectRepairFiles, buildWholeProjectRepairPrompt, shouldRunNextWholeProjectRound, extractExportedFunctionArity, countCallArgumentCounts, estimateFileOutputTokens, estimatePlanOutputTokens, estimateAutoChunkSize, computeRequiredImportLines, applyDeterministicImportPatch, groupGateErrorsByFile, sanitizeNonTsSource, braceBalance, findUnimplementedPlannedExports, groupStubFailuresByFile, pathFromGateFailure, applyDeterministicNameDriftFix, applyContentDrivenImportFix, applyDeterministicLocalCollisionFix, applyDeterministicSiblingPathFix, applyDeterministicMissingExportFix, normalizeImportExtensions, applyDeterministicPartialObjectFix, applyDeterministicHtmlRuntimeFixes, detectHtmlTruncation, repairLLMJson, bucketTscClasses, snapshotFirstDrafts, applyImportPatch, buildImportPatchPrompt, emitCodegenProgress, buildErrorFocusedNumberedSource, buildRenderSmokeRepairPrompt, buildTruncationCompletionPrompt, pickCliEntryFile, fixUninvokedEntryMain, addDeterministicHelpHandler, buildCliSmokeRepairPrompt, runBehavioralSmokeGates, getInternalKnowledgeBlock, buildWriteSummary, learnFromWrite, isValidContractMemberName, type SmokeVerdict } from './codePlanner.js';
+import { isGuiRequest, ensureGuiEntryFile, GUI_WIDGET_SECTION, APP_QUALITY_RULES, inlineExternalScriptRefs, stripTypeScript, stripTypeScriptKeepExports, verifyGeneratedContracts, findMissingPlannedFiles, buildMissingImportRepairPrompt, buildRegenerateWithErrorsPrompt, runTscCheck, normalizeTscError, isSafeNonRelativeImport, stripPhantomPackageImports, tscErrorCode, isMechanicalTscClass, applyDeterministicMissingReturnFix, applyDeterministicVoidReturnFix, selectWholeProjectRepairFiles, buildWholeProjectRepairPrompt, shouldRunNextWholeProjectRound, extractExportedFunctionArity, countCallArgumentCounts, estimateFileOutputTokens, estimatePlanOutputTokens, estimateAutoChunkSize, computeRequiredImportLines, applyDeterministicImportPatch, groupGateErrorsByFile, sanitizeNonTsSource, braceBalance, findUnimplementedPlannedExports, groupStubFailuresByFile, pathFromGateFailure, applyDeterministicNameDriftFix, applyContentDrivenImportFix, applyDeterministicLocalCollisionFix, applyDeterministicSiblingPathFix, applyDeterministicMissingExportFix, normalizeImportExtensions, applyDeterministicPartialObjectFix, applyDeterministicHtmlRuntimeFixes, detectHtmlTruncation, repairLLMJson, extractJSON as extractJSONReal, stripJsonComments, stripTrailingCommas, planRetryNote, bucketTscClasses, snapshotFirstDrafts, applyImportPatch, buildImportPatchPrompt, emitCodegenProgress, buildErrorFocusedNumberedSource, buildRenderSmokeRepairPrompt, buildTruncationCompletionPrompt, pickCliEntryFile, fixUninvokedEntryMain, addDeterministicHelpHandler, buildCliSmokeRepairPrompt, runBehavioralSmokeGates, getInternalKnowledgeBlock, buildWriteSummary, learnFromWrite, isValidContractMemberName, ensureExportProjectFiles, type SmokeVerdict } from './codePlanner.js';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // codePlanner — Interactive CLI Code Planning & Writing
@@ -1307,6 +1307,106 @@ describe('repairLLMJson (raw-newline + truncation repair — the whole-project J
   });
 });
 
+// ═══════════════════════════════════════════════════════════════════════════
+// planRetryNote — the retry must name the ACTUAL failure
+// ═══════════════════════════════════════════════════════════════════════════
+// Two plan paths used to gate their retry on the reply's shape, so the prose
+// form (the model answering "ask any clarifying questions" with chat) skipped
+// the retry entirely and failed on the first try.
+
+describe('planRetryNote (the plan retry names the actual failure)', () => {
+  // Live shape: batch matrix, Go "largest files" — no brace anywhere.
+  const prose =
+    "To help you better, I'll first need to clarify a few details before proceeding.\n\n" +
+    '1. **UI Style** - What kind of interface do you want for this tool?\n' +
+    '   Options: Terminal (CLI), Web app';
+
+  it('tells a PROSE reply it replied in prose, never that it was truncated', () => {
+    const note = planRetryNote(prose);
+    expect(note).toMatch(/prose/i);
+    // The load-bearing property: "your JSON was truncated" sends a prose reply
+    // straight back to prose.
+    expect(note).not.toMatch(/truncated/i);
+  });
+
+  it('tells a brace-bearing reply it was truncated', () => {
+    expect(planRetryNote('{\n  "files": [')).toMatch(/truncated/i);
+  });
+
+  it('treats a FENCED reply as truncated, not prose (the startsWith bug)', () => {
+    // The plan prompt asks for ```json, so a truncated reply usually begins
+    // with the fence — a start-of-string test sent it the PROSE advice and the
+    // retry produced more prose.
+    const fenced = '```json\n{\n  "files": [\n    { "path": "main.go"';
+    const note = planRetryNote(fenced);
+    expect(note).toMatch(/truncated/i);
+    expect(note).not.toMatch(/replied in prose/i);
+  });
+
+  it('always asks for JSON only and caps the reply size', () => {
+    for (const reply of [prose, '{"a":1}', '```json\n{']) {
+      expect(planRetryNote(reply)).toMatch(/JSON/);
+      expect(planRetryNote(reply)).toMatch(/SHORT/);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// extractJSON — comment-laden replies (the plan-stage failure class)
+// ═══════════════════════════════════════════════════════════════════════════
+// Ten of the 375 recorded batch-matrix rows died at the PLAN stage with
+// "Could not create a structured plan" while the reply itself was structured
+// JSON — the model copies the plan prompt's commented schema into its output.
+// The cases below are the recorded shapes.
+
+describe('stripJsonComments / stripTrailingCommas (plan replies echoing the prompt schema)', () => {
+  it('recovers a reply whose comment carried the prompt schema annotation', () => {
+    // Live shape: batch matrix, C task-manager.
+    const raw = '{\n  "files": [\n    {\n      "path": "src/task.c",\n      "language": "c",\n      // ... other fields omitted for brevity (see the file contract schema above)\n    }\n  ]\n}';
+    const plan = extractJSONReal<{ files: Array<{ path: string; language: string }> }>(raw);
+    expect(plan).not.toBeNull();
+    expect(plan!.files[0].language).toBe('c');
+  });
+
+  it('recovers a reply whose block comment contains quotes AND braces of its own', () => {
+    // The comment's own quotes/braces are what desynchronises the string
+    // tracking and the brace-depth scan, so order matters: strip, then scan.
+    const raw = '{\n  "reasoning": "x",\n  "files": [],\n  /*{\n    "key": "some_key",\n    "question": "How many nodes?",\n    "type": "choice"\n  }*/\n  "questions": []\n}';
+    const plan = extractJSONReal<{ reasoning: string; files: unknown[]; questions: unknown[] }>(raw);
+    expect(plan).not.toBeNull();
+    expect(plan!.reasoning).toBe('x');
+    expect(plan!.files).toEqual([]);
+  });
+
+  it('drops the comma a removed comment leaves dangling in front of a closer', () => {
+    const raw = '{"a": 1, // note\n}';
+    expect(JSON.parse(stripTrailingCommas(stripJsonComments(raw)))).toEqual({ a: 1 });
+  });
+
+  it('never touches a `//` that is inside a string value (URLs, code samples)', () => {
+    // The property that makes this safe: comments live outside strings only.
+    const raw = '{"url": "https://example.com/a//b", "code": "const x = 1; // keep me"}';
+    expect(stripJsonComments(raw)).toBe(raw);
+    const parsed = extractJSONReal<{ url: string; code: string }>(raw);
+    expect(parsed!.url).toBe('https://example.com/a//b');
+    expect(parsed!.code).toBe('const x = 1; // keep me');
+  });
+
+  it('leaves already-valid JSON byte-identical', () => {
+    const raw = '{"a":1,"b":[1,2,{"c":"d"}]}';
+    expect(stripJsonComments(raw)).toBe(raw);
+    expect(stripTrailingCommas(raw)).toBe(raw);
+  });
+
+  it('does NOT yet recover an unquoted JS-object-literal value (known gap)', () => {
+    // Live shape: Kotlin task-manager — `"language": kotlin` lost its quotes.
+    // Comment/trailing-comma repair cannot invent quoting, so this stays broken
+    // rather than being silently half-fixed. Recorded so the gap is visible.
+    const raw = '{"files": [{"path": "src/main.kt", "language": kotlin}]}';
+    expect(extractJSONReal(raw)).toBeNull();
+  });
+});
+
 describe('applyDeterministicHtmlRuntimeFixes (zero-LLM JS runtime fixes for the render smoke repair)', () => {
   it('coerces dataset-string vs number comparisons (the first-click crash class)', () => {
     const html = `<script>
@@ -1550,13 +1650,13 @@ describe('snapshotFirstDrafts (ORPO first-draft capture)', () => {
     return { dir, cleanup: () => { try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* */ } } };
   };
 
-  it('writes first-draft content for .ts files into _first-drafts/', () => {
+  it('writes first-draft content for .ts files into .first-drafts/', () => {
     const { dir, cleanup } = mk();
     try {
       const fs = require('fs');
       const path = require('path');
       snapshotFirstDrafts(dir, [{ path: 'src/core.ts', content: 'export const x = 1;' }]);
-      const saved = fs.readFileSync(path.join(dir, '_first-drafts', 'src', 'core.ts'), 'utf-8');
+      const saved = fs.readFileSync(path.join(dir, '.first-drafts', 'src', 'core.ts'), 'utf-8');
       expect(saved).toBe('export const x = 1;');
     } finally { cleanup(); }
   });
@@ -1568,7 +1668,7 @@ describe('snapshotFirstDrafts (ORPO first-draft capture)', () => {
       const path = require('path');
       snapshotFirstDrafts(dir, [{ path: 'src/core.ts', content: 'draft v1' }]);
       snapshotFirstDrafts(dir, [{ path: 'src/core.ts', content: 'draft v2 (repaired)' }]);
-      const saved = fs.readFileSync(path.join(dir, '_first-drafts', 'src', 'core.ts'), 'utf-8');
+      const saved = fs.readFileSync(path.join(dir, '.first-drafts', 'src', 'core.ts'), 'utf-8');
       expect(saved).toBe('draft v1');
     } finally { cleanup(); }
   });
@@ -1582,8 +1682,8 @@ describe('snapshotFirstDrafts (ORPO first-draft capture)', () => {
         { path: 'index.html', content: '<html></html>' },
         { path: 'src/style.css', content: 'body {}' },
       ]);
-      expect(fs.existsSync(path.join(dir, '_first-drafts', 'index.html'))).toBe(false);
-      expect(fs.existsSync(path.join(dir, '_first-drafts', 'src', 'style.css'))).toBe(false);
+      expect(fs.existsSync(path.join(dir, '.first-drafts', 'index.html'))).toBe(false);
+      expect(fs.existsSync(path.join(dir, '.first-drafts', 'src', 'style.css'))).toBe(false);
     } finally { cleanup(); }
   });
 
@@ -1593,8 +1693,38 @@ describe('snapshotFirstDrafts (ORPO first-draft capture)', () => {
       const fs = require('fs');
       const path = require('path');
       snapshotFirstDrafts(dir, [{ path: 'frontend/src/App.tsx', content: 'export const App = () => null;' }]);
-      expect(fs.readFileSync(path.join(dir, '_first-drafts', 'frontend', 'src', 'App.tsx'), 'utf-8')
+      expect(fs.readFileSync(path.join(dir, '.first-drafts', 'frontend', 'src', 'App.tsx'), 'utf-8')
         .startsWith('export const App')).toBe(true);
+    } finally { cleanup(); }
+  });
+
+  // The reason the directory is DOT-prefixed rather than `_first-drafts`: a
+  // first draft is by definition broken, and a project tsconfig without an
+  // explicit `include` resolves `**/*` — so an underscore dir joined the user's
+  // build and failed it. Measured live on a generated Express export. This test
+  // compiles the delivered project the way its user would (`tsc -p .`).
+  it('keeps the snapshot out of a plain `tsc -p .` build of the delivered project', () => {
+    const { dir, cleanup } = mk();
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const { execFileSync } = require('child_process');
+      const tsc = path.resolve(__dirname, '..', '..', '..', 'node_modules', 'typescript', 'bin', 'tsc');
+      if (!fs.existsSync(tsc)) return; // toolchain absent → nothing to measure
+      fs.writeFileSync(path.join(dir, 'tsconfig.json'), JSON.stringify({
+        compilerOptions: { target: 'ES2020', module: 'ESNext', noEmit: true },
+      }));
+      fs.writeFileSync(path.join(dir, 'server.ts'), 'export const ok: number = 1;\n');
+      // A draft that cannot compile — the normal state of a first draft.
+      snapshotFirstDrafts(dir, [{ path: 'server.ts', content: 'const broken = { ;\n' }]);
+      let failed = '';
+      try {
+        execFileSync(process.execPath, [tsc, '-p', '.'], { cwd: dir, stdio: 'pipe' });
+      } catch (e: any) {
+        failed = String(e?.stdout || '') + String(e?.stderr || '');
+      }
+      expect(failed).not.toContain('.first-drafts/server.ts');
+      expect(failed).toBe('');
     } finally { cleanup(); }
   });
 });
@@ -4758,6 +4888,51 @@ describe('add', () => {
       const verdict = await runTscCheck(dir, [{ path: 'App.tsx' }]);
       expect(verdict.status).toBe('clean');
       expect(verdict.errors).toEqual([]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+// The chat write path never runs PerFileScaffolder, so a delivered Go export
+// shipped SOURCE ONLY — no go.mod, no start.sh — and `go build` failed with
+// `go.mod file not found` before it could report the real compile errors.
+// Measured live: exports/a-multi-file-go-cli-that-converts-a-csv--… held
+// main.go + reader_input.go + output_formatter.go and nothing else.
+describe('ensureExportProjectFiles — a chat Go export is buildable and runnable', () => {
+  const request = 'a multi-file Go CLI that converts a CSV file to JSON';
+  const goFiles = [{ path: 'main.go', content: 'package main\n\nfunc main() {}\n' }];
+
+  it('writes go.mod (module = the export\'s own name) and an executable start.sh', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-export-files-'));
+    try {
+      ensureExportProjectFiles(dir, goFiles, request);
+      expect(fs.readFileSync(path.join(dir, 'go.mod'), 'utf-8'))
+        .toContain('module a-multi-file-go-cli-that-converts-a-csv-file-to-json');
+      const start = path.join(dir, 'start.sh');
+      expect(fs.readFileSync(start, 'utf-8')).toContain('go build');
+      expect(fs.statSync(start).mode & 0o111).toBeGreaterThan(0);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('never clobbers a go.mod the model wrote itself', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-export-files-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'go.mod'), 'module mine\n\ngo 1.21\n');
+      ensureExportProjectFiles(dir, goFiles, request);
+      expect(fs.readFileSync(path.join(dir, 'go.mod'), 'utf-8')).toBe('module mine\n\ngo 1.21\n');
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('writes nothing for a non-Go export', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vaca-export-files-'));
+    try {
+      ensureExportProjectFiles(dir, [{ path: 'main.py', content: 'print(1)\n' }], request);
+      expect(fs.readdirSync(dir)).toEqual([]);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

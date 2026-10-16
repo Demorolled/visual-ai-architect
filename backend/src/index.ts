@@ -58,7 +58,7 @@ import { wikiRoutes } from './routes/wiki.js';
 import { todoRoutes } from './routes/todo.js';
 import { reviewRoutes } from './routes/review.js';
 import { sandboxRoutes } from './routes/sandbox.js';
-import { codePlannerRoutes } from './routes/codePlanner.js';
+import { codePlannerRoutes, EFFECTIVE_TIMEOUTS } from './routes/codePlanner.js';
 import { experimentRoutes } from './routes/experiments.js';
 import { idleMonitor, shouldCountRequestAsActivity } from './services/idleMonitor.js';
 import { microExperimenter } from './services/microExperimenterService.js';
@@ -215,7 +215,22 @@ function configuredLlmBaseUrl(): string {
 
 const LLM_BASE_URL = configuredLlmBaseUrl();
 
-async function llmHealth(): Promise<{ up: boolean; model?: string; error?: string }> {
+/** The model this backend will actually ASK for, from the same config/precedence
+ *  translator.ts uses. Reported by /api/health so a batch run can record the
+ *  model behind each verdict. */
+function configuredLlmModel(): string | undefined {
+  try {
+    const cfgPath = resolve(import.meta.dirname!, '..', 'llm-config.json');
+    const cfg = JSON.parse(readFileSync(cfgPath, 'utf-8'));
+    const entry = cfg?.dspark || cfg?.ollama || cfg?.primary;
+    return typeof entry?.model === 'string' && entry.model ? entry.model : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function llmHealth(): Promise<{ up: boolean; model?: string; served?: string[]; modelAvailable?: boolean; error?: string }> {
+  const configured = configuredLlmModel();
   try {
     // 10s, not 2s: dspark generation now runs in a worker thread so /v1/models
     // stays responsive mid-generation, but a busy server can still take >2s on
@@ -224,22 +239,39 @@ async function llmHealth(): Promise<{ up: boolean; model?: string; error?: strin
     // #4). A down server still fails instantly (connection refused), so this
     // only delays the response when the LLM is genuinely hung.
     const res = await fetch(`${LLM_BASE_URL}/v1/models`, { signal: AbortSignal.timeout(10_000) });
-    if (!res.ok) return { up: false, error: `HTTP ${res.status}` };
+    if (!res.ok) return { up: false, model: configured, error: `HTTP ${res.status}` };
     const body: any = await res.json();
-    return { up: true, model: body?.data?.[0]?.id ?? 'unknown' };
+    // `model` must be the CONFIGURED one, not `data[0].id`: a provider lists
+    // every model it holds, and taking the first element reported whatever the
+    // provider happened to sort first (measured: qwen2.5-coder:14b) while the
+    // backend was actually asking for a different model. Recording that would
+    // mislabel every row of a batch run.
+    const served: string[] = (body?.data ?? []).map((m: any) => m?.id).filter(Boolean);
+    return {
+      up: true,
+      model: configured,
+      served: served.slice(0, 5),
+      modelAvailable: configured ? served.includes(configured) : undefined,
+    };
   } catch (err: any) {
-    return { up: false, error: err?.message || 'unreachable' };
+    return { up: false, model: configured, error: err?.message || 'unreachable' };
   }
 }
 
+// `timeouts` reports the build budgets this process is ACTUALLY enforcing
+// (see EFFECTIVE_TIMEOUTS), so a batch run can record them per row and size its
+// own client timeout to outlast the server's cap. Without that, two runs whose
+// timeouts differ look comparable when they are not — and a client that gives
+// up first records an infrastructure failure where the server would have
+// answered.
 app.get('/health', async (_req, res) => {
   const llm = await llmHealth();
-  res.json({ status: 'ok', uptime: process.uptime(), llm, timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', uptime: process.uptime(), llm, timeouts: EFFECTIVE_TIMEOUTS, timestamp: new Date().toISOString() });
 });
 
 app.get('/api/health', async (_req, res) => {
   const llm = await llmHealth();
-  res.json({ ok: true, status: 'ok', uptime: process.uptime(), llm, timestamp: new Date().toISOString() });
+  res.json({ ok: true, status: 'ok', uptime: process.uptime(), llm, timeouts: EFFECTIVE_TIMEOUTS, timestamp: new Date().toISOString() });
 });
 
 // ─── Serve the standalone apps in /projects (claims-audit.html, the
@@ -741,12 +773,62 @@ for (const [category, tools] of Object.entries(registry.grouped)) {
 
 // ─── Ollama connection check ──
 async function checkOllama(): Promise<void> {
-  const healthUrl = process.env.OLLAMA_BASE_URL ? process.env.OLLAMA_BASE_URL.replace('/v1', '') + '/api/tags' : 'http://192.168.1.234:11434/api/tags';
-  const isAlive = await fetch(healthUrl).then(r => r.ok).catch(() => false);
+  const base = process.env.OLLAMA_BASE_URL ? process.env.OLLAMA_BASE_URL.replace('/v1', '') : 'http://192.168.1.234:11434';
+  const isAlive = await fetch(base + '/api/tags').then(r => r.ok).catch(() => false);
   if (isAlive) {
     console.log('[Ollama] Ollama server detected on port 11434');
+    await warnIfKvCacheUnquantized(base);
   } else {
     console.warn('[Ollama] Ollama not found on port 11434. Start it with: ollama serve');
+  }
+}
+
+/**
+ * Advisory: warn when a loaded model is only partly in VRAM.
+ *
+ * Ollama has no API for its KV cache type — `/api/ps` exposes name, size,
+ * size_vram, context_length and details, and no cache field — and
+ * OLLAMA_KV_CACHE_TYPE is only read when `ollama serve` starts. So the app
+ * cannot set it for a daemon it did not launch. What it CAN do is report the
+ * symptom: an unquantized f16 KV cache is a fixed per-context cost large enough
+ * that the 14B stops fitting on a 12 GB card, and Ollama then moves layers to
+ * the CPU. Measured there at num_ctx=16384:
+ *
+ *   f16  → size 12 GB, size_vram ~9.0 GB   (23% of the model on CPU)
+ *   q8_0 → size 10 GB, size_vram ~9.6 GB   (12% of the model on CPU)
+ *
+ * Deliberately advisory, never a verdict: a genuinely larger model on a small
+ * card offloads for reasons that have nothing to do with the KV cache, and
+ * "unverified is never clean" cuts the other way too — this is a hint, not a
+ * failure. Quantizing the KV cache costs no model precision.
+ */
+async function warnIfKvCacheUnquantized(baseUrl: string): Promise<void> {
+  try {
+    const res = await fetch(baseUrl + '/api/ps');
+    if (!res.ok) return;
+    const data: any = await res.json();
+    for (const m of data?.models ?? []) {
+      const size = Number(m?.size);
+      const vram = Number(m?.size_vram);
+      if (!size || !vram) continue;            // nothing loaded, or the field is absent
+      const onGpu = vram / size;
+      // Threshold is not arbitrary: it is set between the two measured states on
+      // the 12 GB reference card at ctx 16384 — f16 lands at 77% VRAM and q8_0
+      // at 88%. Warning at <98% would fire even AFTER the fix is applied (q8_0
+      // still leaves 12% on the CPU) and tell users to redo work they have
+      // already done. 80% separates the two with margin on both sides, and
+      // still catches a smaller card where f16 offloads far more.
+      if (onGpu >= 0.8) continue;
+      console.warn(
+        `[Ollama] ${m.name} is only ${Math.round(onGpu * 100)}% in VRAM ` +
+        `(${Math.round((1 - onGpu) * 100)}% on the CPU) at ctx ${m.context_length}. ` +
+        `If this is the 14B on a 12 GB card, an unquantized f16 KV cache is the ` +
+        `usual cause and quantizing it costs no model precision — check with ` +
+        `'scripts/ollama-kv-cache.sh --check', apply with the same command.`,
+      );
+    }
+  } catch {
+    // A diagnostic must never break startup.
   }
 }
 

@@ -24,6 +24,7 @@
     "minimatch": "^10.2.5",
     "msedge-tts": "^2.1.0",
     "openai": "^6.37.0",
+    "rea-agents": "6.5.0",
     "socket.io": "^4.8.3",
     "uuid": "^14.0.0",
     "ws": "^8.17.0"

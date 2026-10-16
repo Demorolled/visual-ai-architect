@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import { FileGenerator, labelToFileName, getFileExtension, stripLabelExtension, projectGraphSignature, type GenerationProgressCallback } from '../layers/fileGenerator.js';
+import { FileGenerator, resolveFileName, reconcileLabelExtension, projectGraphSignature, type GenerationProgressCallback } from '../layers/fileGenerator.js';
 import { projects } from '../db/projects.js';
 import { SandboxRunner } from '../sandbox/runner.js';
 import { codeScanner } from '../scanner/CodeScanner.js';
 import { broadcastGenerationProgress } from '../socket/socketManager.js';
 import { runRuntimeSmokeTest, isRuntimeSmokeEnabled } from '../sandbox/runtimeSmokeTest.js';
+import { reviewGateFlaggedNonTsBuild } from '../review/gateScopedReview.js';
+import type { CodeReviewResult } from '../review/CodeReviewer.js';
 
 
 export const generationRoutes = Router();
@@ -70,11 +72,53 @@ generationRoutes.post('/:projectId/files', async (req, res) => {
       complexity: codeScanner.analyzeComplexity(f.code),
     }));
 
-    // ── Step 2: (DISABLED) AI code review overlaps with CodeScanner which runs in Step 1
-    // CodeScanner catches security issues, hardcoded secrets, console.log, etc. instantly.
-    // The AI reviewer was redundant and slow with the local 7B model.
-    // The standalone POST /api/review endpoint remains available for manual use.
-    const codeReview = null;
+    // ── Step 2: AI code review — SCOPED (non-TS builds, gate-flagged files) ──
+    // Re-enabled, deliberately narrower than the version that was switched off
+    // here. It runs ONLY when a non-TS language gate exists AND that gate (or
+    // the stub gate) actually flagged a file. A TS/JS build keeps the static
+    // CodeScanner from Step 1 alone; a clean non-TS build reviews nothing at
+    // all; and the reviewer reads the files the compiler REJECTED instead of
+    // every file — two files, not forty. That is the "redundant and slow with
+    // the local 7B model" objection answered with scope instead of absence: the
+    // reviewer now runs on builds that are already broken, which is exactly
+    // where it adds what the gate cannot — the gate says `conversion.go:41:9:
+    // cannot use x (value of type int) as string value`, the reviewer says the
+    // conversion logic is wrong.
+    //
+    // Review only. The bounded gate repair loop above already rewrote what it
+    // could prove; regenerating a file behind it would undo that. The auto-fix
+    // path stays on demand: POST /api/review/and-fix.
+    //
+    // Opt out per request with { codeReview: false }, or globally with
+    // VACA_SKIP_CODE_REVIEW=1. Skipped entirely for fast preview builds.
+    let codeReview: CodeReviewResult | null = null;
+    let codeReviewTime = 0;
+    let codeReviewSkipped: string | null = null;
+    let reviewedFiles: string[] = [];
+    if (skipValidation) {
+      codeReviewSkipped = 'skipValidation build — the compile gate did not run';
+    } else if (req.body.codeReview === false) {
+      codeReviewSkipped = 'disabled by request (codeReview: false)';
+    } else {
+      const masterNode = project.nodes.find((n: any) => n.type === 'master');
+      const reviewStart = Date.now();
+      const outcome = await reviewGateFlaggedNonTsBuild({
+        languageGates: result.languageGates,
+        flaggedFiles: result.gateFlaggedFiles,
+        files: result.files,
+        projectName: project.name,
+        appGoal: masterNode?.data?.appGoal || project.name,
+      });
+      codeReviewTime = Date.now() - reviewStart;
+      codeReview = outcome.review;
+      codeReviewSkipped = outcome.skipped;
+      reviewedFiles = outcome.reviewedFiles;
+      if (outcome.review) {
+        console.log(`[generation] gate-scoped review of ${reviewedFiles.join(', ')} — ${outcome.review.summary.totalComments} finding(s) (${outcome.review.summary.criticalCount} critical, ${outcome.review.summary.highCount} high) in ${codeReviewTime}ms`);
+      } else if (codeReviewSkipped) {
+        console.log(`[generation] gate-scoped review skipped: ${codeReviewSkipped}`);
+      }
+    }
 
     // ── Step 3: Automated RUNTIME smoke test (real builds only) ──
     // Boots the generated app in headless Chromium and clicks through it —
@@ -128,10 +172,17 @@ generationRoutes.post('/:projectId/files', async (req, res) => {
       ...result,
       securityScans,
       codeReview,
+      // Why the reviewer did or didn't run, and on which files — so a caller can
+      // tell "reviewed and found nothing" from "never reviewed".
+      codeReviewScope: {
+        skipped: codeReviewSkipped,
+        reviewedFiles,
+        flaggedFiles: result.gateFlaggedFiles.map((f) => f.fileName),
+      },
       runtimeSmoke,
       timingMs: {
         generation: generationTime,
-        codeReview: 0,
+        codeReview: codeReviewTime,
         runtimeSmoke: runtimeSmoke && runtimeSmoke.available ? runtimeSmoke.durationMs : 0,
         total: Date.now() - startTime,
       },
@@ -148,9 +199,9 @@ generationRoutes.post('/:projectId/files', async (req, res) => {
         isAllValidated: result.failedCount === 0 && result.totalErrors === 0 && result.tsCompileClean === true,
         tsCompileClean: result.tsCompileClean,
         contractViolations: result.contractViolations ?? 0,
-        reviewIssues: 0,
-        reviewCritical: 0,
-        reviewHigh: 0,
+        reviewIssues: codeReview?.summary.totalComments ?? 0,
+        reviewCritical: codeReview?.summary.criticalCount ?? 0,
+        reviewHigh: codeReview?.summary.highCount ?? 0,
       },
     });
   } catch (error) {
@@ -216,12 +267,14 @@ generationRoutes.post('/:projectId/file/:nodeId', async (req, res) => {
     // Generate just this one file using the public single-file API
     const code = await fileGenerator.generateSingleFile(node, project, depLabels);
 
-    // Use shared utilities from fileGenerator to handle embedded extensions (avoids "main.go" → "main-go.go")
+    // The RESOLVED LANGUAGE names the file; the label's embedded extension is
+    // only a fallback when the node declares no language. This used to be the
+    // other way round, so a Rust node labelled "ui.go" (the plan stage labels
+    // nodes from the OS map — linux → go) was written as a `.go` file and every
+    // extension-keyed consumer then chose the Go toolchain. See
+    // `resolveFileName` for the full rationale.
     const rawLabel = node.data.label || '';
-    const fileName = labelToFileName(rawLabel);
-    // Use label's embedded extension if present, otherwise derive from language
-    const { extOverride } = stripLabelExtension(rawLabel);
-    const ext = extOverride || getFileExtension(node.data.language || 'typescript');
+    const { fileName } = resolveFileName(rawLabel, node.data.language);
 
     // Run sandbox validation on this single file
     let errors: string[] = [];
@@ -237,11 +290,13 @@ generationRoutes.post('/:projectId/file/:nodeId', async (req, res) => {
     res.json({
       success: true,
       file: {
-        fileName: `${fileName}.${ext}`,
+        fileName,
         language: node.data.language || 'typescript',
         code,
         nodeId,
-        nodeLabel: node.data.label,
+        // Displayed label only — reconciled to the language so a Rust node the
+        // plan labelled "ui.go" reports back as "ui.rs", matching `fileName`.
+        nodeLabel: reconcileLabelExtension(node.data.label, node.data.language),
         errors,
         validated,
       },

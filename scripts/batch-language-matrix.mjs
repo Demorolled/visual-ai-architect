@@ -42,7 +42,12 @@ const BASE_URL = arg('base-url', 'http://127.0.0.1:3001').replace(/\/+$/, '');
 const OUT_DIR = arg('out', path.join(HERE, 'batch-results'));
 const LIMIT = Number(arg('limit', '0')) || 0;
 const ONLY = (arg('only', '') || '').split(',').map(s => s.trim()).filter(Boolean);
-const TIMEOUT_MS = Number(arg('timeout-ms', '900000')) || 900000;
+// Explicit --timeout-ms wins; otherwise this is DERIVED from the budget the
+// server reports (see detectRunConfig). The old fixed 900_000 default was
+// SMALLER than the server's own cap, so the client reliably gave up first —
+// recording a transport non-verdict for a build the server was still working
+// on, and discarding the server's clean, honest "timed out" verdict.
+let TIMEOUT_MS = Number(arg('timeout-ms', '0')) || 0;
 const SCALE = arg('scale', 'small');
 const SET = arg('set', 'small');
 const RERUN = arg('rerun', '');
@@ -53,6 +58,78 @@ const RERUN = arg('rerun', '');
 const isInfraFailure = (r) =>
   r.verdict === 'FAIL' &&
   /network:|HTTP 5\d\d|Connection error|fetch failed|client timeout/i.test(r.reason || '');
+
+// ── run configuration ───────────────────────────────────────────────────────
+// Stamped onto EVERY row. A verdict only means something next to the config
+// that produced it — the same request scores differently under a different
+// model, provider, or timeout budget — so a result file without this cannot be
+// compared against a later run. That gap is why the recorded matrix could not
+// be compared like-for-like: its rows do not say what model produced them.
+//
+// `runId`/`capturedAt` make a row self-identifying, so rows from two baselines
+// can still be told apart once a file has been concatenated or trimmed.
+const RUN_CONFIG = {
+  runId: null,           // matches the results filename
+  capturedAt: null,      // when this snapshot was taken
+  baseUrl: BASE_URL,
+  provider: null,        // declared: the llm-config.json section the backend loads
+  declaredModel: null,   // declared: the model named in llm-config.json
+  model: null,           // runtime: the model the provider is ACTUALLY serving
+  llmUp: null,           // runtime: was the provider reachable at run start
+  planTimeoutMs: null,   // enforced by the backend, reported on /api/health
+  writeTimeoutMs: null,
+  clientTimeoutMs: null, // this runner's own wait budget
+  source: 'unknown',
+};
+
+/** GET + JSON via node:http — same undici-avoidance reason as postJson. */
+function getJson(url, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    let done = false;
+    let timer;
+    const finish = (fn, a) => { if (!done) { done = true; clearTimeout(timer); fn(a); } };
+    const req = http.request({ hostname: u.hostname, port: u.port || 80, path: u.pathname + u.search, method: 'GET' }, (res) => {
+      const chunks = [];
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => finish(resolve, { status: res.statusCode, text: Buffer.concat(chunks).toString('utf8') }));
+      res.on('error', (e) => finish(reject, e));
+    });
+    timer = setTimeout(() => req.destroy(new Error(`health timeout after ${timeoutMs}ms`)), timeoutMs);
+    req.on('error', (e) => finish(reject, e));
+    req.end();
+  });
+}
+
+/**
+ * Best-effort identification of what this run measures: the DECLARED config
+ * (llm-config.json) plus the RUNTIME truth from /api/health, which probes the
+ * provider's /v1/models. Both are recorded because they can disagree — the
+ * backend falls back DSpark → Ollama, so the declared model is not necessarily
+ * the one answering.
+ */
+async function detectRunConfig() {
+  try {
+    const cfg = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'backend', 'llm-config.json'), 'utf8'));
+    const e = cfg.dspark || cfg.ollama || cfg.primary || {};
+    RUN_CONFIG.provider = cfg.dspark ? 'dspark' : cfg.ollama ? 'ollama' : (cfg.primary?.provider ?? null);
+    RUN_CONFIG.declaredModel = e.model ?? null;
+    RUN_CONFIG.declaredBaseUrl = e.baseUrl ?? null;
+  } catch { /* unreachable config — reported as unknown */ }
+  try {
+    const res = await getJson(`${BASE_URL}/api/health`, 15000);
+    const j = JSON.parse(res.text);
+    RUN_CONFIG.model = j?.llm?.model ?? null;
+    RUN_CONFIG.llmUp = !!j?.llm?.up;
+    RUN_CONFIG.planTimeoutMs = j?.timeouts?.planMs ?? null;
+    RUN_CONFIG.writeTimeoutMs = j?.timeouts?.writeMs ?? null;
+    RUN_CONFIG.source = 'health+llm-config.json';
+  } catch (err) {
+    RUN_CONFIG.healthError = String(err?.message || err);
+    RUN_CONFIG.source = 'llm-config.json (health unreachable)';
+  }
+  return RUN_CONFIG;
+}
 
 // ── the matrix ──────────────────────────────────────────────────────────────
 // Every request names its language explicitly and describes a CLI/console tool:
@@ -191,7 +268,14 @@ async function build(req) {
   const ms = Date.now() - started;
 
   if (netError) {
-    return { ...req, verdict: 'FAIL', reason: `network: ${netError}`, httpStatus, ms };
+    // INFRASTRUCTURE failure, not a verdict about VACA. `verdict` stays 'FAIL'
+    // so `isInfraFailure` still finds the row for --rerun, but `infraFailed`
+    // keeps it out of the code-failure tally below — the same distinction
+    // `envBlocked` already makes for a missing toolchain. Measured: 21 of the
+    // 375 recorded rows were transport failures recorded as plain FAIL, which
+    // inflated the failure rate everywhere it was read (the Go slice alone
+    // read 37 instead of 31).
+    return { ...req, verdict: 'FAIL', infraFailed: true, reason: `network: ${netError}`, httpStatus, ms };
   }
   if (httpStatus !== 200) {
     return { ...req, verdict: 'FAIL', reason: `HTTP ${httpStatus}: ${body?.error || 'unknown'}`, httpStatus, ms, timeout: !!body?.timeout };
@@ -288,6 +372,23 @@ async function build(req) {
 fs.mkdirSync(OUT_DIR, { recursive: true });
 const runId = new Date().toISOString().replace(/[:.]/g, '-');
 const outFile = path.join(OUT_DIR, `matrix-${runId}.jsonl`);
+RUN_CONFIG.runId = runId;
+RUN_CONFIG.capturedAt = new Date().toISOString();
+
+// Know what we are measuring before the first request: model, provider, and the
+// timeout budget the server is enforcing.
+await detectRunConfig();
+if (!TIMEOUT_MS) {
+  // Outlast the server so ITS clean timeout wins over our own abort: a client
+  // timeout is an infrastructure non-verdict, while the server's is a genuine
+  // VACA limitation we want recorded. Falls back to the documented defaults
+  // when the backend is too old to report a budget.
+  const budget = (RUN_CONFIG.planTimeoutMs && RUN_CONFIG.writeTimeoutMs)
+    ? RUN_CONFIG.planTimeoutMs + RUN_CONFIG.writeTimeoutMs
+    : Number(process.env.VACA_PLAN_TIMEOUT_MS || 1_800_000) + Number(process.env.VACA_WRITE_TIMEOUT_MS || 5_400_000);
+  TIMEOUT_MS = budget + 300_000;
+}
+RUN_CONFIG.clientTimeoutMs = TIMEOUT_MS;
 
 let queue = SET === 'hard' ? HARD_REQUESTS : REQUESTS;
 if (RERUN) {
@@ -306,6 +407,9 @@ console.log(`   endpoint : ${BASE_URL}/api/reason/interactive`);
 console.log(`   set      : ${RERUN ? `rerun(${path.basename(RERUN)})` : SET}`);
 console.log(`   scale    : ${SCALE}`);
 console.log(`   requests : ${queue.length}`);
+console.log(`   provider : ${RUN_CONFIG.provider ?? 'unknown'} · model ${RUN_CONFIG.model ?? 'unknown'}${RUN_CONFIG.llmUp === false ? ' (LLM DOWN)' : ''}`);
+console.log(`   timeouts : plan ${RUN_CONFIG.planTimeoutMs ?? '?'}ms · write ${RUN_CONFIG.writeTimeoutMs ?? '?'}ms · client ${TIMEOUT_MS}ms`);
+console.log(`   config   : ${RUN_CONFIG.source}`);
 console.log(`   results  : ${outFile}\n`);
 
 const t0 = Date.now();
@@ -319,19 +423,37 @@ for (const [i, req] of queue.entries()) {
   } catch (err) {
     r = { ...req, verdict: 'FAIL', reason: `harness error: ${String(err?.message || err)}`, ms: 0 };
   }
+  // Stamp the run config on EVERY row, whichever branch produced it. Done here
+  // rather than in each return of build() so a future early-return cannot forget
+  // it — and the early returns are exactly the transport/timeout rows whose
+  // provenance a like-for-like comparison needs most.
+  r = { ...r, runConfig: { ...RUN_CONFIG } };
   results.push(r);
   fs.appendFileSync(outFile, JSON.stringify(r) + '\n');
   console.log(`${r.verdict}  (${Math.round(r.ms / 1000)}s)  ${r.reason ? r.reason.slice(0, 150) : ''}`);
 }
 
-const tally = (rs) => ({
-  pass: rs.filter(r => r.verdict === 'PASS').length,
-  unverified: rs.filter(r => r.verdict === 'UNVERIFIED').length,
-  fail: rs.filter(r => r.verdict === 'FAIL').length,
-});
+// A transport failure is NOT a verdict about VACA (see isInfraFailure), so it is
+// counted separately instead of as FAIL: a failure rate that rises whenever the
+// backend restarts is not a measurement of the code.
+//
+// Deliberately keyed on `infraFailed` (the transport branch) rather than on
+// `isInfraFailure`, which also matches HTTP 5xx including VACA's OWN codegen
+// timeout ("Code generation timed out after 1500s"). That one IS a VACA
+// limitation and must keep counting as a failure.
+const isInfraRow = (r) => r.infraFailed === true;
+const tally = (rs) => {
+  const code = rs.filter(r => !isInfraRow(r));
+  return {
+    pass: code.filter(r => r.verdict === 'PASS').length,
+    unverified: code.filter(r => r.verdict === 'UNVERIFIED').length,
+    fail: code.filter(r => r.verdict === 'FAIL').length,
+    infra: rs.length - code.length,
+  };
+};
 const t = tally(results);
 console.log(`\n── done in ${Math.round((Date.now() - t0) / 1000)}s ──`);
-console.log(`   PASS ${t.pass} · UNVERIFIED ${t.unverified} · FAIL ${t.fail}  (of ${results.length})`);
+console.log(`   PASS ${t.pass} · UNVERIFIED ${t.unverified} · FAIL ${t.fail} · INFRA ${t.infra}  (of ${results.length})`);
 console.log(`results: ${outFile}`);
 
 const byLang = new Map();
@@ -340,12 +462,19 @@ for (const r of results) {
   e.push(r);
   byLang.set(r.lang, e);
 }
-console.log('\n── by language (pass/unverif/fail) ──');
+console.log('\n── by language (pass/unverif/fail, +infra) ──');
 for (const [lang, rs] of byLang) {
   const c = tally(rs);
-  console.log(`   ${lang.padEnd(11)} ${c.pass}/${c.unverified}/${c.fail}`);
+  console.log(`   ${lang.padEnd(11)} ${c.pass}/${c.unverified}/${c.fail}${c.infra ? `  +${c.infra} infra` : ''}`);
 }
 console.log('\n── failures ──');
-for (const r of results.filter(r => r.verdict === 'FAIL')) {
+for (const r of results.filter(r => r.verdict === 'FAIL' && !isInfraRow(r))) {
   console.log(`   ${r.lang.padEnd(11)} ${r.name.padEnd(16)} ${(r.reason || '').slice(0, 170)}`);
+}
+const infraRows = results.filter(isInfraRow);
+if (infraRows.length) {
+  console.log('\n── infrastructure failures (NOT VACA verdicts — recover with --rerun) ──');
+  for (const r of infraRows) {
+    console.log(`   ${r.lang.padEnd(11)} ${r.name.padEnd(16)} ${(r.reason || '').slice(0, 170)}`);
+  }
 }

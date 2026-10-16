@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import * as os from 'os';
-import { runProjectGates, runNonTsGatesWithRepair, sanitizeNonTsSource, buildNonTsRepairPrompt, groupGateErrorsByFile, fixUnusedGoVariables } from './nonTsRepair.js';
+import { runProjectGates, runNonTsGatesWithRepair, sanitizeNonTsSource, buildNonTsRepairPrompt, groupGateErrorsByFile, fixUnusedGoVariables, fixGoImports } from './nonTsRepair.js';
+import { resolveGoModuleName, sanitizeGoModuleName } from './nonTsCompileGate.js';
 
 const hasGo = (() => {
   try { execFileSync('go', ['version'], { stdio: 'ignore' }); return true; } catch { return false; }
@@ -162,6 +163,88 @@ describe('sanitizeNonTsSource — Go node files never claim `package main`', () 
     expect(sanitizeNonTsSource(src, 'go', 'main.go')).toBeNull();
   });
 
+  it('rewrites an INVENTED absolute module path whose tail names a real package dir', () => {
+    // Measured live on the generated Go CSV→JSON CLI: `cmd/root.go` wrote
+    //   import "github.com/user/csv-json-converter/pkg/csv"
+    // while the gate's go.mod declared a DIFFERENT module name (one derives from
+    // the request, the other from the project name), so `go build` failed with
+    // `no required module provides package ...` and 2 LLM repair rounds never
+    // touched the import. The tail `pkg/csv` DOES exist in the project — that is
+    // what makes this safely fixable.
+    const src = [
+      'package cmd',
+      '',
+      'import (',
+      '\t"encoding/csv"',
+      '\t"github.com/user/csv-json-converter/pkg/csv"',
+      ')',
+      '',
+      'func Execute() {}',
+    ].join('\n') + '\n';
+    const fixed = sanitizeNonTsSource(src, 'go', 'cmd/root.go', {
+      goModuleName: 'a-multi-file-go-cli',
+      goPackageDirs: ['cmd', 'pkg/csv', 'pkg/json'],
+    });
+    expect(fixed).toContain('"a-multi-file-go-cli/pkg/csv"');
+    expect(fixed).not.toContain('github.com/user/csv-json-converter');
+    // The standard-library import in the same block is untouched.
+    expect(fixed).toContain('"encoding/csv"');
+  });
+
+  it('prefers the LONGEST matching dir, so pkg/csv never collapses to csv', () => {
+    const src = 'package cmd\n\nimport "github.com/user/x/pkg/csv"\n\nfunc Execute() {}\n';
+    const fixed = sanitizeNonTsSource(src, 'go', 'cmd/root.go', {
+      goModuleName: 'app',
+      goPackageDirs: ['csv', 'pkg/csv'],
+    });
+    expect(fixed).toContain('"app/pkg/csv"');
+    expect(fixed).not.toContain('"app/csv"');
+  });
+
+  it('leaves a correct module path and third-party imports alone', () => {
+    const src = [
+      'package main',
+      '',
+      'import (',
+      '\t"fmt"',
+      '\t"app/pkg/csv"',
+      '\t"gopkg.in/yaml.v3"',
+      ')',
+      '',
+      'func main() {}',
+    ].join('\n') + '\n';
+    const fixed = sanitizeNonTsSource(src, 'go', 'main.go', {
+      goModuleName: 'app',
+      goPackageDirs: ['pkg/csv'],
+    });
+    // `null` means "nothing changed", which is the correct outcome here.
+    expect(fixed ?? src).toContain('"app/pkg/csv"');
+    expect(fixed ?? src).toContain('"gopkg.in/yaml.v3"');
+    expect(fixed ?? src).toContain('"fmt"');
+  });
+
+  it('never rewrites a spec-shaped STRING outside the import block', () => {
+    const src = [
+      'package main',
+      '',
+      'import "fmt"',
+      '',
+      'const usage = "github.com/user/x/pkg/csv"',
+      '',
+      'func main() { fmt.Println(usage) }',
+    ].join('\n') + '\n';
+    const fixed = sanitizeNonTsSource(src, 'go', 'main.go', {
+      goModuleName: 'app',
+      goPackageDirs: ['pkg/csv'],
+    });
+    expect(fixed ?? src).toContain('"github.com/user/x/pkg/csv"');
+  });
+
+  it('does nothing when no project package dirs are known', () => {
+    const src = 'package main\n\nimport "github.com/user/x/pkg/csv"\n\nfunc main() {}\n';
+    expect(sanitizeNonTsSource(src, 'go', 'main.go', { goModuleName: 'app' })).toBeNull();
+  });
+
   it('falls back to `app` for an unusable directory name', () => {
     const src = 'package main\n\nfunc f() {}\n';
     expect(sanitizeNonTsSource(src, 'go', 'src/2d/render.go')).toContain('package app');
@@ -208,6 +291,170 @@ describe('fixUnusedGoVariables — Go\'s unused-local error has an exact fix', (
   it('ignores errors that are not the unused-local class', () => {
     expect(fixUnusedGoVariables('package main\n', ['main.go:1:1: missing return'])).toBeNull();
     expect(fixUnusedGoVariables('package main\n', [])).toBeNull();
+  });
+
+  it('blanks an unused `range` header variable instead of inserting a statement', () => {
+    // MEASURED LIVE on the delivered CSV→JSON export:
+    // `output_formatter.go:18:7: declared and not used: i` for
+    // `for i, record := range records[1:]` — a hard error no repair round
+    // cleared, because a statement cannot be inserted inside a for header.
+    const src = 'package main\n\nfunc f(records [][]string) {\n\tfor i, record := range records[1:] {\n\t\tprintln(record[0])\n\t}\n}\n';
+    const fixed = fixUnusedGoVariables(src, ['output_formatter.go:4:7: declared and not used: i']);
+    expect(fixed).toContain('for _, record := range records[1:]');
+    expect(fixed).not.toContain('for i, record');
+  });
+
+  it('drops the whole clause when the range variable was the only one', () => {
+    const src = 'package main\n\nfunc f(xs []int) {\n\tfor i := range xs {\n\t\tprintln("x")\n\t}\n}\n';
+    const fixed = fixUnusedGoVariables(src, ['main.go:4:6: declared and not used: i']);
+    expect(fixed).toContain('for range xs {');
+  });
+
+  it('never blanks a range variable the body really reads', () => {
+    // The compiler would not call a used variable unused; blanking one would
+    // silently drop the program's work, so the occurrence guard must hold.
+    const src = 'package main\n\nfunc f(xs []int) {\n\tfor i, v := range xs {\n\t\tprintln(i, v)\n\t}\n}\n';
+    expect(fixUnusedGoVariables(src, ['main.go:4:6: declared and not used: i'])).toBeNull();
+  });
+});
+
+describe('resolveGoModuleName — the ONE Go module name', () => {
+  it('prefers the project name and falls back to the request', () => {
+    expect(resolveGoModuleName('A CSV to JSON Tool', 'ignored request')).toBe('a-csv-to-json-tool');
+    expect(resolveGoModuleName('', 'a multi-file Go CLI that converts a CSV file to JSON'))
+      .toBe('a-multi-file-go-cli-that-converts-a-csv-file-to-json');
+    expect(resolveGoModuleName('   ', '  ')).toBe('untitled');
+  });
+
+  it('applies the same transformation the gate and the go.mod writer apply', () => {
+    for (const n of ['A 3D chess game, with pieces!', 'json2yaml', '!!!', '']) {
+      expect(resolveGoModuleName(n)).toBe(sanitizeGoModuleName(n));
+    }
+  });
+});
+
+describe('runProjectGates — the gate stages the module name it is GIVEN', () => {
+  // A two-file Go project whose sibling import names the module by hand-off.
+  // `json2yaml/pkg/util` resolves ONLY when the gate's go.mod says
+  // `module json2yaml` — which is the whole point of threading the name in.
+  // runProjectGates takes `{ path, content }` — the language comes from the
+  // planner's contracts, exactly as both real pipelines pass it.
+  const goFiles = [
+    { path: 'pkg/util/util.go', content: 'package util\n\nfunc Hello() string { return "hi" }\n' },
+    {
+      path: 'main.go',
+      content: 'package main\n\nimport (\n\t"fmt"\n\n\t"json2yaml/pkg/util"\n)\n\nfunc main() { fmt.Println(util.Hello()) }\n',
+    },
+  ];
+  const goContracts = goFiles.map((f) => ({ path: f.path, summary: '', language: 'go', exports: [] as string[] }));
+
+  it.skipIf(!hasGo)('resolves the sibling import under the passed module name', async () => {
+    const res = await runProjectGates('a JSON to YAML tool', goFiles, goContracts as any, false, 'json2yaml');
+    expect(res.languageGates.find((g) => g.language === 'go')?.clean).toBe(true);
+  });
+
+  it.skipIf(!hasGo)('FAILS when the name is derived from the request instead (the defect)', async () => {
+    // Before the name was threaded, the gate keyed off the request while the
+    // writer keyed off the project name — two different modules for one project.
+    const res = await runProjectGates('a JSON to YAML tool', goFiles, goContracts as any);
+    const go = res.languageGates.find((g) => g.language === 'go');
+    expect(go?.clean).toBe(false);
+    expect(go?.errors.length).toBeGreaterThan(0);
+  });
+});
+
+describe('fixGoImports — Go\'s missing/unused-import errors have an exact fix', () => {
+  // `main.go` verbatim (module and error lines) from the delivered CSV→JSON
+  // export, whose compiler output was:
+  //   ./main.go:9:2: "bufio" imported as csvutil and not used
+  //   ./main.go:19:12: undefined: csv
+  const csvCliMain = [
+    'package main',
+    '',
+    'import (',
+    '\t"encoding/json"',
+    '\t"fmt"',
+    '\t"log"',
+    '\t"os"',
+    '',
+    '\tcsvutil "bufio"',
+    ')',
+    '',
+    'func convertCSVToJson(filePath string) ([]map[string]string, error) {',
+    '\tfile, err := os.Open(filePath)',
+    '\tif err != nil {',
+    '\t\treturn nil, err',
+    '\t}',
+    '\tdefer file.Close()',
+    '\treader := csv.NewReader(file)',
+    '\t_ = reader',
+    '\t_ = json.Marshal',
+    '\t_ = fmt.Sprint',
+    '\t_ = log.Print',
+    '\treturn nil, nil',
+    '}',
+    '',
+  ].join('\n');
+
+  it('drops an aliased import the compiler named unused AND adds the missing one', () => {
+    const fixed = fixGoImports(csvCliMain, [
+      'main.go:9:2: "bufio" imported as csvutil and not used',
+      'main.go:19:12: undefined: csv',
+    ]);
+    expect(fixed).not.toBeNull();
+    expect(fixed).not.toContain('bufio');
+    expect(fixed).toContain('"encoding/csv"');
+    // In the import block, not stranded elsewhere in the file.
+    expect(fixed!.split('import (')[1].split(')')[0]).toContain('"encoding/csv"');
+  });
+
+  it('drops a plain unused import and keeps the used ones', () => {
+    // MEASURED LIVE: `reader_input.go:7:2: "os" imported and not used`.
+    const src = 'package main\n\nimport (\n\t"encoding/csv"\n\t"errors"\n\t"fmt"\n\t"os"\n)\n\nfunc f() error { return errors.New(csv.ErrFieldCount.Error() + fmt.Sprint(1)) }\n';
+    const fixed = fixGoImports(src, ['reader_input.go:7:2: "os" imported and not used']);
+    expect(fixed).not.toBeNull();
+    expect(fixed).not.toContain('"os"');
+    expect(fixed).toContain('"errors"');
+    expect(fixed).toContain('"fmt"');
+  });
+
+  it('removes the whole declaration when its last import goes', () => {
+    const src = 'package main\n\nimport "os"\n\nfunc main() {}\n';
+    const fixed = fixGoImports(src, ['main.go:3:8: "os" imported and not used']);
+    expect(fixed).not.toBeNull();
+    expect(fixed).not.toContain('import');
+  });
+
+  it('adds an import block when the file has none', () => {
+    const src = 'package main\n\nfunc main() { println(strings.ToUpper("hi")) }\n';
+    const fixed = fixGoImports(src, ['main.go:3:19: undefined: strings']);
+    expect(fixed).toContain('import (\n\t"strings"\n)');
+  });
+
+  it('resolves a missing PROJECT package to <module>/<dir>', () => {
+    const src = 'package main\n\nfunc main() { println(util.Hello()) }\n';
+    const fixed = fixGoImports(src, ['main.go:3:19: undefined: util'], {
+      goModuleName: 'json2yaml',
+      goPackageDirs: ['pkg/util'],
+    });
+    expect(fixed).toContain('"json2yaml/pkg/util"');
+  });
+
+  it('never adds an import for a name that is not a package qualifier', () => {
+    // Adding it would only produce `"encoding/csv" imported and not used` on the
+    // next round — the add/remove cycle two fixers must never enter.
+    const src = 'package main\n\nfunc main() { println(csv) }\n';
+    expect(fixGoImports(src, ['main.go:3:19: undefined: csv'])).toBeNull();
+  });
+
+  it('leaves an import the file already has alone', () => {
+    const src = 'package main\n\nimport "encoding/csv"\n\nfunc f() { _ = csv.ErrFieldCount }\n';
+    expect(fixGoImports(src, ['main.go:5:9: undefined: csv'])).toBeNull();
+  });
+
+  it('ignores errors that are not an import class', () => {
+    expect(fixGoImports(csvCliMain, ['main.go:19:12: missing return'])).toBeNull();
+    expect(fixGoImports(csvCliMain, [])).toBeNull();
   });
 });
 
